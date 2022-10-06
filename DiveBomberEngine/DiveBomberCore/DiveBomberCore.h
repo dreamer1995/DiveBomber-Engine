@@ -1,4 +1,5 @@
 #include "Window.h"
+#include "Exception.h"
 
 #pragma once
 class DiveBomberCore
@@ -11,6 +12,8 @@ public:
 private:
 	void Start();
 	void Update();
+	void ProcessInput();
+	void GameLogic();
 
 	std::unique_ptr<Window> wnd;
 };

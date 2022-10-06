@@ -1,3 +1,13 @@
+/******************************************************************************************
+*	1.Window Class																		  *
+*	2.Window 																			  *
+*	3.KeyBoard																			  *
+*	4.Exception																			  *
+*	5.Mouse																				  *
+* 	6.LinktoCore																		  *
+*	7.Winmain to Core																   	  *
+*	8.Grapics																		  	  *
+******************************************************************************************/
 #pragma once
 
 #define NOMINMAX
@@ -11,6 +21,9 @@
 #include <vector>
 
 #include "Common.h"
+#include "WindowException.h"
+#include "Keyboard.h"
+#include "Mouse.h"
 
 class Window
 {
@@ -34,7 +47,7 @@ public:
 	~Window();
 	Window(const Window&) = delete;
 	Window& operator = (const Window&) = delete;
-	void SetTitle(const std::string& title);
+	void SetTitle(const std::wstring& title);
 	void EnableCursor() noexcept;
 	void DisableCursor() noexcept;
 	bool CursorEnabled() const noexcept;
@@ -42,10 +55,19 @@ public:
 	//Graphics& Gfx();
 
 	const wchar_t* title;
+	Keyboard kbd;
+	Mouse mouse;
+
 private:
 	LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 	static LRESULT CALLBACK HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 	static LRESULT CALLBACK HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
+	void ConfineCursor() noexcept;
+	void FreeCursor() noexcept;
+	void ShowCursor() noexcept;
+	void HideCursor() noexcept;
+	void EnableImGuiMouse() noexcept;
+	void DisableImGuiMouse() noexcept;
 
 	bool cursorEnabled = true;
 	int windowWidth;
