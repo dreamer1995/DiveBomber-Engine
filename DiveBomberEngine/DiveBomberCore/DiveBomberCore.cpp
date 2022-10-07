@@ -1,12 +1,21 @@
 #include "DiveBomberCore.h"
+#include <iostream>
 
 DiveBomberCore::DiveBomberCore()
 {
 	wnd = std::make_unique<Window>(1280, 720, L"DiveBomber Engine");
+	console = std::make_unique<Console>();
 }
 
 DiveBomberCore::~DiveBomberCore()
-{}
+{
+	console->waitForInput = false;
+	FreeConsole();
+	for (std::thread& task : threadTasks)
+	{
+		task.join();
+	}
+}
 
 int DiveBomberCore::GameLoop()
 {
@@ -25,7 +34,7 @@ int DiveBomberCore::GameLoop()
 
 void DiveBomberCore::Start()
 {
-
+	threadTasks.emplace_back(std::thread{ &Console::GetInput, console.get(), std::ref(command)});
 }
 
 void DiveBomberCore::Update()
@@ -58,6 +67,8 @@ void DiveBomberCore::ProcessInput()
 			//	break;
 		case VK_F1:
 			wnd->SetTitle(L"Keyboard Detected!");
+			std::cout << "Keyboard Detected!" << std::endl;
+			//OutputDebugString(L"Keyboard Detected!哈哈");
 			break;
 		}
 	}
@@ -121,8 +132,14 @@ void DiveBomberCore::ProcessInput()
 		wnd->SetTitle(L"[W]键按下！");
 	}
 
-	if (wnd->kbd.KeyIsDown('W'))
-	{
-		wnd->SetTitle(L"[W]键按下！");
-	}
+	ExecuteCommand();
 }
+
+void DiveBomberCore::ExecuteCommand()
+{
+	if (!command.empty())
+	{
+		std::wcout << L"[Execute]" << command << std::endl;
+		command.clear();
+	}
+};

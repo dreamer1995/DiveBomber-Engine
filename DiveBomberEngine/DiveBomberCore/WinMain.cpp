@@ -1,7 +1,7 @@
 #include "DiveBomberCore.h"
 
 int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLine, int nCmdShow)
-{
+{	
 	try
 	{
 		return DiveBomberCore{}.GameLoop();
