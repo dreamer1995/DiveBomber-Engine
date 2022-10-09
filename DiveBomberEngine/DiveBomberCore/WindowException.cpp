@@ -23,14 +23,13 @@ std::string WindowException::TranslateErrorCode(HRESULT hr) noexcept
 	return errorString;
 }
 
-
-HrException::HrException(int line, const char* file, HRESULT hr) noexcept
+WindowHrException::WindowHrException(int line, const char* file, HRESULT hr) noexcept
 	:
 	WindowException(line, file),
 	hr(hr)
 {}
 
-const char* HrException::what() const noexcept
+const char* WindowHrException::what() const noexcept
 {
 	std::ostringstream oss;
 	oss << GetType() << std::endl
@@ -42,21 +41,20 @@ const char* HrException::what() const noexcept
 	return whatBuffer.c_str();
 }
 
-const char* HrException::GetType() const noexcept
+const char* WindowHrException::GetType() const noexcept
 {
 	return "Window Exception";
 }
 
-HRESULT HrException::GetErrorCode() const noexcept
+HRESULT WindowHrException::GetErrorCode() const noexcept
 {
 	return hr;
 }
 
-std::string HrException::GetErrorDescription() const noexcept
+std::string WindowHrException::GetErrorDescription() const noexcept
 {
 	return WindowException::TranslateErrorCode(hr);
 }
-
 
 const char* NoGfxException::GetType() const noexcept
 {

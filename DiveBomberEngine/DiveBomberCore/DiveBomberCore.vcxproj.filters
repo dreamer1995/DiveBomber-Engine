@@ -52,6 +52,18 @@
     <ClCompile Include="Console.cpp">
       <Filter>Console</Filter>
     </ClCompile>
+    <ClCompile Include="GraphicsException.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowsMessageMap.cpp">
+      <Filter>Window</Filter>
+    </ClCompile>
+    <ClCompile Include="DxgiInfoManager.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window.h">
@@ -80,6 +92,21 @@
     </ClInclude>
     <ClInclude Include="Console.h">
       <Filter>Console</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsException.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowsMessageMap.h">
+      <Filter>Window</Filter>
+    </ClInclude>
+    <ClInclude Include="WRL.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="DxgiInfoManager.h">
+      <Filter>Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
