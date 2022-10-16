@@ -6,7 +6,7 @@ GPUAdapter::GPUAdapter(std::shared_ptr<DxgiInfoManager> inputInfoManager)
     wrl::ComPtr<IDXGIFactory4> dxgiFactory;
     UINT createFactoryFlags = 0;
 #if defined(_DEBUG)
-    createFactoryFlags = DXGI_CREATE_FACTORY_DEBUG;
+    createFactoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
 #endif
     HRESULT hr;
     GFX_THROW_INFO(CreateDXGIFactory2(createFactoryFlags, IID_PPV_ARGS(&dxgiFactory)));

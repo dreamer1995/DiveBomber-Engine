@@ -148,6 +148,7 @@
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="GraphicsResource.cpp" />
+    <ClCompile Include="SwapChain.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="WindowException.cpp" />
     <ClCompile Include="WindowsMessageMap.cpp" />
@@ -169,6 +170,7 @@
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Mouse.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="SwapChain.h" />
     <ClInclude Include="SystemConfig.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="WindowException.h" />

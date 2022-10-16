@@ -12,3 +12,8 @@ CommandQueue::CommandQueue(ID3D12Device2* device, std::shared_ptr<DxgiInfoManage
     HRESULT hr;
     GFX_THROW_INFO(device->CreateCommandQueue(&desc, IID_PPV_ARGS(&commandQueue)));
 }
+
+ID3D12CommandQueue* CommandQueue::GetCommandQueue() noexcept
+{
+    return commandQueue.Get();
+}

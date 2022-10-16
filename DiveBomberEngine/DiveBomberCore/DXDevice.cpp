@@ -44,7 +44,7 @@ DXDevice::DXDevice(IDXGIAdapter4* adapter, std::shared_ptr<DxgiInfoManager> inpu
 #endif
 }
 
-ID3D12Device2* DXDevice::GetDecive()
+ID3D12Device2* DXDevice::GetDecive() noexcept
 {
     return dxDevice.Get();
 }

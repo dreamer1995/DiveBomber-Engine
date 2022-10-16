@@ -79,6 +79,9 @@
     <ClCompile Include="CommandQueue.cpp">
       <Filter>Graphics\DX12</Filter>
     </ClCompile>
+    <ClCompile Include="SwapChain.cpp">
+      <Filter>Graphics\DX12</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window.h">
@@ -142,6 +145,9 @@
       <Filter>Graphics\DX12</Filter>
     </ClInclude>
     <ClInclude Include="CommandQueue.h">
+      <Filter>Graphics\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="SwapChain.h">
       <Filter>Graphics\DX12</Filter>
     </ClInclude>
   </ItemGroup>

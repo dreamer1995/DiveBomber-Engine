@@ -5,6 +5,7 @@
 #include "GPUAdapter.h"
 #include "DXDevice.h"
 #include "CommandQueue.h"
+#include "SwapChain.h"
 
 class Graphics
 {
@@ -55,6 +56,7 @@ private:
 	std::unique_ptr<GPUAdapter> gpuAdapter;
 	std::unique_ptr<DXDevice> dxDevice;
 	std::unique_ptr<CommandQueue> commandQueue;
+	std::unique_ptr<SwapChain> swapChain;
 public:
 	bool isWireFrame = false;
 	bool isTAA;
