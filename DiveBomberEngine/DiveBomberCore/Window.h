@@ -10,11 +10,8 @@
 ******************************************************************************************/
 #pragma once
 
-#define NOMINMAX
-
-#include <Windows.h>
+#include "WindowResource.h"
 #include <shellapi.h> // For CommandLineToArgvW
-#include <string>
 #include <optional>
 #include <cassert>
 #include <memory>
@@ -24,6 +21,7 @@
 #include "WindowException.h"
 #include "Keyboard.h"
 #include "Mouse.h"
+#include "Graphics.h"
 
 class Window
 {
@@ -43,7 +41,7 @@ class Window
 		HINSTANCE hInst;
 	};
 public:
-	Window(int width, int height, const wchar_t* name);
+	Window(const wchar_t* name);
 	~Window();
 	Window(const Window&) = delete;
 	Window& operator = (const Window&) = delete;
@@ -52,7 +50,7 @@ public:
 	void DisableCursor() noexcept;
 	bool CursorEnabled() const noexcept;
 	static std::optional<int> ProcessMessages() noexcept;
-	//Graphics& Gfx();
+	Graphics& Gfx();
 
 	const wchar_t* title;
 	Keyboard kbd;
@@ -75,7 +73,7 @@ private:
 	int screenWidth;
 	int screenHeight;
 	HWND hWnd;
-	//std::unique_ptr<Graphics> pGfx;
+	std::unique_ptr<Graphics> pGfx;
 	std::vector<BYTE> rawBuffer;
 	std::string commandLine;
 };

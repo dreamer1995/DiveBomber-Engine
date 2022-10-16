@@ -1,5 +1,7 @@
 #pragma once
-#include "Window.h"
+#include "WindowResource.h"
+#include "WindowException.h"
+#include <string>
 
 class Console
 {

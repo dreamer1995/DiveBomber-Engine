@@ -26,6 +26,9 @@
     <Filter Include="Console">
       <UniqueIdentifier>{ba33a9c2-828d-4ccd-b405-8041765e32c3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Graphics\DX12">
+      <UniqueIdentifier>{65403054-4078-41df-93bb-d9b9884c8cbb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Window.cpp">
@@ -63,6 +66,18 @@
     </ClCompile>
     <ClCompile Include="DxgiInfoManager.cpp">
       <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsResource.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="GPUAdapter.cpp">
+      <Filter>Graphics\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="DXDevice.cpp">
+      <Filter>Graphics\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandQueue.cpp">
+      <Filter>Graphics\DX12</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -108,6 +123,27 @@
     <ClInclude Include="DxgiInfoManager.h">
       <Filter>Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="WindowResource.h">
+      <Filter>Window</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsResource.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="d3dx12.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="SystemConfig.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="GPUAdapter.h">
+      <Filter>Graphics\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="DXDevice.h">
+      <Filter>Graphics\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandQueue.h">
+      <Filter>Graphics\DX12</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="C:\Users\H\Downloads\DiveBomberIcon.ico">
@@ -118,5 +154,10 @@
     <ResourceCompile Include="Resource.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="d3dcompiler_47.dll">
+      <Filter>Common</Filter>
+    </None>
   </ItemGroup>
 </Project>

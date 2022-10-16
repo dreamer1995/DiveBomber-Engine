@@ -19,7 +19,7 @@
 ******************************************************************************************/
 #pragma once
 #include <unordered_map>
-#include "Window.h"
+#include "WindowResource.h"
 
 class WindowsMessageMap
 {

@@ -1,9 +1,10 @@
+#include "SystemConfig.h"
 #include "DiveBomberCore.h"
 #include <iostream>
 
 DiveBomberCore::DiveBomberCore()
 {
-	wnd = std::make_unique<Window>(1280, 720, L"DiveBomber Engine");
+	wnd = std::make_unique<Window>(L"DiveBomber Engine");
 	console = std::make_unique<Console>();
 }
 

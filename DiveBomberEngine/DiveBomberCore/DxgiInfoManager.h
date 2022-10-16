@@ -3,8 +3,9 @@
 #include <dxgidebug.h>
 #include <string>
 
-#include "Window.h"
 #include "WRL.h"
+#include "WindowResource.h"
+#include "WindowException.h"
 
 class DxgiInfoManager
 {

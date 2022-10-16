@@ -1,5 +1,4 @@
 #include "DxgiInfoManager.h"
-#include "Window.h"
 #include "GraphicsException.h"
 #include <memory>
 

@@ -4,4 +4,4 @@
 #define DEBUGMODE
 #endif
 
-#define noxnd noexcept(!IS_DEBUG)
+#define noxnd noexcept(!_DEBUG)

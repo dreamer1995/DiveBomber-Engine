@@ -20,7 +20,7 @@ Window::WindowClass::WindowClass() noexcept
 		IMAGE_ICON, 32, 32, 0
 	));
 	wClass.hCursor = ::LoadCursor(NULL, IDC_ARROW);
-	wClass.hbrBackground = (HBRUSH)(COLOR_BACKGROUND);
+	wClass.hbrBackground = /*(HBRUSH)(COLOR_BACKGROUND)*/NULL;
 	wClass.lpszMenuName = NULL;
 	wClass.lpszClassName = GetName();
 	wClass.hIconSm = static_cast<HICON>(LoadImage(
@@ -47,21 +47,21 @@ HINSTANCE Window::WindowClass::GetInstance() noexcept
 	return wndClass.hInst;
 }
 
-Window::Window(int width, int height, const wchar_t* name)
+Window::Window(const wchar_t* name)
 {
 	screenWidth = ::GetSystemMetrics(SM_CXSCREEN);
 	screenHeight = ::GetSystemMetrics(SM_CYSCREEN);
 
-	windowWidth = width;
-	windowHeight = height;
+	windowWidth = DefaultWindowWidth;
+	windowHeight = DefaultWindowHeight;
 	title = name;
 
 	// calculate window size based on desired client region size
 	RECT wRct;
 	wRct.left = 0;
-	wRct.right = width + wRct.left;
+	wRct.right = windowWidth + wRct.left;
 	wRct.top = 0;
-	wRct.bottom = height + wRct.top;
+	wRct.bottom = windowHeight + wRct.top;
 
 	if (::AdjustWindowRect(&wRct, WS_OVERLAPPEDWINDOW, FALSE) == 0)
 	{
@@ -69,8 +69,8 @@ Window::Window(int width, int height, const wchar_t* name)
 	}
 
 	// Center the window within the screen. Clamp to 0, 0 for the top-left corner.
-	int windowX = std::max<int>(0, (screenWidth - width) / 2);
-	int windowY = std::max<int>(0, (screenHeight - height) / 2);
+	int windowX = std::max<int>(0, (screenWidth - windowWidth) / 2);
+	int windowY = std::max<int>(0, (screenHeight - windowHeight) / 2);
 
 	hWnd = ::CreateWindowEx(
 		NULL,
@@ -102,6 +102,9 @@ Window::Window(int width, int height, const wchar_t* name)
 	{
 		throw WND_LAST_EXCEPT();
 	}
+
+	// create graphics object
+	pGfx = std::make_unique<Graphics>(hWnd);
 }
 
 LRESULT CALLBACK Window::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
@@ -483,4 +486,13 @@ std::optional<int> Window::ProcessMessages() noexcept
 
 	// return empty optional when not quitting app
 	return {};
+}
+
+Graphics& Window::Gfx()
+{
+	if (!pGfx)
+	{
+		throw WND_NOGFX_EXCEPT();
+	}
+	return *pGfx;
 }
