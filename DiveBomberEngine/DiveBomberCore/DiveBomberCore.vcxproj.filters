@@ -82,6 +82,9 @@
     <ClCompile Include="SwapChain.cpp">
       <Filter>Graphics\DX12</Filter>
     </ClCompile>
+    <ClCompile Include="DescriptorHeap.cpp">
+      <Filter>Graphics\DX12</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window.h">
@@ -148,6 +151,9 @@
       <Filter>Graphics\DX12</Filter>
     </ClInclude>
     <ClInclude Include="SwapChain.h">
+      <Filter>Graphics\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="DescriptorHeap.h">
       <Filter>Graphics\DX12</Filter>
     </ClInclude>
   </ItemGroup>

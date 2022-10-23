@@ -1,8 +1,7 @@
 #include "DXDevice.h"
 
-DXDevice::DXDevice(IDXGIAdapter4* adapter, std::shared_ptr<DxgiInfoManager> inputInfoManager)
+DXDevice::DXDevice(IDXGIAdapter4* adapter)
 {
-	infoManager = inputInfoManager;
 	HRESULT hr;
 	GFX_THROW_INFO(D3D12CreateDevice(adapter, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&dxDevice)));
 

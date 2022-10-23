@@ -4,6 +4,16 @@
 
 #pragma comment(lib, "dxguid.lib")
 
+#ifndef NDEBUG
+DxgiInfoManager* DxgiInfoManager::g_pDxgiInfoMng = new (std::nothrow)DxgiInfoManager();
+#else
+DxgiInfoManager* DxgiInfoManager::g_pDxgiInfoMng = NULL;
+#endif
+
+DxgiInfoManager* DxgiInfoManager::GetInstance() noexcept
+{
+	return g_pDxgiInfoMng;
+}
 
 DxgiInfoManager::DxgiInfoManager()
 {
@@ -55,4 +65,10 @@ std::vector<std::string> DxgiInfoManager::GetMessages() const
 		messages.emplace_back(pMessage->pDescription);
 	}
 	return messages;
+}
+
+DxgiInfoManager::~DxgiInfoManager()
+{
+	delete g_pDxgiInfoMng;
+	g_pDxgiInfoMng = nullptr;
 }

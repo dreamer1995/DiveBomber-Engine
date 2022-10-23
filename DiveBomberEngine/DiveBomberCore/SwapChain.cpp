@@ -1,8 +1,7 @@
 #include "SwapChain.h"
 
-SwapChain::SwapChain(HWND hWnd, ID3D12CommandQueue* commandQueue, std::shared_ptr<DxgiInfoManager> inputInfoManager)
+SwapChain::SwapChain(HWND hWnd, ID3D12CommandQueue* commandQueue)
 {
-    infoManager = inputInfoManager;
     wrl::ComPtr<IDXGIFactory4> dxgiFactory4;
     UINT createFactoryFlags = 0;
 #if defined(_DEBUG)
@@ -29,7 +28,7 @@ SwapChain::SwapChain(HWND hWnd, ID3D12CommandQueue* commandQueue, std::shared_pt
     wrl::ComPtr<IDXGISwapChain1> swapChain1;
     GFX_THROW_INFO(dxgiFactory4->CreateSwapChainForHwnd(
         commandQueue,
-        hWnd,
+        NULL,
         &swapChainDesc,
         nullptr,
         nullptr,

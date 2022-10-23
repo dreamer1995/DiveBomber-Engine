@@ -5,10 +5,9 @@
 class GPUAdapter
 {
 public:
-	GPUAdapter(std::shared_ptr<DxgiInfoManager> inputInfoManager);
+	GPUAdapter();
 	IDXGIAdapter4* GetAdapter() noexcept;
 private:
 	wrl::ComPtr<IDXGIAdapter4> dxgiAdapter;
-	std::shared_ptr<DxgiInfoManager> infoManager;
 };
 

@@ -92,6 +92,9 @@ Window::Window(const wchar_t* name)
 	// newly created windows start off as hidden
 	::ShowWindow(hWnd, SW_SHOW);
 
+	// create graphics object
+	pGfx = std::make_unique<Graphics>(hWnd);
+
 	// register mouse raw input device
 	RAWINPUTDEVICE rid;
 	rid.usUsagePage = 0x01; // mouse page
@@ -102,9 +105,6 @@ Window::Window(const wchar_t* name)
 	{
 		throw WND_LAST_EXCEPT();
 	}
-
-	// create graphics object
-	pGfx = std::make_unique<Graphics>(hWnd);
 }
 
 LRESULT CALLBACK Window::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept

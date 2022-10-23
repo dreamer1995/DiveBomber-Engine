@@ -1,8 +1,7 @@
 #include "CommandQueue.h"
 
-CommandQueue::CommandQueue(ID3D12Device2* device, std::shared_ptr<DxgiInfoManager> inputInfoManager)
+CommandQueue::CommandQueue(ID3D12Device2* device)
 {
-    infoManager = inputInfoManager;
     D3D12_COMMAND_QUEUE_DESC desc = {};
     desc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
     desc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;

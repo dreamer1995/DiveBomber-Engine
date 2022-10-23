@@ -1,8 +1,7 @@
 #include "GPUAdapter.h"
 
-GPUAdapter::GPUAdapter(std::shared_ptr<DxgiInfoManager> inputInfoManager)
+GPUAdapter::GPUAdapter()
 {
-    infoManager = inputInfoManager;
     wrl::ComPtr<IDXGIFactory4> dxgiFactory;
     UINT createFactoryFlags = 0;
 #if defined(_DEBUG)

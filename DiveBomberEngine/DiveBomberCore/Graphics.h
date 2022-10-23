@@ -44,9 +44,6 @@ private:
 	DirectX::XMMATRIX camera;
 	bool imguiEnabled = true;
 	float mFOV;
-#ifndef NDEBUG
-	std::shared_ptr<DxgiInfoManager> infoManager;
-#endif
 	wrl::ComPtr<ID3D12Device2> pDevice;
 	wrl::ComPtr<IDXGISwapChain4> pSwap;
 	HWND hWnd;
