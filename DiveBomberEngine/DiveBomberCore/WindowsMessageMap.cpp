@@ -18,11 +18,15 @@
 *	along with The Chili Direct3D Engine.  If not, see <http://www.gnu.org/licenses/>.    *
 ******************************************************************************************/
 #include "WindowsMessageMap.h"
+
 #include <string>
 #include <sstream>
 #include <iomanip>
+#include <locale>
+#include <codecvt>
 
 // secret messages
+#define WM_SYNCPAINT 0x0088
 #define WM_UAHDESTROYWINDOW 0x0090
 #define WM_UAHDRAWMENU 0x0091
 #define WM_UAHDRAWMENUITEM 0x0092
@@ -30,7 +34,7 @@
 #define WM_UAHMEASUREMENUITEM 0x0094
 #define WM_UAHNCPAINTMENUPOPUP 0x0095
 
-#define REGISTER_MESSAGE(msg){msg,#msg}
+#define REGISTER_MESSAGE(msg) {msg,ToWide(#msg)}
 
 WindowsMessageMap::WindowsMessageMap() noexcept
 	:
@@ -209,24 +213,24 @@ WindowsMessageMap::WindowsMessageMap() noexcept
 	} )
 {}
 
-std::string WindowsMessageMap::operator()( DWORD msg,LPARAM lp,WPARAM wp ) const noexcept
+std::wstring WindowsMessageMap::operator()( DWORD msg,LPARAM lp,WPARAM wp ) const noexcept
 {
 	constexpr int firstColWidth = 25;
 	const auto i = map.find( msg );
 
-	std::ostringstream oss;
+	std::wstringstream oss;
 	if( i != map.end() )
 	{
 		oss << std::left << std::setw( firstColWidth ) << i->second << std::right;
 	}
 	else
 	{
-		std::ostringstream padss;
-		padss << "Unknown message: 0x" << std::hex << msg;
+		std::wostringstream padss;
+		padss << L"Unknown message: 0x" << std::hex << msg;
 		oss << std::left << std::setw( firstColWidth ) << padss.str() << std::right;
 	}
-	oss << "   LP: 0x" << std::hex << std::setfill( '0' ) << std::setw( 8 ) << lp;
-	oss << "   WP: 0x" << std::hex << std::setfill( '0' ) << std::setw( 8 ) << wp << std::endl;
+	oss << L"   LP: 0x" << std::hex << std::setfill( L'0' ) << std::setw( 8 ) << lp;
+	oss << L"   WP: 0x" << std::hex << std::setfill( L'0' ) << std::setw( 8 ) << wp << std::endl;
 
 	return oss.str();
 }

@@ -1,9 +1,8 @@
+#pragma once
 #include "Window.h"
 #include "Exception.h"
 #include "Console.h"
 #include <thread>
-
-#pragma once
 class DiveBomberCore
 {
 public:

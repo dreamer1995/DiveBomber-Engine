@@ -1,5 +1,6 @@
 #include "Window.h"
 #include "resource.h"
+// #include "WindowsMessageMap.h"
 
 // Window Class Stuff
 Window::WindowClass Window::WindowClass::wndClass;
@@ -92,9 +93,6 @@ Window::Window(const wchar_t* name)
 	// newly created windows start off as hidden
 	::ShowWindow(hWnd, SW_SHOW);
 
-	// create graphics object
-	pGfx = std::make_unique<Graphics>(hWnd);
-
 	// register mouse raw input device
 	RAWINPUTDEVICE rid;
 	rid.usUsagePage = 0x01; // mouse page
@@ -105,6 +103,9 @@ Window::Window(const wchar_t* name)
 	{
 		throw WND_LAST_EXCEPT();
 	}
+
+	// create graphics object
+	pGfx = std::make_unique<Graphics>(hWnd);
 }
 
 LRESULT CALLBACK Window::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
@@ -136,6 +137,9 @@ LRESULT CALLBACK Window::HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPAR
 
 LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
+	//static WindowsMessageMap wMM;
+	//OutputDebugString(wMM(msg, lParam, wParam).c_str());
+
 	//if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
 	//{
 	//	return true;

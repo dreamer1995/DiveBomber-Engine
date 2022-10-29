@@ -1,4 +1,5 @@
 #include "DiveBomberCore.h"
+#include "Common.h"
 
 int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLine, int nCmdShow)
 {	
@@ -8,15 +9,15 @@ int CALLBACK wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdL
 	}
 	catch (const Exception& e)
 	{
-		MessageBoxA(NULL, e.what(), e.GetType(), MB_OK | MB_ICONEXCLAMATION);
+		MessageBox(NULL, e.whatW(), e.GetType(), MB_OK | MB_ICONEXCLAMATION);
 	}
 	catch (const std::exception& e)
 	{
-		MessageBoxA(NULL, e.what(), "Buildin Exception", MB_OK | MB_ICONEXCLAMATION);
+		MessageBox(NULL, ToWide(e.what()), L"Buildin Exception", MB_OK | MB_ICONEXCLAMATION);
 	}
 	catch (...)
 	{
-		MessageBoxA(NULL, "No details available", "Unknown Exception", MB_OK | MB_ICONEXCLAMATION);
+		MessageBox(NULL, L"No details available", L"Unknown Exception", MB_OK | MB_ICONEXCLAMATION);
 	}
 	return -1;
 }

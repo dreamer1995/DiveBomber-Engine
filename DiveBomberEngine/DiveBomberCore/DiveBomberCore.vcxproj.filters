@@ -85,6 +85,9 @@
     <ClCompile Include="DescriptorHeap.cpp">
       <Filter>Graphics\DX12</Filter>
     </ClCompile>
+    <ClCompile Include="Common.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window.h">

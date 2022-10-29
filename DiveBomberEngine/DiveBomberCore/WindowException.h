@@ -7,27 +7,21 @@
 #define WND_LAST_EXCEPT() WindowHrException( __LINE__,__FILE__,GetLastError() )
 #define WND_NOGFX_EXCEPT() NoGfxException( __LINE__,__FILE__ )
 
-class WindowException : public Exception
-{
-	using Exception::Exception;
-public:
-	static std::string TranslateErrorCode(HRESULT hr) noexcept;
-};
-class WindowHrException : public WindowException
+class WindowHrException : public Exception
 {
 public:
 	WindowHrException(int line, const char* file, HRESULT hr) noexcept;
-	const char* what() const noexcept override;
-	const char* GetType() const noexcept override;
+	const wchar_t* whatW() const noexcept override;
+	const wchar_t* GetType() const noexcept override;
 	HRESULT GetErrorCode() const noexcept;
-	std::string GetErrorDescription() const noexcept;
+	std::wstring GetErrorDescription() const noexcept;
 private:
 	HRESULT hr;
 };
-class NoGfxException : public WindowException
+class NoGfxException : public Exception
 {
 public:
-	using WindowException::WindowException;
-	const char* GetType() const noexcept override;
+	using Exception::Exception;
+	const wchar_t* GetType() const noexcept override;
 };
 

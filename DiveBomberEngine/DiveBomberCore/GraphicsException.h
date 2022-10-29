@@ -41,32 +41,31 @@ class GraphicsHrException : public Exception
 {
 public:
 	GraphicsHrException(int line, const char* file, HRESULT hr, std::vector<std::string> infoMsgs = {}) noexcept;
-	const char* what() const noexcept override;
-	const char* GetType() const noexcept override;
+	const wchar_t* whatW() const noexcept override;
+	const wchar_t* GetType() const noexcept override;
 	HRESULT GetErrorCode() const noexcept;
-	std::string GetErrorInfo() const noexcept;
-	std::string GetErrorDescription() const noexcept;
-	static std::string TranslateErrorCode(HRESULT hr) noexcept;
+	std::wstring GetErrorInfo() const noexcept;
+	std::wstring GetErrorDescription() const noexcept;
 private:
 	HRESULT hr;
-	std::string info;
+	std::wstring info;
 };
 class InfoException : public Exception
 {
 public:
 	InfoException(int line, const char* file, std::vector<std::string> infoMsgs) noexcept;
-	const char* what() const noexcept override;
-	const char* GetType() const noexcept override;
-	std::string GetErrorInfo() const noexcept;
+	const wchar_t* whatW() const noexcept override;
+	const wchar_t* GetType() const noexcept override;
+	std::wstring GetErrorInfo() const noexcept;
 private:
-	std::string info;
+	std::wstring info;
 };
 class DeviceRemovedException : public GraphicsHrException
 {
 	using GraphicsHrException::GraphicsHrException;
 public:
-	const char* GetType() const noexcept override;
+	const wchar_t* GetType() const noexcept override;
 private:
-	std::string reason;
+	std::wstring reason;
 };
 

@@ -137,6 +137,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CommandQueue.cpp" />
+    <ClCompile Include="Common.cpp" />
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="DescriptorHeap.cpp" />
     <ClCompile Include="DiveBomberCore.cpp" />

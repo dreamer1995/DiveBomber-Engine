@@ -9,7 +9,7 @@ GraphicsHrException::GraphicsHrException(int line, const char* file, HRESULT hr,
 	// join all info messages with newlines into single string
 	for (const auto& m : infoMsgs)
 	{
-		info += m;
+		info += ToWide(m);
 		info.push_back('\n');
 	}
 	// remove final newline if exists
@@ -19,26 +19,25 @@ GraphicsHrException::GraphicsHrException(int line, const char* file, HRESULT hr,
 	}
 }
 
-const char* GraphicsHrException::what() const noexcept
+const wchar_t* GraphicsHrException::whatW() const noexcept
 {
-	std::ostringstream oss;
+	std::wostringstream oss;
 	oss << GetType() << std::endl
-		<< "[Error Code] 0x" << std::hex << std::uppercase << GetErrorCode()
-		<< std::dec << " (" << (unsigned long)GetErrorCode() << ")" << std::endl
-		<< "[Error String] " << GetOriginString() << std::endl
-		<< "[Description] " << GetErrorDescription() << std::endl;
+		<< L"[Error Code] 0x" << std::hex << std::uppercase << GetErrorCode()
+		<< std::dec << L" (" << (unsigned long)GetErrorCode() << L")" << std::endl
+		<< L"[Description] " << GetErrorDescription() << std::endl;
 	if (!info.empty())
 	{
-		oss << "\n[Error Info]\n" << GetErrorInfo() << std::endl << std::endl;
+		oss << L"\n[Error Info]\n" << GetErrorInfo() << std::endl << std::endl;
 	}
 	oss << GetOriginString();
 	whatBuffer = oss.str();
 	return whatBuffer.c_str();
 }
 
-const char* GraphicsHrException::GetType() const noexcept
+const wchar_t* GraphicsHrException::GetType() const noexcept
 {
-	return "Graphics Exception";
+	return L"Graphics Exception";
 }
 
 HRESULT GraphicsHrException::GetErrorCode() const noexcept
@@ -46,41 +45,19 @@ HRESULT GraphicsHrException::GetErrorCode() const noexcept
 	return hr;
 }
 
-std::string GraphicsHrException::GetErrorInfo() const noexcept
+std::wstring GraphicsHrException::GetErrorInfo() const noexcept
 {
 	return info;
 }
 
-std::string GraphicsHrException::GetErrorDescription() const noexcept
+std::wstring GraphicsHrException::GetErrorDescription() const noexcept
 {
 	return TranslateErrorCode(hr);
 }
 
-std::string GraphicsHrException::TranslateErrorCode(HRESULT hr) noexcept
+const wchar_t* DeviceRemovedException::GetType() const noexcept
 {
-	char* pMsgBuf = NULL;
-	// windows will allocate memory for err string and make our pointer point to it
-	const DWORD nMsgLen = FormatMessage(
-		FORMAT_MESSAGE_ALLOCATE_BUFFER |
-		FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-		NULL, hr, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-		reinterpret_cast<LPWSTR>(&pMsgBuf), 0, NULL
-	);
-	// 0 string length returned indicates a failure
-	if (nMsgLen == 0)
-	{
-		return "Unidentified error code";
-	}
-	// copy error string from windows-allocated buffer to std::string
-	std::string errorString = pMsgBuf;
-	// free windows buffer
-	LocalFree(pMsgBuf);
-	return errorString;
-}
-
-const char* DeviceRemovedException::GetType() const noexcept
-{
-	return "Graphics Exception [Device Removed] (DXGI_ERROR_DEVICE_REMOVED)";
+	return L"Graphics Exception [Device Removed] (DXGI_ERROR_DEVICE_REMOVED)";
 }
 InfoException::InfoException(int line, const char* file, std::vector<std::string> infoMsgs) noexcept
 	:
@@ -89,7 +66,7 @@ InfoException::InfoException(int line, const char* file, std::vector<std::string
 	// join all info messages with newlines into single string
 	for (const auto& m : infoMsgs)
 	{
-		info += m;
+		info += ToWide(m);
 		info.push_back('\n');
 	}
 	// remove final newline if exists
@@ -99,22 +76,22 @@ InfoException::InfoException(int line, const char* file, std::vector<std::string
 	}
 }
 
-const char* InfoException::what() const noexcept
+const wchar_t* InfoException::whatW() const noexcept
 {
-	std::ostringstream oss;
+	std::wostringstream oss;
 	oss << GetType() << std::endl
-		<< "\n[Error Info]\n" << GetErrorInfo() << std::endl << std::endl;
+		<< L"\n[Error Info]\n" << GetErrorInfo() << std::endl << std::endl;
 	oss << GetOriginString();
 	whatBuffer = oss.str();
 	return whatBuffer.c_str();
 }
 
-const char* InfoException::GetType() const noexcept
+const wchar_t* InfoException::GetType() const noexcept
 {
-	return "Graphics Info Exception";
+	return L"Graphics Info Exception";
 }
 
-std::string InfoException::GetErrorInfo() const noexcept
+std::wstring InfoException::GetErrorInfo() const noexcept
 {
 	return info;
 }
