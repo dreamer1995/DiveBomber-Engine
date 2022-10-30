@@ -6,6 +6,9 @@
 #include "DXDevice.h"
 #include "CommandQueue.h"
 #include "SwapChain.h"
+#include "DescriptorHeap.h"
+#include "CommandList.h"
+#include "Fence.h"
 
 class Graphics
 {
@@ -37,6 +40,9 @@ public:
 	void ClearRenderTarget() noexcept;
 	void ClearUAV(UINT slot) noexcept;
 	void ClearShader() noexcept;
+	uint64_t Signal();
+	void WaitForFenceValue(std::chrono::milliseconds duration = std::chrono::milliseconds::max());
+	void Flush() noexcept;
 private:
 	UINT width = DefaultWindowWidth;
 	UINT height = DefaultWindowHeight;
@@ -54,6 +60,12 @@ private:
 	std::unique_ptr<DXDevice> dxDevice;
 	std::unique_ptr<CommandQueue> commandQueue;
 	std::unique_ptr<SwapChain> swapChain;
+	std::unique_ptr<DescriptorHeap> SCRTDesHeap;
+	std::unique_ptr<CommandList> commandList;
+	std::unique_ptr<Fence> fence;
+	HANDLE fenceEvent;
+	uint64_t fenceValue = 0;
+
 public:
 	bool isWireFrame = false;
 	bool isTAA;

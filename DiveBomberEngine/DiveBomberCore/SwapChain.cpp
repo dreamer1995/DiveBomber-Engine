@@ -71,3 +71,44 @@ IDXGISwapChain4* SwapChain::GetSwapChain() noexcept
 {
     return swapChain.Get();
 }
+
+void SwapChain::UpdateMainRT(ID3D12Device2* device, ID3D12DescriptorHeap* SWRTDesHeap)
+{
+    auto rtvDescriptorSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+
+    CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(SWRTDesHeap->GetCPUDescriptorHandleForHeapStart());
+
+    for (int i = 0; i < SwapChainBufferCount; ++i)
+    {
+        wrl::ComPtr<ID3D12Resource> backBuffer;
+        HRESULT hr;
+        GFX_THROW_INFO(swapChain->GetBuffer(i, IID_PPV_ARGS(&backBuffer)));
+
+        device->CreateRenderTargetView(backBuffer.Get(), nullptr, rtvHandle);
+
+        backBuffers[i] = backBuffer;
+
+        rtvHandle.Offset(rtvDescriptorSize);
+    }
+}
+
+void SwapChain::CreateComandAllocator(ID3D12Device2* device, D3D12_COMMAND_LIST_TYPE type)
+{
+    HRESULT hr;
+    for (int i = 0; i < SwapChainBufferCount; ++i)
+    {
+        wrl::ComPtr<ID3D12CommandAllocator> commandAllocator;
+        GFX_THROW_INFO(device->CreateCommandAllocator(type, IID_PPV_ARGS(&commandAllocator)));
+        commandAllocators[i] = commandAllocator;
+    }
+}
+
+ID3D12Resource* SwapChain::GetBackBuffer(int i) noexcept
+{
+    return backBuffers[i].Get();
+}
+
+ID3D12CommandAllocator* SwapChain::GetCommandAllocator(int i) noexcept
+{
+    return commandAllocators[i].Get();
+}

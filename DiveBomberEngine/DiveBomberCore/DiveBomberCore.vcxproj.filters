@@ -88,6 +88,13 @@
     <ClCompile Include="Common.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="CommandAllocator.cpp">
+      <Filter>Graphics\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandList.cpp">
+      <Filter>Graphics\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="Fence.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window.h">
@@ -159,6 +166,13 @@
     <ClInclude Include="DescriptorHeap.h">
       <Filter>Graphics\DX12</Filter>
     </ClInclude>
+    <ClInclude Include="CommandAllocator.h">
+      <Filter>Graphics\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandList.h">
+      <Filter>Graphics\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Fence.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="C:\Users\H\Downloads\DiveBomberIcon.ico">
