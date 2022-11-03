@@ -13,12 +13,10 @@
 class Graphics
 {
 public:
-	Graphics(HWND inputHWnd);
+	Graphics(HWND inputHWnd, UINT includeWidth, UINT includeHeight);
 	Graphics(const Graphics&) = delete;
 	Graphics& operator=(const Graphics&) = delete;
 	~Graphics();
-	void EndFrame();
-	void BeginFrame(float red, float green, float blue) noexcept;
 	void DrawIndexed(UINT count) noxnd;
 	void DrawInstanced(UINT vertexCount, UINT instanceCount) noxnd;
 	void Dispatch(UINT x, UINT y, UINT group) noxnd;
@@ -43,15 +41,18 @@ public:
 	uint64_t Signal();
 	void WaitForFenceValue(std::chrono::milliseconds duration = std::chrono::milliseconds::max());
 	void Flush() noexcept;
+	void BeginFrame();
+	void EndFrame();
+	HANDLE GetFenceEvent() noexcept;
+	void ReSizeMainRT(uint32_t inputWidth, uint32_t inputHeight);
 private:
-	UINT width = DefaultWindowWidth;
-	UINT height = DefaultWindowHeight;
+	bool CheckTearingSupport();
+	UINT width;
+	UINT height;
 	DirectX::XMMATRIX projection;
 	DirectX::XMMATRIX camera;
 	bool imguiEnabled = true;
 	float mFOV;
-	wrl::ComPtr<ID3D12Device2> pDevice;
-	wrl::ComPtr<IDXGISwapChain4> pSwap;
 	HWND hWnd;
 	//wrl::ComPtr<ID3D12DeviceContext> pContext;
 
@@ -64,7 +65,7 @@ private:
 	std::unique_ptr<CommandList> commandList;
 	std::unique_ptr<Fence> fence;
 	HANDLE fenceEvent;
-	uint64_t fenceValue = 0;
+	uint64_t frameFenceValues[SwapChainBufferCount] = {};
 
 public:
 	bool isWireFrame = false;

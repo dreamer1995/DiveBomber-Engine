@@ -53,8 +53,6 @@ Window::Window(const wchar_t* name)
 	screenWidth = ::GetSystemMetrics(SM_CXSCREEN);
 	screenHeight = ::GetSystemMetrics(SM_CYSCREEN);
 
-	windowWidth = DefaultWindowWidth;
-	windowHeight = DefaultWindowHeight;
 	title = name;
 
 	// calculate window size based on desired client region size
@@ -88,6 +86,8 @@ Window::Window(const wchar_t* name)
 		this
 	);
 
+	::GetWindowRect(hWnd, &windowRect);
+
 	assert(hWnd && "Failed to create window");
 
 	// register mouse raw input device
@@ -102,7 +102,7 @@ Window::Window(const wchar_t* name)
 	}
 
 	// create graphics object
-	pGfx = std::make_unique<Graphics>(hWnd);
+	pGfx = std::make_unique<Graphics>(hWnd, windowWidth, windowHeight);
 
 	// newly created windows start off as hidden
 	::ShowWindow(hWnd, SW_SHOW);
@@ -151,8 +151,27 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 		// we don't want the DefProc to handle this message because
 		// we want our destructor to destroy the window, so return 0 instead of break
 	case WM_CLOSE:
-		PostQuitMessage(0);
+		::PostQuitMessage(0);
 		return 0;
+	case WM_DESTROY:
+		::PostQuitMessage(0);
+		return 0;
+	case WM_SIZE:
+	{
+		RECT clientRect = {};
+		::GetClientRect(hWnd, &clientRect);
+		int width = clientRect.right - clientRect.left;
+		int height = clientRect.bottom - clientRect.top;
+
+		if (windowWidth != width || windowHeight != height)
+		{
+			windowWidth = width;
+			windowHeight = height;
+			Gfx().ReSizeMainRT(width, height);
+		}
+		break;
+	}
+		
 		// clear keystate when window loses focus to prevent input getting "stuck"
 	case WM_KILLFOCUS:
 		kbd.ClearState();
@@ -400,7 +419,7 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 	/************** END RAW MOUSE MESSAGES **************/
 	}
 
-	return DefWindowProc(hWnd, msg, wParam, lParam);
+	return ::DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
 Window::~Window()
@@ -499,4 +518,56 @@ Graphics& Window::Gfx()
 		throw WND_NOGFX_EXCEPT();
 	}
 	return *pGfx;
+}
+
+void Window::SetFullScreen(bool fullScreen) noexcept
+{
+	if (isFullScreen != fullScreen)
+	{
+		isFullScreen = fullScreen;
+
+		if (isFullScreen) // Switching to fullscreen.
+		{
+			// Store the current window dimensions so they can be restored 
+			// when switching out of fullscreen state.
+			::GetWindowRect(hWnd, &windowRect);
+
+			// Set the window style to a borderless window so the client area fills
+			// the entire screen.
+			UINT windowStyle = WS_OVERLAPPEDWINDOW & ~(WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX);
+
+			::SetWindowLongW(hWnd, GWL_STYLE, windowStyle);
+
+			// Query the name of the nearest display device for the window.
+			// This is required to set the fullscreen dimensions of the window
+			// when using a multi-monitor setup.
+			HMONITOR hMonitor = ::MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
+			MONITORINFOEX monitorInfo = {};
+			monitorInfo.cbSize = sizeof(MONITORINFOEX);
+			::GetMonitorInfo(hMonitor, &monitorInfo);
+
+			::SetWindowPos(hWnd, HWND_TOPMOST,
+				monitorInfo.rcMonitor.left,
+				monitorInfo.rcMonitor.top,
+				monitorInfo.rcMonitor.right - monitorInfo.rcMonitor.left,
+				monitorInfo.rcMonitor.bottom - monitorInfo.rcMonitor.top,
+				SWP_FRAMECHANGED | SWP_NOACTIVATE);
+
+			::ShowWindow(hWnd, SW_MAXIMIZE);
+		}
+		else
+		{
+			// Restore all the window decorators.
+			::SetWindowLong(hWnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
+
+			::SetWindowPos(hWnd, HWND_NOTOPMOST,
+				windowRect.left,
+				windowRect.top,
+				windowRect.right - windowRect.left,
+				windowRect.bottom - windowRect.top,
+				SWP_FRAMECHANGED | SWP_NOACTIVATE);
+
+			::ShowWindow(hWnd, SW_NORMAL);
+		}
+	}
 }

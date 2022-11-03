@@ -26,6 +26,8 @@ int DiveBomberCore::GameLoop()
 		// process all messages pending, but to not block for new messages
 		if (const auto ecode = Window::ProcessMessages())
 		{
+			wnd->Gfx().Flush();
+			::CloseHandle(wnd->Gfx().GetFenceEvent());
 			// if return optional has value, means we're quitting so return exit code
 			return *ecode;
 		}
@@ -40,11 +42,17 @@ void DiveBomberCore::Start()
 
 void DiveBomberCore::Update()
 {
+	g_DeltaTime = coreTimer.Mark() * TimerSpeed;
+	RefreshRenderReport();
+
 	ProcessInput();
+	RenderLogic();
 }
 
 void DiveBomberCore::ProcessInput()
 {
+	ExecuteConsoleCommand();
+
 	while (const auto e = wnd->kbd.ReadKey())
 	{
 		if (!(e->IsKeyDown()))
@@ -71,6 +79,12 @@ void DiveBomberCore::ProcessInput()
 			std::cout << "Keyboard Detected!" << std::endl;
 			//OutputDebugString(L"Keyboard Detected!¹þ¹þ");
 			break;
+			if (wnd->kbd.KeyIsDown(VK_MENU))
+			{
+		case VK_F11:
+			wnd->SetFullScreen(!wnd->isFullScreen);
+			break;
+			}
 		}
 	}
 
@@ -132,11 +146,9 @@ void DiveBomberCore::ProcessInput()
 	{
 		wnd->SetTitle(L"[W]¼ü°´ÏÂ£¡");
 	}
-
-	ExecuteCommand();
 }
 
-void DiveBomberCore::ExecuteCommand()
+void DiveBomberCore::ExecuteConsoleCommand()
 {
 	if (!command.empty())
 	{
@@ -144,3 +156,31 @@ void DiveBomberCore::ExecuteCommand()
 		command.clear();
 	}
 };
+
+void DiveBomberCore::RenderLogic()
+{
+	wnd->Gfx().BeginFrame();
+	wnd->Gfx().EndFrame();
+}
+
+void DiveBomberCore::RefreshRenderReport()
+{
+	g_FrameCounter++;
+
+	//static double elapsedSeconds = 0.0;
+	//static uint64_t elapsedFrames = 0;
+
+	//elapsedSeconds += g_DeltaTime;
+	//elapsedFrames++;
+
+	//if (elapsedSeconds > 1.0f)
+	//{
+	//	g_FramePerSnd = elapsedFrames / elapsedSeconds / 1000;
+	//	std::wcout << g_FramePerSnd << std::endl;
+	//	elapsedSeconds = 0.0;
+	//	elapsedFrames = 0;
+	//}
+
+	//std::wcout << wnd->Gfx().GetWidth() << std::endl;
+	//std::wcout << wnd->windowWidth << std::endl;
+}

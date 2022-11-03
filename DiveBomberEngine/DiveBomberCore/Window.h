@@ -51,10 +51,12 @@ public:
 	bool CursorEnabled() const noexcept;
 	static std::optional<int> ProcessMessages() noexcept;
 	Graphics& Gfx();
+	void SetFullScreen(bool fullScreen) noexcept;
 
 	const wchar_t* title;
 	Keyboard kbd;
 	Mouse mouse;
+	bool isFullScreen = false;
 
 private:
 	LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
@@ -68,12 +70,13 @@ private:
 	void DisableImGuiMouse() noexcept;
 
 	bool cursorEnabled = true;
-	int windowWidth;
-	int windowHeight;
+	int windowWidth = MainWindowWidth;
+	int windowHeight = MainWindowHeight;
 	int screenWidth;
 	int screenHeight;
 	HWND hWnd;
 	std::unique_ptr<Graphics> pGfx;
 	std::vector<BYTE> rawBuffer;
 	std::string commandLine;
+	RECT windowRect;
 };

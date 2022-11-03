@@ -12,8 +12,8 @@ SwapChain::SwapChain(HWND hWnd, ID3D12CommandQueue* commandQueue)
     GFX_THROW_INFO(CreateDXGIFactory2(createFactoryFlags, IID_PPV_ARGS(&dxgiFactory4)));
 
     DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
-    swapChainDesc.Width = DefaultWindowWidth;
-    swapChainDesc.Height = DefaultWindowHeight;
+    swapChainDesc.Width = MainWindowWidth;
+    swapChainDesc.Height = MainWindowHeight;
     swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
     swapChainDesc.Stereo = FALSE;
     swapChainDesc.SampleDesc = { 1, 0 };
@@ -105,10 +105,18 @@ void SwapChain::CreateComandAllocator(ID3D12Device2* device, D3D12_COMMAND_LIST_
 
 ID3D12Resource* SwapChain::GetBackBuffer(int i) noexcept
 {
+    assert(i < SwapChainBufferCount);
     return backBuffers[i].Get();
 }
 
 ID3D12CommandAllocator* SwapChain::GetCommandAllocator(int i) noexcept
 {
+    assert(i < SwapChainBufferCount);
     return commandAllocators[i].Get();
+}
+
+void SwapChain::ResetBackBuffer(int i) noexcept
+{
+    assert(i < SwapChainBufferCount);
+    backBuffers[i].Reset();
 }

@@ -154,6 +154,7 @@
     <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="GraphicsResource.cpp" />
     <ClCompile Include="SwapChain.cpp" />
+    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="WindowException.cpp" />
     <ClCompile Include="WindowsMessageMap.cpp" />
@@ -176,11 +177,13 @@
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="GraphicsException.h" />
     <ClInclude Include="GraphicsResource.h" />
+    <ClInclude Include="RenderStatistics.h" />
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Mouse.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SwapChain.h" />
     <ClInclude Include="SystemConfig.h" />
+    <ClInclude Include="Timer.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="WindowException.h" />
     <ClInclude Include="WindowResource.h" />
