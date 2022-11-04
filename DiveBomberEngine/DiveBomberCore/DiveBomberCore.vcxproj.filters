@@ -94,9 +94,11 @@
     <ClCompile Include="CommandList.cpp">
       <Filter>Graphics\DX12</Filter>
     </ClCompile>
-    <ClCompile Include="Fence.cpp" />
     <ClCompile Include="Timer.cpp">
       <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Fence.cpp">
+      <Filter>Graphics\DX12</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -175,12 +177,14 @@
     <ClInclude Include="CommandList.h">
       <Filter>Graphics\DX12</Filter>
     </ClInclude>
-    <ClInclude Include="Fence.h" />
     <ClInclude Include="RenderStatistics.h">
       <Filter>Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Timer.h">
       <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Fence.h">
+      <Filter>Graphics\DX12</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

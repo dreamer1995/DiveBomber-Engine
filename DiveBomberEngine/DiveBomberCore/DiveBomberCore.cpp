@@ -152,8 +152,12 @@ void DiveBomberCore::ExecuteConsoleCommand()
 {
 	if (!command.empty())
 	{
-		std::wcout << L"[Execute]" << command << std::endl;
+		if (console->waitForInput)
+		{
+			std::wcout << L"[Execute]" << command << std::endl;
+		}
 		command.clear();
+		threadTasks.emplace_back(std::thread{ &Console::GetInput, console.get(), std::ref(command) });
 	}
 };
 

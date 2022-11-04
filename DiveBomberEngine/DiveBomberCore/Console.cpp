@@ -26,8 +26,4 @@ Console::~Console()
 void Console::GetInput(std::wstring& command)
 {
 	std::getline(std::wcin, command);
-	if (waitForInput)
-	{
-		GetInput(command);
-	}
 }
