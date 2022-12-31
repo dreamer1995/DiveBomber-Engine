@@ -7,7 +7,7 @@
 #include "WindowResource.h"
 #include "WindowException.h"
 
-class DxgiInfoManager
+class DxgiInfoManager final
 {
 public:
 	static DxgiInfoManager* GetInstance() noexcept;

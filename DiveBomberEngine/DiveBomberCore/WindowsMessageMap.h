@@ -22,7 +22,7 @@
 #include "WindowResource.h"
 #include "Common.h"
 
-class WindowsMessageMap
+class WindowsMessageMap final
 {
 public:
 	WindowsMessageMap() noexcept;

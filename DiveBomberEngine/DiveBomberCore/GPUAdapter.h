@@ -2,7 +2,7 @@
 #include "GraphicsResource.h"
 #include "WindowResource.h"
 
-class GPUAdapter
+class GPUAdapter final
 {
 public:
 	GPUAdapter();

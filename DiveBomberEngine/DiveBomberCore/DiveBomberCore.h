@@ -6,7 +6,7 @@
 #include "RenderStatistics.h"
 
 #include <thread>
-class DiveBomberCore
+class DiveBomberCore final
 {
 public:
 	DiveBomberCore();

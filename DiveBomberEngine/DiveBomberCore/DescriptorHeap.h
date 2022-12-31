@@ -1,7 +1,7 @@
 #pragma once
 #include "GraphicsResource.h"
 
-class DescriptorHeap
+class DescriptorHeap final
 {
 public:
 	DescriptorHeap(ID3D12Device2* device, D3D12_DESCRIPTOR_HEAP_TYPE type);

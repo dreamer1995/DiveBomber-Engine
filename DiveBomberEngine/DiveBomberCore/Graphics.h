@@ -10,7 +10,7 @@
 #include "CommandList.h"
 #include "Fence.h"
 
-class Graphics
+class Graphics final
 {
 public:
 	Graphics(HWND inputHWnd, UINT includeWidth, UINT includeHeight);

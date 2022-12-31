@@ -2,7 +2,7 @@
 #include <queue>
 #include <optional>
 
-class Mouse
+class Mouse final
 {
 	friend class Window;
 public:

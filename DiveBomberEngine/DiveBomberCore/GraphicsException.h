@@ -60,7 +60,7 @@ public:
 private:
 	std::wstring info;
 };
-class DeviceRemovedException : public GraphicsHrException
+class DeviceRemovedException final : public GraphicsHrException
 {
 	using GraphicsHrException::GraphicsHrException;
 public:

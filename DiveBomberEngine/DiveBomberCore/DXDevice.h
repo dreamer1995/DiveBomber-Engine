@@ -1,7 +1,7 @@
 #pragma once
 #include "GraphicsResource.h"
 
-class DXDevice
+class DXDevice final
 {
 public:
 	DXDevice(IDXGIAdapter4* adapter);

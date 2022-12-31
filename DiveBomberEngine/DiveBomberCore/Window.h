@@ -23,10 +23,10 @@
 #include "Mouse.h"
 #include "Graphics.h"
 
-class Window
+class Window final
 {
 	// Window Class
-	class WindowClass
+	class WindowClass final
 	{
 	public:
 		static const wchar_t* GetName() noexcept;

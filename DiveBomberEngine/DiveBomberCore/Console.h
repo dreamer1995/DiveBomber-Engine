@@ -3,7 +3,7 @@
 #include "WindowException.h"
 #include <string>
 
-class Console
+class Console final
 {
 public:
 	Console();

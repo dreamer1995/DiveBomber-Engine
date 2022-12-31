@@ -2,7 +2,7 @@
 #include "GraphicsResource.h"
 #include "WindowResource.h"
 
-class Fence
+class Fence final
 {
 public:
 	Fence(ID3D12Device2* device);

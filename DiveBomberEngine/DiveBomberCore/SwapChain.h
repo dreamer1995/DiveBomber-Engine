@@ -1,7 +1,7 @@
 #pragma once
 #include "WindowResource.h"
 #include "GraphicsResource.h"
-class SwapChain
+class SwapChain final
 {
 public:
 	SwapChain(HWND hWnd, ID3D12CommandQueue* commandQueue);

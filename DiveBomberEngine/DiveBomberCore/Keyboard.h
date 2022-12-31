@@ -3,7 +3,7 @@
 #include <bitset>
 #include <optional>
 
-class Keyboard
+class Keyboard final
 {
 	friend class Window;
 public:

@@ -1,7 +1,7 @@
 #pragma once
 #include "GraphicsResource.h"
 
-class CommandQueue
+class CommandQueue final
 {
 public:
 	CommandQueue(ID3D12Device2* device);
