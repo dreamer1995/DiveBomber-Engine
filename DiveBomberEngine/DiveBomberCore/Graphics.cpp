@@ -8,6 +8,11 @@ Graphics::Graphics(HWND inputHWnd, UINT includeWidth, UINT includeHeight)
 
 	gpuAdapter = std::make_unique<GPUAdapter>();
 	dxDevice = std::make_unique<DXDevice>(gpuAdapter->GetAdapter());
+
+	fenceManager = std::make_shared<FenceManager>(dxDevice->GetDecive());
+	fenceEvent = ::CreateEvent(NULL, FALSE, FALSE, NULL);
+	assert(fenceEvent && "Failed to create fence event.");
+
 	commandQueue = std::make_unique<CommandQueue>(dxDevice->GetDecive());
 	SCRTDesHeap = std::make_unique<DescriptorHeap>(dxDevice->GetDecive(), D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	swapChain = std::make_unique<SwapChain>(hWnd, commandQueue->GetCommandQueue());
@@ -16,10 +21,6 @@ Graphics::Graphics(HWND inputHWnd, UINT includeWidth, UINT includeHeight)
 	commandList = std::make_unique<CommandList>(dxDevice->GetDecive(),
 		swapChain->GetCommandAllocator(swapChain->GetSwapChain()->GetCurrentBackBufferIndex()),
 		D3D12_COMMAND_LIST_TYPE_DIRECT);
-	fence = std::make_unique<Fence>(dxDevice->GetDecive());
-
-	fenceEvent = ::CreateEvent(NULL, FALSE, FALSE, NULL);
-	assert(fenceEvent && "Failed to create fence event.");
 }
 
 Graphics::~Graphics()
@@ -32,7 +33,7 @@ uint64_t Graphics::Signal()
 	uint64_t fenceValueForSignal = ++frameFenceValues[swapChain->GetSwapChain()->GetCurrentBackBufferIndex()];
 
 	HRESULT hr;
-	GFX_THROW_INFO(commandQueue->GetCommandQueue()->Signal(fence->GetFence(), fenceValueForSignal));
+	GFX_THROW_INFO(commandQueue->GetCommandQueue()->Signal(fenceManager->GetFence(), fenceValueForSignal));
 
 	return fenceValueForSignal;
 }
@@ -40,10 +41,10 @@ uint64_t Graphics::Signal()
 void Graphics::WaitForFenceValue(std::chrono::milliseconds duration)
 {
 	auto currentBackBufferIndex = swapChain->GetSwapChain()->GetCurrentBackBufferIndex();
-	if (fence->GetFence()->GetCompletedValue() < frameFenceValues[currentBackBufferIndex])
+	if (fenceManager->GetFence()->GetCompletedValue() < frameFenceValues[currentBackBufferIndex])
 	{
 		HRESULT hr;
-		GFX_THROW_INFO(fence->GetFence()->SetEventOnCompletion(frameFenceValues[currentBackBufferIndex], fenceEvent));
+		GFX_THROW_INFO(fenceManager->GetFence()->SetEventOnCompletion(frameFenceValues[currentBackBufferIndex], fenceEvent));
 		::WaitForSingleObject(fenceEvent, static_cast<DWORD>(duration.count()));
 	}
 }

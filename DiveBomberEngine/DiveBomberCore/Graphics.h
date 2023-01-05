@@ -8,7 +8,7 @@
 #include "SwapChain.h"
 #include "DescriptorHeap.h"
 #include "CommandList.h"
-#include "Fence.h"
+#include "FenceManager.h"
 
 class Graphics final
 {
@@ -63,7 +63,7 @@ private:
 	std::unique_ptr<SwapChain> swapChain;
 	std::unique_ptr<DescriptorHeap> SCRTDesHeap;
 	std::unique_ptr<CommandList> commandList;
-	std::unique_ptr<Fence> fence;
+	std::shared_ptr<FenceManager> fenceManager;
 	HANDLE fenceEvent;
 	uint64_t frameFenceValues[SwapChainBufferCount] = {};
 

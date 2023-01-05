@@ -138,6 +138,7 @@
   <ItemGroup>
     <ClCompile Include="CommandAllocator.cpp" />
     <ClCompile Include="CommandList.cpp" />
+    <ClCompile Include="CommandManager.cpp" />
     <ClCompile Include="CommandQueue.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="Console.cpp" />
@@ -146,7 +147,7 @@
     <ClCompile Include="DXDevice.cpp" />
     <ClCompile Include="DxgiInfoManager.cpp" />
     <ClCompile Include="Exception.cpp" />
-    <ClCompile Include="Fence.cpp" />
+    <ClCompile Include="FenceManager.cpp" />
     <ClCompile Include="GPUAdapter.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="GraphicsException.cpp" />
@@ -163,6 +164,7 @@
   <ItemGroup>
     <ClInclude Include="CommandAllocator.h" />
     <ClInclude Include="CommandList.h" />
+    <ClInclude Include="CommandManager.h" />
     <ClInclude Include="CommandQueue.h" />
     <ClInclude Include="Console.h" />
     <ClInclude Include="d3dx12.h" />
@@ -172,7 +174,7 @@
     <ClInclude Include="DXDevice.h" />
     <ClInclude Include="DxgiInfoManager.h" />
     <ClInclude Include="Exception.h" />
-    <ClInclude Include="Fence.h" />
+    <ClInclude Include="FenceManager.h" />
     <ClInclude Include="GPUAdapter.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="GraphicsException.h" />

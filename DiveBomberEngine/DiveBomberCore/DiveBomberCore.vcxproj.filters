@@ -97,7 +97,10 @@
     <ClCompile Include="Timer.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="Fence.cpp">
+    <ClCompile Include="FenceManager.cpp">
+      <Filter>Graphics\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandManager.cpp">
       <Filter>Graphics\DX12</Filter>
     </ClCompile>
   </ItemGroup>
@@ -183,7 +186,10 @@
     <ClInclude Include="Timer.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="Fence.h">
+    <ClInclude Include="FenceManager.h">
+      <Filter>Graphics\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandManager.h">
       <Filter>Graphics\DX12</Filter>
     </ClInclude>
   </ItemGroup>
