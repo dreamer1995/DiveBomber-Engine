@@ -4,10 +4,9 @@
 #include "GraphicsResource.h"
 #include "GPUAdapter.h"
 #include "DXDevice.h"
-#include "CommandQueue.h"
+#include "CommandManager.h"
 #include "SwapChain.h"
 #include "DescriptorHeap.h"
-#include "CommandList.h"
 #include "FenceManager.h"
 
 class Graphics final
@@ -38,13 +37,12 @@ public:
 	void ClearRenderTarget() noexcept;
 	void ClearUAV(UINT slot) noexcept;
 	void ClearShader() noexcept;
-	uint64_t Signal();
-	void WaitForFenceValue(std::chrono::milliseconds duration = std::chrono::milliseconds::max());
-	void Flush() noexcept;
+
 	void BeginFrame();
 	void EndFrame();
 	HANDLE GetFenceEvent() noexcept;
 	void ReSizeMainRT(uint32_t inputWidth, uint32_t inputHeight);
+	CommandManager* GetCommandManager() noexcept;
 private:
 	bool CheckTearingSupport();
 	UINT width;
@@ -59,13 +57,13 @@ private:
 	//std::shared_ptr<Bind::RenderTarget> pTarget;
 	std::unique_ptr<GPUAdapter> gpuAdapter;
 	std::unique_ptr<DXDevice> dxDevice;
-	std::unique_ptr<CommandQueue> commandQueue;
+	std::unique_ptr<CommandManager> commandManager;
 	std::unique_ptr<SwapChain> swapChain;
 	std::unique_ptr<DescriptorHeap> SCRTDesHeap;
-	std::unique_ptr<CommandList> commandList;
 	std::shared_ptr<FenceManager> fenceManager;
 	HANDLE fenceEvent;
 	uint64_t frameFenceValues[SwapChainBufferCount] = {};
+	wrl::ComPtr<ID3D12GraphicsCommandList2> commandList;
 
 public:
 	bool isWireFrame = false;

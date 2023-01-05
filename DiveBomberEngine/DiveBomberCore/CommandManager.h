@@ -8,7 +8,7 @@
 class CommandManager final
 {
 public:
-	CommandManager(ID3D12Device2* inputDevice, D3D12_COMMAND_LIST_TYPE intputType, std::shared_ptr<FenceManager> inputFenceManager);
+	CommandManager(ID3D12Device2* inputDevice, std::shared_ptr<FenceManager> inputFenceManager, D3D12_COMMAND_LIST_TYPE intputType = D3D12_COMMAND_LIST_TYPE_DIRECT);
 	~CommandManager();
 	ID3D12CommandQueue* GetCommandQueue() noexcept;
 
@@ -18,8 +18,9 @@ public:
 	wrl::ComPtr<ID3D12CommandAllocator> CreateCommandAllocator();
 	wrl::ComPtr<ID3D12GraphicsCommandList2> CreateCommandList(ID3D12CommandAllocator* commandAllocator);
 
-	ID3D12GraphicsCommandList2* GetCommandList();
-	uint64_t ExcuteCommandList(ID3D12GraphicsCommandList2* commandList);
+	wrl::ComPtr<ID3D12GraphicsCommandList2> GetCommandList();
+	uint64_t ExecuteCommandList(ID3D12GraphicsCommandList2* commandList);
+	void WaitForFenceValue(uint64_t fenceValue) noexcept;
 private:
 	D3D12_COMMAND_LIST_TYPE type;
 	wrl::ComPtr<ID3D12Device2> device;

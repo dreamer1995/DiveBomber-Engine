@@ -92,27 +92,10 @@ void SwapChain::UpdateMainRT(ID3D12Device2* device, ID3D12DescriptorHeap* SWRTDe
     }
 }
 
-void SwapChain::CreateComandAllocator(ID3D12Device2* device, D3D12_COMMAND_LIST_TYPE type)
-{
-    HRESULT hr;
-    for (int i = 0; i < SwapChainBufferCount; ++i)
-    {
-        wrl::ComPtr<ID3D12CommandAllocator> commandAllocator;
-        GFX_THROW_INFO(device->CreateCommandAllocator(type, IID_PPV_ARGS(&commandAllocator)));
-        commandAllocators[i] = commandAllocator;
-    }
-}
-
 ID3D12Resource* SwapChain::GetBackBuffer(int i) noexcept
 {
     assert(i < SwapChainBufferCount);
     return backBuffers[i].Get();
-}
-
-ID3D12CommandAllocator* SwapChain::GetCommandAllocator(int i) noexcept
-{
-    assert(i < SwapChainBufferCount);
-    return commandAllocators[i].Get();
 }
 
 void SwapChain::ResetBackBuffer(int i) noexcept

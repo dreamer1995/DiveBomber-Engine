@@ -136,8 +136,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CommandAllocator.cpp" />
-    <ClCompile Include="CommandList.cpp" />
     <ClCompile Include="CommandManager.cpp" />
     <ClCompile Include="CommandQueue.cpp" />
     <ClCompile Include="Common.cpp" />
@@ -162,8 +160,6 @@
     <ClCompile Include="WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CommandAllocator.h" />
-    <ClInclude Include="CommandList.h" />
     <ClInclude Include="CommandManager.h" />
     <ClInclude Include="CommandQueue.h" />
     <ClInclude Include="Console.h" />

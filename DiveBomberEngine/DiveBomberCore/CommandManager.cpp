@@ -1,6 +1,6 @@
 #include "CommandManager.h"
 
-CommandManager::CommandManager(ID3D12Device2* inputDevice, D3D12_COMMAND_LIST_TYPE intputType, std::shared_ptr<FenceManager> inputFenceManager)
+CommandManager::CommandManager(ID3D12Device2* inputDevice, std::shared_ptr<FenceManager> inputFenceManager, D3D12_COMMAND_LIST_TYPE intputType)
 {
     type = intputType;
     device = inputDevice;
@@ -46,6 +46,7 @@ wrl::ComPtr<ID3D12CommandAllocator> CommandManager::CreateCommandAllocator()
     wrl::ComPtr<ID3D12CommandAllocator> commandAllocator;
     HRESULT hr;
     GFX_THROW_INFO(device->CreateCommandAllocator(type, IID_PPV_ARGS(&commandAllocator)));
+    return commandAllocator;
 }
 
 wrl::ComPtr<ID3D12GraphicsCommandList2> CommandManager::CreateCommandList(ID3D12CommandAllocator* commandAllocator)
@@ -54,9 +55,10 @@ wrl::ComPtr<ID3D12GraphicsCommandList2> CommandManager::CreateCommandList(ID3D12
     HRESULT hr;
     GFX_THROW_INFO(device->CreateCommandList(0, type, commandAllocator, nullptr, IID_PPV_ARGS(&commandList)));
     commandList->Close();
+    return commandList;
 }
 
-ID3D12GraphicsCommandList2* CommandManager::GetCommandList()
+wrl::ComPtr <ID3D12GraphicsCommandList2> CommandManager::GetCommandList()
 {
     wrl::ComPtr<ID3D12CommandAllocator> commandAllocator;
     wrl::ComPtr<ID3D12GraphicsCommandList2> commandList;
@@ -90,10 +92,10 @@ ID3D12GraphicsCommandList2* CommandManager::GetCommandList()
     // retrieved when the command list is executed.
     GFX_THROW_INFO(commandList->SetPrivateDataInterface(__uuidof(ID3D12CommandAllocator), commandAllocator.Get()));
 
-    return commandList.Get();
+    return commandList;
 }
 
-uint64_t CommandManager::ExcuteCommandList(ID3D12GraphicsCommandList2* commandList)
+uint64_t CommandManager::ExecuteCommandList(ID3D12GraphicsCommandList2* commandList)
 {
     commandList->Close();
 
@@ -117,4 +119,9 @@ uint64_t CommandManager::ExcuteCommandList(ID3D12GraphicsCommandList2* commandLi
     commandAllocator->Release();
 
     return fenceValue;
+}
+
+void CommandManager::WaitForFenceValue(uint64_t inputFenceValue) noexcept
+{
+    fenceManager->WaitForFenceValue(inputFenceValue, fenceEvent);
 }

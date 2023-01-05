@@ -88,12 +88,6 @@
     <ClCompile Include="Common.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="CommandAllocator.cpp">
-      <Filter>Graphics\DX12</Filter>
-    </ClCompile>
-    <ClCompile Include="CommandList.cpp">
-      <Filter>Graphics\DX12</Filter>
-    </ClCompile>
     <ClCompile Include="Timer.cpp">
       <Filter>Common</Filter>
     </ClCompile>
@@ -172,12 +166,6 @@
       <Filter>Graphics\DX12</Filter>
     </ClInclude>
     <ClInclude Include="DescriptorHeap.h">
-      <Filter>Graphics\DX12</Filter>
-    </ClInclude>
-    <ClInclude Include="CommandAllocator.h">
-      <Filter>Graphics\DX12</Filter>
-    </ClInclude>
-    <ClInclude Include="CommandList.h">
       <Filter>Graphics\DX12</Filter>
     </ClInclude>
     <ClInclude Include="RenderStatistics.h">

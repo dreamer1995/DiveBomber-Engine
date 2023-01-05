@@ -13,46 +13,15 @@ Graphics::Graphics(HWND inputHWnd, UINT includeWidth, UINT includeHeight)
 	fenceEvent = ::CreateEvent(NULL, FALSE, FALSE, NULL);
 	assert(fenceEvent && "Failed to create fence event.");
 
-	commandQueue = std::make_unique<CommandQueue>(dxDevice->GetDecive());
+	commandManager = std::make_unique<CommandManager>(dxDevice->GetDecive(), fenceManager);
 	SCRTDesHeap = std::make_unique<DescriptorHeap>(dxDevice->GetDecive(), D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-	swapChain = std::make_unique<SwapChain>(hWnd, commandQueue->GetCommandQueue());
+	swapChain = std::make_unique<SwapChain>(hWnd, commandManager->GetCommandQueue());
 	swapChain->UpdateMainRT(dxDevice->GetDecive(), SCRTDesHeap->GetDescriptorHeap());
-	swapChain->CreateComandAllocator(dxDevice->GetDecive(), D3D12_COMMAND_LIST_TYPE_DIRECT);
-	commandList = std::make_unique<CommandList>(dxDevice->GetDecive(),
-		swapChain->GetCommandAllocator(swapChain->GetSwapChain()->GetCurrentBackBufferIndex()),
-		D3D12_COMMAND_LIST_TYPE_DIRECT);
 }
 
 Graphics::~Graphics()
 {
 
-}
-
-uint64_t Graphics::Signal()
-{
-	uint64_t fenceValueForSignal = ++frameFenceValues[swapChain->GetSwapChain()->GetCurrentBackBufferIndex()];
-
-	HRESULT hr;
-	GFX_THROW_INFO(commandQueue->GetCommandQueue()->Signal(fenceManager->GetFence(), fenceValueForSignal));
-
-	return fenceValueForSignal;
-}
-
-void Graphics::WaitForFenceValue(std::chrono::milliseconds duration)
-{
-	auto currentBackBufferIndex = swapChain->GetSwapChain()->GetCurrentBackBufferIndex();
-	if (fenceManager->GetFence()->GetCompletedValue() < frameFenceValues[currentBackBufferIndex])
-	{
-		HRESULT hr;
-		GFX_THROW_INFO(fenceManager->GetFence()->SetEventOnCompletion(frameFenceValues[currentBackBufferIndex], fenceEvent));
-		::WaitForSingleObject(fenceEvent, static_cast<DWORD>(duration.count()));
-	}
-}
-
-void Graphics::Flush() noexcept
-{
-	uint64_t fenceValueForSignal = Signal();
-	WaitForFenceValue();
 }
 
 bool Graphics::CheckTearingSupport()
@@ -84,11 +53,9 @@ bool Graphics::CheckTearingSupport()
 void Graphics::BeginFrame()
 {
 	auto currentBackBufferIndex = swapChain->GetSwapChain()->GetCurrentBackBufferIndex();
-	auto commandAllocator = swapChain->GetCommandAllocator(currentBackBufferIndex);
 	auto backBuffer = swapChain->GetBackBuffer(currentBackBufferIndex);
 
-	commandAllocator->Reset();
-	commandList->GetCommandList()->Reset(commandAllocator, NULL);
+	commandList = commandManager->GetCommandList();
 
 	// Clear the render target.
 	{
@@ -96,20 +63,19 @@ void Graphics::BeginFrame()
 			backBuffer,
 			D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
-		commandList->GetCommandList()->ResourceBarrier(1, &barrier);
+		commandList->ResourceBarrier(1, &barrier);
 
 		CD3DX12_CPU_DESCRIPTOR_HANDLE rtv(SCRTDesHeap->GetDescriptorHeap()->GetCPUDescriptorHandleForHeapStart(),
 			currentBackBufferIndex, dxDevice->GetDecive()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV));
 
 		FLOAT clearColor[] = ClearMainRTColor;
-		commandList->GetCommandList()->ClearRenderTargetView(rtv, clearColor, 0, nullptr);
+		commandList->ClearRenderTargetView(rtv, clearColor, 0, nullptr);
 	}
 }
 
 void Graphics::EndFrame()
 {
 	auto currentBackBufferIndex = swapChain->GetSwapChain()->GetCurrentBackBufferIndex();
-	auto commandAllocator = swapChain->GetCommandAllocator(currentBackBufferIndex);
 	auto backBuffer = swapChain->GetBackBuffer(currentBackBufferIndex);
 
 	// Present
@@ -117,24 +83,17 @@ void Graphics::EndFrame()
 		CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
 			backBuffer,
 			D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
-		commandList->GetCommandList()->ResourceBarrier(1, &barrier);
+		commandList->ResourceBarrier(1, &barrier);
+
+		auto fenceValue = commandManager->ExecuteCommandList(commandList.Get());
 
 		HRESULT hr;
-		GFX_THROW_INFO(commandList->GetCommandList()->Close());
-
-		ID3D12CommandList* const commandLists[] = {
-			commandList->GetCommandList()
-		};
-		commandQueue->GetCommandQueue()->ExecuteCommandLists(_countof(commandLists), commandLists);
-
-		frameFenceValues[currentBackBufferIndex] = Signal();
-
 		bool enableVSync = VSync;
 		UINT syncInterval = enableVSync ? 1 : 0;
 		UINT presentFlags = CheckTearingSupport() && !enableVSync ? DXGI_PRESENT_ALLOW_TEARING : 0;
 		GFX_THROW_INFO(swapChain->GetSwapChain()->Present(syncInterval, presentFlags));
 
-		WaitForFenceValue();
+		commandManager->WaitForFenceValue(fenceValue);
 	}
 }
 
@@ -151,7 +110,7 @@ void Graphics::ReSizeMainRT(uint32_t inputWidth, uint32_t inputHeight)
 
 	// Flush the GPU queue to make sure the swap chain's back buffers
 	// are not being referenced by an in-flight command list.
-	Flush();
+	commandManager->Flush();
 
 	for (int i = 0; i < SwapChainBufferCount; ++i)
 	{
@@ -180,4 +139,9 @@ UINT Graphics::GetWidth() const noexcept
 UINT Graphics::GetHeight() const noexcept
 {
 	return height;
+}
+
+CommandManager* Graphics::GetCommandManager() noexcept
+{
+	return commandManager.get();
 }
