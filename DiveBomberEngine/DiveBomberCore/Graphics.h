@@ -43,8 +43,8 @@ public:
 	HANDLE GetFenceEvent() noexcept;
 	void ReSizeMainRT(uint32_t inputWidth, uint32_t inputHeight);
 	CommandManager* GetCommandManager() noexcept;
+	void Flush() noexcept;
 private:
-	bool CheckTearingSupport();
 	UINT width;
 	UINT height;
 	DirectX::XMMATRIX projection;

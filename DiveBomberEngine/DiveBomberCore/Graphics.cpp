@@ -24,32 +24,6 @@ Graphics::~Graphics()
 
 }
 
-bool Graphics::CheckTearingSupport()
-{
-	BOOL allowTearing = FALSE;
-
-	// Rather than create the DXGI 1.5 factory interface directly, we create the
-	// DXGI 1.4 interface and query for the 1.5 interface. This is to enable the 
-	// graphics debugging tools which will not support the 1.5 factory interface 
-	// until a future update.
-	wrl::ComPtr<IDXGIFactory4> factory4;
-	if (SUCCEEDED(CreateDXGIFactory1(IID_PPV_ARGS(&factory4))))
-	{
-		wrl::ComPtr<IDXGIFactory5> factory5;
-		if (SUCCEEDED(factory4.As(&factory5)))
-		{
-			if (FAILED(factory5->CheckFeatureSupport(
-				DXGI_FEATURE_PRESENT_ALLOW_TEARING,
-				&allowTearing, sizeof(allowTearing))))
-			{
-				allowTearing = FALSE;
-			}
-		}
-	}
-
-	return allowTearing == TRUE;
-}
-
 void Graphics::BeginFrame()
 {
 	auto currentBackBufferIndex = swapChain->GetSwapChain()->GetCurrentBackBufferIndex();
@@ -90,7 +64,7 @@ void Graphics::EndFrame()
 		HRESULT hr;
 		bool enableVSync = VSync;
 		UINT syncInterval = enableVSync ? 1 : 0;
-		UINT presentFlags = CheckTearingSupport() && !enableVSync ? DXGI_PRESENT_ALLOW_TEARING : 0;
+		UINT presentFlags = swapChain->CheckTearingSupport() && !enableVSync ? DXGI_PRESENT_ALLOW_TEARING : 0;
 		GFX_THROW_INFO(swapChain->GetSwapChain()->Present(syncInterval, presentFlags));
 
 		commandManager->WaitForFenceValue(fenceValue);
@@ -110,7 +84,7 @@ void Graphics::ReSizeMainRT(uint32_t inputWidth, uint32_t inputHeight)
 
 	// Flush the GPU queue to make sure the swap chain's back buffers
 	// are not being referenced by an in-flight command list.
-	commandManager->Flush();
+	Flush();
 
 	for (int i = 0; i < SwapChainBufferCount; ++i)
 	{
@@ -144,4 +118,9 @@ UINT Graphics::GetHeight() const noexcept
 CommandManager* Graphics::GetCommandManager() noexcept
 {
 	return commandManager.get();
+}
+
+void Graphics::Flush() noexcept
+{
+	commandManager->Flush();
 }
