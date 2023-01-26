@@ -15,7 +15,7 @@ CommandManager::CommandManager(ID3D12Device2* inputDevice, std::shared_ptr<Fence
 
     fenceManager = inputFenceManager;
 
-    fenceEvent = ::CreateEvent(NULL, FALSE, FALSE, NULL);
+    fenceEvent = ::CreateEvent(nullptr, FALSE, FALSE, nullptr);
     assert(fenceEvent && "Failed to create fence event.");
 }
 
@@ -81,7 +81,7 @@ wrl::ComPtr <ID3D12GraphicsCommandList2> CommandManager::GetCommandList()
         commandList = commandListQueue.front();
         commandListQueue.pop();
 
-        GFX_THROW_INFO(commandList->Reset(commandAllocator.Get(), NULL));
+        GFX_THROW_INFO(commandList->Reset(commandAllocator.Get(), nullptr));
     }
     else
     {

@@ -7,7 +7,7 @@ Window::WindowClass Window::WindowClass::wndClass;
 
 Window::WindowClass::WindowClass() noexcept
 {
-	hInst = HINSTANCE(GetModuleHandle(NULL));
+	hInst = HINSTANCE(GetModuleHandle(nullptr));
 
 	WNDCLASSEX wClass = { 0 };
 	wClass.cbSize = sizeof(wClass);
@@ -20,9 +20,9 @@ Window::WindowClass::WindowClass() noexcept
 		GetInstance(), MAKEINTRESOURCE(IDI_ICON1),
 		IMAGE_ICON, 32, 32, 0
 	));
-	wClass.hCursor = ::LoadCursor(NULL, IDC_ARROW);
-	wClass.hbrBackground = /*(HBRUSH)(COLOR_BACKGROUND)*/NULL;
-	wClass.lpszMenuName = NULL;
+	wClass.hCursor = ::LoadCursor(nullptr, IDC_ARROW);
+	wClass.hbrBackground = /*(HBRUSH)(COLOR_BACKGROUND)*/nullptr;
+	wClass.lpszMenuName = nullptr;
 	wClass.lpszClassName = GetName();
 	wClass.hIconSm = static_cast<HICON>(LoadImage(
 		GetInstance(), MAKEINTRESOURCE(IDI_ICON1),
@@ -78,7 +78,7 @@ Window::Window(const wchar_t* name)
 	int windowY = std::max<int>(0, (screenHeight - windowHeight) / 2);
 
 	hWnd = ::CreateWindowEx(
-		NULL,
+		0L,
 		WindowClass::GetName(),
 		name,
 		WS_OVERLAPPEDWINDOW,
@@ -86,8 +86,8 @@ Window::Window(const wchar_t* name)
 		windowY,
 		wRct.right - wRct.left,
 		wRct.bottom - wRct.top,
-		NULL,
-		NULL,
+		nullptr,
+		nullptr,
 		WindowClass::GetInstance(),
 		this
 	);
@@ -394,7 +394,7 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 		if (GetRawInputData(
 			reinterpret_cast<HRAWINPUT>(lParam),
 			RID_INPUT,
-			NULL,
+			nullptr,
 			&size,
 			sizeof(RAWINPUTHEADER)) == -1)
 		{
@@ -430,7 +430,10 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 
 Window::~Window()
 {
-	DestroyWindow(hWnd);
+	if (hWnd)
+	{
+		DestroyWindow(hWnd);
+	}
 }
 
 void Window::EnableCursor() noexcept
@@ -499,7 +502,7 @@ std::optional<int> Window::ProcessMessages() noexcept
 {
 	MSG msg;
 	// while queue has messages, remove and dispatch them (but do not block on empty queue)
-	while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+	while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
 	{
 		// check for quit because peekmessage does not signal this via return val
 		if (msg.message == WM_QUIT)

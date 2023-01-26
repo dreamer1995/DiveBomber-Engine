@@ -40,13 +40,13 @@ std::wstring Exception::GetOriginString() const noexcept
 
 std::wstring Exception::TranslateErrorCode(HRESULT hr) noexcept
 {
-	wchar_t* pMsgBuf = NULL;
+	wchar_t* pMsgBuf = nullptr;
 	// windows will allocate memory for err string and make our pointer point to it
 	const DWORD nMsgLen = FormatMessage(
 		FORMAT_MESSAGE_ALLOCATE_BUFFER |
 		FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-		NULL, hr, MAKELANGID(ThrowLanguage, SUBLANG_DEFAULT),
-		reinterpret_cast<LPWSTR>(&pMsgBuf), 0, NULL
+		nullptr, hr, MAKELANGID(ThrowLanguage, SUBLANG_DEFAULT),
+		reinterpret_cast<LPWSTR>(&pMsgBuf), 0, nullptr
 	);
 	// 0 string length returned indicates a failure
 	if (nMsgLen == 0)

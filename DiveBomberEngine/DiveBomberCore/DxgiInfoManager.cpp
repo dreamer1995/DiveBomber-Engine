@@ -7,7 +7,7 @@
 #ifndef NDEBUG
 DxgiInfoManager* DxgiInfoManager::g_pDxgiInfoMng = new (std::nothrow)DxgiInfoManager();
 #else
-DxgiInfoManager* DxgiInfoManager::g_pDxgiInfoMng = NULL;
+DxgiInfoManager* DxgiInfoManager::g_pDxgiInfoMng = nullptr;
 #endif
 
 DxgiInfoManager* DxgiInfoManager::GetInstance() noexcept

@@ -28,7 +28,7 @@ SwapChain::SwapChain(HWND hWnd, ID3D12CommandQueue* commandQueue)
     wrl::ComPtr<IDXGISwapChain1> swapChain1;
     GFX_THROW_INFO(dxgiFactory4->CreateSwapChainForHwnd(
         commandQueue,
-        hWnd/*NULL*/,
+        hWnd/*nullptr*/,
         &swapChainDesc,
         nullptr,
         nullptr,

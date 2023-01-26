@@ -2,6 +2,13 @@
 
 Graphics::Graphics(HWND inputHWnd, UINT includeWidth, UINT includeHeight)
 {
+	// Check for DirectX Math library support.
+	if (!DirectX::XMVerifyCPUSupport())
+	{
+		MessageBoxA(nullptr, "Failed to verify DirectX Math library support.", "Error", MB_OK | MB_ICONERROR);
+		return;
+	}
+
 	hWnd = inputHWnd;
 	width = includeWidth;
 	height = includeHeight;
@@ -10,7 +17,7 @@ Graphics::Graphics(HWND inputHWnd, UINT includeWidth, UINT includeHeight)
 	dxDevice = std::make_unique<DXDevice>(gpuAdapter->GetAdapter());
 
 	fenceManager = std::make_shared<FenceManager>(dxDevice->GetDecive());
-	fenceEvent = ::CreateEvent(NULL, FALSE, FALSE, NULL);
+	fenceEvent = ::CreateEvent(nullptr, FALSE, FALSE, nullptr);
 	assert(fenceEvent && "Failed to create fence event.");
 
 	commandManager = std::make_unique<CommandManager>(dxDevice->GetDecive(), fenceManager);
@@ -21,7 +28,7 @@ Graphics::Graphics(HWND inputHWnd, UINT includeWidth, UINT includeHeight)
 
 Graphics::~Graphics()
 {
-
+	Flush();
 }
 
 void Graphics::BeginFrame()

@@ -16,7 +16,6 @@ DiveBomberCore::~DiveBomberCore()
 	{
 		task.join();
 	}
-	wnd->Gfx().Flush();
 }
 
 int DiveBomberCore::GameLoop()
