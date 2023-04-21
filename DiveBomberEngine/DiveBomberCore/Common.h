@@ -8,11 +8,11 @@
 
 #include "Windows.h"
 
-#if defined(DEBUG) || defined(_DEBUG)
-#define DEBUGMODE
+#ifdef _DEBUG
+	#define noxnd noexcept(false)
+#else
+	#define noxnd noexcept(true)
 #endif
-
-#define noxnd noexcept(!IS_DEBUG)
 
 std::wstring ToWide(const std::string& narrow);
 
