@@ -1,7 +1,7 @@
 #include "Common.h"
 #include <sstream>
 #include <iomanip>
-#include <atlbase.h>
+//#include <atlbase.h>
 
 std::wstring ToWide(const std::string& narrow)
 {

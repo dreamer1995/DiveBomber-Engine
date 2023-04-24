@@ -5,6 +5,7 @@
 #include <iterator>
 #include <iostream>
 #include <Shlwapi.h>
+#pragma comment(lib, "Shlwapi.lib")
 
 #include "Windows.h"
 
