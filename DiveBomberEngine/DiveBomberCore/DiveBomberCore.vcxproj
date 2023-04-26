@@ -79,66 +79,60 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CommandManager.cpp" />
-    <ClCompile Include="CommandQueue.cpp" />
-    <ClCompile Include="Common.cpp" />
-    <ClCompile Include="Console.cpp" />
-    <ClCompile Include="DescriptorHeap.cpp" />
-    <ClCompile Include="DiveBomberCore.cpp" />
-    <ClCompile Include="DXDevice.cpp" />
-    <ClCompile Include="DxgiInfoManager.cpp" />
-    <ClCompile Include="Exception.cpp" />
-    <ClCompile Include="FenceManager.cpp" />
-    <ClCompile Include="GPUAdapter.cpp" />
-    <ClCompile Include="Graphics.cpp" />
-    <ClCompile Include="GraphicsException.cpp" />
-    <ClCompile Include="Keyboard.cpp" />
-    <ClCompile Include="Mouse.cpp" />
-    <ClCompile Include="GraphicsResource.cpp" />
-    <ClCompile Include="SwapChain.cpp" />
-    <ClCompile Include="Timer.cpp" />
-    <ClCompile Include="Window.cpp" />
-    <ClCompile Include="WindowException.cpp" />
-    <ClCompile Include="WindowsMessageMap.cpp" />
-    <ClCompile Include="WinMain.cpp" />
+    <ClCompile Include="Source\Graphics\DX\CommandManager.cpp" />
+    <ClCompile Include="Source\Graphics\DX\CommandQueue.cpp" />
+    <ClCompile Include="Source\Utility\Common.cpp" />
+    <ClCompile Include="Source\Console\Console.cpp" />
+    <ClCompile Include="Source\Graphics\DX\DescriptorHeap.cpp" />
+    <ClCompile Include="Source\DiveBomberCore.cpp" />
+    <ClCompile Include="Source\Graphics\DX\DXDevice.cpp" />
+    <ClCompile Include="Source\Exception\DxgiInfoManager.cpp" />
+    <ClCompile Include="Source\Exception\Exception.cpp" />
+    <ClCompile Include="Source\Graphics\DX\FenceManager.cpp" />
+    <ClCompile Include="Source\Graphics\DX\GPUAdapter.cpp" />
+    <ClCompile Include="Source\Graphics\Graphics.cpp" />
+    <ClCompile Include="Source\Exception\GraphicsException.cpp" />
+    <ClCompile Include="Source\Hardware\Keyboard.cpp" />
+    <ClCompile Include="Source\Hardware\Mouse.cpp" />
+    <ClCompile Include="Source\Graphics\DX\SwapChain.cpp" />
+    <ClCompile Include="Source\Utility\Timer.cpp" />
+    <ClCompile Include="Source\Window\Window.cpp" />
+    <ClCompile Include="Source\Exception\WindowException.cpp" />
+    <ClCompile Include="Source\Window\WindowsMessageMap.cpp" />
+    <ClCompile Include="Source\WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CommandManager.h" />
-    <ClInclude Include="CommandQueue.h" />
-    <ClInclude Include="Console.h" />
-    <ClInclude Include="d3dx12.h" />
-    <ClInclude Include="DescriptorHeap.h" />
-    <ClInclude Include="DiveBomberCore.h" />
-    <ClInclude Include="Common.h" />
-    <ClInclude Include="DXDevice.h" />
-    <ClInclude Include="DxgiInfoManager.h" />
-    <ClInclude Include="Exception.h" />
-    <ClInclude Include="FenceManager.h" />
-    <ClInclude Include="GPUAdapter.h" />
-    <ClInclude Include="Graphics.h" />
-    <ClInclude Include="GraphicsException.h" />
-    <ClInclude Include="GraphicsResource.h" />
-    <ClInclude Include="RenderStatistics.h" />
-    <ClInclude Include="Keyboard.h" />
-    <ClInclude Include="Mouse.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="SwapChain.h" />
-    <ClInclude Include="SystemConfig.h" />
-    <ClInclude Include="Timer.h" />
-    <ClInclude Include="Window.h" />
-    <ClInclude Include="WindowException.h" />
-    <ClInclude Include="WindowResource.h" />
-    <ClInclude Include="WindowsMessageMap.h" />
-    <ClInclude Include="WRL.h" />
+    <ClInclude Include="Source\Graphics\DX\CommandManager.h" />
+    <ClInclude Include="Source\Graphics\DX\CommandQueue.h" />
+    <ClInclude Include="Source\Console\Console.h" />
+    <ClInclude Include="Source\Graphics\DX\d3dx12.h" />
+    <ClInclude Include="Source\Graphics\DX\DescriptorHeap.h" />
+    <ClInclude Include="Source\DiveBomberCore.h" />
+    <ClInclude Include="Source\Utility\Common.h" />
+    <ClInclude Include="Source\Graphics\DX\DXDevice.h" />
+    <ClInclude Include="Source\Exception\DxgiInfoManager.h" />
+    <ClInclude Include="Source\Exception\Exception.h" />
+    <ClInclude Include="Source\Graphics\DX\FenceManager.h" />
+    <ClInclude Include="Source\Graphics\DX\GPUAdapter.h" />
+    <ClInclude Include="Source\Graphics\Graphics.h" />
+    <ClInclude Include="Source\Exception\GraphicsException.h" />
+    <ClInclude Include="Source\Graphics\GraphicsResource.h" />
+    <ClInclude Include="Source\Utility\RenderStatistics.h" />
+    <ClInclude Include="Source\Hardware\Keyboard.h" />
+    <ClInclude Include="Source\Hardware\Mouse.h" />
+    <ClInclude Include="Resource\resource.h" />
+    <ClInclude Include="Source\Graphics\DX\SwapChain.h" />
+    <ClInclude Include="Config\SystemConfig.h" />
+    <ClInclude Include="Source\Utility\Timer.h" />
+    <ClInclude Include="Source\Window\Window.h" />
+    <ClInclude Include="Source\Exception\WindowException.h" />
+    <ClInclude Include="Source\Window\DEWindows.h" />
+    <ClInclude Include="Source\Window\WindowResource.h" />
+    <ClInclude Include="Source\Window\WindowsMessageMap.h" />
+    <ClInclude Include="Source\Graphics\DEWrl.h" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="C:\Users\H\Downloads\DiveBomberIcon.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="Resource.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="d3dcompiler_47.dll" />
+    <ResourceCompile Include="Resource\Resource.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,0 +1,37 @@
+#include "Console.h"
+
+#include "..\Window\WindowResource.h"
+
+#include <iostream>
+
+namespace DiveBomber::DEConsole
+{
+	using namespace DEException;
+
+	Console::Console()
+	{
+		// Console
+		if (AllocConsole() == 0)
+		{
+			const auto excetion = WND_LAST_EXCEPT();
+		}
+
+		FILE* fpstdin = stdin, * fpstdout = stdout, * fpstderr = stderr;
+
+		freopen_s(&fpstdin, "CONIN$", "r", stdin);
+		freopen_s(&fpstdout, "CONOUT$", "w", stdout);
+		freopen_s(&fpstderr, "CONOUT$", "w", stderr);
+
+		SetConsoleTitle(L"Console");
+	}
+
+	Console::~Console()
+	{
+		FreeConsole();
+	}
+
+	void Console::GetInput(std::wstring& command)
+	{
+		std::getline(std::wcin, command);
+	}
+}

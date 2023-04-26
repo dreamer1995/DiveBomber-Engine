@@ -1,199 +1,59 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="Window">
-      <UniqueIdentifier>{60b8e0c2-fb9a-455f-a49a-8850e8a4cdeb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core">
-      <UniqueIdentifier>{1e00bb68-8748-4481-a329-92384bba1dd7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common">
-      <UniqueIdentifier>{393425c6-cba3-4fc9-bcea-4098f09c329a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Graphics">
-      <UniqueIdentifier>{1f22daf2-b682-41f1-9b67-a8a55d31c867}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Exception">
-      <UniqueIdentifier>{5cf694c2-fbee-4f70-a206-d2425a9ed433}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Hardware">
-      <UniqueIdentifier>{ae7a7696-b11d-43ca-a4f6-5cc740ac1c1c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Console">
-      <UniqueIdentifier>{ba33a9c2-828d-4ccd-b405-8041765e32c3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Graphics\DX12">
-      <UniqueIdentifier>{65403054-4078-41df-93bb-d9b9884c8cbb}</UniqueIdentifier>
-    </Filter>
+    <ClCompile Include="Source\Utility\Common.cpp" />
+    <ClCompile Include="Source\Utility\Timer.cpp" />
+    <ClCompile Include="Source\Window\Window.cpp" />
+    <ClCompile Include="Source\Exception\WindowException.cpp" />
+    <ClCompile Include="Source\Window\WindowsMessageMap.cpp" />
+    <ClCompile Include="Source\Hardware\Keyboard.cpp" />
+    <ClCompile Include="Source\Hardware\Mouse.cpp" />
+    <ClCompile Include="Source\Exception\DxgiInfoManager.cpp" />
+    <ClCompile Include="Source\Graphics\Graphics.cpp" />
+    <ClCompile Include="Source\Exception\GraphicsException.cpp" />
+    <ClCompile Include="Source\Graphics\DX\CommandManager.cpp" />
+    <ClCompile Include="Source\Graphics\DX\CommandQueue.cpp" />
+    <ClCompile Include="Source\Graphics\DX\DescriptorHeap.cpp" />
+    <ClCompile Include="Source\Graphics\DX\DXDevice.cpp" />
+    <ClCompile Include="Source\Graphics\DX\FenceManager.cpp" />
+    <ClCompile Include="Source\Graphics\DX\GPUAdapter.cpp" />
+    <ClCompile Include="Source\Graphics\DX\SwapChain.cpp" />
+    <ClCompile Include="Source\Exception\Exception.cpp" />
+    <ClCompile Include="Source\Console\Console.cpp" />
+    <ClCompile Include="Source\DiveBomberCore.cpp" />
+    <ClCompile Include="Source\WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Window.cpp">
-      <Filter>Window</Filter>
-    </ClCompile>
-    <ClCompile Include="DiveBomberCore.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="WinMain.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Exception.cpp">
-      <Filter>Exception</Filter>
-    </ClCompile>
-    <ClCompile Include="WindowException.cpp">
-      <Filter>Window</Filter>
-    </ClCompile>
-    <ClCompile Include="Keyboard.cpp">
-      <Filter>Hardware</Filter>
-    </ClCompile>
-    <ClCompile Include="Mouse.cpp">
-      <Filter>Hardware</Filter>
-    </ClCompile>
-    <ClCompile Include="Console.cpp">
-      <Filter>Console</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphicsException.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Graphics.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="WindowsMessageMap.cpp">
-      <Filter>Window</Filter>
-    </ClCompile>
-    <ClCompile Include="DxgiInfoManager.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphicsResource.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="GPUAdapter.cpp">
-      <Filter>Graphics\DX12</Filter>
-    </ClCompile>
-    <ClCompile Include="DXDevice.cpp">
-      <Filter>Graphics\DX12</Filter>
-    </ClCompile>
-    <ClCompile Include="CommandQueue.cpp">
-      <Filter>Graphics\DX12</Filter>
-    </ClCompile>
-    <ClCompile Include="SwapChain.cpp">
-      <Filter>Graphics\DX12</Filter>
-    </ClCompile>
-    <ClCompile Include="DescriptorHeap.cpp">
-      <Filter>Graphics\DX12</Filter>
-    </ClCompile>
-    <ClCompile Include="Common.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
-    <ClCompile Include="Timer.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
-    <ClCompile Include="FenceManager.cpp">
-      <Filter>Graphics\DX12</Filter>
-    </ClCompile>
-    <ClCompile Include="CommandManager.cpp">
-      <Filter>Graphics\DX12</Filter>
-    </ClCompile>
+    <ClInclude Include="Source\Utility\Common.h" />
+    <ClInclude Include="Source\Graphics\DX\d3dx12.h" />
+    <ClInclude Include="Source\Utility\Timer.h" />
+    <ClInclude Include="Source\Graphics\DEWrl.h" />
+    <ClInclude Include="Source\Window\Window.h" />
+    <ClInclude Include="Source\Exception\WindowException.h" />
+    <ClInclude Include="Source\Window\DEWindows.h" />
+    <ClInclude Include="Source\Window\WindowsMessageMap.h" />
+    <ClInclude Include="Resource\resource.h" />
+    <ClInclude Include="Source\Hardware\Mouse.h" />
+    <ClInclude Include="Source\Hardware\Keyboard.h" />
+    <ClInclude Include="Source\Utility\RenderStatistics.h" />
+    <ClInclude Include="Source\Exception\DxgiInfoManager.h" />
+    <ClInclude Include="Source\Graphics\Graphics.h" />
+    <ClInclude Include="Source\Exception\GraphicsException.h" />
+    <ClInclude Include="Source\Graphics\GraphicsResource.h" />
+    <ClInclude Include="Source\Graphics\DX\SwapChain.h" />
+    <ClInclude Include="Source\Graphics\DX\CommandManager.h" />
+    <ClInclude Include="Source\Graphics\DX\CommandQueue.h" />
+    <ClInclude Include="Source\Graphics\DX\DescriptorHeap.h" />
+    <ClInclude Include="Source\Graphics\DX\DXDevice.h" />
+    <ClInclude Include="Source\Graphics\DX\FenceManager.h" />
+    <ClInclude Include="Source\Graphics\DX\GPUAdapter.h" />
+    <ClInclude Include="Source\Exception\Exception.h" />
+    <ClInclude Include="Source\Console\Console.h" />
+    <ClInclude Include="Source\DiveBomberCore.h" />
+    <ClInclude Include="Config\SystemConfig.h" />
+    <ClInclude Include="Source\Window\WindowResource.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Window.h">
-      <Filter>Window</Filter>
-    </ClInclude>
-    <ClInclude Include="DiveBomberCore.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Common.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="Exception.h">
-      <Filter>Exception</Filter>
-    </ClInclude>
-    <ClInclude Include="WindowException.h">
-      <Filter>Window</Filter>
-    </ClInclude>
-    <ClInclude Include="Keyboard.h">
-      <Filter>Hardware</Filter>
-    </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Resource Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Mouse.h">
-      <Filter>Hardware</Filter>
-    </ClInclude>
-    <ClInclude Include="Console.h">
-      <Filter>Console</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphicsException.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Graphics.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="WindowsMessageMap.h">
-      <Filter>Window</Filter>
-    </ClInclude>
-    <ClInclude Include="WRL.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="DxgiInfoManager.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="WindowResource.h">
-      <Filter>Window</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphicsResource.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="d3dx12.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="SystemConfig.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="GPUAdapter.h">
-      <Filter>Graphics\DX12</Filter>
-    </ClInclude>
-    <ClInclude Include="DXDevice.h">
-      <Filter>Graphics\DX12</Filter>
-    </ClInclude>
-    <ClInclude Include="CommandQueue.h">
-      <Filter>Graphics\DX12</Filter>
-    </ClInclude>
-    <ClInclude Include="SwapChain.h">
-      <Filter>Graphics\DX12</Filter>
-    </ClInclude>
-    <ClInclude Include="DescriptorHeap.h">
-      <Filter>Graphics\DX12</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderStatistics.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Timer.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="FenceManager.h">
-      <Filter>Graphics\DX12</Filter>
-    </ClInclude>
-    <ClInclude Include="CommandManager.h">
-      <Filter>Graphics\DX12</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="C:\Users\H\Downloads\DiveBomberIcon.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="Resource.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="d3dcompiler_47.dll">
-      <Filter>Common</Filter>
-    </None>
+    <ResourceCompile Include="Resource\Resource.rc" />
   </ItemGroup>
 </Project>
