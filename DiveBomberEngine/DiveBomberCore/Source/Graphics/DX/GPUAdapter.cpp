@@ -12,6 +12,9 @@ namespace DiveBomber::DX
         createFactoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
 #endif
         HRESULT hr;
+        // Poco::NotFoundException at memory location after Nvdia driver 531.18
+        // Error 20 (this feature has not been implemented yet) in function AVolute::GetProductInfoT::<lambda_3920e95365a48b95dd51020986e9e351>::operator ()
+        // caused by realtek
         GFX_THROW_INFO(CreateDXGIFactory2(createFactoryFlags, IID_PPV_ARGS(&dxgiFactory)));
 
         wrl::ComPtr<IDXGIAdapter1> dxgiAdapter1;
