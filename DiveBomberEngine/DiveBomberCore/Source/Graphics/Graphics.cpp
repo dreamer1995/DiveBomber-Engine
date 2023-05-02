@@ -21,11 +21,10 @@ namespace DiveBomber::DEGraphics
 		gpuAdapter = std::make_unique<GPUAdapter>();
 		dxDevice = std::make_unique<DXDevice>(gpuAdapter->GetAdapter());
 
-		fenceManager = std::make_shared<FenceManager>(dxDevice->GetDecive());
 		fenceEvent = ::CreateEvent(nullptr, FALSE, FALSE, nullptr);
 		assert(fenceEvent && "Failed to create fence event.");
 
-		commandManager = std::make_unique<CommandManager>(dxDevice->GetDecive(), fenceManager);
+		commandManager = std::make_unique<CommandManager>(dxDevice->GetDecive());
 		SCRTDesHeap = std::make_unique<DescriptorHeap>(dxDevice->GetDecive(), D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 		swapChain = std::make_unique<SwapChain>(hWnd, commandManager->GetCommandQueue());
 		swapChain->UpdateMainRT(dxDevice->GetDecive(), SCRTDesHeap->GetDescriptorHeap());

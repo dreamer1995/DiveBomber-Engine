@@ -4,7 +4,7 @@ namespace DiveBomber::DX
 {
     using namespace DEException;
 
-    CommandManager::CommandManager(ID3D12Device2* inputDevice, std::shared_ptr<FenceManager> inputFenceManager, D3D12_COMMAND_LIST_TYPE intputType)
+    CommandManager::CommandManager(ID3D12Device2* inputDevice, D3D12_COMMAND_LIST_TYPE intputType)
     {
         type = intputType;
         device = inputDevice;
@@ -16,8 +16,7 @@ namespace DiveBomber::DX
 
         HRESULT hr;
         GFX_THROW_INFO(device->CreateCommandQueue(&desc, IID_PPV_ARGS(&commandQueue)));
-
-        fenceManager = inputFenceManager;
+        GFX_THROW_INFO(device->CreateFence(fenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence)));
 
         fenceEvent = ::CreateEvent(nullptr, FALSE, FALSE, nullptr);
         assert(fenceEvent && "Failed to create fence event.");
@@ -33,16 +32,17 @@ namespace DiveBomber::DX
         return commandQueue.Get();
     }
 
-    void CommandManager::Signal() noexcept
+    uint64_t CommandManager::Signal() noexcept
     {
         fenceValue++;
-        commandQueue->Signal(fenceManager->GetFence(), fenceValue);
+        commandQueue->Signal(fence.Get(), fenceValue);
+        return fenceValue;
     }
 
     void CommandManager::Flush() noexcept
     {
         Signal();
-        fenceManager->WaitForFenceValue(fenceValue, fenceEvent);
+        WaitForFenceValue(Signal());
     }
 
     wrl::ComPtr<ID3D12CommandAllocator> CommandManager::CreateCommandAllocator()
@@ -68,7 +68,7 @@ namespace DiveBomber::DX
         wrl::ComPtr<ID3D12GraphicsCommandList2> commandList;
 
         HRESULT hr;
-        if (!commandAllocatorQueue.empty() && fenceManager->IsFenceComplete(commandAllocatorQueue.front().fenceValue))
+        if (!commandAllocatorQueue.empty() && IsFenceComplete(commandAllocatorQueue.front().fenceValue))
         {
             commandAllocator = commandAllocatorQueue.front().commandAllocator;
             commandAllocatorQueue.pop();
@@ -112,9 +112,8 @@ namespace DiveBomber::DX
         ID3D12CommandList* const commandLists[] = { commandList };
 
         commandQueue->ExecuteCommandLists(1, commandLists);
-        Signal();
 
-        commandAllocatorQueue.emplace(CommandAllocatorInfo{ fenceValue, commandAllocator });
+        commandAllocatorQueue.emplace(CommandAllocatorInfo{ Signal(), commandAllocator});
         commandListQueue.push(commandList);
 
         // The ownership of the command allocator has been transferred to the ComPtr
@@ -127,6 +126,15 @@ namespace DiveBomber::DX
 
     void CommandManager::WaitForFenceValue(uint64_t inputFenceValue) noexcept
     {
-        fenceManager->WaitForFenceValue(inputFenceValue, fenceEvent);
+        if (!IsFenceComplete(inputFenceValue))
+        {
+            fence->SetEventOnCompletion(inputFenceValue, fenceEvent);
+            ::WaitForSingleObject(fenceEvent, DWORD_MAX);
+        }
+    }
+
+    bool CommandManager::IsFenceComplete(uint64_t inputFenceValue) noexcept
+    {
+        return fence->GetCompletedValue() >= inputFenceValue;
     }
 }

@@ -4,7 +4,6 @@
 #include "DX\CommandManager.h"
 #include "DX\SwapChain.h"
 #include "DX\DescriptorHeap.h"
-#include "DX\FenceManager.h"
 
 namespace DiveBomber::DEGraphics
 {
@@ -61,7 +60,6 @@ namespace DiveBomber::DEGraphics
 		std::unique_ptr<CommandManager> commandManager;
 		std::unique_ptr<SwapChain> swapChain;
 		std::unique_ptr<DescriptorHeap> SCRTDesHeap;
-		std::shared_ptr<FenceManager> fenceManager;
 		HANDLE fenceEvent = 0;
 		uint64_t frameFenceValues[SwapChainBufferCount] = {};
 		wrl::ComPtr<ID3D12GraphicsCommandList2> commandList;
