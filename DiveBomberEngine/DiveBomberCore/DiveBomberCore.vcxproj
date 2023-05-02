@@ -88,7 +88,6 @@
     <ClCompile Include="Source\Graphics\DX\DXDevice.cpp" />
     <ClCompile Include="Source\Exception\DxgiInfoManager.cpp" />
     <ClCompile Include="Source\Exception\Exception.cpp" />
-    <ClCompile Include="Source\Graphics\DX\FenceManager.cpp" />
     <ClCompile Include="Source\Graphics\DX\GPUAdapter.cpp" />
     <ClCompile Include="Source\Graphics\Graphics.cpp" />
     <ClCompile Include="Source\Exception\GraphicsException.cpp" />
@@ -112,7 +111,6 @@
     <ClInclude Include="Source\Graphics\DX\DXDevice.h" />
     <ClInclude Include="Source\Exception\DxgiInfoManager.h" />
     <ClInclude Include="Source\Exception\Exception.h" />
-    <ClInclude Include="Source\Graphics\DX\FenceManager.h" />
     <ClInclude Include="Source\Graphics\DX\GPUAdapter.h" />
     <ClInclude Include="Source\Graphics\Graphics.h" />
     <ClInclude Include="Source\Exception\GraphicsException.h" />

@@ -15,7 +15,6 @@
     <ClCompile Include="Source\Graphics\DX\CommandQueue.cpp" />
     <ClCompile Include="Source\Graphics\DX\DescriptorHeap.cpp" />
     <ClCompile Include="Source\Graphics\DX\DXDevice.cpp" />
-    <ClCompile Include="Source\Graphics\DX\FenceManager.cpp" />
     <ClCompile Include="Source\Graphics\DX\GPUAdapter.cpp" />
     <ClCompile Include="Source\Graphics\DX\SwapChain.cpp" />
     <ClCompile Include="Source\Exception\Exception.cpp" />
@@ -45,7 +44,6 @@
     <ClInclude Include="Source\Graphics\DX\CommandQueue.h" />
     <ClInclude Include="Source\Graphics\DX\DescriptorHeap.h" />
     <ClInclude Include="Source\Graphics\DX\DXDevice.h" />
-    <ClInclude Include="Source\Graphics\DX\FenceManager.h" />
     <ClInclude Include="Source\Graphics\DX\GPUAdapter.h" />
     <ClInclude Include="Source\Exception\Exception.h" />
     <ClInclude Include="Source\Console\Console.h" />
