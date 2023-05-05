@@ -1,7 +1,7 @@
 #pragma once
 #include "DX\GPUAdapter.h"
 #include "DX\DXDevice.h"
-#include "DX\CommandManager.h"
+#include "DX\CommandQueue.h"
 #include "DX\SwapChain.h"
 #include "DX\DescriptorHeap.h"
 
@@ -42,7 +42,7 @@ namespace DiveBomber::DEGraphics
 		void EndFrame();
 		HANDLE GetFenceEvent() noexcept;
 		void ReSizeMainRT(uint32_t inputWidth, uint32_t inputHeight);
-		CommandManager* GetCommandManager() noexcept;
+		CommandQueue* GetCommandQueue(D3D12_COMMAND_LIST_TYPE) noexcept;
 		void Flush() noexcept;
 	private:
 		UINT width = 0;
@@ -57,7 +57,9 @@ namespace DiveBomber::DEGraphics
 		//std::shared_ptr<Bind::RenderTarget> pTarget;
 		std::unique_ptr<GPUAdapter> gpuAdapter;
 		std::unique_ptr<DXDevice> dxDevice;
-		std::unique_ptr<CommandManager> commandManager;
+		std::unique_ptr<CommandQueue> directCommandQueue;
+		std::unique_ptr<CommandQueue> computeCommandQueue;
+		std::unique_ptr<CommandQueue> copyCommandQueue;
 		std::unique_ptr<SwapChain> swapChain;
 		std::unique_ptr<DescriptorHeap> SCRTDesHeap;
 		HANDLE fenceEvent = 0;

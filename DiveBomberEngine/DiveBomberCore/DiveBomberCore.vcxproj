@@ -79,7 +79,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Graphics\DX\CommandManager.cpp" />
     <ClCompile Include="Source\Graphics\DX\CommandQueue.cpp" />
     <ClCompile Include="Source\Utility\Common.cpp" />
     <ClCompile Include="Source\Console\Console.cpp" />
@@ -101,7 +100,6 @@
     <ClCompile Include="Source\WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Graphics\DX\CommandManager.h" />
     <ClInclude Include="Source\Graphics\DX\CommandQueue.h" />
     <ClInclude Include="Source\Console\Console.h" />
     <ClInclude Include="Source\Graphics\DX\d3dx12.h" />
@@ -131,6 +129,12 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource\Resource.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resource\Resource.aps" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resource\DiveBomberIcon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

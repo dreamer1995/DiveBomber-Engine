@@ -24,9 +24,11 @@ namespace DiveBomber::DEGraphics
 		fenceEvent = ::CreateEvent(nullptr, FALSE, FALSE, nullptr);
 		assert(fenceEvent && "Failed to create fence event.");
 
-		commandManager = std::make_unique<CommandManager>(dxDevice->GetDecive());
+		directCommandQueue = std::make_unique<CommandQueue>(dxDevice->GetDecive(), D3D12_COMMAND_LIST_TYPE_DIRECT);
+		computeCommandQueue = std::make_unique<CommandQueue>(dxDevice->GetDecive(), D3D12_COMMAND_LIST_TYPE_COMPUTE);
+		copyCommandQueue = std::make_unique<CommandQueue>(dxDevice->GetDecive(), D3D12_COMMAND_LIST_TYPE_COPY);
 		SCRTDesHeap = std::make_unique<DescriptorHeap>(dxDevice->GetDecive(), D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-		swapChain = std::make_unique<SwapChain>(hWnd, commandManager->GetCommandQueue());
+		swapChain = std::make_unique<SwapChain>(hWnd, directCommandQueue->GetCommandQueue());
 		swapChain->UpdateMainRT(dxDevice->GetDecive(), SCRTDesHeap->GetDescriptorHeap());
 	}
 
@@ -40,7 +42,7 @@ namespace DiveBomber::DEGraphics
 		auto currentBackBufferIndex = swapChain->GetSwapChain()->GetCurrentBackBufferIndex();
 		auto backBuffer = swapChain->GetBackBuffer(currentBackBufferIndex);
 
-		commandList = commandManager->GetCommandList();
+		commandList = directCommandQueue->GetCommandList();
 
 		// Clear the render target.
 		{
@@ -70,7 +72,7 @@ namespace DiveBomber::DEGraphics
 				D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 			commandList->ResourceBarrier(1, &barrier);
 
-			auto fenceValue = commandManager->ExecuteCommandList(commandList.Get());
+			auto fenceValue = directCommandQueue->ExecuteCommandList(commandList.Get());
 
 			HRESULT hr;
 			bool enableVSync = VSync;
@@ -78,7 +80,7 @@ namespace DiveBomber::DEGraphics
 			UINT presentFlags = swapChain->CheckTearingSupport() && !enableVSync ? DXGI_PRESENT_ALLOW_TEARING : 0;
 			GFX_THROW_INFO(swapChain->GetSwapChain()->Present(syncInterval, presentFlags));
 
-			commandManager->WaitForFenceValue(fenceValue);
+			directCommandQueue->WaitForFenceValue(fenceValue);
 		}
 	}
 
@@ -126,13 +128,29 @@ namespace DiveBomber::DEGraphics
 		return height;
 	}
 
-	CommandManager* Graphics::GetCommandManager() noexcept
+	CommandQueue* Graphics::GetCommandQueue(D3D12_COMMAND_LIST_TYPE type) noexcept
 	{
-		return commandManager.get();
+		switch (type)
+		{
+		case D3D12_COMMAND_LIST_TYPE_DIRECT:
+			return directCommandQueue.get();
+			break;
+		case D3D12_COMMAND_LIST_TYPE_COMPUTE:
+			return computeCommandQueue.get();
+			break;
+		case D3D12_COMMAND_LIST_TYPE_COPY:
+			return copyCommandQueue.get();
+			break;
+		default:
+			assert(false && "Invalid command queue type.");
+			return nullptr;
+		}
 	}
 
 	void Graphics::Flush() noexcept
 	{
-		commandManager->Flush();
+		directCommandQueue->Flush();
+		computeCommandQueue->Flush();
+		copyCommandQueue->Flush();
 	}
 }

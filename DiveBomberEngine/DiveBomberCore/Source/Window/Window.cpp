@@ -63,6 +63,13 @@ namespace DiveBomber::DEWindow
 
 	Window::Window(const wchar_t* name)
 	{
+		// First check if a window with the given name already exists.
+		//WindowNameMap::iterator windowIter = gs_WindowByName.find(windowName);
+		//if (windowIter != gs_WindowByName.end())
+		//{
+		//	return windowIter->second;
+		//}
+
 		// Windows 10 Creators update adds Per Monitor V2 DPI awareness context.
 		// Using this awareness context allows the client area of the window 
 		// to achieve 100% scaling while still allowing non-client window content to 
