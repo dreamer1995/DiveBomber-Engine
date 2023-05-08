@@ -15,17 +15,22 @@ namespace DiveBomber
 	DiveBomberCore::DiveBomberCore()
 	{
 		wnd = std::make_unique<Window>(L"DiveBomber Engine");
-		console = std::make_unique<Console>();
+		if(EnableConsole)
+			console = std::make_unique<Console>();
 	}
 
 	DiveBomberCore::~DiveBomberCore()
 	{
-		console->waitForInput = false;
-		FreeConsole();
-		for (std::thread& task : threadTasks)
+		if (EnableConsole)
 		{
-			task.join();
+			console->waitForInput = false;
+			FreeConsole();
+			for (std::thread& task : threadTasks)
+			{
+				task.join();
+			}
 		}
+		
 	}
 
 	int DiveBomberCore::GameLoop()
@@ -41,13 +46,25 @@ namespace DiveBomber
 				// if return optional has value, means we're quitting so return exit code
 				return *ecode;
 			}
+			
+			//here is a sequence problem
+			static int first = 0;
+			//first = true;
+			if (first<2)
+			{
+				wnd->Gfx().Load();
+				first += 1;
+			}
+
 			Update();
 		}
 	}
 
 	void DiveBomberCore::Start()
 	{
-		threadTasks.emplace_back(std::thread{ &Console::GetInput, console.get(), std::ref(command) });
+		if(EnableConsole)
+			threadTasks.emplace_back(std::thread{ &Console::GetInput, console.get(), std::ref(command) });
+
 	}
 
 	void DiveBomberCore::Update()
@@ -160,6 +177,8 @@ namespace DiveBomber
 
 	void DiveBomberCore::ExecuteConsoleCommand()
 	{
+		if (!EnableConsole)
+			return;
 		if (!command.empty())
 		{
 			if (console->waitForInput)
@@ -174,6 +193,7 @@ namespace DiveBomber
 	void DiveBomberCore::RenderLogic()
 	{
 		wnd->Gfx().BeginFrame();
+		wnd->Gfx().OnRender();
 		wnd->Gfx().EndFrame();
 	}
 

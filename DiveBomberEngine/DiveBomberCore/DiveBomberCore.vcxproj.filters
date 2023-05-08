@@ -20,6 +20,7 @@
     <ClCompile Include="Source\Console\Console.cpp" />
     <ClCompile Include="Source\DiveBomberCore.cpp" />
     <ClCompile Include="Source\WinMain.cpp" />
+    <ClCompile Include="Source\Graphics\BindObj\Vertex.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Utility\Common.h" />
@@ -48,6 +49,7 @@
     <ClInclude Include="Source\DiveBomberCore.h" />
     <ClInclude Include="Config\SystemConfig.h" />
     <ClInclude Include="Source\Window\WindowResource.h" />
+    <ClInclude Include="Source\Graphics\BindObj\Vertex.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource\Resource.rc" />
@@ -57,5 +59,9 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resource\DiveBomberIcon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shader\VertexShader.hlsl" />
+    <FxCompile Include="Shader\PixelShader.hlsl" />
   </ItemGroup>
 </Project>

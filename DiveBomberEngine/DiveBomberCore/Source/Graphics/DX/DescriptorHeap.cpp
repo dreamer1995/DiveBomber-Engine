@@ -11,6 +11,8 @@ namespace DiveBomber::DX
 		D3D12_DESCRIPTOR_HEAP_DESC desc = {};
 		desc.NumDescriptors = SwapChainBufferCount;
 		desc.Type = type;
+		desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+		desc.NodeMask = 0;
 
 		GFX_THROW_INFO(device->CreateDescriptorHeap(&desc, IID_PPV_ARGS(&descriptorHeap)));
 	}

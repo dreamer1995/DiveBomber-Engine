@@ -41,7 +41,6 @@ namespace DiveBomber::DX
 
     void CommandQueue::Flush() noexcept
     {
-        Signal();
         WaitForFenceValue(Signal());
     }
 
