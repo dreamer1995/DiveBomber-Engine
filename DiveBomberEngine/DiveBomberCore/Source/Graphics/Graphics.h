@@ -4,6 +4,7 @@
 #include "DX\CommandQueue.h"
 #include "DX\SwapChain.h"
 #include "DX\DescriptorHeap.h"
+#include "../Utility/RenderStatistics.h"
 
 namespace DiveBomber::DEGraphics
 {
@@ -52,7 +53,7 @@ namespace DiveBomber::DEGraphics
 			D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE);
 
 		void ResizeDepthBuffer(int width, int height);
-		void OnRender();
+		void OnRender(float time);
 	private:
 		UINT width = 0;
 		UINT height = 0;
@@ -76,6 +77,7 @@ namespace DiveBomber::DEGraphics
 		wrl::ComPtr<ID3D12GraphicsCommandList2> commandList;
 
 		//temp
+	public:
 		uint64_t m_FenceValues[SwapChainBufferCount] = {};
 
 		// Vertex buffer for the cube.
@@ -106,6 +108,8 @@ namespace DiveBomber::DEGraphics
 		DirectX::XMMATRIX m_ProjectionMatrix;
 
 		bool m_ContentLoaded = false;
+
+		DirectX::XMFLOAT4 eyePosition = { 0, 0, -10, 1 };
 
 	public:
 		bool isWireFrame = false;

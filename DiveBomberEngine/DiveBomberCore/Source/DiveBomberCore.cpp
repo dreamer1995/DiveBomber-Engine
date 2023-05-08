@@ -69,7 +69,9 @@ namespace DiveBomber
 
 	void DiveBomberCore::Update()
 	{
+		g_FrameCounter++;
 		g_DeltaTime = coreTimer.Mark() * TimerSpeed;
+		g_GameTime += g_DeltaTime;
 		RefreshRenderReport();
 
 		ProcessInput();
@@ -157,12 +159,14 @@ namespace DiveBomber
 			case Mouse::Event::Type::MBE_WheelFront:
 			{
 				cameraSpeed += 0.3f;
+				wnd->Gfx().eyePosition.z += 0.5f;
 				wnd->SetTitle(std::to_wstring(cameraSpeed));
 				break;
 			}
 			case Mouse::Event::Type::MBE_WheelBack:
 			{
 				cameraSpeed -= 0.3f;
+				wnd->Gfx().eyePosition.z -= 0.5f;
 				wnd->SetTitle(std::to_wstring(cameraSpeed));
 				break;
 			}
@@ -193,14 +197,12 @@ namespace DiveBomber
 	void DiveBomberCore::RenderLogic()
 	{
 		wnd->Gfx().BeginFrame();
-		wnd->Gfx().OnRender();
+		wnd->Gfx().OnRender((float)Utility::g_GameTime);
 		wnd->Gfx().EndFrame();
 	}
 
 	void DiveBomberCore::RefreshRenderReport()
 	{
-		g_FrameCounter++;
-
 		//static double elapsedSeconds = 0.0;
 		//static uint64_t elapsedFrames = 0;
 

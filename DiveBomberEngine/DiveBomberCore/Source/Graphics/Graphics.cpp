@@ -1,5 +1,7 @@
 #include "Graphics.h"
 
+#include <iostream>
+
 namespace DiveBomber::DEGraphics
 {
 	using namespace DX;
@@ -402,22 +404,22 @@ namespace DiveBomber::DEGraphics
 		commandList->ClearDepthStencilView(dsv, D3D12_CLEAR_FLAG_DEPTH, depth, 0, 0, nullptr);
 	}
 
-	void Graphics::OnRender()
+	void Graphics::OnRender(float time)
 	{
 		using namespace DirectX;
 		// Update the model matrix.
-		float angle = static_cast<float>(1.0f * 90.0);
+		float angle = time * 90.0f;
 		const XMVECTOR rotationAxis = XMVectorSet(0, 1, 1, 0);
 		m_ModelMatrix = XMMatrixRotationAxis(rotationAxis, XMConvertToRadians(angle));
 
 		// Update the view matrix.
-		const XMVECTOR eyePosition = XMVectorSet(0, 0, -10, 1);
+		const XMVECTOR eyePositionVector = XMVectorSet(eyePosition.x, eyePosition.y, eyePosition.z, eyePosition.w);
 		const XMVECTOR focusPoint = XMVectorSet(0, 0, 0, 1);
 		const XMVECTOR upDirection = XMVectorSet(0, 1, 0, 0);
-		m_ViewMatrix = XMMatrixLookAtLH(eyePosition, focusPoint, upDirection);
+		m_ViewMatrix = XMMatrixLookAtLH(eyePositionVector, focusPoint, upDirection);
 
 		// Update the projection matrix.
-		float aspectRatio = MainWindowWidth / static_cast<float>(MainWindowHeight);
+		float aspectRatio = MainWindowWidth / (float)MainWindowHeight;
 		m_ProjectionMatrix = XMMatrixPerspectiveFovLH(XMConvertToRadians(m_FoV), aspectRatio, 0.1f, 100.0f);
 
 
