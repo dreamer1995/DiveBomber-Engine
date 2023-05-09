@@ -43,7 +43,7 @@ namespace DiveBomber::DEGraphics
 		void EndFrame();
 		HANDLE GetFenceEvent() noexcept;
 		void ReSizeMainRT(uint32_t inputWidth, uint32_t inputHeight);
-		CommandQueue* GetCommandQueue(D3D12_COMMAND_LIST_TYPE) noexcept;
+		CommandQueue* GetCommandQueue(D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT) noexcept;
 		void Flush() noexcept;
 		//temp
 		void Load();
@@ -74,7 +74,8 @@ namespace DiveBomber::DEGraphics
 		std::unique_ptr<DescriptorHeap> SCRTDesHeap;
 		HANDLE fenceEvent = 0;
 		uint64_t frameFenceValues[SwapChainBufferCount] = {};
-		wrl::ComPtr<ID3D12GraphicsCommandList2> commandList;
+		wrl::ComPtr<ID3D12GraphicsCommandList2> copyCommandList;
+		wrl::ComPtr<ID3D12GraphicsCommandList2> directCommandList;
 
 		//temp
 	public:
@@ -110,6 +111,7 @@ namespace DiveBomber::DEGraphics
 		bool m_ContentLoaded = false;
 
 		DirectX::XMFLOAT4 eyePosition = { 0, 0, -10, 1 };
+		UINT m_CurrentBackBufferIndex;
 
 	public:
 		bool isWireFrame = false;

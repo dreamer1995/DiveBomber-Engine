@@ -44,7 +44,9 @@ namespace DiveBomber::DEGraphics
 		auto currentBackBufferIndex = swapChain->GetSwapChain()->GetCurrentBackBufferIndex();
 		auto backBuffer = swapChain->GetBackBuffer(currentBackBufferIndex);
 
-		commandList = directCommandQueue->GetCommandList();
+		auto commandQueue = GetCommandQueue();
+		directCommandList = commandQueue->GetCommandList();
+		auto commandList = directCommandList;
 
 		// Clear the render target.
 		{
@@ -67,6 +69,9 @@ namespace DiveBomber::DEGraphics
 		auto currentBackBufferIndex = swapChain->GetSwapChain()->GetCurrentBackBufferIndex();
 		auto backBuffer = swapChain->GetBackBuffer(currentBackBufferIndex);
 
+		auto commandQueue = GetCommandQueue();
+		auto commandList = directCommandList;
+
 		// Present
 		{
 			CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
@@ -74,7 +79,7 @@ namespace DiveBomber::DEGraphics
 				D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 			commandList->ResourceBarrier(1, &barrier);
 
-			auto fenceValue = directCommandQueue->ExecuteCommandList(commandList.Get());
+			m_FenceValues[currentBackBufferIndex] = commandQueue->ExecuteCommandList(commandList.Get());
 
 			HRESULT hr;
 			bool enableVSync = VSync;
@@ -82,7 +87,9 @@ namespace DiveBomber::DEGraphics
 			UINT presentFlags = swapChain->CheckTearingSupport() && !enableVSync ? DXGI_PRESENT_ALLOW_TEARING : 0;
 			GFX_THROW_INFO(swapChain->GetSwapChain()->Present(syncInterval, presentFlags));
 
-			directCommandQueue->WaitForFenceValue(fenceValue);
+			currentBackBufferIndex = swapChain->GetSwapChain()->GetCurrentBackBufferIndex();
+
+			commandQueue->WaitForFenceValue(m_FenceValues[currentBackBufferIndex]);
 		}
 	}
 
@@ -235,7 +242,9 @@ namespace DiveBomber::DEGraphics
 
 	void Graphics::Load()
 	{
-		commandList = copyCommandQueue->GetCommandList();
+		auto commandQueue = GetCommandQueue(D3D12_COMMAND_LIST_TYPE_COPY);
+		copyCommandList = commandQueue->GetCommandList();
+		auto commandList = copyCommandList;
 
 		// Upload vertex buffer data.
 		wrl::ComPtr<ID3D12Resource> intermediateVertexBuffer;
@@ -344,8 +353,8 @@ namespace DiveBomber::DEGraphics
 		GFX_THROW_INFO(device->CreatePipelineState(&pipelineStateStreamDesc, IID_PPV_ARGS(&m_PipelineState)));
 
 
-		auto fenceValue = copyCommandQueue->ExecuteCommandList(commandList.Get());
-		copyCommandQueue->WaitForFenceValue(fenceValue);
+		auto fenceValue = commandQueue->ExecuteCommandList(commandList.Get());
+		commandQueue->WaitForFenceValue(fenceValue);
 
 		m_ContentLoaded = true;
 
@@ -406,6 +415,8 @@ namespace DiveBomber::DEGraphics
 
 	void Graphics::OnRender(float time)
 	{
+		auto commandList = directCommandList;
+
 		using namespace DirectX;
 		// Update the model matrix.
 		float angle = time * 90.0f;

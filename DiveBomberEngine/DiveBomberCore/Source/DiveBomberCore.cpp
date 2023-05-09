@@ -46,15 +46,6 @@ namespace DiveBomber
 				// if return optional has value, means we're quitting so return exit code
 				return *ecode;
 			}
-			
-			//here is a sequence problem
-			static int first = 0;
-			//first = true;
-			if (first<2)
-			{
-				wnd->Gfx().Load();
-				first += 1;
-			}
 
 			Update();
 		}
@@ -65,6 +56,9 @@ namespace DiveBomber
 		if(EnableConsole)
 			threadTasks.emplace_back(std::thread{ &Console::GetInput, console.get(), std::ref(command) });
 
+		// why twice?
+		wnd->Gfx().Load();
+		//wnd->Gfx().Load();
 	}
 
 	void DiveBomberCore::Update()
