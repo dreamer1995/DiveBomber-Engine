@@ -57,7 +57,6 @@ namespace DiveBomber::DX
         wrl::ComPtr<ID3D12GraphicsCommandList2> commandList;
         HRESULT hr;
         GFX_THROW_INFO(device->CreateCommandList(0, type, commandAllocator, nullptr, IID_PPV_ARGS(&commandList)));
-        commandList->Close();
         return commandList;
     }
 

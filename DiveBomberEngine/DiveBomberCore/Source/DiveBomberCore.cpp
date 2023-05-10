@@ -56,9 +56,7 @@ namespace DiveBomber
 		if(EnableConsole)
 			threadTasks.emplace_back(std::thread{ &Console::GetInput, console.get(), std::ref(command) });
 
-		// why twice?
 		wnd->Gfx().Load();
-		//wnd->Gfx().Load();
 	}
 
 	void DiveBomberCore::Update()
