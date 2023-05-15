@@ -465,4 +465,28 @@ namespace DiveBomber::DEGraphics
 
 		commandList->DrawIndexedInstanced(_countof(g_Indicies), 1, 0, 0, 0);
 	}
+
+	ID3D12Device2* Graphics::GetDecive() noexcept
+	{
+		return dxDevice->GetDecive();
+	}
+
+	ID3D12GraphicsCommandList2* Graphics::GetCommandList(D3D12_COMMAND_LIST_TYPE type) noexcept
+	{
+		switch (type)
+		{
+		case D3D12_COMMAND_LIST_TYPE_DIRECT:
+			return directCommandList.Get();
+			break;
+		case D3D12_COMMAND_LIST_TYPE_COMPUTE:
+			return nullptr;
+			break;
+		case D3D12_COMMAND_LIST_TYPE_COPY:
+			return copyCommandList.Get();
+			break;
+		default:
+			assert(false && "Invalid command queue type.");
+			return nullptr;
+		}
+	}
 }

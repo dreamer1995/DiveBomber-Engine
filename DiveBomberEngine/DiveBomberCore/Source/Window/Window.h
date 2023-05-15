@@ -17,9 +17,6 @@
 
 namespace DiveBomber::DEWindow
 {
-	using namespace DEGraphics;
-	using namespace Hardware;
-
 	class Window final
 	{
 		// Window Class
@@ -47,12 +44,12 @@ namespace DiveBomber::DEWindow
 		void DisableCursor() noexcept;
 		bool CursorEnabled() const noexcept;
 		static std::optional<int> ProcessMessages() noexcept;
-		Graphics& Gfx();
+		DEGraphics::Graphics& Gfx();
 		void SetFullScreen(bool fullScreen) noexcept;
 
 		const wchar_t* title;
-		Keyboard kbd;
-		Mouse mouse;
+		Hardware::Keyboard kbd;
+		Hardware::Mouse mouse;
 		bool isFullScreen = false;
 
 	private:
@@ -72,7 +69,7 @@ namespace DiveBomber::DEWindow
 		int screenWidth;
 		int screenHeight;
 		HWND hWnd;
-		std::unique_ptr<Graphics> pGfx;
+		std::unique_ptr<DEGraphics::Graphics> pGfx;
 		std::vector<BYTE> rawBuffer;
 		std::string commandLine;
 		RECT windowRect;

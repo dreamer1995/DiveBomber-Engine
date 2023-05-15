@@ -6,6 +6,7 @@
 #include "DEWrl.h"
 #include "..\..\Config\SystemConfig.h"
 #include "..\Exception\GraphicsException.h"
+#include "..\Utility\DEMath.h"
 
 #include <d3d12.h>
 #include <dxgi1_6.h>

@@ -8,8 +8,6 @@
 
 namespace DiveBomber::DEGraphics
 {
-	using namespace DX;
-
 	class Graphics final
 	{
 	public:
@@ -43,7 +41,7 @@ namespace DiveBomber::DEGraphics
 		void EndFrame();
 		HANDLE GetFenceEvent() noexcept;
 		void ReSizeMainRT(uint32_t inputWidth, uint32_t inputHeight);
-		CommandQueue* GetCommandQueue(D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT) noexcept;
+		DX::CommandQueue* GetCommandQueue(D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT) noexcept;
 		void Flush() noexcept;
 		//temp
 		void Load();
@@ -54,24 +52,26 @@ namespace DiveBomber::DEGraphics
 
 		void ResizeDepthBuffer(int width, int height);
 		void OnRender(float time);
+		ID3D12Device2* GetDecive() noexcept;
+		ID3D12GraphicsCommandList2* GetCommandList(D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT) noexcept;
 	private:
 		UINT width = 0;
 		UINT height = 0;
 		DirectX::XMMATRIX projection = DirectX::XMMATRIX();
 		DirectX::XMMATRIX camera = DirectX::XMMATRIX();
 		bool imguiEnabled = true;
-		float mFOV = PI / 3 * 2;
+		float mFOV = Utility::PI / 3 * 2;
 		HWND hWnd = 0;
 		//wrl::ComPtr<ID3D12DeviceContext> pContext;
 
 		//std::shared_ptr<Bind::RenderTarget> pTarget;
-		std::unique_ptr<GPUAdapter> gpuAdapter;
-		std::unique_ptr<DXDevice> dxDevice;
-		std::unique_ptr<CommandQueue> directCommandQueue;
-		std::unique_ptr<CommandQueue> computeCommandQueue;
-		std::unique_ptr<CommandQueue> copyCommandQueue;
-		std::unique_ptr<SwapChain> swapChain;
-		std::unique_ptr<DescriptorHeap> SCRTDesHeap;
+		std::unique_ptr<DX::GPUAdapter> gpuAdapter;
+		std::unique_ptr<DX::DXDevice> dxDevice;
+		std::unique_ptr<DX::CommandQueue> directCommandQueue;
+		std::unique_ptr<DX::CommandQueue> computeCommandQueue;
+		std::unique_ptr<DX::CommandQueue> copyCommandQueue;
+		std::unique_ptr<DX::SwapChain> swapChain;
+		std::unique_ptr<DX::DescriptorHeap> SCRTDesHeap;
 		HANDLE fenceEvent = 0;
 		uint64_t frameFenceValues[SwapChainBufferCount] = {};
 		wrl::ComPtr<ID3D12GraphicsCommandList2> copyCommandList;

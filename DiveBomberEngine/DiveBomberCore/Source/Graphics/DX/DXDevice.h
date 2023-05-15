@@ -7,7 +7,7 @@ namespace DiveBomber::DX
 	{
 	public:
 		DXDevice(IDXGIAdapter4* adapter);
-		ID3D12Device2* GetDecive()noexcept;
+		ID3D12Device2* GetDecive() noexcept;
 	private:
 		wrl::ComPtr<ID3D12Device2> dxDevice;
 	};

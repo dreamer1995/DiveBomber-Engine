@@ -12,6 +12,7 @@
 
 namespace DiveBomber::DEWindow
 {
+	using namespace DEGraphics;
 	using namespace DEException;
 	using namespace Hardware;
 
