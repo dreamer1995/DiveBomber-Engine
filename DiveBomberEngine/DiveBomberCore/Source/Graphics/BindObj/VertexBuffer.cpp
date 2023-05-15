@@ -61,6 +61,11 @@ namespace DiveBomber::BindObj
 				0, 0, 1, &subresourceData);
 		}
 
+		// Create the vertex buffer view.
+		vertexBufferView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
+		vertexBufferView.SizeInBytes = bufferSize;
+		vertexBufferView.StrideInBytes = stride;
+
 		//D3D11_BUFFER_DESC bd = {};
 		//bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 		//bd.Usage = D3D11_USAGE_DEFAULT;

@@ -79,6 +79,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Graphics\BindObj\IndexBuffer.cpp" />
     <ClCompile Include="Source\Graphics\DX\CommandQueue.cpp" />
     <ClCompile Include="Source\Utility\Color.h" />
     <ClCompile Include="Source\Utility\Common.cpp" />
@@ -110,6 +111,7 @@
     <ClInclude Include="Source\Graphics\BindObj\Geometry\Plane.h" />
     <ClInclude Include="Source\Graphics\BindObj\Geometry\Sphere.h" />
     <ClInclude Include="Source\Graphics\BindObj\Bindable.h" />
+    <ClInclude Include="Source\Graphics\BindObj\IndexBuffer.h" />
     <ClInclude Include="Source\Graphics\DX\CommandQueue.h" />
     <ClInclude Include="Source\Console\Console.h" />
     <ClInclude Include="Source\Graphics\DX\d3dx12.h" />

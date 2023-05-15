@@ -1,5 +1,5 @@
 #pragma once
-#include "..\GraphicsResource.h"
+#include "..\Graphics.h"
 
 #include <memory>
 #include <string>
