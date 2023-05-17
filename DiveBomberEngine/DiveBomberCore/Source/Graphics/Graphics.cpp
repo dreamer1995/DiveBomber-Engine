@@ -46,7 +46,7 @@ namespace DiveBomber::DEGraphics
 
 		auto commandQueue = GetCommandQueue();
 		directCommandList = commandQueue->GetCommandList();
-		auto commandList = directCommandList;
+		auto commandList = directCommandList.Get();
 
 		// Clear the render target.
 		{
@@ -70,7 +70,7 @@ namespace DiveBomber::DEGraphics
 		auto backBuffer = swapChain->GetBackBuffer(currentBackBufferIndex);
 
 		auto commandQueue = GetCommandQueue();
-		auto commandList = directCommandList;
+		auto commandList = directCommandList.Get();
 
 		// Present
 		{
@@ -79,7 +79,7 @@ namespace DiveBomber::DEGraphics
 				D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 			commandList->ResourceBarrier(1, &barrier);
 
-			m_FenceValues[currentBackBufferIndex] = commandQueue->ExecuteCommandList(commandList.Get());
+			m_FenceValues[currentBackBufferIndex] = commandQueue->ExecuteCommandList(commandList);
 
 			HRESULT hr;
 			bool enableVSync = VSync;
@@ -112,7 +112,6 @@ namespace DiveBomber::DEGraphics
 		{
 			// Any references to the back buffers must be released
 			// before the swap chain can be resized.
-			wrl::ComPtr<ID3D12Resource> a;
 			swapChain->ResetBackBuffer(i);
 			frameFenceValues[i] = frameFenceValues[swapChain->GetSwapChain()->GetCurrentBackBufferIndex()];
 		}
@@ -242,9 +241,9 @@ namespace DiveBomber::DEGraphics
 
 	void Graphics::Load(std::vector<D3D12_INPUT_ELEMENT_DESC> vlv)
 	{
-		auto commandQueue = GetCommandQueue(D3D12_COMMAND_LIST_TYPE_COPY);
-		copyCommandList = commandQueue->GetCommandList();
-		auto commandList = copyCommandList;
+		//auto commandQueue = GetCommandQueue(D3D12_COMMAND_LIST_TYPE_COPY);
+		//copyCommandList = commandQueue->GetCommandList();
+		//auto commandList = copyCommandList.Get();
 
 		//// Upload vertex buffer data.
 		//wrl::ComPtr<ID3D12Resource> intermediateVertexBuffer;
@@ -358,9 +357,8 @@ namespace DiveBomber::DEGraphics
 		};
 		GFX_THROW_INFO(device->CreatePipelineState(&pipelineStateStreamDesc, IID_PPV_ARGS(&m_PipelineState)));
 
-
-		auto fenceValue = commandQueue->ExecuteCommandList(commandList.Get());
-		commandQueue->WaitForFenceValue(fenceValue);
+		//auto fenceValue = commandQueue->ExecuteCommandList(commandList);
+		//commandQueue->WaitForFenceValue(fenceValue);
 
 		m_ContentLoaded = true;
 
@@ -413,7 +411,7 @@ namespace DiveBomber::DEGraphics
 		}
 	}
 
-	void ClearDepth(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList2> commandList,
+	void ClearDepth(ID3D12GraphicsCommandList2* commandList,
 		D3D12_CPU_DESCRIPTOR_HANDLE dsv, FLOAT depth = 1.0f)
 	{
 		commandList->ClearDepthStencilView(dsv, D3D12_CLEAR_FLAG_DEPTH, depth, 0, 0, nullptr);
@@ -421,7 +419,7 @@ namespace DiveBomber::DEGraphics
 
 	void Graphics::OnRender(float time)
 	{
-		auto commandList = directCommandList;
+		auto commandList = directCommandList.Get();
 
 		using namespace DirectX;
 		// Update the model matrix.
@@ -477,18 +475,31 @@ namespace DiveBomber::DEGraphics
 		return dxDevice->GetDecive();
 	}
 
-	wrl::ComPtr<ID3D12GraphicsCommandList2> Graphics::GetCommandList(D3D12_COMMAND_LIST_TYPE type) noexcept
+	ID3D12GraphicsCommandList2* Graphics::GetCommandList(D3D12_COMMAND_LIST_TYPE type) noexcept
 	{
 		switch (type)
 		{
 		case D3D12_COMMAND_LIST_TYPE_DIRECT:
-			return directCommandList;
+			if (directCommandList)
+				return directCommandList.Get();
+			else
+			{
+				directCommandList = GetCommandQueue(D3D12_COMMAND_LIST_TYPE_DIRECT)->GetCommandList();
+				return directCommandList.Get();
+			}
 			break;
 		case D3D12_COMMAND_LIST_TYPE_COMPUTE:
 			return nullptr;
 			break;
 		case D3D12_COMMAND_LIST_TYPE_COPY:
-			return copyCommandList;
+			if (copyCommandList)
+				return copyCommandList.Get();
+			else
+			{
+				copyCommandList = GetCommandQueue(D3D12_COMMAND_LIST_TYPE_DIRECT)->GetCommandList();
+
+				return copyCommandList.Get();
+			}
 			break;
 		default:
 			assert(false && "Invalid command queue type.");

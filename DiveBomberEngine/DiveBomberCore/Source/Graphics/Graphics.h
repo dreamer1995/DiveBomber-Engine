@@ -53,7 +53,7 @@ namespace DiveBomber::DEGraphics
 		void ResizeDepthBuffer(int width, int height);
 		void OnRender(float time);
 		ID3D12Device2* GetDecive() noexcept;
-		wrl::ComPtr<ID3D12GraphicsCommandList2> GetCommandList(D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT) noexcept;
+		ID3D12GraphicsCommandList2* GetCommandList(D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT) noexcept;
 	private:
 		UINT width = 0;
 		UINT height = 0;

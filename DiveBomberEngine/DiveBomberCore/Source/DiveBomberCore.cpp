@@ -56,9 +56,6 @@ namespace DiveBomber
 		if(EnableConsole)
 			threadTasks.emplace_back(std::thread{ &Console::GetInput, console.get(), std::ref(command) });
 
-		//auto commandQueue = wnd->Gfx().GetCommandQueue(D3D12_COMMAND_LIST_TYPE_COPY);
-		//wnd->Gfx().copyCommandList = commandQueue->GetCommandList();
-
 		using namespace DiveBomber::BindObj;
 		using namespace DiveBomber::BindObj::VertexProcess;
 		VertexLayout vl;

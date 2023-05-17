@@ -44,23 +44,23 @@ namespace DiveBomber::DX
         WaitForFenceValue(Signal());
     }
 
-    wrl::ComPtr<ID3D12CommandAllocator> CommandQueue::CreateCommandAllocator()
+    ID3D12CommandAllocator* CommandQueue::CreateCommandAllocator()
     {
-        wrl::ComPtr<ID3D12CommandAllocator> commandAllocator;
+        ID3D12CommandAllocator* commandAllocator;
         HRESULT hr;
         GFX_THROW_INFO(device->CreateCommandAllocator(type, IID_PPV_ARGS(&commandAllocator)));
         return commandAllocator;
     }
 
-    wrl::ComPtr<ID3D12GraphicsCommandList2> CommandQueue::CreateCommandList(ID3D12CommandAllocator* commandAllocator)
+    ID3D12GraphicsCommandList2* CommandQueue::CreateCommandList(ID3D12CommandAllocator* commandAllocator)
     {
-        wrl::ComPtr<ID3D12GraphicsCommandList2> commandList;
+        ID3D12GraphicsCommandList2* commandList;
         HRESULT hr;
         GFX_THROW_INFO(device->CreateCommandList(0, type, commandAllocator, nullptr, IID_PPV_ARGS(&commandList)));
         return commandList;
     }
 
-    wrl::ComPtr <ID3D12GraphicsCommandList2> CommandQueue::GetCommandList()
+    ID3D12GraphicsCommandList2* CommandQueue::GetCommandList()
     {
         wrl::ComPtr<ID3D12CommandAllocator> commandAllocator;
         wrl::ComPtr<ID3D12GraphicsCommandList2> commandList;
@@ -94,7 +94,7 @@ namespace DiveBomber::DX
         // retrieved when the command list is executed.
         GFX_THROW_INFO(commandList->SetPrivateDataInterface(__uuidof(ID3D12CommandAllocator), commandAllocator.Get()));
 
-        return commandList;
+        return commandList.Get();
     }
 
     uint64_t CommandQueue::ExecuteCommandList(ID3D12GraphicsCommandList2* commandList)

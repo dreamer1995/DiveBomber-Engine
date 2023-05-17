@@ -15,9 +15,6 @@ namespace DiveBomber::BindObj
 		tag(tag),
 		count((UINT)indices.size())
 	{
-		auto commandQueue = gfx.GetCommandQueue(D3D12_COMMAND_LIST_TYPE_COPY);
-		auto commandList = commandQueue->GetCommandList();
-
 		size_t bufferSize = UINT(count * sizeof(unsigned short));
 
 		HRESULT hr;
@@ -37,6 +34,8 @@ namespace DiveBomber::BindObj
 			IID_PPV_ARGS(&indexBuffer)));
 
 		wrl::ComPtr<ID3D12Resource> intermediateIndexBuffer;
+		auto commandQueue = gfx.GetCommandQueue(D3D12_COMMAND_LIST_TYPE_COPY);
+		auto commandList = commandQueue->GetCommandList();
 		// Create an committed resource for the upload.
 		if (indices.data())
 		{
@@ -56,7 +55,7 @@ namespace DiveBomber::BindObj
 			subresourceData.RowPitch = bufferSize;
 			subresourceData.SlicePitch = subresourceData.RowPitch;
 
-			UpdateSubresources(commandList.Get(),
+			UpdateSubresources(commandList,
 				indexBuffer.Get(), intermediateIndexBuffer.Get(),
 				0, 0, 1, &subresourceData);
 		}
@@ -66,7 +65,7 @@ namespace DiveBomber::BindObj
 		indexBufferView.Format = DXGI_FORMAT_R16_UINT;
 		indexBufferView.SizeInBytes = bufferSize;
 
-		auto fenceValue = commandQueue->ExecuteCommandList(commandList.Get());
+		auto fenceValue = commandQueue->ExecuteCommandList(commandList);
 		commandQueue->WaitForFenceValue(fenceValue);
 	}
 
