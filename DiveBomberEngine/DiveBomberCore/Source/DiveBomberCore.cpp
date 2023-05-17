@@ -56,7 +56,27 @@ namespace DiveBomber
 		if(EnableConsole)
 			threadTasks.emplace_back(std::thread{ &Console::GetInput, console.get(), std::ref(command) });
 
-		wnd->Gfx().Load();
+		//auto commandQueue = wnd->Gfx().GetCommandQueue(D3D12_COMMAND_LIST_TYPE_COPY);
+		//wnd->Gfx().copyCommandList = commandQueue->GetCommandList();
+
+		using namespace DiveBomber::BindObj;
+		using namespace DiveBomber::BindObj::VertexProcess;
+		VertexLayout vl;
+		vl.Append(VertexLayout::Position3D);
+		vl.Append(VertexLayout::Normal);
+		vl.Append(VertexLayout::Tangent);
+		vl.Append(VertexLayout::Binormal);
+		vl.Append(VertexLayout::Texture2D);
+		mesh = std::make_shared<BindObj::IndexedTriangleList> (Sphere::MakeNormalUVed(vl, true));
+		mesh->Transform(dx::XMMatrixScaling(1, 1, 1));
+		const auto geometryTag = "$sphere." + std::to_string(1);
+		vertexBuffer = std::make_shared<VertexBuffer>(wnd->Gfx(), geometryTag, mesh->vertices);
+		indexBuffer = std::make_shared<IndexBuffer>(wnd->Gfx(), geometryTag, mesh->indices);
+
+		auto vlv = vertexBuffer->GetLayout().GetD3DLayout();
+		//auto vlv = std::vector<D3D12_INPUT_ELEMENT_DESC>();
+
+		wnd->Gfx().Load(vlv);
 	}
 
 	void DiveBomberCore::Update()
@@ -189,7 +209,13 @@ namespace DiveBomber
 	void DiveBomberCore::RenderLogic()
 	{
 		wnd->Gfx().BeginFrame();
+
+		vertexBuffer->Bind(wnd->Gfx());
+		indexBuffer->Bind(wnd->Gfx());
+
 		wnd->Gfx().OnRender((float)Utility::g_GameTime);
+
+		wnd->Gfx().GetCommandList()->DrawIndexedInstanced(indexBuffer->GetCount(), 1, 0, 0, 0);
 		wnd->Gfx().EndFrame();
 	}
 

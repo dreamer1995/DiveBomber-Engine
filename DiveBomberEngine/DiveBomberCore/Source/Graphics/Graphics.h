@@ -44,7 +44,7 @@ namespace DiveBomber::DEGraphics
 		DX::CommandQueue* GetCommandQueue(D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT) noexcept;
 		void Flush() noexcept;
 		//temp
-		void Load();
+		void Load(std::vector<D3D12_INPUT_ELEMENT_DESC> vlv);
 		void UpdateBufferResource(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList2> commandList,
 			ID3D12Resource** pDestinationResource, ID3D12Resource** pIntermediateResource,
 			size_t numElements, size_t elementSize, const void* bufferData,
@@ -53,7 +53,7 @@ namespace DiveBomber::DEGraphics
 		void ResizeDepthBuffer(int width, int height);
 		void OnRender(float time);
 		ID3D12Device2* GetDecive() noexcept;
-		ID3D12GraphicsCommandList2* GetCommandList(D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT) noexcept;
+		wrl::ComPtr<ID3D12GraphicsCommandList2> GetCommandList(D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT) noexcept;
 	private:
 		UINT width = 0;
 		UINT height = 0;
@@ -74,8 +74,6 @@ namespace DiveBomber::DEGraphics
 		std::unique_ptr<DX::DescriptorHeap> SCRTDesHeap;
 		HANDLE fenceEvent = 0;
 		uint64_t frameFenceValues[SwapChainBufferCount] = {};
-		wrl::ComPtr<ID3D12GraphicsCommandList2> copyCommandList;
-		wrl::ComPtr<ID3D12GraphicsCommandList2> directCommandList;
 
 		//temp
 	public:
@@ -112,6 +110,9 @@ namespace DiveBomber::DEGraphics
 
 		DirectX::XMFLOAT4 eyePosition = { 0, 0, -10, 1 };
 		UINT m_CurrentBackBufferIndex;
+
+		wrl::ComPtr<ID3D12GraphicsCommandList2> copyCommandList;
+		wrl::ComPtr<ID3D12GraphicsCommandList2> directCommandList;
 
 	public:
 		bool isWireFrame = false;

@@ -240,33 +240,33 @@ namespace DiveBomber::DEGraphics
 		4, 0, 3, 4, 3, 7
 	};
 
-	void Graphics::Load()
+	void Graphics::Load(std::vector<D3D12_INPUT_ELEMENT_DESC> vlv)
 	{
 		auto commandQueue = GetCommandQueue(D3D12_COMMAND_LIST_TYPE_COPY);
 		copyCommandList = commandQueue->GetCommandList();
 		auto commandList = copyCommandList;
 
-		// Upload vertex buffer data.
-		wrl::ComPtr<ID3D12Resource> intermediateVertexBuffer;
-		UpdateBufferResource(commandList,
-			&m_VertexBuffer, &intermediateVertexBuffer,
-			_countof(g_Vertices), sizeof(VertexPosColor), g_Vertices);
+		//// Upload vertex buffer data.
+		//wrl::ComPtr<ID3D12Resource> intermediateVertexBuffer;
+		//UpdateBufferResource(commandList,
+		//	&m_VertexBuffer, &intermediateVertexBuffer,
+		//	_countof(g_Vertices), sizeof(VertexPosColor), g_Vertices);
 
-		// Create the vertex buffer view.
-		m_VertexBufferView.BufferLocation = m_VertexBuffer->GetGPUVirtualAddress();
-		m_VertexBufferView.SizeInBytes = sizeof(g_Vertices);
-		m_VertexBufferView.StrideInBytes = sizeof(VertexPosColor);
+		//// Create the vertex buffer view.
+		//m_VertexBufferView.BufferLocation = m_VertexBuffer->GetGPUVirtualAddress();
+		//m_VertexBufferView.SizeInBytes = sizeof(g_Vertices);
+		//m_VertexBufferView.StrideInBytes = sizeof(VertexPosColor);
 
-		// Upload index buffer data.
-		wrl::ComPtr<ID3D12Resource> intermediateIndexBuffer;
-		UpdateBufferResource(commandList,
-			&m_IndexBuffer, &intermediateIndexBuffer,
-			_countof(g_Indicies), sizeof(WORD), g_Indicies);
+		//// Upload index buffer data.
+		//wrl::ComPtr<ID3D12Resource> intermediateIndexBuffer;
+		//UpdateBufferResource(commandList,
+		//	&m_IndexBuffer, &intermediateIndexBuffer,
+		//	_countof(g_Indicies), sizeof(WORD), g_Indicies);
 
-		// Create index buffer view.
-		m_IndexBufferView.BufferLocation = m_IndexBuffer->GetGPUVirtualAddress();
-		m_IndexBufferView.Format = DXGI_FORMAT_R16_UINT;
-		m_IndexBufferView.SizeInBytes = sizeof(g_Indicies);
+		//// Create index buffer view.
+		//m_IndexBufferView.BufferLocation = m_IndexBuffer->GetGPUVirtualAddress();
+		//m_IndexBufferView.Format = DXGI_FORMAT_R16_UINT;
+		//m_IndexBufferView.SizeInBytes = sizeof(g_Indicies);
 
 		// Create the descriptor heap for the depth-stencil view.
 		D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc = {};
@@ -286,11 +286,17 @@ namespace DiveBomber::DEGraphics
 		wrl::ComPtr<ID3DBlob> pixelShaderBlob;
 		GFX_THROW_INFO(D3DReadFileToBlob(L"PixelShader.cso", &pixelShaderBlob));
 
-		// Create the vertex input layout
-		D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
-			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-			{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-		};
+		//// Create the vertex input layout
+		//D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
+		//	{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		//	{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		//};
+
+		D3D12_INPUT_ELEMENT_DESC inputLayout[5];
+		for (int i = 0; i < 5; i++)
+		{
+			inputLayout[i] = vlv[i];
+		}
 
 		// Create a root signature.
 		D3D12_FEATURE_DATA_ROOT_SIGNATURE featureData = {};
@@ -450,8 +456,8 @@ namespace DiveBomber::DEGraphics
 		commandList->SetGraphicsRootSignature(m_RootSignature.Get());
 
 		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		commandList->IASetVertexBuffers(0, 1, &m_VertexBufferView);
-		commandList->IASetIndexBuffer(&m_IndexBufferView);
+		//commandList->IASetVertexBuffers(0u, 1u, &m_VertexBufferView);
+		//commandList->IASetIndexBuffer(&m_IndexBufferView);
 
 		commandList->RSSetViewports(1, &m_Viewport);
 		commandList->RSSetScissorRects(1, &m_ScissorRect);
@@ -463,7 +469,7 @@ namespace DiveBomber::DEGraphics
 		mvpMatrix = XMMatrixMultiply(mvpMatrix, m_ProjectionMatrix);
 		commandList->SetGraphicsRoot32BitConstants(0, sizeof(XMMATRIX) / 4, &mvpMatrix, 0);
 
-		commandList->DrawIndexedInstanced(_countof(g_Indicies), 1, 0, 0, 0);
+		//commandList->DrawIndexedInstanced(_countof(g_Indicies), 1, 0, 0, 0);
 	}
 
 	ID3D12Device2* Graphics::GetDecive() noexcept
@@ -471,18 +477,18 @@ namespace DiveBomber::DEGraphics
 		return dxDevice->GetDecive();
 	}
 
-	ID3D12GraphicsCommandList2* Graphics::GetCommandList(D3D12_COMMAND_LIST_TYPE type) noexcept
+	wrl::ComPtr<ID3D12GraphicsCommandList2> Graphics::GetCommandList(D3D12_COMMAND_LIST_TYPE type) noexcept
 	{
 		switch (type)
 		{
 		case D3D12_COMMAND_LIST_TYPE_DIRECT:
-			return directCommandList.Get();
+			return directCommandList;
 			break;
 		case D3D12_COMMAND_LIST_TYPE_COMPUTE:
 			return nullptr;
 			break;
 		case D3D12_COMMAND_LIST_TYPE_COPY:
-			return copyCommandList.Get();
+			return copyCommandList;
 			break;
 		default:
 			assert(false && "Invalid command queue type.");

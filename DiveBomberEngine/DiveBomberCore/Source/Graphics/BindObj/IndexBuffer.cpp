@@ -5,6 +5,7 @@ namespace DiveBomber::BindObj
 {
 	using namespace DEGraphics;
 	using namespace DEException;
+
 	IndexBuffer::IndexBuffer(Graphics& gfx, const std::vector<unsigned short>& indices)
 		:
 		IndexBuffer(gfx, "?", indices)
@@ -14,6 +15,9 @@ namespace DiveBomber::BindObj
 		tag(tag),
 		count((UINT)indices.size())
 	{
+		auto commandQueue = gfx.GetCommandQueue(D3D12_COMMAND_LIST_TYPE_COPY);
+		auto commandList = commandQueue->GetCommandList();
+
 		size_t bufferSize = UINT(count * sizeof(unsigned short));
 
 		HRESULT hr;
@@ -32,11 +36,10 @@ namespace DiveBomber::BindObj
 			nullptr,
 			IID_PPV_ARGS(&indexBuffer)));
 
+		wrl::ComPtr<ID3D12Resource> intermediateIndexBuffer;
 		// Create an committed resource for the upload.
 		if (indices.data())
 		{
-			wrl::ComPtr<ID3D12Resource> intermediateIndexBuffer;
-
 			auto heapProp1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
 			auto resDes1 = CD3DX12_RESOURCE_DESC::Buffer(bufferSize);
 
@@ -53,7 +56,7 @@ namespace DiveBomber::BindObj
 			subresourceData.RowPitch = bufferSize;
 			subresourceData.SlicePitch = subresourceData.RowPitch;
 
-			UpdateSubresources(gfx.GetCommandList(D3D12_COMMAND_LIST_TYPE_COPY),
+			UpdateSubresources(commandList.Get(),
 				indexBuffer.Get(), intermediateIndexBuffer.Get(),
 				0, 0, 1, &subresourceData);
 		}
@@ -63,16 +66,8 @@ namespace DiveBomber::BindObj
 		indexBufferView.Format = DXGI_FORMAT_R16_UINT;
 		indexBufferView.SizeInBytes = bufferSize;
 
-		//D3D11_BUFFER_DESC ibd = {};
-		//ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-		//ibd.Usage = D3D11_USAGE_DEFAULT;
-		//ibd.CPUAccessFlags = 0u;
-		//ibd.MiscFlags = 0u;
-		//ibd.ByteWidth = UINT(count * sizeof(unsigned short));
-		//ibd.StructureByteStride = sizeof(unsigned short);
-		//D3D11_SUBRESOURCE_DATA isd = {};
-		//isd.pSysMem = indices.data();
-		//GFX_THROW_INFO(GetDevice(gfx)->CreateBuffer(&ibd, &isd, &pIndexBuffer));
+		auto fenceValue = commandQueue->ExecuteCommandList(commandList.Get());
+		commandQueue->WaitForFenceValue(fenceValue);
 	}
 
 	void IndexBuffer::Bind(Graphics& gfx) noxnd

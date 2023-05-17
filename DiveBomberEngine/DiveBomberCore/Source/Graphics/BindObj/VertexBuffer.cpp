@@ -17,6 +17,9 @@ namespace DiveBomber::BindObj
 		tag(tag),
 		layout(vbuf.GetLayout())
 	{
+		auto commandQueue = gfx.GetCommandQueue(D3D12_COMMAND_LIST_TYPE_COPY);
+		auto commandList = commandQueue->GetCommandList();
+
 		size_t bufferSize = UINT(vbuf.SizeBytes());
 		
 		HRESULT hr;
@@ -35,10 +38,10 @@ namespace DiveBomber::BindObj
 			nullptr,
 			IID_PPV_ARGS(&vertexBuffer)));
 
+		wrl::ComPtr<ID3D12Resource> intermediateVertexBuffer;
 		// Create an committed resource for the upload.
 		if (vbuf.GetData())
 		{
-			wrl::ComPtr<ID3D12Resource> intermediateVertexBuffer;
 
 			auto heapProp1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
 			auto resDes1 = CD3DX12_RESOURCE_DESC::Buffer(bufferSize);
@@ -56,7 +59,7 @@ namespace DiveBomber::BindObj
 			subresourceData.RowPitch = bufferSize;
 			subresourceData.SlicePitch = subresourceData.RowPitch;
 
-			UpdateSubresources(gfx.GetCommandList(D3D12_COMMAND_LIST_TYPE_COPY),
+			UpdateSubresources(commandList.Get(),
 				vertexBuffer.Get(), intermediateVertexBuffer.Get(),
 				0, 0, 1, &subresourceData);
 		}
@@ -66,16 +69,8 @@ namespace DiveBomber::BindObj
 		vertexBufferView.SizeInBytes = bufferSize;
 		vertexBufferView.StrideInBytes = stride;
 
-		//D3D11_BUFFER_DESC bd = {};
-		//bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		//bd.Usage = D3D11_USAGE_DEFAULT;
-		//bd.CPUAccessFlags = 0u;
-		//bd.MiscFlags = 0u;
-		//bd.ByteWidth = UINT(vbuf.SizeBytes());
-		//bd.StructureByteStride = stride;
-		//D3D11_SUBRESOURCE_DATA sd = {};
-		//sd.pSysMem = vbuf.GetData();
-		//GFX_THROW_INFO(GetDevice(gfx)->CreateBuffer(&bd, &sd, &pVertexBuffer));
+		auto fenceValue = commandQueue->ExecuteCommandList(commandList.Get());
+		commandQueue->WaitForFenceValue(fenceValue);
 	}
 
 	const VertexProcess::VertexLayout& VertexBuffer::GetLayout() const noexcept

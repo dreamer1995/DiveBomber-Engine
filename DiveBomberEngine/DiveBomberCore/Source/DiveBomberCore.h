@@ -3,6 +3,10 @@
 #include "Console\Console.h"
 #include "Utility\Timer.h"
 
+#include "Graphics\BindObj\VertexBuffer.h"
+#include "Graphics\BindObj\IndexBuffer.h"
+#include "Graphics\BindObj\Geometry\Sphere.h"
+
 #include <thread>
 
 namespace DiveBomber
@@ -29,5 +33,9 @@ namespace DiveBomber
 		std::wstring command;
 
 		Utility::Timer coreTimer;
+
+		std::shared_ptr<BindObj::VertexBuffer> vertexBuffer;
+		std::shared_ptr<BindObj::IndexBuffer> indexBuffer;
+		std::shared_ptr<BindObj::IndexedTriangleList> mesh;
 	};
 }

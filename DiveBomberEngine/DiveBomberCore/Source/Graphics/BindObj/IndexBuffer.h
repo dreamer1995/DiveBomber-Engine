@@ -24,7 +24,7 @@ namespace DiveBomber::BindObj
 	protected:
 		std::string tag;
 		UINT count;
-		Microsoft::WRL::ComPtr<ID3D12Resource> indexBuffer;
+		wrl::ComPtr<ID3D12Resource> indexBuffer;
 		D3D12_INDEX_BUFFER_VIEW indexBufferView;
 	};
 }
