@@ -8,7 +8,7 @@
 
 namespace DiveBomber::BindObj
 {
-	class Sphere
+	class Sphere final
 	{
 	public:
 		static IndexedTriangleList MakeTesselated(VertexProcess::VertexLayout layout, int latDiv, int longDiv, bool withNormal)

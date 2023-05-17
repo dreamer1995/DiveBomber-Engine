@@ -112,7 +112,7 @@ namespace DiveBomber::DX
         commandQueue->ExecuteCommandLists(1, commandLists);
 
         commandAllocatorQueue.emplace(CommandAllocatorInfo{ Signal(), commandAllocator});
-        commandListQueue.push(commandList);
+        commandListQueue.push(std::move(commandList));
 
         // The ownership of the command allocator has been transferred to the ComPtr
         // in the command allocator queue. It is safe to release the reference 

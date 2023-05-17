@@ -11,7 +11,7 @@
 
 namespace DiveBomber::BindObj
 {
-	class Cube
+	class Cube final
 	{
 	public:
 		static IndexedTriangleList MakePosOnly(std::optional<VertexProcess::VertexLayout> layout = {})

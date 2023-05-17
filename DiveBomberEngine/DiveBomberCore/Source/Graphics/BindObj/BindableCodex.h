@@ -8,7 +8,7 @@
 
 namespace DiveBomber::BindObj
 {
-	class Codex
+	class Codex final
 	{
 	public:
 		template<class T, typename...Params>

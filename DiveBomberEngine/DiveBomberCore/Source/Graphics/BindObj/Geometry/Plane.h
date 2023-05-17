@@ -10,7 +10,7 @@
 
 namespace DiveBomber::BindObj
 {
-	class Plane
+	class Plane final
 	{
 	public:
 		enum class Type

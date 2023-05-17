@@ -8,7 +8,7 @@
 
 namespace DiveBomber::BindObj
 {
-	class MiscShape
+	class MiscShape final
 	{
 	public:
 		static IndexedTriangleList MakeDynamicArrow(VertexProcess::VertexLayout layout, float length)

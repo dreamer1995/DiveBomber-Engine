@@ -25,7 +25,7 @@ namespace DiveBomber::BindObj::VertexProcess
 	X( RGBAColor ) \
 	X( Count )
 
-	class VertexLayout
+	class VertexLayout final
 	{
 	public:
 		enum ElementType
@@ -130,7 +130,7 @@ namespace DiveBomber::BindObj::VertexProcess
 			return F<VertexLayout::Count>::Exec(std::forward<Args>(args)...);
 		}
 
-		class Element
+		class Element final
 		{
 		public:
 			Element(ElementType type, size_t offset);
@@ -171,7 +171,7 @@ namespace DiveBomber::BindObj::VertexProcess
 		std::vector<Element> elements;
 	};
 
-	class Vertex
+	class Vertex final
 	{
 		friend class VertexData;
 	private:
@@ -230,7 +230,7 @@ namespace DiveBomber::BindObj::VertexProcess
 		const VertexLayout& layout;
 	};
 
-	class ConstVertex
+	class ConstVertex final
 	{
 	public:
 		ConstVertex(const Vertex& v) noxnd;
@@ -243,7 +243,7 @@ namespace DiveBomber::BindObj::VertexProcess
 		Vertex vertex;
 	};
 
-	class VertexData
+	class VertexData final
 	{
 	public:
 		VertexData(VertexLayout layout, size_t size = 0u) noxnd;
