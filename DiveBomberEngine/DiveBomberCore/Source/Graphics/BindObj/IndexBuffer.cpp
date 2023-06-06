@@ -33,12 +33,12 @@ namespace DiveBomber::BindObj
 			nullptr,
 			IID_PPV_ARGS(&indexBuffer)));
 
-		wrl::ComPtr<ID3D12Resource> intermediateIndexBuffer;
-		auto commandQueue = gfx.GetCommandQueue(D3D12_COMMAND_LIST_TYPE_COPY);
-		auto commandList = commandQueue->GetCommandList();
+		auto commandList = gfx.GetCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
 		// Create an committed resource for the upload.
 		if (indices.data())
 		{
+			//wrl::ComPtr<ID3D12Resource> intermediateIndexBuffer;
+			ID3D12Resource* intermediateIndexBuffer;
 			auto heapProp1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
 			auto resDes1 = CD3DX12_RESOURCE_DESC::Buffer(bufferSize);
 
@@ -56,7 +56,7 @@ namespace DiveBomber::BindObj
 			subresourceData.SlicePitch = subresourceData.RowPitch;
 
 			UpdateSubresources(commandList,
-				indexBuffer.Get(), intermediateIndexBuffer.Get(),
+				indexBuffer.Get(), intermediateIndexBuffer,
 				0, 0, 1, &subresourceData);
 		}
 
@@ -64,9 +64,6 @@ namespace DiveBomber::BindObj
 		indexBufferView.BufferLocation = indexBuffer->GetGPUVirtualAddress();
 		indexBufferView.Format = DXGI_FORMAT_R16_UINT;
 		indexBufferView.SizeInBytes = bufferSize;
-
-		auto fenceValue = commandQueue->ExecuteCommandList(commandList);
-		commandQueue->WaitForFenceValue(fenceValue);
 	}
 
 	void IndexBuffer::Bind(Graphics& gfx) noxnd

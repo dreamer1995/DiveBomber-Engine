@@ -4,7 +4,7 @@
 
 namespace DiveBomber::BindObj
 {
-	class IndexBuffer : public Bindable
+	class IndexBuffer final : public Bindable
 	{
 	public:
 		IndexBuffer(DEGraphics::Graphics& gfx, const std::vector<unsigned short>& indices);

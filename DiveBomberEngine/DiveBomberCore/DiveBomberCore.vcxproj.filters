@@ -24,6 +24,7 @@
     <ClCompile Include="Source\Utility\Color.h" />
     <ClCompile Include="Source\Graphics\BindObj\VertexBuffer.cpp" />
     <ClCompile Include="Source\Graphics\BindObj\IndexBuffer.cpp" />
+    <ClCompile Include="Source\Graphics\DX\CommandContext.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Utility\Common.h" />
@@ -63,6 +64,7 @@
     <ClInclude Include="Source\Graphics\BindObj\Geometry\Sphere.h" />
     <ClInclude Include="Source\Utility\DEMath.h" />
     <ClInclude Include="Source\Graphics\BindObj\IndexBuffer.h" />
+    <ClInclude Include="Source\Graphics\DX\CommandContext.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource\Resource.rc" />

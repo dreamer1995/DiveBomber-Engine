@@ -67,8 +67,15 @@ namespace DiveBomber
 		mesh = std::make_shared<BindObj::IndexedTriangleList> (Sphere::MakeNormalUVed(vl, true));
 		mesh->Transform(dx::XMMatrixScaling(1, 1, 1));
 		const auto geometryTag = "$sphere." + std::to_string(1);
+
+		auto commandQueue = wnd->Gfx().GetCommandQueue(D3D12_COMMAND_LIST_TYPE_COPY);
+		auto commandList = wnd->Gfx().GetCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
+
 		vertexBuffer = std::make_shared<VertexBuffer>(wnd->Gfx(), geometryTag, mesh->vertices);
 		indexBuffer = std::make_shared<IndexBuffer>(wnd->Gfx(), geometryTag, mesh->indices);
+
+		auto fenceValue = commandQueue->ExecuteCommandList(commandList);
+		commandQueue->WaitForFenceValue(fenceValue);
 
 		auto vlv = vertexBuffer->GetLayout().GetD3DLayout();
 		//auto vlv = std::vector<D3D12_INPUT_ELEMENT_DESC>();

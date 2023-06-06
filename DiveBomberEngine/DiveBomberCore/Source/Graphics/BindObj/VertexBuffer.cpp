@@ -35,12 +35,13 @@ namespace DiveBomber::BindObj
 			nullptr,
 			IID_PPV_ARGS(&vertexBuffer)));
 
-		wrl::ComPtr<ID3D12Resource> intermediateVertexBuffer;
-		auto commandQueue = gfx.GetCommandQueue(D3D12_COMMAND_LIST_TYPE_COPY);
-		auto commandList = commandQueue->GetCommandList();
+		//auto commandList = commandQueue->GetCommandList();
+		auto commandList = gfx.GetCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
 		// Create an committed resource for the upload.
 		if (vbuf.GetData())
 		{
+			//wrl::ComPtr<ID3D12Resource> intermediateVertexBuffer;
+			ID3D12Resource* intermediateVertexBuffer;
 			auto heapProp1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
 			auto resDes1 = CD3DX12_RESOURCE_DESC::Buffer(bufferSize);
 
@@ -58,7 +59,7 @@ namespace DiveBomber::BindObj
 			subresourceData.SlicePitch = subresourceData.RowPitch;
 
 			UpdateSubresources(commandList,
-				vertexBuffer.Get(), intermediateVertexBuffer.Get(),
+				vertexBuffer.Get(), intermediateVertexBuffer,
 				0, 0, 1, &subresourceData);
 		}
 
@@ -66,9 +67,6 @@ namespace DiveBomber::BindObj
 		vertexBufferView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
 		vertexBufferView.SizeInBytes = bufferSize;
 		vertexBufferView.StrideInBytes = stride;
-
-		auto fenceValue = commandQueue->ExecuteCommandList(commandList);
-		commandQueue->WaitForFenceValue(fenceValue);
 	}
 
 	const VertexProcess::VertexLayout& VertexBuffer::GetLayout() const noexcept

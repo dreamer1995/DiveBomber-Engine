@@ -6,7 +6,7 @@
 
 namespace DiveBomber::BindObj
 {
-	class VertexBuffer : public Bindable
+	class VertexBuffer final : public Bindable
 	{
 	public:
 		VertexBuffer(DEGraphics::Graphics& gfx, const std::string& tag, const VertexProcess::VertexData& vbuf);

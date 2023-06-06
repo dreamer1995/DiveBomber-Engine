@@ -79,6 +79,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Graphics\DX\CommandContext.cpp" />
     <ClCompile Include="Source\Graphics\BindObj\IndexBuffer.cpp" />
     <ClCompile Include="Source\Graphics\DX\CommandQueue.cpp" />
     <ClCompile Include="Source\Utility\Color.h" />
@@ -104,6 +105,7 @@
     <ClCompile Include="Source\Graphics\BindObj\VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Graphics\DX\CommandContext.h" />
     <ClInclude Include="Source\Graphics\BindObj\BindableCodex.h" />
     <ClInclude Include="Source\Graphics\BindObj\Geometry\Cube.h" />
     <ClInclude Include="Source\Graphics\BindObj\Geometry\IndexedTriangleList.h" />

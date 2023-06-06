@@ -496,7 +496,7 @@ namespace DiveBomber::DEGraphics
 				return copyCommandList.Get();
 			else
 			{
-				copyCommandList = GetCommandQueue(D3D12_COMMAND_LIST_TYPE_DIRECT)->GetCommandList();
+				copyCommandList = GetCommandQueue(D3D12_COMMAND_LIST_TYPE_COPY)->GetCommandList();
 
 				return copyCommandList.Get();
 			}
