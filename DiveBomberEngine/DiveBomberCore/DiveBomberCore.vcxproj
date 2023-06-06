@@ -103,6 +103,7 @@
     <ClCompile Include="Source\WinMain.cpp" />
     <ClCompile Include="Source\Graphics\BindObj\Vertex.cpp" />
     <ClCompile Include="Source\Graphics\BindObj\VertexBuffer.cpp" />
+    <ClCompile Include="Source\Graphics\BindObj\Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Graphics\DX\CommandContext.h" />
@@ -143,6 +144,7 @@
     <ClInclude Include="Source\Graphics\DEWrl.h" />
     <ClInclude Include="Source\Graphics\BindObj\Vertex.h" />
     <ClInclude Include="Source\Graphics\BindObj\VertexBuffer.h" />
+    <ClInclude Include="Source\Graphics\BindObj\Shader.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource\Resource.rc" />

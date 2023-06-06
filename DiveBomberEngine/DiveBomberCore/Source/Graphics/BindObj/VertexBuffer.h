@@ -23,7 +23,6 @@ namespace DiveBomber::BindObj
 		std::string GetUID() const noexcept override;
 	private:
 		static std::string GenerateUID_(const std::string& tag);
-	protected:
 		std::string tag;
 		UINT stride;
 		wrl::ComPtr<ID3D12Resource> vertexBuffer;

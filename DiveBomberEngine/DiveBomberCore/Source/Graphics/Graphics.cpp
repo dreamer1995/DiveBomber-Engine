@@ -241,32 +241,6 @@ namespace DiveBomber::DEGraphics
 
 	void Graphics::Load(std::vector<D3D12_INPUT_ELEMENT_DESC> vlv)
 	{
-		//auto commandQueue = GetCommandQueue(D3D12_COMMAND_LIST_TYPE_COPY);
-		//copyCommandList = commandQueue->GetCommandList();
-		//auto commandList = copyCommandList.Get();
-
-		//// Upload vertex buffer data.
-		//wrl::ComPtr<ID3D12Resource> intermediateVertexBuffer;
-		//UpdateBufferResource(commandList,
-		//	&m_VertexBuffer, &intermediateVertexBuffer,
-		//	_countof(g_Vertices), sizeof(VertexPosColor), g_Vertices);
-
-		//// Create the vertex buffer view.
-		//m_VertexBufferView.BufferLocation = m_VertexBuffer->GetGPUVirtualAddress();
-		//m_VertexBufferView.SizeInBytes = sizeof(g_Vertices);
-		//m_VertexBufferView.StrideInBytes = sizeof(VertexPosColor);
-
-		//// Upload index buffer data.
-		//wrl::ComPtr<ID3D12Resource> intermediateIndexBuffer;
-		//UpdateBufferResource(commandList,
-		//	&m_IndexBuffer, &intermediateIndexBuffer,
-		//	_countof(g_Indicies), sizeof(WORD), g_Indicies);
-
-		//// Create index buffer view.
-		//m_IndexBufferView.BufferLocation = m_IndexBuffer->GetGPUVirtualAddress();
-		//m_IndexBufferView.Format = DXGI_FORMAT_R16_UINT;
-		//m_IndexBufferView.SizeInBytes = sizeof(g_Indicies);
-
 		// Create the descriptor heap for the depth-stencil view.
 		D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc = {};
 		dsvHeapDesc.NumDescriptors = 1;
@@ -279,7 +253,8 @@ namespace DiveBomber::DEGraphics
 
 		// Load the vertex shader.
 		wrl::ComPtr<ID3DBlob> vertexShaderBlob;
-		GFX_THROW_INFO(D3DReadFileToBlob(L"VertexShader.cso", &vertexShaderBlob));
+		//TODO!!!!!!!!!!
+		/*GFX_THROW_INFO*/(D3DReadFileToBlob(L"VertexShader.csomotherfvcker", &vertexShaderBlob));
 
 		// Load the pixel shader.
 		wrl::ComPtr<ID3DBlob> pixelShaderBlob;
@@ -356,9 +331,6 @@ namespace DiveBomber::DEGraphics
 			sizeof(PipelineStateStream), &pipelineStateStream
 		};
 		GFX_THROW_INFO(device->CreatePipelineState(&pipelineStateStreamDesc, IID_PPV_ARGS(&m_PipelineState)));
-
-		//auto fenceValue = commandQueue->ExecuteCommandList(commandList);
-		//commandQueue->WaitForFenceValue(fenceValue);
 
 		m_ContentLoaded = true;
 
@@ -454,8 +426,6 @@ namespace DiveBomber::DEGraphics
 		commandList->SetGraphicsRootSignature(m_RootSignature.Get());
 
 		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		//commandList->IASetVertexBuffers(0u, 1u, &m_VertexBufferView);
-		//commandList->IASetIndexBuffer(&m_IndexBufferView);
 
 		commandList->RSSetViewports(1, &m_Viewport);
 		commandList->RSSetScissorRects(1, &m_ScissorRect);
