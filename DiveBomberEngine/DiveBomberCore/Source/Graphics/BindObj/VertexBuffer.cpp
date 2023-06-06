@@ -24,8 +24,6 @@ namespace DiveBomber::BindObj
 		auto heapProp = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
 		auto resDes = CD3DX12_RESOURCE_DESC::Buffer(bufferSize, D3D12_RESOURCE_FLAG_NONE);
 
-		void* bufferData = (void*)vbuf.GetData();
-
 		// Create a committed resource for the GPU resource in a default heap.
 		GFX_THROW_INFO(gfx.GetDecive()->CreateCommittedResource(
 			&heapProp,
@@ -35,13 +33,9 @@ namespace DiveBomber::BindObj
 			nullptr,
 			IID_PPV_ARGS(&vertexBuffer)));
 
-		//auto commandList = commandQueue->GetCommandList();
-		auto commandList = gfx.GetCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
 		// Create an committed resource for the upload.
 		if (vbuf.GetData())
 		{
-			//wrl::ComPtr<ID3D12Resource> intermediateVertexBuffer;
-			ID3D12Resource* intermediateVertexBuffer;
 			auto heapProp1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
 			auto resDes1 = CD3DX12_RESOURCE_DESC::Buffer(bufferSize);
 
@@ -51,15 +45,16 @@ namespace DiveBomber::BindObj
 				&resDes1,
 				D3D12_RESOURCE_STATE_GENERIC_READ,
 				nullptr,
-				IID_PPV_ARGS(&intermediateVertexBuffer)));
+				IID_PPV_ARGS(&vertexUploadBuffer)));
 
 			D3D12_SUBRESOURCE_DATA subresourceData = {};
-			subresourceData.pData = bufferData;
+			subresourceData.pData = vbuf.GetData();
 			subresourceData.RowPitch = bufferSize;
 			subresourceData.SlicePitch = subresourceData.RowPitch;
 
+			auto commandList = gfx.GetCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
 			UpdateSubresources(commandList,
-				vertexBuffer.Get(), intermediateVertexBuffer,
+				vertexBuffer.Get(), vertexUploadBuffer.Get(),
 				0, 0, 1, &subresourceData);
 		}
 
