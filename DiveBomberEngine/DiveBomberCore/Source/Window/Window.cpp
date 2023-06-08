@@ -529,7 +529,7 @@ namespace DiveBomber::DEWindow
 			if (msg.message == WM_QUIT)
 			{
 				// return optional wrapping int (arg to PostQuitMessage is in wparam) signals quit
-				return (int)msg.wParam;
+				return static_cast<int>(msg.wParam);
 			}
 
 			// TranslateMessage will post auxilliary WM_CHAR messages from key msgs

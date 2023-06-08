@@ -253,8 +253,7 @@ namespace DiveBomber::DEGraphics
 
 		// Load the vertex shader.
 		wrl::ComPtr<ID3DBlob> vertexShaderBlob;
-		//TODO!!!!!!!!!!
-		/*GFX_THROW_INFO*/(D3DReadFileToBlob(L"VertexShader.csomotherfvcker", &vertexShaderBlob));
+		GFX_THROW_INFO(D3DReadFileToBlob(L"VertexShader.cso", &vertexShaderBlob));
 
 		// Load the pixel shader.
 		wrl::ComPtr<ID3DBlob> pixelShaderBlob;

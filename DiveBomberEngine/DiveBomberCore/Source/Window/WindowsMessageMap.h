@@ -21,6 +21,7 @@
 #include "DEWindows.h"
 
 #include <unordered_map>
+#include <string>
 
 namespace DiveBomber::DEWindow
 {

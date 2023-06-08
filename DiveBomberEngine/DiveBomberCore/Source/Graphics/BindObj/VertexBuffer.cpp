@@ -29,7 +29,7 @@ namespace DiveBomber::BindObj
 			&heapProp,
 			D3D12_HEAP_FLAG_NONE,
 			&resDes,
-			D3D12_RESOURCE_STATE_COPY_DEST,
+			D3D12_RESOURCE_STATE_COMMON,
 			nullptr,
 			IID_PPV_ARGS(&vertexBuffer)));
 

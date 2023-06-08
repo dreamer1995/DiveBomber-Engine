@@ -29,18 +29,38 @@ int CALLBACK wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
 	try
 	{
-		return DiveBomberCore{}.GameLoop();
+		int returnValue = DiveBomberCore{}.GameLoop();
+		atexit(&ReportLiveObjects);
+		return returnValue;
 	}
 	catch (const Exception& e)
 	{
+		MSG msg = { 0 };
+		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
 		MessageBox(nullptr, e.whatW(), e.GetType(), MB_OK | MB_ICONEXCLAMATION);
 	}
 	catch (const std::exception& e)
 	{
+		MSG msg = { 0 };
+		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
 		MessageBox(nullptr, Utility::ToWide(e.what()), L"Buildin Exception", MB_OK | MB_ICONEXCLAMATION);
 	}
 	catch (...)
 	{
+		MSG msg = { 0 };
+		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
 		MessageBox(nullptr, L"No details available", L"Unknown Exception", MB_OK | MB_ICONEXCLAMATION);
 	}
 
