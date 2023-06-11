@@ -44,23 +44,23 @@ namespace DiveBomber::DX
         WaitForFenceValue(Signal());
     }
 
-    ID3D12CommandAllocator* CommandQueue::CreateCommandAllocator()
+    wrl::ComPtr<ID3D12CommandAllocator> CommandQueue::CreateCommandAllocator()
     {
-        ID3D12CommandAllocator* commandAllocator;
+        wrl::ComPtr<ID3D12CommandAllocator> commandAllocator;
         HRESULT hr;
         GFX_THROW_INFO(device->CreateCommandAllocator(type, IID_PPV_ARGS(&commandAllocator)));
         return commandAllocator;
     }
 
-    ID3D12GraphicsCommandList2* CommandQueue::CreateCommandList(ID3D12CommandAllocator* commandAllocator)
+    wrl::ComPtr<ID3D12GraphicsCommandList2> CommandQueue::CreateCommandList(wrl::ComPtr<ID3D12CommandAllocator> commandAllocator)
     {
-        ID3D12GraphicsCommandList2* commandList;
+        wrl::ComPtr<ID3D12GraphicsCommandList2> commandList;
         HRESULT hr;
-        GFX_THROW_INFO(device->CreateCommandList(0, type, commandAllocator, nullptr, IID_PPV_ARGS(&commandList)));
+        GFX_THROW_INFO(device->CreateCommandList(0, type, commandAllocator.Get(), nullptr, IID_PPV_ARGS(&commandList)));
         return commandList;
     }
 
-    ID3D12GraphicsCommandList2* CommandQueue::GetCommandList()
+    wrl::ComPtr<ID3D12GraphicsCommandList2> CommandQueue::GetCommandList()
     {
         wrl::ComPtr<ID3D12CommandAllocator> commandAllocator;
         wrl::ComPtr<ID3D12GraphicsCommandList2> commandList;
@@ -97,7 +97,7 @@ namespace DiveBomber::DX
         return commandList.Get();
     }
 
-    uint64_t CommandQueue::ExecuteCommandList(ID3D12GraphicsCommandList2* commandList)
+    uint64_t CommandQueue::ExecuteCommandList(wrl::ComPtr<ID3D12GraphicsCommandList2> commandList)
     {
         commandList->Close();
 
@@ -107,7 +107,7 @@ namespace DiveBomber::DX
         HRESULT hr;
         GFX_THROW_INFO(commandList->GetPrivateData(__uuidof(ID3D12CommandAllocator), &dataSize, &commandAllocator));
 
-        ID3D12CommandList* const commandLists[] = { commandList };
+        ID3D12CommandList* const commandLists[] = { commandList.Get()};
 
         commandQueue->ExecuteCommandLists(1, commandLists);
 

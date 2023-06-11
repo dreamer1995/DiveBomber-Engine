@@ -15,11 +15,11 @@ namespace DiveBomber::DX
 		uint64_t Signal() noexcept;
 		void Flush() noexcept;
 
-		ID3D12CommandAllocator* CreateCommandAllocator();
-		ID3D12GraphicsCommandList2* CreateCommandList(ID3D12CommandAllocator* commandAllocator);
+		wrl::ComPtr<ID3D12CommandAllocator> CreateCommandAllocator();
+		wrl::ComPtr<ID3D12GraphicsCommandList2> CreateCommandList(wrl::ComPtr<ID3D12CommandAllocator> commandAllocator);
 
-		ID3D12GraphicsCommandList2* GetCommandList();
-		uint64_t ExecuteCommandList(ID3D12GraphicsCommandList2* commandList);
+		wrl::ComPtr<ID3D12GraphicsCommandList2> GetCommandList();
+		uint64_t ExecuteCommandList(wrl::ComPtr<ID3D12GraphicsCommandList2> commandList);
 		void WaitForFenceValue(uint64_t inputFenceValue) noexcept;
 		bool IsFenceComplete(uint64_t inputFenceValue) noexcept;
 	private:

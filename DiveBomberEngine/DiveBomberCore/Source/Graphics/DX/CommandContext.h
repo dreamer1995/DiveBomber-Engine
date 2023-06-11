@@ -13,7 +13,7 @@ namespace DiveBomber::DX
 	private:
 		DEGraphics::Graphics& gfx;
 		D3D12_COMMAND_LIST_TYPE type;
-		ID3D12GraphicsCommandList2* commandList;
+		wrl::ComPtr<ID3D12GraphicsCommandList2> commandList;
 		DX::CommandQueue* commandQueue;
 	};
 }

@@ -12,7 +12,7 @@ namespace DiveBomber::DX
 	}
 	void CommandContext::BindBuffer(ID3D12Resource* destBuf, ID3D12Resource* intermediateBuf, UINT numSubresources, D3D12_SUBRESOURCE_DATA subData[])
 	{
-		UpdateSubresources(commandList,
+		UpdateSubresources(commandList.Get(),
 			destBuf, intermediateBuf,
 			0, 0, numSubresources, subData);
 	}
