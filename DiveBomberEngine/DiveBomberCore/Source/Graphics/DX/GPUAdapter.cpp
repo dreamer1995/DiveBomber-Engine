@@ -51,8 +51,8 @@ namespace DiveBomber::DX
         }
     }
 
-    IDXGIAdapter4* GPUAdapter::GetAdapter() noexcept
+    wrl::ComPtr<IDXGIAdapter4> GPUAdapter::GetAdapter() noexcept
     {
-        return dxgiAdapter.Get();
+        return dxgiAdapter;
     }
 }

@@ -8,9 +8,9 @@ namespace DiveBomber::DX
 	class CommandQueue final
 	{
 	public:
-		CommandQueue(ID3D12Device2* inputDevice, D3D12_COMMAND_LIST_TYPE intputType = D3D12_COMMAND_LIST_TYPE_DIRECT);
+		CommandQueue(wrl::ComPtr<ID3D12Device2> inputDevice, D3D12_COMMAND_LIST_TYPE intputType = D3D12_COMMAND_LIST_TYPE_DIRECT);
 		~CommandQueue();
-		ID3D12CommandQueue* GetCommandQueue() noexcept;
+		wrl::ComPtr<ID3D12CommandQueue> GetCommandQueue() noexcept;
 
 		uint64_t Signal() noexcept;
 		void Flush() noexcept;

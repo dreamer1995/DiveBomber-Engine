@@ -17,7 +17,7 @@ namespace DiveBomber::BindObj
 		};
 	public:
 		Shader(DEGraphics::Graphics& inputGfx, const std::string& inputPath, ShaderType inputType);
-		ID3DBlob* GetBytecode() const noexcept;
+		wrl::ComPtr<ID3DBlob> GetBytecode() const noexcept;
 		bool RecompileShader();
 	private:
 		DEGraphics::Graphics& gfx;

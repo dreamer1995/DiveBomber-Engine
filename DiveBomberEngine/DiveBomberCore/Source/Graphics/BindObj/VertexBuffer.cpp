@@ -53,7 +53,7 @@ namespace DiveBomber::BindObj
 			subresourceData.SlicePitch = subresourceData.RowPitch;
 
 			auto commandList = gfx.GetCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
-			UpdateSubresources(commandList,
+			UpdateSubresources(commandList.Get(),
 				vertexBuffer.Get(), vertexUploadBuffer.Get(),
 				0, 0, 1, &subresourceData);
 		}

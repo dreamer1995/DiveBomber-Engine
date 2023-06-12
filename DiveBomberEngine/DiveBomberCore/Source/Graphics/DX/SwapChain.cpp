@@ -4,7 +4,7 @@ namespace DiveBomber::DX
 {
     using namespace DEException;
 
-    SwapChain::SwapChain(HWND hWnd, ID3D12CommandQueue* commandQueue)
+    SwapChain::SwapChain(HWND hWnd, wrl::ComPtr<ID3D12CommandQueue> commandQueue)
     {
         wrl::ComPtr<IDXGIFactory4> dxgiFactory4;
         UINT createFactoryFlags = 0;
@@ -31,7 +31,7 @@ namespace DiveBomber::DX
 
         wrl::ComPtr<IDXGISwapChain1> swapChain1;
         GFX_THROW_INFO(dxgiFactory4->CreateSwapChainForHwnd(
-            commandQueue,
+            commandQueue.Get(),
             hWnd/*nullptr*/,
             &swapChainDesc,
             nullptr,
@@ -71,12 +71,12 @@ namespace DiveBomber::DX
         return allowTearing == TRUE;
     }
 
-    IDXGISwapChain4* SwapChain::GetSwapChain() noexcept
+    wrl::ComPtr<IDXGISwapChain4> SwapChain::GetSwapChain() noexcept
     {
-        return swapChain.Get();
+        return swapChain;
     }
 
-    void SwapChain::UpdateMainRT(ID3D12Device2* device, ID3D12DescriptorHeap* SWRTDesHeap)
+    void SwapChain::UpdateMainRT(wrl::ComPtr<ID3D12Device2> device, wrl::ComPtr<ID3D12DescriptorHeap> SWRTDesHeap)
     {
         auto rtvDescriptorSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
@@ -96,10 +96,10 @@ namespace DiveBomber::DX
         }
     }
 
-    ID3D12Resource* SwapChain::GetBackBuffer(int i) noexcept
+    wrl::ComPtr<ID3D12Resource> SwapChain::GetBackBuffer(int i) noexcept
     {
         assert(i < SwapChainBufferCount);
-        return backBuffers[i].Get();
+        return backBuffers[i];
     }
 
     void SwapChain::ResetBackBuffer(int i) noexcept

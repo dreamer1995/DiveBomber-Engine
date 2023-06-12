@@ -41,7 +41,7 @@ namespace DiveBomber::DEGraphics
 		void EndFrame();
 		HANDLE GetFenceEvent() noexcept;
 		void ReSizeMainRT(uint32_t inputWidth, uint32_t inputHeight);
-		DX::CommandQueue* GetCommandQueue(D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT) noexcept;
+		std::shared_ptr<DX::CommandQueue> GetCommandQueue(D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT) noexcept;
 		void Flush() noexcept;
 		//temp
 		void Load(std::vector<D3D12_INPUT_ELEMENT_DESC> vlv);
@@ -52,8 +52,8 @@ namespace DiveBomber::DEGraphics
 
 		void ResizeDepthBuffer(int width, int height);
 		void OnRender(float time);
-		ID3D12Device2* GetDecive() noexcept;
-		ID3D12GraphicsCommandList2* GetCommandList(D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT) noexcept;
+		wrl::ComPtr<ID3D12Device2> GetDecive() noexcept;
+		wrl::ComPtr<ID3D12GraphicsCommandList2> GetCommandList(D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT) noexcept;
 	private:
 		UINT width = 0;
 		UINT height = 0;
@@ -67,9 +67,9 @@ namespace DiveBomber::DEGraphics
 		//std::shared_ptr<Bind::RenderTarget> pTarget;
 		std::unique_ptr<DX::GPUAdapter> gpuAdapter;
 		std::unique_ptr<DX::DXDevice> dxDevice;
-		std::unique_ptr<DX::CommandQueue> directCommandQueue;
-		std::unique_ptr<DX::CommandQueue> computeCommandQueue;
-		std::unique_ptr<DX::CommandQueue> copyCommandQueue;
+		std::shared_ptr<DX::CommandQueue> directCommandQueue;
+		std::shared_ptr<DX::CommandQueue> computeCommandQueue;
+		std::shared_ptr<DX::CommandQueue> copyCommandQueue;
 		std::unique_ptr<DX::SwapChain> swapChain;
 		std::unique_ptr<DX::DescriptorHeap> SCRTDesHeap;
 		HANDLE fenceEvent = 0;

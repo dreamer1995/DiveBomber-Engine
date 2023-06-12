@@ -4,7 +4,7 @@ namespace DiveBomber::DX
 {
     using namespace DEException;
 
-    CommandQueue::CommandQueue(ID3D12Device2* inputDevice, D3D12_COMMAND_LIST_TYPE intputType)
+    CommandQueue::CommandQueue(wrl::ComPtr<ID3D12Device2> inputDevice, D3D12_COMMAND_LIST_TYPE intputType)
     {
         type = intputType;
         device = inputDevice;
@@ -27,9 +27,9 @@ namespace DiveBomber::DX
         CloseHandle(fenceEvent);
     }
 
-    ID3D12CommandQueue* CommandQueue::GetCommandQueue() noexcept
+    wrl::ComPtr<ID3D12CommandQueue> CommandQueue::GetCommandQueue() noexcept
     {
-        return commandQueue.Get();
+        return commandQueue;
     }
 
     uint64_t CommandQueue::Signal() noexcept
@@ -87,14 +87,14 @@ namespace DiveBomber::DX
         }
         else
         {
-            commandList = CreateCommandList(commandAllocator.Get());
+            commandList = CreateCommandList(commandAllocator);
         }
 
         // Associate the command allocator with the command list so that it can be
         // retrieved when the command list is executed.
         GFX_THROW_INFO(commandList->SetPrivateDataInterface(__uuidof(ID3D12CommandAllocator), commandAllocator.Get()));
 
-        return commandList.Get();
+        return commandList;
     }
 
     uint64_t CommandQueue::ExecuteCommandList(wrl::ComPtr<ID3D12GraphicsCommandList2> commandList)

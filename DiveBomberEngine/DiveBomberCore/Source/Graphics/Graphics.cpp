@@ -46,12 +46,12 @@ namespace DiveBomber::DEGraphics
 
 		auto commandQueue = GetCommandQueue();
 		directCommandList = commandQueue->GetCommandList();
-		auto commandList = directCommandList.Get();
+		auto commandList = directCommandList;
 
 		// Clear the render target.
 		{
 			CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
-				backBuffer,
+				backBuffer.Get(),
 				D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
 			commandList->ResourceBarrier(1, &barrier);
@@ -70,12 +70,12 @@ namespace DiveBomber::DEGraphics
 		auto backBuffer = swapChain->GetBackBuffer(currentBackBufferIndex);
 
 		auto commandQueue = GetCommandQueue();
-		auto commandList = directCommandList.Get();
+		auto commandList = directCommandList;
 
 		// Present
 		{
 			CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
-				backBuffer,
+				backBuffer.Get(),
 				D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 			commandList->ResourceBarrier(1, &barrier);
 
@@ -136,18 +136,18 @@ namespace DiveBomber::DEGraphics
 		return height;
 	}
 
-	CommandQueue* Graphics::GetCommandQueue(D3D12_COMMAND_LIST_TYPE type) noexcept
+	std::shared_ptr<CommandQueue> Graphics::GetCommandQueue(D3D12_COMMAND_LIST_TYPE type) noexcept
 	{
 		switch (type)
 		{
 		case D3D12_COMMAND_LIST_TYPE_DIRECT:
-			return directCommandQueue.get();
+			return directCommandQueue;
 			break;
 		case D3D12_COMMAND_LIST_TYPE_COMPUTE:
-			return computeCommandQueue.get();
+			return computeCommandQueue;
 			break;
 		case D3D12_COMMAND_LIST_TYPE_COPY:
-			return copyCommandQueue.get();
+			return copyCommandQueue;
 			break;
 		default:
 			assert(false && "Invalid command queue type.");
@@ -382,7 +382,7 @@ namespace DiveBomber::DEGraphics
 		}
 	}
 
-	void ClearDepth(ID3D12GraphicsCommandList2* commandList,
+	void ClearDepth(wrl::ComPtr<ID3D12GraphicsCommandList2> commandList,
 		D3D12_CPU_DESCRIPTOR_HANDLE dsv, FLOAT depth = 1.0f)
 	{
 		commandList->ClearDepthStencilView(dsv, D3D12_CLEAR_FLAG_DEPTH, depth, 0, 0, nullptr);
@@ -390,7 +390,7 @@ namespace DiveBomber::DEGraphics
 
 	void Graphics::OnRender(float time)
 	{
-		auto commandList = directCommandList.Get();
+		auto commandList = directCommandList;
 
 		using namespace DirectX;
 		// Update the model matrix.
@@ -439,22 +439,22 @@ namespace DiveBomber::DEGraphics
 		//commandList->DrawIndexedInstanced(_countof(g_Indicies), 1, 0, 0, 0);
 	}
 
-	ID3D12Device2* Graphics::GetDecive() noexcept
+	wrl::ComPtr<ID3D12Device2> Graphics::GetDecive() noexcept
 	{
 		return dxDevice->GetDecive();
 	}
 
-	ID3D12GraphicsCommandList2* Graphics::GetCommandList(D3D12_COMMAND_LIST_TYPE type) noexcept
+	wrl::ComPtr<ID3D12GraphicsCommandList2> Graphics::GetCommandList(D3D12_COMMAND_LIST_TYPE type) noexcept
 	{
 		switch (type)
 		{
 		case D3D12_COMMAND_LIST_TYPE_DIRECT:
 			if (directCommandList)
-				return directCommandList.Get();
+				return directCommandList;
 			else
 			{
 				directCommandList = GetCommandQueue(D3D12_COMMAND_LIST_TYPE_DIRECT)->GetCommandList();
-				return directCommandList.Get();
+				return directCommandList;
 			}
 			break;
 		case D3D12_COMMAND_LIST_TYPE_COMPUTE:
@@ -462,12 +462,12 @@ namespace DiveBomber::DEGraphics
 			break;
 		case D3D12_COMMAND_LIST_TYPE_COPY:
 			if (copyCommandList)
-				return copyCommandList.Get();
+				return copyCommandList;
 			else
 			{
 				copyCommandList = GetCommandQueue(D3D12_COMMAND_LIST_TYPE_COPY)->GetCommandList();
 
-				return copyCommandList.Get();
+				return copyCommandList;
 			}
 			break;
 		default:

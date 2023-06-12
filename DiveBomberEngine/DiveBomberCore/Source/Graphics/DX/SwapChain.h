@@ -6,11 +6,11 @@ namespace DiveBomber::DX
 	class SwapChain final
 	{
 	public:
-		SwapChain(HWND hWnd, ID3D12CommandQueue* commandQueue);
+		SwapChain(HWND hWnd, wrl::ComPtr<ID3D12CommandQueue> commandQueue);
 		bool CheckTearingSupport();
-		IDXGISwapChain4* GetSwapChain() noexcept;
-		void UpdateMainRT(ID3D12Device2* device, ID3D12DescriptorHeap* SWRTDesHeap);
-		ID3D12Resource* GetBackBuffer(int i) noexcept;
+		wrl::ComPtr<IDXGISwapChain4> GetSwapChain() noexcept;
+		void UpdateMainRT(wrl::ComPtr<ID3D12Device2> device, wrl::ComPtr<ID3D12DescriptorHeap> SWRTDesHeap);
+		wrl::ComPtr<ID3D12Resource> GetBackBuffer(int i) noexcept;
 		void ResetBackBuffer(int i) noexcept;
 	private:
 		wrl::ComPtr<IDXGISwapChain4> swapChain;
