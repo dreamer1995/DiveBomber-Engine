@@ -14,9 +14,15 @@ namespace DiveBomber
 
 	DiveBomberCore::DiveBomberCore()
 	{
-		wnd = std::make_unique<Window>(L"DiveBomber Engine");
-		if(EnableConsole)
+		if (EnableConsole)
+		{
 			console = std::make_unique<Console>();
+			threadTasks.emplace_back(std::thread{
+				&Console::GetInput, console.get(), std::ref(command)
+				});
+		}
+			
+		wnd = std::make_unique<Window>(L"DiveBomber Engine");
 	}
 
 	DiveBomberCore::~DiveBomberCore()
@@ -30,7 +36,6 @@ namespace DiveBomber
 				task.join();
 			}
 		}
-		
 	}
 
 	int DiveBomberCore::GameLoop()
@@ -53,9 +58,6 @@ namespace DiveBomber
 
 	void DiveBomberCore::Start()
 	{
-		if(EnableConsole)
-			threadTasks.emplace_back(std::thread{ &Console::GetInput, console.get(), std::ref(command) });
-
 		using namespace DiveBomber::BindObj;
 		using namespace DiveBomber::BindObj::VertexProcess;
 		VertexLayout vl;
