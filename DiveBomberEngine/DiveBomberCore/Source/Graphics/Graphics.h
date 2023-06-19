@@ -45,11 +45,6 @@ namespace DiveBomber::DEGraphics
 		void Flush() noexcept;
 		//temp
 		void Load(std::vector<D3D12_INPUT_ELEMENT_DESC> vlv);
-		void UpdateBufferResource(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList2> commandList,
-			ID3D12Resource** pDestinationResource, ID3D12Resource** pIntermediateResource,
-			size_t numElements, size_t elementSize, const void* bufferData,
-			D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE);
-
 		void ResizeDepthBuffer(int width, int height);
 		void OnRender(float time);
 		wrl::ComPtr<ID3D12Device2> GetDecive() noexcept;

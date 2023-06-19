@@ -26,6 +26,7 @@
     <ClCompile Include="Source\Graphics\BindObj\IndexBuffer.cpp" />
     <ClCompile Include="Source\Graphics\DX\CommandContext.cpp" />
     <ClCompile Include="Source\Graphics\BindObj\Shader.cpp" />
+    <ClCompile Include="Source\Graphics\BindObj\RootSignature.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Utility\Common.h" />
@@ -67,6 +68,7 @@
     <ClInclude Include="Source\Graphics\BindObj\IndexBuffer.h" />
     <ClInclude Include="Source\Graphics\DX\CommandContext.h" />
     <ClInclude Include="Source\Graphics\BindObj\Shader.h" />
+    <ClInclude Include="Source\Graphics\BindObj\RootSignature.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource\Resource.rc" />

@@ -82,6 +82,7 @@
     <ClCompile Include="Source\Graphics\DX\CommandContext.cpp" />
     <ClCompile Include="Source\Graphics\BindObj\IndexBuffer.cpp" />
     <ClCompile Include="Source\Graphics\DX\CommandQueue.cpp" />
+    <ClCompile Include="Source\Graphics\BindObj\RootSignature.cpp" />
     <ClCompile Include="Source\Utility\Color.h" />
     <ClCompile Include="Source\Utility\Common.cpp" />
     <ClCompile Include="Source\Console\Console.cpp" />
@@ -120,6 +121,7 @@
     <ClInclude Include="Source\Graphics\DX\d3dx12.h" />
     <ClInclude Include="Source\Graphics\DX\DescriptorHeap.h" />
     <ClInclude Include="Source\DiveBomberCore.h" />
+    <ClInclude Include="Source\Graphics\BindObj\RootSignature.h" />
     <ClInclude Include="Source\Utility\Common.h" />
     <ClInclude Include="Source\Graphics\DX\DXDevice.h" />
     <ClInclude Include="Source\Exception\DxgiInfoManager.h" />

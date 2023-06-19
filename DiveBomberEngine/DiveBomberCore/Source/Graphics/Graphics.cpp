@@ -162,83 +162,6 @@ namespace DiveBomber::DEGraphics
 		copyCommandQueue->Flush();
 	}
 
-	void Graphics::UpdateBufferResource(
-		wrl::ComPtr<ID3D12GraphicsCommandList2> commandList,
-		ID3D12Resource** pDestinationResource,
-		ID3D12Resource** pIntermediateResource,
-		size_t numElements, size_t elementSize, const void* bufferData,
-		D3D12_RESOURCE_FLAGS flags)
-	{
-		auto device = dxDevice->GetDecive();
-
-		size_t bufferSize = numElements * elementSize;
-
-		HRESULT hr;
-		auto heapProp = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
-		auto resDes = CD3DX12_RESOURCE_DESC::Buffer(bufferSize, flags);
-
-		// Create a committed resource for the GPU resource in a default heap.
-		GFX_THROW_INFO(device->CreateCommittedResource(
-			&heapProp,
-			D3D12_HEAP_FLAG_NONE,
-			&resDes,
-			D3D12_RESOURCE_STATE_COPY_DEST,
-			nullptr,
-			IID_PPV_ARGS(pDestinationResource)));
-
-		// Create an committed resource for the upload.
-		if (bufferData)
-		{
-			auto heapProp1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
-			auto resDes1 = CD3DX12_RESOURCE_DESC::Buffer(bufferSize);
-
-			GFX_THROW_INFO(device->CreateCommittedResource(
-				&heapProp1,
-				D3D12_HEAP_FLAG_NONE,
-				&resDes1,
-				D3D12_RESOURCE_STATE_GENERIC_READ,
-				nullptr,
-				IID_PPV_ARGS(pIntermediateResource)));
-
-			D3D12_SUBRESOURCE_DATA subresourceData = {};
-			subresourceData.pData = bufferData;
-			subresourceData.RowPitch = bufferSize;
-			subresourceData.SlicePitch = subresourceData.RowPitch;
-
-			UpdateSubresources(commandList.Get(),
-				*pDestinationResource, *pIntermediateResource,
-				0, 0, 1, &subresourceData);
-		}
-	}
-
-	// Vertex data for a colored cube.
-	struct VertexPosColor
-	{
-		DirectX::XMFLOAT3 Position;
-		DirectX::XMFLOAT3 Color;
-	};
-
-	static VertexPosColor g_Vertices[8] = {
-		{ DirectX::XMFLOAT3(-1.0f, -1.0f, -1.0f), DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f) }, // 0
-		{ DirectX::XMFLOAT3(-1.0f,  1.0f, -1.0f), DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f) }, // 1
-		{ DirectX::XMFLOAT3(1.0f,  1.0f, -1.0f), DirectX::XMFLOAT3(1.0f, 1.0f, 0.0f) }, // 2
-		{ DirectX::XMFLOAT3(1.0f, -1.0f, -1.0f), DirectX::XMFLOAT3(1.0f, 0.0f, 0.0f) }, // 3
-		{ DirectX::XMFLOAT3(-1.0f, -1.0f,  1.0f), DirectX::XMFLOAT3(0.0f, 0.0f, 1.0f) }, // 4
-		{ DirectX::XMFLOAT3(-1.0f,  1.0f,  1.0f), DirectX::XMFLOAT3(0.0f, 1.0f, 1.0f) }, // 5
-		{ DirectX::XMFLOAT3(1.0f,  1.0f,  1.0f), DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f) }, // 6
-		{ DirectX::XMFLOAT3(1.0f, -1.0f,  1.0f), DirectX::XMFLOAT3(1.0f, 0.0f, 1.0f) }  // 7
-	};
-
-	static WORD g_Indicies[36] =
-	{
-		0, 1, 2, 0, 2, 3,
-		4, 6, 5, 4, 7, 6,
-		4, 5, 1, 4, 1, 0,
-		3, 2, 6, 3, 6, 7,
-		1, 5, 6, 1, 6, 2,
-		4, 0, 3, 4, 3, 7
-	};
-
 	void Graphics::Load(std::vector<D3D12_INPUT_ELEMENT_DESC> vlv)
 	{
 		// Create the descriptor heap for the depth-stencil view.
@@ -258,12 +181,6 @@ namespace DiveBomber::DEGraphics
 		// Load the pixel shader.
 		wrl::ComPtr<ID3DBlob> pixelShaderBlob;
 		GFX_THROW_INFO(D3DReadFileToBlob(L"PixelShader.cso", &pixelShaderBlob));
-
-		//// Create the vertex input layout
-		//D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
-		//	{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-		//	{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-		//};
 
 		D3D12_INPUT_ELEMENT_DESC inputLayout[5];
 		for (int i = 0; i < 5; i++)

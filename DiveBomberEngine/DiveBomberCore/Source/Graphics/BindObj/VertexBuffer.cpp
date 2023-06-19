@@ -73,17 +73,20 @@ namespace DiveBomber::BindObj
 	{
 		GFX_THROW_INFO_ONLY(gfx.GetCommandList()->IASetVertexBuffers(0u, 1u, &vertexBufferView));
 	}
+
 	std::shared_ptr<VertexBuffer> VertexBuffer::Resolve(Graphics& gfx, const std::string& tag,
 		const VertexProcess::VertexData& vbuf)
 	{
 		assert(tag != "?");
 		return Codex::Resolve<VertexBuffer>(gfx, tag, vbuf);
 	}
+
 	std::string VertexBuffer::GenerateUID_(const std::string& tag)
 	{
 		using namespace std::string_literals;
 		return typeid(VertexBuffer).name() + "#"s + tag;
 	}
+
 	std::string VertexBuffer::GetUID() const noexcept
 	{
 		return GenerateUID(tag);
