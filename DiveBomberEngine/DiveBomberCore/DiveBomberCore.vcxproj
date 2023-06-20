@@ -79,6 +79,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Graphics\BindObj\PipelineStateObject.cpp" />
+    <ClCompile Include="Source\Graphics\BindObj\Topology.cpp" />
     <ClCompile Include="Source\Graphics\DX\CommandContext.cpp" />
     <ClCompile Include="Source\Graphics\BindObj\IndexBuffer.cpp" />
     <ClCompile Include="Source\Graphics\DX\CommandQueue.cpp" />
@@ -107,6 +109,8 @@
     <ClCompile Include="Source\Graphics\BindObj\Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Graphics\BindObj\PipelineStateObject.h" />
+    <ClInclude Include="Source\Graphics\BindObj\Topology.h" />
     <ClInclude Include="Source\Graphics\DX\CommandContext.h" />
     <ClInclude Include="Source\Graphics\BindObj\BindableCodex.h" />
     <ClInclude Include="Source\Graphics\BindObj\Geometry\Cube.h" />

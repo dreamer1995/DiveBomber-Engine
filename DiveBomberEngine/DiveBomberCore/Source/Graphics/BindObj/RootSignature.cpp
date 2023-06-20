@@ -7,9 +7,7 @@ namespace DiveBomber::BindObj
 	using namespace DEGraphics;
 	using namespace DEException;
 
-	RootSignature::RootSignature(Graphics& inputGfx)
-		:
-		gfx(inputGfx)
+	RootSignature::RootSignature(Graphics& gfx)
 	{
 		HRESULT hr;
 		D3D12_FEATURE_DATA_ROOT_SIGNATURE featureData = {};
@@ -51,8 +49,7 @@ namespace DiveBomber::BindObj
 
 	void RootSignature::Bind(Graphics& gfx) noxnd
 	{
-		//HRESULT hr;
-		//GFX_THROW_INFO_ONLY(GetContext(gfx)->PSSetShader(pPixelShader.Get(), nullptr, 0u));
+		GFX_THROW_INFO_ONLY(gfx.GetCommandList()->SetGraphicsRootSignature(rootSignature.Get()));
 	}
 	std::shared_ptr<RootSignature> RootSignature::Resolve(Graphics& gfx)
 	{
