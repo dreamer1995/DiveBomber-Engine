@@ -79,7 +79,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Graphics\BindObj\DepthStencil.cpp" />
     <ClCompile Include="Source\Graphics\BindObj\PipelineStateObject.cpp" />
+    <ClCompile Include="Source\Graphics\BindObj\RenderTarget.cpp" />
     <ClCompile Include="Source\Graphics\BindObj\Topology.cpp" />
     <ClCompile Include="Source\Graphics\DX\CommandContext.cpp" />
     <ClCompile Include="Source\Graphics\BindObj\IndexBuffer.cpp" />
@@ -109,7 +111,10 @@
     <ClCompile Include="Source\Graphics\BindObj\Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Graphics\BindObj\BindObjCommon.h" />
+    <ClInclude Include="Source\Graphics\BindObj\DepthStencil.h" />
     <ClInclude Include="Source\Graphics\BindObj\PipelineStateObject.h" />
+    <ClInclude Include="Source\Graphics\BindObj\RenderTarget.h" />
     <ClInclude Include="Source\Graphics\BindObj\Topology.h" />
     <ClInclude Include="Source\Graphics\DX\CommandContext.h" />
     <ClInclude Include="Source\Graphics\BindObj\BindableCodex.h" />

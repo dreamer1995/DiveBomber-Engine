@@ -29,6 +29,8 @@
     <ClCompile Include="Source\Graphics\BindObj\RootSignature.cpp" />
     <ClCompile Include="Source\Graphics\BindObj\PipelineStateObject.cpp" />
     <ClCompile Include="Source\Graphics\BindObj\Topology.cpp" />
+    <ClCompile Include="Source\Graphics\BindObj\RenderTarget.cpp" />
+    <ClCompile Include="Source\Graphics\BindObj\DepthStencil.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Utility\Common.h" />
@@ -73,6 +75,9 @@
     <ClInclude Include="Source\Graphics\BindObj\RootSignature.h" />
     <ClInclude Include="Source\Graphics\BindObj\PipelineStateObject.h" />
     <ClInclude Include="Source\Graphics\BindObj\Topology.h" />
+    <ClInclude Include="Source\Graphics\BindObj\BindObjCommon.h" />
+    <ClInclude Include="Source\Graphics\BindObj\RenderTarget.h" />
+    <ClInclude Include="Source\Graphics\BindObj\DepthStencil.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource\Resource.rc" />

@@ -29,9 +29,10 @@ namespace DiveBomber::DEGraphics
 		directCommandQueue = std::make_unique<CommandQueue>(dxDevice->GetDecive(), D3D12_COMMAND_LIST_TYPE_DIRECT);
 		computeCommandQueue = std::make_unique<CommandQueue>(dxDevice->GetDecive(), D3D12_COMMAND_LIST_TYPE_COMPUTE);
 		copyCommandQueue = std::make_unique<CommandQueue>(dxDevice->GetDecive(), D3D12_COMMAND_LIST_TYPE_COPY);
-		SCRTDesHeap = std::make_unique<DescriptorHeap>(dxDevice->GetDecive(), D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+		SCRTVDesHeap = std::make_unique<DescriptorHeap>(dxDevice->GetDecive(), D3D12_DESCRIPTOR_HEAP_TYPE_RTV, SwapChainBufferCount);
 		swapChain = std::make_unique<SwapChain>(hWnd, directCommandQueue->GetCommandQueue());
-		swapChain->UpdateMainRT(dxDevice->GetDecive(), SCRTDesHeap->GetDescriptorHeap());
+		swapChain->UpdateMainRT(dxDevice->GetDecive(), SCRTVDesHeap->GetDescriptorHeap());
+		DSVHeap = std::make_unique<DescriptorHeap>(dxDevice->GetDecive(), D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1);
 	}
 
 	Graphics::~Graphics()
@@ -56,7 +57,7 @@ namespace DiveBomber::DEGraphics
 
 			commandList->ResourceBarrier(1, &barrier);
 
-			CD3DX12_CPU_DESCRIPTOR_HANDLE rtv(SCRTDesHeap->GetDescriptorHeap()->GetCPUDescriptorHandleForHeapStart(),
+			CD3DX12_CPU_DESCRIPTOR_HANDLE rtv(SCRTVDesHeap->GetDescriptorHeap()->GetCPUDescriptorHandleForHeapStart(),
 				currentBackBufferIndex, dxDevice->GetDecive()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV));
 
 			FLOAT clearColor[] = ClearMainRTColor;
@@ -123,7 +124,7 @@ namespace DiveBomber::DEGraphics
 		GFX_THROW_INFO(swapChain->GetSwapChain()->ResizeBuffers(SwapChainBufferCount, width, height,
 			swapChainDesc.BufferDesc.Format, swapChainDesc.Flags));
 
-		swapChain->UpdateMainRT(dxDevice->GetDecive(), SCRTDesHeap->GetDescriptorHeap());
+		swapChain->UpdateMainRT(dxDevice->GetDecive(), SCRTVDesHeap->GetDescriptorHeap());
 	}
 
 	UINT Graphics::GetWidth() const noexcept
@@ -182,11 +183,7 @@ namespace DiveBomber::DEGraphics
 		wrl::ComPtr<ID3DBlob> pixelShaderBlob;
 		GFX_THROW_INFO(D3DReadFileToBlob(L"PixelShader.cso", &pixelShaderBlob));
 
-		D3D12_INPUT_ELEMENT_DESC inputLayout[5];
-		for (int i = 0; i < 5; i++)
-		{
-			inputLayout[i] = vlv[i];
-		}
+		auto inputLayout = vlv;
 
 		// Create a root signature.
 		D3D12_FEATURE_DATA_ROOT_SIGNATURE featureData = {};
@@ -236,7 +233,7 @@ namespace DiveBomber::DEGraphics
 		rtvFormats.RTFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
 
 		pipelineStateStream.pRootSignature = m_RootSignature.Get();
-		pipelineStateStream.InputLayout = { inputLayout, _countof(inputLayout) };
+		pipelineStateStream.InputLayout = { &inputLayout[0], (UINT)inputLayout.size()};
 		pipelineStateStream.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 		pipelineStateStream.VS = CD3DX12_SHADER_BYTECODE(vertexShaderBlob.Get());
 		pipelineStateStream.PS = CD3DX12_SHADER_BYTECODE(pixelShaderBlob.Get());
@@ -327,9 +324,8 @@ namespace DiveBomber::DEGraphics
 
 
 		auto currentBackBufferIndex = swapChain->GetSwapChain()->GetCurrentBackBufferIndex();
-		auto backBuffer = swapChain->GetBackBuffer(currentBackBufferIndex);
 
-		auto rtv = CD3DX12_CPU_DESCRIPTOR_HANDLE(SCRTDesHeap->GetDescriptorHeap()->GetCPUDescriptorHandleForHeapStart(),
+		auto rtv = CD3DX12_CPU_DESCRIPTOR_HANDLE(SCRTVDesHeap->GetDescriptorHeap()->GetCPUDescriptorHandleForHeapStart(),
 			currentBackBufferIndex, dxDevice->GetDecive()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV));
 		auto dsv = m_DSVHeap->GetCPUDescriptorHandleForHeapStart();
 

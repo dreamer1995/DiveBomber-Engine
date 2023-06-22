@@ -4,7 +4,7 @@
 
 namespace DiveBomber::BindObj
 {
-	class Topology : public Bindable
+	class Topology final: public Bindable
 	{
 	public:
 		Topology(DEGraphics::Graphics& gfx, D3D12_PRIMITIVE_TOPOLOGY inputType);
@@ -13,7 +13,7 @@ namespace DiveBomber::BindObj
 		static std::shared_ptr<Topology> Resolve(DEGraphics::Graphics& gfx, D3D12_PRIMITIVE_TOPOLOGY type = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		static std::string GenerateUID(D3D12_PRIMITIVE_TOPOLOGY type);
 		std::string GetUID() const noexcept override;
-	protected:
+	private:
 		D3D12_PRIMITIVE_TOPOLOGY type;
 	};
 }

@@ -3,8 +3,7 @@
 #include "Console\Console.h"
 #include "Utility\Timer.h"
 
-#include "Graphics\BindObj\VertexBuffer.h"
-#include "Graphics\BindObj\IndexBuffer.h"
+#include "Graphics\BindObj\BindObjCommon.h"
 #include "Graphics\BindObj\Geometry\Sphere.h"
 
 #include <thread>

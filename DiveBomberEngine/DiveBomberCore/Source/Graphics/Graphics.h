@@ -66,7 +66,8 @@ namespace DiveBomber::DEGraphics
 		std::shared_ptr<DX::CommandQueue> computeCommandQueue;
 		std::shared_ptr<DX::CommandQueue> copyCommandQueue;
 		std::unique_ptr<DX::SwapChain> swapChain;
-		std::unique_ptr<DX::DescriptorHeap> SCRTDesHeap;
+		std::unique_ptr<DX::DescriptorHeap> SCRTVDesHeap;
+		std::unique_ptr<DX::DescriptorHeap> DSVHeap;
 		HANDLE fenceEvent = 0;
 		uint64_t frameFenceValues[SwapChainBufferCount] = {};
 

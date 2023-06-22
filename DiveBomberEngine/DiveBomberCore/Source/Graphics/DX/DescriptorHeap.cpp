@@ -4,12 +4,12 @@ namespace DiveBomber::DX
 {
 	using namespace DEException;
 
-	DescriptorHeap::DescriptorHeap(wrl::ComPtr<ID3D12Device2> device, D3D12_DESCRIPTOR_HEAP_TYPE type)
+	DescriptorHeap::DescriptorHeap(wrl::ComPtr<ID3D12Device2> device, D3D12_DESCRIPTOR_HEAP_TYPE type, UINT RTNum)
 	{
 		HRESULT hr;
 
 		D3D12_DESCRIPTOR_HEAP_DESC desc = {};
-		desc.NumDescriptors = SwapChainBufferCount;
+		desc.NumDescriptors = RTNum;
 		desc.Type = type;
 		desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 		desc.NodeMask = 0;

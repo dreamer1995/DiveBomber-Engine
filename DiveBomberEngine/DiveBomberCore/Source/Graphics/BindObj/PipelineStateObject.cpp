@@ -15,16 +15,10 @@ namespace DiveBomber::BindObj
 	{
 		HRESULT hr;
 
+		auto inputLayout = vertexBuffer->GetLayout().GetD3DLayout();
+
 		pipelineStateStream.pRootSignature = rootSignature->GetRootSignature().Get();
-
-		auto vlv = vertexBuffer->GetLayout().GetD3DLayout();
-		D3D12_INPUT_ELEMENT_DESC inputLayout[5];
-		for (int i = 0; i < 5; i++)
-		{
-			inputLayout[i] = vlv[i];
-		}
-		pipelineStateStream.InputLayout = { inputLayout, _countof(inputLayout) };
-
+		pipelineStateStream.InputLayout = { &inputLayout[0], (UINT)inputLayout.size()};
 		pipelineStateStream.PrimitiveTopologyType = (D3D12_PRIMITIVE_TOPOLOGY_TYPE)topology->GetTopology();
 		pipelineStateStream.VS = CD3DX12_SHADER_BYTECODE(vertexShader->GetBytecode().Get());
 		pipelineStateStream.PS = CD3DX12_SHADER_BYTECODE(pixelShader->GetBytecode().Get());
