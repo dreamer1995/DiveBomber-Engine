@@ -2,9 +2,7 @@
 #include "Window\Window.h"
 #include "Console\Console.h"
 #include "Utility\Timer.h"
-
-#include "Graphics\BindObj\BindObjCommon.h"
-#include "Graphics\BindObj\Geometry\Sphere.h"
+#include "Graphics\RenderPipeline\RenderPipelineGraph.h"
 
 #include <thread>
 
@@ -33,8 +31,6 @@ namespace DiveBomber
 
 		Utility::Timer coreTimer;
 
-		std::shared_ptr<BindObj::VertexBuffer> vertexBuffer;
-		std::shared_ptr<BindObj::IndexBuffer> indexBuffer;
-		std::shared_ptr<BindObj::IndexedTriangleList> mesh;
+		std::unique_ptr<RenderPipeline::RenderPipelineGraph> mainRenderPipeline;
 	};
 }

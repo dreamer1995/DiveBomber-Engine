@@ -8,7 +8,7 @@ namespace DiveBomber::BindObj
 	{
 	public:
 		IndexBuffer(DEGraphics::Graphics& gfx, const std::vector<unsigned short>& indices);
-		IndexBuffer(DEGraphics::Graphics& gfx, std::string tag, const std::vector<unsigned short>& indices);
+		IndexBuffer(DEGraphics::Graphics& gfx, std::string inputTag, const std::vector<unsigned short>& indices);
 		void Bind(DEGraphics::Graphics& gfx) noxnd override;
 		UINT GetCount() const noexcept;
 		static std::shared_ptr<IndexBuffer> Resolve(DEGraphics::Graphics& gfx, const std::string& tag,

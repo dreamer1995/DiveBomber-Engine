@@ -17,16 +17,16 @@ namespace DiveBomber::BindObj
 			ComputeShder,
 		};
 	public:
-		Shader(DEGraphics::Graphics& inputGfx, const std::string& inputPath, ShaderType inputType);
+		Shader(DEGraphics::Graphics& inputGfx, const std::wstring& inputPath, ShaderType inputType);
 		wrl::ComPtr<ID3DBlob> GetBytecode() const noexcept;
 		bool RecompileShader();
 		void Bind(DEGraphics::Graphics& gfx) noxnd override;
-		static std::shared_ptr<Shader> Resolve(DEGraphics::Graphics& gfx, const std::string& path, ShaderType type);
-		static std::string GenerateUID(const std::string& path, ShaderType type);
+		static std::shared_ptr<Shader> Resolve(DEGraphics::Graphics& gfx, const std::wstring& path, ShaderType type);
+		static std::string GenerateUID(const std::wstring& path, ShaderType type);
 		std::string GetUID() const noexcept override;
 	private:
 		DEGraphics::Graphics& gfx;
-		std::string path;
+		std::wstring path;
 		wrl::ComPtr<ID3DBlob> pBytecodeBlob;
 		ShaderType type;
 	};

@@ -43,12 +43,14 @@ namespace DiveBomber::DEGraphics
 		void ReSizeMainRT(uint32_t inputWidth, uint32_t inputHeight);
 		std::shared_ptr<DX::CommandQueue> GetCommandQueue(D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT) noexcept;
 		void Flush() noexcept;
-		//temp
-		void Load(std::vector<D3D12_INPUT_ELEMENT_DESC> vlv);
-		void ResizeDepthBuffer(int width, int height);
-		void OnRender(float time);
 		wrl::ComPtr<ID3D12Device2> GetDecive() noexcept;
 		wrl::ComPtr<ID3D12GraphicsCommandList2> GetCommandList(D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT) noexcept;
+
+		//temp
+		void Load();
+		void ResizeDepthBuffer(int width, int height);
+		void OnRender(float time);
+
 	private:
 		UINT width = 0;
 		UINT height = 0;
@@ -73,25 +75,10 @@ namespace DiveBomber::DEGraphics
 
 		//temp
 	public:
-		uint64_t m_FenceValues[SwapChainBufferCount] = {};
-
-		// Vertex buffer for the cube.
-		Microsoft::WRL::ComPtr<ID3D12Resource> m_VertexBuffer;
-		D3D12_VERTEX_BUFFER_VIEW m_VertexBufferView;
-		// Index buffer for the cube.
-		Microsoft::WRL::ComPtr<ID3D12Resource> m_IndexBuffer;
-		D3D12_INDEX_BUFFER_VIEW m_IndexBufferView;
-
 		// Depth buffer.
 		Microsoft::WRL::ComPtr<ID3D12Resource> m_DepthBuffer;
 		// Descriptor heap for depth buffer.
 		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_DSVHeap;
-
-		// Root signature
-		Microsoft::WRL::ComPtr<ID3D12RootSignature> m_RootSignature;
-
-		// Pipeline state object.
-		Microsoft::WRL::ComPtr<ID3D12PipelineState> m_PipelineState;
 
 		D3D12_VIEWPORT m_Viewport = CD3DX12_VIEWPORT(0.0f, 0.0f, static_cast<float>(MainWindowWidth), static_cast<float>(MainWindowHeight));
 		D3D12_RECT m_ScissorRect = CD3DX12_RECT(0, 0, LONG_MAX, LONG_MAX);
@@ -107,6 +94,7 @@ namespace DiveBomber::DEGraphics
 		DirectX::XMFLOAT4 eyePosition = { 0, 0, -10, 1 };
 		UINT m_CurrentBackBufferIndex;
 
+	private:
 		wrl::ComPtr<ID3D12GraphicsCommandList2> copyCommandList;
 		wrl::ComPtr<ID3D12GraphicsCommandList2> directCommandList;
 

@@ -10,11 +10,11 @@ namespace DiveBomber::BindObj
 		:
 		IndexBuffer(gfx, "?", indices)
 	{}
-	IndexBuffer::IndexBuffer(Graphics& gfx, std::string tag, const std::vector<unsigned short>& indices)
-		:
-		tag(tag),
-		count((UINT)indices.size())
+	IndexBuffer::IndexBuffer(Graphics& gfx, std::string inputTag, const std::vector<unsigned short>& indices)
 	{
+		tag = inputTag;
+		count = (UINT)indices.size();
+
 		size_t bufferSize = UINT(count * sizeof(unsigned short));
 
 		HRESULT hr;

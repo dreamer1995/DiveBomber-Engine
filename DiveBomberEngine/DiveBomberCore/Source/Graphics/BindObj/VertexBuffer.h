@@ -9,7 +9,7 @@ namespace DiveBomber::BindObj
 	class VertexBuffer final : public Bindable
 	{
 	public:
-		VertexBuffer(DEGraphics::Graphics& gfx, const std::string& tag, const VertexProcess::VertexData& vbuf);
+		VertexBuffer(DEGraphics::Graphics& gfx, const std::string& inputTag, const VertexProcess::VertexData& vbuf);
 		VertexBuffer(DEGraphics::Graphics& gfx, const VertexProcess::VertexData& vbuf);
 		void Bind(DEGraphics::Graphics& gfx) noxnd override;
 		const VertexProcess::VertexLayout& GetLayout() const noexcept;

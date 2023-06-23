@@ -7,8 +7,9 @@ namespace DiveBomber::BindObj
 	using namespace DEGraphics;
 	using namespace DEException;
 
-	RootSignature::RootSignature(Graphics& gfx)
+	RootSignature::RootSignature(Graphics& gfx, const std::string& inputTag)
 	{
+		tag = inputTag;
 		HRESULT hr;
 		D3D12_FEATURE_DATA_ROOT_SIGNATURE featureData = {};
 		featureData.HighestVersion = D3D_ROOT_SIGNATURE_VERSION_1_1;
@@ -51,17 +52,20 @@ namespace DiveBomber::BindObj
 	{
 		GFX_THROW_INFO_ONLY(gfx.GetCommandList()->SetGraphicsRootSignature(rootSignature.Get()));
 	}
-	std::shared_ptr<RootSignature> RootSignature::Resolve(Graphics& gfx)
+
+	std::shared_ptr<RootSignature> RootSignature::Resolve(Graphics& gfx, const std::string& tag)
 	{
-		return Codex::Resolve<RootSignature>(gfx);
+		return Codex::Resolve<RootSignature>(gfx, tag);
 	}
-	std::string RootSignature::GenerateUID()
+
+	std::string RootSignature::GenerateUID_(const std::string& tag)
 	{
 		using namespace std::string_literals;
-		return typeid(RootSignature).name() + "#"s;
+		return typeid(RootSignature).name() + "#"s + tag;
 	}
+
 	std::string RootSignature::GetUID() const noexcept
 	{
-		return GenerateUID();
+		return GenerateUID(tag);
 	}
 }

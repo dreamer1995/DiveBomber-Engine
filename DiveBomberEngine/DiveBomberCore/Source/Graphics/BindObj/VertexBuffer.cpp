@@ -11,12 +11,12 @@ namespace DiveBomber::BindObj
 		:
 		VertexBuffer(gfx, "?", vbuf)
 	{}
-	VertexBuffer::VertexBuffer(Graphics& gfx, const std::string& tag, const VertexProcess::VertexData& vbuf)
-		:
-		stride((UINT)vbuf.GetLayout().Size()),
-		tag(tag),
-		layout(vbuf.GetLayout())
+	VertexBuffer::VertexBuffer(Graphics& gfx, const std::string& inputTag, const VertexProcess::VertexData& vbuf)
 	{
+		stride = (UINT)vbuf.GetLayout().Size();
+		tag = inputTag;
+		layout = vbuf.GetLayout();
+
 		size_t bufferSize = UINT(vbuf.SizeBytes());
 		
 		HRESULT hr;

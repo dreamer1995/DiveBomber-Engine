@@ -6,7 +6,7 @@ namespace DiveBomber::BindObj
 {
 	using namespace DEGraphics;
 	using namespace DEException;
-	Shader::Shader(Graphics& inputGfx, const std::string& inputPath, ShaderType inputType)
+	Shader::Shader(Graphics& inputGfx, const std::wstring& inputPath, ShaderType inputType)
 		:
 		gfx(inputGfx)
 	{
@@ -24,7 +24,7 @@ namespace DiveBomber::BindObj
 	{
 		//todo
 		HRESULT hr;
-		GFX_THROW_INFO(D3DReadFileToBlob(Utility::ToWide(/*"ShaderBins\\" + */path).c_str(), &pBytecodeBlob));
+		GFX_THROW_INFO(D3DReadFileToBlob(/*"ShaderBins\\" + */path.c_str(), &pBytecodeBlob));
 	}
 
 	void Shader::Bind(Graphics& gfx) noxnd
@@ -33,15 +33,15 @@ namespace DiveBomber::BindObj
 		//GFX_THROW_INFO_ONLY(GetContext(gfx)->PSSetShader(pPixelShader.Get(), nullptr, 0u));
 	}
 
-	std::shared_ptr<Shader> Shader::Resolve(Graphics& gfx, const std::string& path, ShaderType type)
+	std::shared_ptr<Shader> Shader::Resolve(Graphics& gfx, const std::wstring& path, ShaderType type)
 	{
 		return Codex::Resolve<Shader>(gfx, path, type);
 	}
 
-	std::string Shader::GenerateUID(const std::string& path, ShaderType type)
+	std::string Shader::GenerateUID(const std::wstring& path, ShaderType type)
 	{
 		using namespace std::string_literals;
-		return typeid(Shader).name() + "#"s + path + "#"s + std::to_string((int)type);
+		return typeid(Shader).name() + "#"s + Utility::ToNarrow(path) + "#"s + std::to_string((int)type);
 	}
 
 	std::string Shader::GetUID() const noexcept

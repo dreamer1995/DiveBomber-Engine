@@ -7,9 +7,10 @@ namespace DiveBomber::BindObj
 	using namespace DEGraphics;
 	using namespace DEException;
 
-	Topology::Topology(Graphics& gfx, D3D12_PRIMITIVE_TOPOLOGY inputType)
+	Topology::Topology(Graphics& gfx, D3D_PRIMITIVE_TOPOLOGY inputType, D3D12_PRIMITIVE_TOPOLOGY_TYPE inputShaderType)
 	{
 		type = inputType;
+		shaderType = inputShaderType;
 	}
 
 	void Topology::Bind(Graphics& gfx) noxnd
@@ -22,19 +23,24 @@ namespace DiveBomber::BindObj
 		return type;
 	}
 
-	std::shared_ptr<Topology> Topology::Resolve(Graphics& gfx, D3D12_PRIMITIVE_TOPOLOGY type)
+	D3D12_PRIMITIVE_TOPOLOGY_TYPE Topology::GetShaderTopology() noexcept
 	{
-		return Codex::Resolve<Topology>(gfx, type);
+		return shaderType;
 	}
 
-	std::string Topology::GenerateUID(D3D12_PRIMITIVE_TOPOLOGY type)
+	std::shared_ptr<Topology> Topology::Resolve(Graphics& gfx, D3D_PRIMITIVE_TOPOLOGY type, D3D12_PRIMITIVE_TOPOLOGY_TYPE shaderType)
+	{
+		return Codex::Resolve<Topology>(gfx, type, shaderType);
+	}
+
+	std::string Topology::GenerateUID(D3D_PRIMITIVE_TOPOLOGY type, D3D12_PRIMITIVE_TOPOLOGY_TYPE shaderType)
 	{
 		using namespace std::string_literals;
-		return typeid(Topology).name() + "#"s + std::to_string(type);
+		return typeid(Topology).name() + "#"s + "Type"s + std::to_string(type) + "#"s + "ShaderType"s + std::to_string(type);
 	}
 
 	std::string Topology::GetUID() const noexcept
 	{
-		return GenerateUID(type);
+		return GenerateUID(type, shaderType);
 	}
 }
