@@ -63,7 +63,7 @@ namespace DiveBomber::RenderPipeline
 		topology->Bind(gfx);
 
 		//why global time cant work???????????
-		gfx.OnRender(Utility::g_GameTime);
+		gfx.OnRender();
 
 		gfx.GetCommandList()->DrawIndexedInstanced(indexBuffer->GetCount(), 1, 0, 0, 0);
 	}

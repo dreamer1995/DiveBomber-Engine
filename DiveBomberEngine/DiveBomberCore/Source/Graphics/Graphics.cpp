@@ -232,13 +232,13 @@ namespace DiveBomber::DEGraphics
 		commandList->ClearDepthStencilView(dsv, D3D12_CLEAR_FLAG_DEPTH, depth, 0, 0, nullptr);
 	}
 
-	void Graphics::OnRender(float time)
+	void Graphics::OnRender()
 	{
 		auto commandList = directCommandList;
 
 		using namespace DirectX;
 		// Update the model matrix.
-		float angle = time * 90.0f;
+		float angle = Utility::g_GameTime * 90.0f;
 		const XMVECTOR rotationAxis = XMVectorSet(0, 1, 1, 0);
 		m_ModelMatrix = XMMatrixRotationAxis(rotationAxis, XMConvertToRadians(angle));
 

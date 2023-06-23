@@ -49,7 +49,7 @@ namespace DiveBomber::DEGraphics
 		//temp
 		void Load();
 		void ResizeDepthBuffer(int width, int height);
-		void OnRender(float time);
+		void OnRender();
 
 	private:
 		UINT width = 0;

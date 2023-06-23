@@ -14,7 +14,6 @@ namespace DiveBomber
 
 	DiveBomberCore::DiveBomberCore()
 	{
-
 		if (EnableConsole)
 		{
 			console = std::make_unique<Console>();
