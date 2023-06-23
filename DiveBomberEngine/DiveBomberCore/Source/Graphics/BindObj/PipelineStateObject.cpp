@@ -22,12 +22,8 @@ namespace DiveBomber::BindObj
 		pipelineStateStream.pRootSignature = rootSignature->GetRootSignature().Get();
 		pipelineStateStream.InputLayout = { &inputLayout[0], (UINT)inputLayout.size() };
 		pipelineStateStream.PrimitiveTopologyType = topology->GetShaderTopology();
-		wrl::ComPtr<ID3DBlob> vsblob;
-		GFX_THROW_INFO(D3DReadFileToBlob(L"VertexShader.cso", &vsblob));
-		wrl::ComPtr<ID3DBlob> psblob;
-		GFX_THROW_INFO(D3DReadFileToBlob(L"PixelShader.cso", &psblob));
-		pipelineStateStream.VS = CD3DX12_SHADER_BYTECODE(vsblob.Get());
-		pipelineStateStream.PS = CD3DX12_SHADER_BYTECODE(psblob.Get());
+		pipelineStateStream.VS = CD3DX12_SHADER_BYTECODE(vertexShader->GetBytecode().Get());
+		pipelineStateStream.PS = CD3DX12_SHADER_BYTECODE(pixelShader->GetBytecode().Get());
 		pipelineStateStream.DSVFormat = dsvFormat;
 		pipelineStateStream.RTVFormats = rtvFormats;
 

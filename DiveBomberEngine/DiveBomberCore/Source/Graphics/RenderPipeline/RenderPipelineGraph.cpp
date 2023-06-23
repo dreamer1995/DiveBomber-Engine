@@ -1,5 +1,7 @@
 #include "RenderPipelineGraph.h"
 
+#include <iostream>
+
 namespace DiveBomber::RenderPipeline
 {
 	using namespace DEGraphics;
@@ -31,10 +33,8 @@ namespace DiveBomber::RenderPipeline
 		auto fenceValue = commandQueue->ExecuteCommandList(commandList);
 		commandQueue->WaitForFenceValue(fenceValue);
 
-		auto vlv = vertexBuffer->GetLayout().GetD3DLayout();
-
-		//vertexShader = std::make_shared<Shader>(gfx, L"VertexShader.cso", Shader::ShaderType::VertexShader);
-		//vertexShader = std::make_shared<Shader>(gfx, L"PixelShader.cso", Shader::ShaderType::PixelShader);
+		vertexShader = std::make_shared<Shader>(gfx, L"VertexShader.cso", Shader::ShaderType::VertexShader);
+		pixelShader = std::make_shared<Shader>(gfx, L"PixelShader.cso", Shader::ShaderType::PixelShader);
 
 		topology = std::make_shared<Topology>(gfx, D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
 
@@ -63,7 +63,7 @@ namespace DiveBomber::RenderPipeline
 		topology->Bind(gfx);
 
 		//why global time cant work???????????
-		gfx.OnRender((float)Utility::g_GameTime);
+		gfx.OnRender(Utility::g_GameTime);
 
 		gfx.GetCommandList()->DrawIndexedInstanced(indexBuffer->GetCount(), 1, 0, 0, 0);
 	}

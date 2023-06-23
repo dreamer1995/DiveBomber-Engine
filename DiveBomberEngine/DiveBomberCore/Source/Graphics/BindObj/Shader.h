@@ -18,7 +18,7 @@ namespace DiveBomber::BindObj
 		};
 	public:
 		Shader(DEGraphics::Graphics& inputGfx, const std::wstring& inputPath, ShaderType inputType);
-		wrl::ComPtr<ID3DBlob> GetBytecode() const noexcept;
+		wrl::ComPtr<ID3DBlob> GetBytecode() noexcept;
 		bool RecompileShader();
 		void Bind(DEGraphics::Graphics& gfx) noxnd override;
 		static std::shared_ptr<Shader> Resolve(DEGraphics::Graphics& gfx, const std::wstring& path, ShaderType type);
@@ -27,7 +27,7 @@ namespace DiveBomber::BindObj
 	private:
 		DEGraphics::Graphics& gfx;
 		std::wstring path;
-		wrl::ComPtr<ID3DBlob> pBytecodeBlob;
+		wrl::ComPtr<ID3DBlob> bytecodeBlob;
 		ShaderType type;
 	};
 }

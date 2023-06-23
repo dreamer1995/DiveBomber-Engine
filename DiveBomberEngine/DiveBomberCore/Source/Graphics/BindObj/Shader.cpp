@@ -15,16 +15,16 @@ namespace DiveBomber::BindObj
 		RecompileShader();
 	}
 
-	wrl::ComPtr<ID3DBlob> Shader::GetBytecode() const noexcept
+	wrl::ComPtr<ID3DBlob> Shader::GetBytecode() noexcept
 	{
-		return pBytecodeBlob;
+		return bytecodeBlob;
 	}
 
 	bool Shader::RecompileShader()
 	{
 		//todo
 		HRESULT hr;
-		GFX_THROW_INFO(D3DReadFileToBlob(/*"ShaderBins\\" + */path.c_str(), &pBytecodeBlob));
+		GFX_THROW_INFO(D3DReadFileToBlob(/*"ShaderBins\\" + */path.c_str(), &bytecodeBlob));
 	}
 
 	void Shader::Bind(Graphics& gfx) noxnd

@@ -32,6 +32,7 @@
     <ClCompile Include="Source\Graphics\BindObj\RenderTarget.cpp" />
     <ClCompile Include="Source\Graphics\BindObj\DepthStencil.cpp" />
     <ClCompile Include="Source\Graphics\RenderPipeline\RenderPipelineGraph.cpp" />
+    <ClCompile Include="Source\Utility\RenderStatistics.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Utility\Common.h" />
