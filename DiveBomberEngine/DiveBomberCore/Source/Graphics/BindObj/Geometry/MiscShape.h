@@ -11,7 +11,7 @@ namespace DiveBomber::BindObj
 	class MiscShape final
 	{
 	public:
-		static IndexedTriangleList MakeDynamicArrow(VertexProcess::VertexLayout layout, float length)
+		[[nodiscard]] static IndexedTriangleList MakeDynamicArrow(VertexProcess::VertexLayout layout,const float length)
 		{
 			namespace dx = DirectX;
 			float expansion = 0.2;
@@ -32,7 +32,7 @@ namespace DiveBomber::BindObj
 			};
 		}
 
-		static IndexedTriangleList MakeArrow(float length)
+		[[nodiscard]] static IndexedTriangleList MakeArrow(const float length)
 		{
 			VertexProcess::VertexLayout vl;
 			vl.Append(VertexProcess::VertexLayout::Position3D);

@@ -39,11 +39,11 @@ namespace DiveBomber::DEException
 	{
 	public:
 		GraphicsHrException(int line, const char* file, HRESULT hr, std::vector<std::string> infoMsgs = {}) noexcept;
-		const wchar_t* whatW() const noexcept override;
-		const wchar_t* GetType() const noexcept override;
-		HRESULT GetErrorCode() const noexcept;
-		std::wstring GetErrorInfo() const noexcept;
-		std::wstring GetErrorDescription() const noexcept;
+		[[nodiscard]] const wchar_t* whatW() const noexcept override;
+		[[nodiscard]] const wchar_t* GetType() const noexcept override;
+		[[nodiscard]] HRESULT GetErrorCode() const noexcept;
+		[[nodiscard]] std::wstring GetErrorInfo() const noexcept;
+		[[nodiscard]] std::wstring GetErrorDescription() const noexcept;
 	private:
 		HRESULT hr;
 		std::wstring info;
@@ -52,9 +52,9 @@ namespace DiveBomber::DEException
 	{
 	public:
 		InfoException(int line, const char* file, std::vector<std::string> infoMsgs) noexcept;
-		const wchar_t* whatW() const noexcept override;
-		const wchar_t* GetType() const noexcept override;
-		std::wstring GetErrorInfo() const noexcept;
+		[[nodiscard]] const wchar_t* whatW() const noexcept override;
+		[[nodiscard]] const wchar_t* GetType() const noexcept override;
+		[[nodiscard]] std::wstring GetErrorInfo() const noexcept;
 	private:
 		std::wstring info;
 	};
@@ -62,7 +62,7 @@ namespace DiveBomber::DEException
 	{
 		using GraphicsHrException::GraphicsHrException;
 	public:
-		const wchar_t* GetType() const noexcept override;
+		[[nodiscard]] const wchar_t* GetType() const noexcept override;
 	private:
 		std::wstring reason;
 	};

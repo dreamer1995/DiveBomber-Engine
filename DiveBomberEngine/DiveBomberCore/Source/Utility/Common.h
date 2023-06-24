@@ -13,11 +13,11 @@ namespace DiveBomber
 
 namespace DiveBomber::Utility
 {
-	std::wstring ToWide(const std::string& narrow);
+	[[nodiscard]] std::wstring ToWide(const std::string& narrow);
 
-	std::string ToNarrow(const std::wstring& wide);
+	[[nodiscard]] std::string ToNarrow(const std::wstring& wide);
 
-	const wchar_t* ToWide(const char* narrow);
+	[[nodiscard]] const wchar_t* ToWide(const char* narrow);
 
 	//LPCSTR* ToNarrow1(const LPCWSTR* wide);
 }

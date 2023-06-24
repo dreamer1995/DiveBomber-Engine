@@ -28,12 +28,12 @@ namespace DiveBomber::BindObj
 		return shaderType;
 	}
 
-	std::shared_ptr<Topology> Topology::Resolve(Graphics& gfx, D3D_PRIMITIVE_TOPOLOGY type, D3D12_PRIMITIVE_TOPOLOGY_TYPE shaderType)
+	std::shared_ptr<Topology> Topology::Resolve(Graphics& gfx, const D3D_PRIMITIVE_TOPOLOGY type, const D3D12_PRIMITIVE_TOPOLOGY_TYPE shaderType)
 	{
 		return Codex::Resolve<Topology>(gfx, type, shaderType);
 	}
 
-	std::string Topology::GenerateUID(D3D_PRIMITIVE_TOPOLOGY type, D3D12_PRIMITIVE_TOPOLOGY_TYPE shaderType)
+	std::string Topology::GenerateUID(const D3D_PRIMITIVE_TOPOLOGY type, const D3D12_PRIMITIVE_TOPOLOGY_TYPE shaderType)
 	{
 		using namespace std::string_literals;
 		return typeid(Topology).name() + "#"s + "Type"s + std::to_string(type) + "#"s + "ShaderType"s + std::to_string(type);

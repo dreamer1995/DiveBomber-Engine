@@ -7,7 +7,7 @@ namespace DiveBomber::DX
 	{
 	public:
 		GPUAdapter();
-		wrl::ComPtr<IDXGIAdapter4> GetAdapter() noexcept;
+		[[nodiscard]] wrl::ComPtr<IDXGIAdapter4> GetAdapter() const noexcept;
 	private:
 		wrl::ComPtr<IDXGIAdapter4> dxgiAdapter;
 	};

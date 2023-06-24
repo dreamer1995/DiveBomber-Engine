@@ -14,7 +14,7 @@ namespace DiveBomber::BindObj
 	class Cube final
 	{
 	public:
-		static IndexedTriangleList MakePosOnly(std::optional<VertexProcess::VertexLayout> layout = {})
+		[[nodiscard]] static IndexedTriangleList MakePosOnly(std::optional<VertexProcess::VertexLayout> layout = {})
 		{
 			using Type = VertexProcess::VertexLayout::ElementType;
 
@@ -48,7 +48,7 @@ namespace DiveBomber::BindObj
 			};
 		}
 
-		static IndexedTriangleList MakeIndependent(VertexProcess::VertexLayout layout)
+		[[nodiscard]] static IndexedTriangleList MakeIndependent(VertexProcess::VertexLayout layout)
 		{
 			using Type = VertexProcess::VertexLayout::ElementType;
 
@@ -92,7 +92,7 @@ namespace DiveBomber::BindObj
 			};
 		}
 
-		static IndexedTriangleList IndependentAddTextured(IndexedTriangleList itl)
+		[[nodiscard]] static IndexedTriangleList IndependentAddTextured(IndexedTriangleList itl)
 		{
 			using Type = VertexProcess::VertexLayout::ElementType;
 
@@ -124,7 +124,7 @@ namespace DiveBomber::BindObj
 			return itl;
 		}
 
-		static IndexedTriangleList MakeIndependentTextured()
+		[[nodiscard]] static IndexedTriangleList MakeIndependentTextured()
 		{
 			using Type = VertexProcess::VertexLayout::ElementType;
 
@@ -139,7 +139,7 @@ namespace DiveBomber::BindObj
 			return itl;
 		}
 
-		static IndexedTriangleList MakeIndependentSimple()
+		[[nodiscard]] static IndexedTriangleList MakeIndependentSimple()
 		{
 			using Type = VertexProcess::VertexLayout::ElementType;
 
@@ -150,7 +150,7 @@ namespace DiveBomber::BindObj
 			return itl;
 		}
 
-		static IndexedTriangleList MakeIndependentTBN()
+		[[nodiscard]] static IndexedTriangleList MakeIndependentTBN()
 		{
 			using Type = VertexProcess::VertexLayout::ElementType;
 

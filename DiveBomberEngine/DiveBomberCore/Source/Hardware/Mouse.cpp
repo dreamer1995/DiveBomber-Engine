@@ -110,7 +110,7 @@ namespace DiveBomber::Hardware
 		TrimBuffer();
 	}
 
-	void Mouse::OnLeftDown(int x, int y) noexcept
+	void Mouse::OnLeftDown() noexcept
 	{
 		leftIsDown = true;
 
@@ -118,7 +118,7 @@ namespace DiveBomber::Hardware
 		TrimBuffer();
 	}
 
-	void Mouse::OnLeftUp(int x, int y) noexcept
+	void Mouse::OnLeftUp() noexcept
 	{
 		leftIsDown = false;
 
@@ -126,7 +126,7 @@ namespace DiveBomber::Hardware
 		TrimBuffer();
 	}
 
-	void Mouse::OnRightDown(int x, int y) noexcept
+	void Mouse::OnRightDown() noexcept
 	{
 		rightIsDown = true;
 
@@ -134,7 +134,7 @@ namespace DiveBomber::Hardware
 		TrimBuffer();
 	}
 
-	void Mouse::OnRightUp(int x, int y) noexcept
+	void Mouse::OnRightUp() noexcept
 	{
 		rightIsDown = false;
 
@@ -142,19 +142,19 @@ namespace DiveBomber::Hardware
 		TrimBuffer();
 	}
 
-	void Mouse::OnWheelFront(int x, int y) noexcept
+	void Mouse::OnWheelFront() noexcept
 	{
 		buffer.push(Mouse::Event(Mouse::Event::Type::MBE_WheelFront, *this));
 		TrimBuffer();
 	}
 
-	void Mouse::OnWheelBack(int x, int y) noexcept
+	void Mouse::OnWheelBack() noexcept
 	{
 		buffer.push(Mouse::Event(Mouse::Event::Type::MBE_WheelBack, *this));
 		TrimBuffer();
 	}
 
-	void Mouse::OnWheelDown(int x, int y) noexcept
+	void Mouse::OnWheelDown() noexcept
 	{
 		wheelIsDown = true;
 
@@ -162,7 +162,7 @@ namespace DiveBomber::Hardware
 		TrimBuffer();
 	}
 
-	void Mouse::OnWheelUp(int x, int y) noexcept
+	void Mouse::OnWheelUp() noexcept
 	{
 		wheelIsDown = false;
 
@@ -186,19 +186,19 @@ namespace DiveBomber::Hardware
 		}
 	}
 
-	void Mouse::OnWheelDelta(int x, int y, int delta) noexcept
+	void Mouse::OnWheelDelta(const int delta) noexcept
 	{
 		wheelDeltaCarry += delta;
 		// generate events for every 120 
 		while (wheelDeltaCarry >= WHEEL_DELTA)
 		{
 			wheelDeltaCarry -= WHEEL_DELTA;
-			OnWheelFront(x, y);
+			OnWheelFront();
 		}
 		while (wheelDeltaCarry <= -WHEEL_DELTA)
 		{
 			wheelDeltaCarry += WHEEL_DELTA;
-			OnWheelBack(x, y);
+			OnWheelBack();
 		}
 	}
 }

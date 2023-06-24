@@ -15,7 +15,7 @@ namespace DiveBomber::BindObj
 		tag = inputTag;
 		count = (UINT)indices.size();
 
-		size_t bufferSize = UINT(count * sizeof(unsigned short));
+		size_t bufferSize = count * sizeof(unsigned short);
 
 		HRESULT hr;
 
@@ -59,7 +59,7 @@ namespace DiveBomber::BindObj
 		// Create index buffer view.
 		indexBufferView.BufferLocation = indexBuffer->GetGPUVirtualAddress();
 		indexBufferView.Format = DXGI_FORMAT_R16_UINT;
-		indexBufferView.SizeInBytes = bufferSize;
+		indexBufferView.SizeInBytes = (UINT)bufferSize;
 	}
 
 	void IndexBuffer::Bind(Graphics& gfx) noxnd

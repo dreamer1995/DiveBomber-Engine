@@ -11,7 +11,7 @@ namespace DiveBomber::BindObj
 	class Sphere final
 	{
 	public:
-		static IndexedTriangleList MakeTesselated(VertexProcess::VertexLayout layout, int latDiv, int longDiv, bool withNormal)
+		[[nodiscard]] static IndexedTriangleList MakeTesselated(VertexProcess::VertexLayout layout, const int latDiv, const int longDiv, const bool withNormal)
 		{
 			namespace dx = DirectX;
 			assert(latDiv >= 3);
@@ -130,7 +130,7 @@ namespace DiveBomber::BindObj
 			return { std::move(vd),std::move(indices) };
 		}
 
-		static IndexedTriangleList MakeTesselatedNormalUV(VertexProcess::VertexLayout layout, int latDiv, int longDiv, bool withTangent)
+		[[nodiscard]] static IndexedTriangleList MakeTesselatedNormalUV(VertexProcess::VertexLayout layout, const int latDiv, const int longDiv, const bool withTangent)
 		{
 			namespace dx = DirectX;
 			assert(latDiv >= 3);
@@ -337,7 +337,7 @@ namespace DiveBomber::BindObj
 			return { std::move(vd),std::move(indices) };
 		}
 
-		static IndexedTriangleList Make(std::optional<VertexProcess::VertexLayout> layout = std::nullopt, bool withTangent = false)
+		[[nodiscard]] static IndexedTriangleList Make(std::optional<VertexProcess::VertexLayout> layout = std::nullopt, const bool withTangent = false)
 		{
 			using Element = VertexProcess::VertexLayout::ElementType;
 			if (!layout)
@@ -347,7 +347,7 @@ namespace DiveBomber::BindObj
 			return MakeTesselated(std::move(*layout), 12, 24, withTangent);
 		}
 
-		static IndexedTriangleList MakeNormalUVed(std::optional<VertexProcess::VertexLayout> layout = std::nullopt, bool withTangent = false)
+		[[nodiscard]] static IndexedTriangleList MakeNormalUVed(std::optional<VertexProcess::VertexLayout> layout = std::nullopt, const bool withTangent = false)
 		{
 			if (!layout)
 			{

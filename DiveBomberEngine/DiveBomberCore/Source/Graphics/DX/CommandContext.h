@@ -8,8 +8,8 @@ namespace DiveBomber::DX
 	{
 	public:
 		CommandContext(DEGraphics::Graphics& inputGfx, D3D12_COMMAND_LIST_TYPE intputType);
-		void BindBuffer(wrl::ComPtr<ID3D12Resource> destBuf, wrl::ComPtr<ID3D12Resource> intermediateBuf, UINT numSubresources, D3D12_SUBRESOURCE_DATA subData[]);
-		void ExecuteCommandList();
+		void BindBuffer(wrl::ComPtr<ID3D12Resource> destBuf, wrl::ComPtr<ID3D12Resource> intermediateBuf, UINT numSubresources, D3D12_SUBRESOURCE_DATA subData[]) const;
+		void ExecuteCommandList() const;
 	private:
 		DEGraphics::Graphics& gfx;
 		D3D12_COMMAND_LIST_TYPE type;

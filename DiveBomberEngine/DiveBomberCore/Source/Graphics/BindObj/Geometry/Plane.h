@@ -21,8 +21,8 @@ namespace DiveBomber::BindObj
 			PlaneTexturedTBN,
 			TessellatedQuadTextured
 		};
-		static IndexedTriangleList MakeTesselatedTextured
-		(VertexProcess::VertexLayout layout, int divisions_x, int divisions_y, bool withTexture, bool withNormal, bool withTangent, bool tessellated)
+		[[nodiscard]] static IndexedTriangleList MakeTesselatedTextured
+		(VertexProcess::VertexLayout layout, const int divisions_x, const int divisions_y, const bool withTexture, const bool withNormal, const bool withTangent, const bool tessellated)
 		{
 			namespace dx = DirectX;
 			assert(divisions_x >= 1);
@@ -130,7 +130,7 @@ namespace DiveBomber::BindObj
 
 			return{ std::move(vd),std::move(indices) };
 		}
-		static IndexedTriangleList Make(Type type = Type::SimpleQuad, UINT divisions = 1)
+		[[nodiscard]]static IndexedTriangleList Make(const Type type = Type::SimpleQuad, const UINT divisions = 1)
 		{
 			bool withTexture = false;
 			bool withNormal = false;
@@ -150,11 +150,13 @@ namespace DiveBomber::BindObj
 				vl.Append(VertexProcess::VertexLayout::Tangent);
 				vl.Append(VertexProcess::VertexLayout::Binormal);
 				withTangent = true;
+				[[fallthrough]];
 			}
 			case Type::PlaneTexturedNormal:
 			{
 				vl.Append(VertexProcess::VertexLayout::Normal);
 				withNormal = true;
+				[[fallthrough]];
 			}
 			case Type::PlaneTextured:
 			{

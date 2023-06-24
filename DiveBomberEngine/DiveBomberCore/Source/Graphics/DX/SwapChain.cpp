@@ -4,7 +4,7 @@ namespace DiveBomber::DX
 {
     using namespace DEException;
 
-    SwapChain::SwapChain(HWND hWnd, wrl::ComPtr<ID3D12CommandQueue> commandQueue)
+    SwapChain::SwapChain(const HWND hWnd, const wrl::ComPtr<ID3D12CommandQueue> commandQueue)
     {
         wrl::ComPtr<IDXGIFactory4> dxgiFactory4;
         UINT createFactoryFlags = 0;
@@ -76,7 +76,7 @@ namespace DiveBomber::DX
         return swapChain;
     }
 
-    void SwapChain::UpdateMainRT(wrl::ComPtr<ID3D12Device2> device, wrl::ComPtr<ID3D12DescriptorHeap> SWRTDesHeap)
+    void SwapChain::UpdateMainRT(const wrl::ComPtr<ID3D12Device2> device, const wrl::ComPtr<ID3D12DescriptorHeap> SWRTDesHeap)
     {
         auto rtvDescriptorSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
@@ -96,13 +96,13 @@ namespace DiveBomber::DX
         }
     }
 
-    wrl::ComPtr<ID3D12Resource> SwapChain::GetBackBuffer(int i) noexcept
+    wrl::ComPtr<ID3D12Resource> SwapChain::GetBackBuffer(const int i) noexcept
     {
         assert(i < SwapChainBufferCount);
         return backBuffers[i];
     }
 
-    void SwapChain::ResetBackBuffer(int i) noexcept
+    void SwapChain::ResetBackBuffer(const int i) noexcept
     {
         assert(i < SwapChainBufferCount);
         backBuffers[i].Reset();

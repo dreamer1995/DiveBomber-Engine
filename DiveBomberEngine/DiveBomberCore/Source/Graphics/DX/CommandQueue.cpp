@@ -27,7 +27,7 @@ namespace DiveBomber::DX
         CloseHandle(fenceEvent);
     }
 
-    wrl::ComPtr<ID3D12CommandQueue> CommandQueue::GetCommandQueue() noexcept
+    wrl::ComPtr<ID3D12CommandQueue> CommandQueue::GetCommandQueue() const noexcept
     {
         return commandQueue;
     }
@@ -52,7 +52,7 @@ namespace DiveBomber::DX
         return commandAllocator;
     }
 
-    wrl::ComPtr<ID3D12GraphicsCommandList2> CommandQueue::CreateCommandList(wrl::ComPtr<ID3D12CommandAllocator> commandAllocator)
+    wrl::ComPtr<ID3D12GraphicsCommandList2> CommandQueue::CreateCommandList(const wrl::ComPtr<ID3D12CommandAllocator> commandAllocator)
     {
         wrl::ComPtr<ID3D12GraphicsCommandList2> commandList;
         HRESULT hr;
@@ -122,7 +122,7 @@ namespace DiveBomber::DX
         return fenceValue;
     }
 
-    void CommandQueue::WaitForFenceValue(uint64_t inputFenceValue) noexcept
+    void CommandQueue::WaitForFenceValue(const uint64_t inputFenceValue) noexcept
     {
         if (!IsFenceComplete(inputFenceValue))
         {
@@ -131,7 +131,7 @@ namespace DiveBomber::DX
         }
     }
 
-    bool CommandQueue::IsFenceComplete(uint64_t inputFenceValue) noexcept
+    bool CommandQueue::IsFenceComplete(uint64_t inputFenceValue) const noexcept
     {
         return fence->GetCompletedValue() >= inputFenceValue;
     }

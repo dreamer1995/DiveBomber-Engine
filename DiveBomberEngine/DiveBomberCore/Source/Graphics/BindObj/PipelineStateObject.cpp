@@ -45,10 +45,10 @@ namespace DiveBomber::BindObj
 	}
 
 	std::shared_ptr<PipelineStateObject> PipelineStateObject::Resolve(Graphics& gfx, const std::string& tag,
-		std::shared_ptr<RootSignature> rootSignature, std::shared_ptr<VertexBuffer> vertexBuffer,
-		std::shared_ptr<Topology> topology,
-		std::shared_ptr<Shader> vertexShader, std::shared_ptr<Shader> pixelShader,
-		DXGI_FORMAT dsvFormat, D3D12_RT_FORMAT_ARRAY rtvFormats)
+		const std::shared_ptr<RootSignature> rootSignature, const std::shared_ptr<VertexBuffer> vertexBuffer,
+		const std::shared_ptr<Topology> topology,
+		const std::shared_ptr<Shader> vertexShader, const std::shared_ptr<Shader> pixelShader,
+		const DXGI_FORMAT dsvFormat, const D3D12_RT_FORMAT_ARRAY rtvFormats)
 	{
 		return Codex::Resolve<PipelineStateObject>(gfx, tag,
 			rootSignature, vertexBuffer, topology, vertexShader, pixelShader, dsvFormat, rtvFormats);

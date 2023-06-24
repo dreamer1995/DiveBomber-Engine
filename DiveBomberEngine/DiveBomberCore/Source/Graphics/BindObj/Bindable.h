@@ -15,7 +15,7 @@ namespace DiveBomber::BindObj
 		//{}
 		//virtual void Accept(TechniqueProbe&)
 		//{}
-		virtual std::string GetUID() const noexcept
+		[[nodiscard]] virtual std::string GetUID() const noexcept
 		{
 			assert(false);
 			return "";

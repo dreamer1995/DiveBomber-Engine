@@ -16,7 +16,7 @@ namespace DiveBomber::DX
 
 		GFX_THROW_INFO(device->CreateDescriptorHeap(&desc, IID_PPV_ARGS(&descriptorHeap)));
 	}
-	wrl::ComPtr<ID3D12DescriptorHeap> DescriptorHeap::GetDescriptorHeap()noexcept
+	wrl::ComPtr<ID3D12DescriptorHeap> DescriptorHeap::GetDescriptorHeap() const noexcept
 	{
 		return descriptorHeap;
 	}

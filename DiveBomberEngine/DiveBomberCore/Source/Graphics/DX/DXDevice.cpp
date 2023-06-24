@@ -4,7 +4,7 @@ namespace DiveBomber::DX
 {
     using namespace DEException;
 
-    DXDevice::DXDevice(wrl::ComPtr<IDXGIAdapter4> adapter)
+    DXDevice::DXDevice(const wrl::ComPtr<IDXGIAdapter4> adapter)
     {
         HRESULT hr;
         GFX_THROW_INFO(D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&dxDevice)));
@@ -47,7 +47,7 @@ namespace DiveBomber::DX
 #endif
     }
 
-    wrl::ComPtr<ID3D12Device2> DXDevice::GetDecive() noexcept
+    wrl::ComPtr<ID3D12Device2> DXDevice::GetDecive() const noexcept
     {
         return dxDevice;
     }

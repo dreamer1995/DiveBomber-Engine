@@ -11,12 +11,12 @@ namespace DiveBomber::DEException
 	{
 	public:
 		Exception(int inputLine, const char* inputFile) noexcept;
-		virtual const wchar_t* whatW() const noexcept;
-		virtual const wchar_t* GetType() const noexcept;
-		int GetLine() const noexcept;
-		const std::wstring& GetFile() const noexcept;
-		std::wstring GetOriginString() const noexcept;
-		static std::wstring TranslateErrorCode(HRESULT hr) noexcept;
+		[[nodiscard]] virtual const wchar_t* whatW() const noexcept;
+		[[nodiscard]] virtual const wchar_t* GetType() const noexcept;
+		[[nodiscard]] int GetLine() const noexcept;
+		[[nodiscard]] const std::wstring& GetFile() const noexcept;
+		[[nodiscard]] std::wstring GetOriginString() const noexcept;
+		[[nodiscard]] static std::wstring TranslateErrorCode(HRESULT hr) noexcept;
 	private:
 		int line;
 		std::wstring file;

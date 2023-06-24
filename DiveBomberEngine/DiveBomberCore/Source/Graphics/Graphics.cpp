@@ -47,7 +47,7 @@ namespace DiveBomber::DEGraphics
 
 		auto commandQueue = GetCommandQueue();
 		directCommandList = commandQueue->GetCommandList();
-		auto commandList = directCommandList;
+		wrl::ComPtr<ID3D12GraphicsCommandList2> commandList = directCommandList;
 
 		// Clear the render target.
 		{
@@ -71,7 +71,7 @@ namespace DiveBomber::DEGraphics
 		auto backBuffer = swapChain->GetBackBuffer(currentBackBufferIndex);
 
 		auto commandQueue = GetCommandQueue();
-		auto commandList = directCommandList;
+		wrl::ComPtr<ID3D12GraphicsCommandList2> commandList = directCommandList;
 
 		// Present
 		{
@@ -94,12 +94,12 @@ namespace DiveBomber::DEGraphics
 		}
 	}
 
-	HANDLE Graphics::GetFenceEvent() noexcept
+	HANDLE Graphics::GetFenceEvent() const noexcept
 	{
 		return fenceEvent;
 	}
 
-	void Graphics::ReSizeMainRT(uint32_t inputWidth, uint32_t inputHeight)
+	void Graphics::ReSizeMainRT(const uint32_t inputWidth, const uint32_t inputHeight)
 	{
 		// Don't allow 0 size swap chain back buffers.
 		width = std::max(1u, inputWidth);
@@ -137,7 +137,7 @@ namespace DiveBomber::DEGraphics
 		return height;
 	}
 
-	std::shared_ptr<CommandQueue> Graphics::GetCommandQueue(D3D12_COMMAND_LIST_TYPE type) noexcept
+	std::shared_ptr<CommandQueue> Graphics::GetCommandQueue(D3D12_COMMAND_LIST_TYPE type) const noexcept
 	{
 		switch (type)
 		{
@@ -156,7 +156,7 @@ namespace DiveBomber::DEGraphics
 		}
 	}
 
-	void Graphics::Flush() noexcept
+	void Graphics::Flush() const noexcept
 	{
 		directCommandQueue->Flush();
 		computeCommandQueue->Flush();
@@ -234,11 +234,11 @@ namespace DiveBomber::DEGraphics
 
 	void Graphics::OnRender()
 	{
-		auto commandList = directCommandList;
+		wrl::ComPtr<ID3D12GraphicsCommandList2> commandList = directCommandList;
 
 		using namespace DirectX;
 		// Update the model matrix.
-		float angle = Utility::g_GameTime * 90.0f;
+		float angle = (float)Utility::g_GameTime * 90.0f;
 		const XMVECTOR rotationAxis = XMVectorSet(0, 1, 1, 0);
 		m_ModelMatrix = XMMatrixRotationAxis(rotationAxis, XMConvertToRadians(angle));
 
@@ -275,12 +275,12 @@ namespace DiveBomber::DEGraphics
 		commandList->SetGraphicsRoot32BitConstants(0, sizeof(XMMATRIX) / 4, &mvpMatrix, 0);
 	}
 
-	wrl::ComPtr<ID3D12Device2> Graphics::GetDecive() noexcept
+	wrl::ComPtr<ID3D12Device2> Graphics::GetDecive() const noexcept
 	{
 		return dxDevice->GetDecive();
 	}
 
-	wrl::ComPtr<ID3D12GraphicsCommandList2> Graphics::GetCommandList(D3D12_COMMAND_LIST_TYPE type) noexcept
+	wrl::ComPtr<ID3D12GraphicsCommandList2> Graphics::GetCommandList(const D3D12_COMMAND_LIST_TYPE type) noexcept
 	{
 		switch (type)
 		{

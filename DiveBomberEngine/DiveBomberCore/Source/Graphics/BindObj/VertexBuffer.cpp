@@ -60,7 +60,7 @@ namespace DiveBomber::BindObj
 
 		// Create the vertex buffer view.
 		vertexBufferView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
-		vertexBufferView.SizeInBytes = bufferSize;
+		vertexBufferView.SizeInBytes = (UINT)bufferSize;
 		vertexBufferView.StrideInBytes = stride;
 	}
 

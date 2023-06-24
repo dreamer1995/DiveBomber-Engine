@@ -10,9 +10,9 @@ namespace DiveBomber::DEException
 	class DxgiInfoManager final
 	{
 	public:
-		static DxgiInfoManager* GetInstance() noexcept;
+		[[nodiscard]] static DxgiInfoManager* GetInstance() noexcept;
 		void Set() noexcept;
-		std::vector<std::string> GetMessages() const;
+		[[nodiscard]] std::vector<std::string> GetMessages() const;
 	private:
 		DxgiInfoManager();
 		~DxgiInfoManager();

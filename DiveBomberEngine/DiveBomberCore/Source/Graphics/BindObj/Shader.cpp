@@ -15,12 +15,12 @@ namespace DiveBomber::BindObj
 		RecompileShader();
 	}
 
-	wrl::ComPtr<ID3DBlob> Shader::GetBytecode() noexcept
+	wrl::ComPtr<ID3DBlob> Shader::GetBytecode() const noexcept
 	{
 		return bytecodeBlob;
 	}
 
-	bool Shader::RecompileShader()
+	void Shader::RecompileShader()
 	{
 		//todo
 		HRESULT hr;

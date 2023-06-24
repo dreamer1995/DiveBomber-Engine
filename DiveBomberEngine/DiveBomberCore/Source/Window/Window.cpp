@@ -312,8 +312,7 @@ namespace DiveBomber::DEWindow
 			//{
 			//	break;
 			//}
-			const POINTS pt = MAKEPOINTS(lParam);
-			mouse.OnLeftDown(pt.x, pt.y);
+			mouse.OnLeftDown();
 			break;
 		}
 		case WM_RBUTTONDOWN:
@@ -323,8 +322,7 @@ namespace DiveBomber::DEWindow
 			//{
 			//	break;
 			//}
-			const POINTS pt = MAKEPOINTS(lParam);
-			mouse.OnRightDown(pt.x, pt.y);
+			mouse.OnRightDown();
 			break;
 		}
 		case WM_MBUTTONDOWN:
@@ -334,8 +332,7 @@ namespace DiveBomber::DEWindow
 			//{
 			//	break;
 			//}
-			const POINTS pt = MAKEPOINTS(lParam);
-			mouse.OnWheelDown(pt.x, pt.y);
+			mouse.OnWheelDown();
 			break;
 		}
 		case WM_LBUTTONUP:
@@ -346,7 +343,7 @@ namespace DiveBomber::DEWindow
 			//	break;
 			//}
 			const POINTS pt = MAKEPOINTS(lParam);
-			mouse.OnLeftUp(pt.x, pt.y);
+			mouse.OnLeftUp();
 			// release mouse if outside of window
 			if (pt.x < 0 || pt.x >= windowWidth || pt.y < 0 || pt.y >= windowHeight)
 			{
@@ -363,7 +360,7 @@ namespace DiveBomber::DEWindow
 			//	break;
 			//}
 			const POINTS pt = MAKEPOINTS(lParam);
-			mouse.OnRightUp(pt.x, pt.y);
+			mouse.OnRightUp();
 			// release mouse if outside of window
 			if (pt.x < 0 || pt.x >= windowWidth || pt.y < 0 || pt.y >= windowHeight)
 			{
@@ -380,7 +377,7 @@ namespace DiveBomber::DEWindow
 			//	break;
 			//}
 			const POINTS pt = MAKEPOINTS(lParam);
-			mouse.OnWheelUp(pt.x, pt.y);
+			mouse.OnWheelUp();
 			// release mouse if outside of window
 			if (pt.x < 0 || pt.x >= windowWidth || pt.y < 0 || pt.y >= windowHeight)
 			{
@@ -398,7 +395,7 @@ namespace DiveBomber::DEWindow
 			//}
 			const POINTS pt = MAKEPOINTS(lParam);
 			const int delta = GET_WHEEL_DELTA_WPARAM(wParam);
-			mouse.OnWheelDelta(pt.x, pt.y, delta);
+			mouse.OnWheelDelta(delta);
 			break;
 		}
 		/************** END MOUSE MESSAGES **************/

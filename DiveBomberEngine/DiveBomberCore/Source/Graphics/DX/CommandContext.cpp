@@ -10,13 +10,13 @@ namespace DiveBomber::DX
 		commandQueue = gfx.GetCommandQueue(type);
 		commandList = commandQueue->GetCommandList();
 	}
-	void CommandContext::BindBuffer(wrl::ComPtr<ID3D12Resource> destBuf, wrl::ComPtr<ID3D12Resource> intermediateBuf, UINT numSubresources, D3D12_SUBRESOURCE_DATA subData[])
+	void CommandContext::BindBuffer(wrl::ComPtr<ID3D12Resource> destBuf, wrl::ComPtr<ID3D12Resource> intermediateBuf, UINT numSubresources, D3D12_SUBRESOURCE_DATA subData[]) const
 	{
 		UpdateSubresources(commandList.Get(),
 			destBuf.Get(), intermediateBuf.Get(),
 			0, 0, numSubresources, subData);
 	}
-	void CommandContext::ExecuteCommandList()
+	void CommandContext::ExecuteCommandList() const
 	{
 		uint64_t fenceValue = commandQueue->ExecuteCommandList(commandList);
 		commandQueue->WaitForFenceValue(fenceValue);

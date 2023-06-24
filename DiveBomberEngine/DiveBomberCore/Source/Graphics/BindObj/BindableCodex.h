@@ -34,7 +34,7 @@ namespace DiveBomber::BindObj
 				return std::static_pointer_cast<T>(i->second);
 			}
 		}
-		static Codex& Get()
+		[[nodiscard]] static Codex& Get()
 		{
 			static Codex codex;
 			return codex;

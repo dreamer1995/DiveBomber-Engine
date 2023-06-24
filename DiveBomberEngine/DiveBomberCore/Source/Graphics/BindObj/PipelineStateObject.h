@@ -27,21 +27,21 @@ namespace DiveBomber::BindObj
 			std::shared_ptr<Topology> topology,
 			std::shared_ptr<Shader> vertexShader, std::shared_ptr<Shader> pixelShader,
 			DXGI_FORMAT dsvFormat, D3D12_RT_FORMAT_ARRAY rtvFormats);
-		wrl::ComPtr<ID3D12PipelineState> GetPipelineStateObject() noexcept;
+		[[nodiscard]] wrl::ComPtr<ID3D12PipelineState> GetPipelineStateObject() noexcept;
 		void Bind(DEGraphics::Graphics& gfx) noxnd override;
-		static std::shared_ptr<PipelineStateObject> Resolve(DEGraphics::Graphics& gfx, const std::string& tag,
-			std::shared_ptr<RootSignature> rootSignature, std::shared_ptr<VertexBuffer> vertexBuffer,
-			std::shared_ptr<Topology> topology,
-			std::shared_ptr<Shader> vertexShader, std::shared_ptr<Shader> pixelShader,
-			DXGI_FORMAT dsvFormat, D3D12_RT_FORMAT_ARRAY rtvFormats);
+		[[nodiscard]] static std::shared_ptr<PipelineStateObject> Resolve(DEGraphics::Graphics& gfx, const std::string& tag,
+			const std::shared_ptr<RootSignature> rootSignature, const std::shared_ptr<VertexBuffer> vertexBuffer,
+			const std::shared_ptr<Topology> topology,
+			const std::shared_ptr<Shader> vertexShader, const std::shared_ptr<Shader> pixelShader,
+			const DXGI_FORMAT dsvFormat, const D3D12_RT_FORMAT_ARRAY rtvFormats);
 		template<typename...Ignore>
-		static std::string GenerateUID(const std::string& tag, Ignore&&...ignore)
+		[[nodiscard]] static std::string GenerateUID(const std::string& tag, Ignore&&...ignore)
 		{
 			return GenerateUID_(tag);
 		}
-		std::string GetUID() const noexcept override;
+		[[nodiscard]] std::string GetUID() const noexcept override;
 	private:
-		static std::string GenerateUID_(const std::string& tag);
+		[[nodiscard]] static std::string GenerateUID_(const std::string& tag);
 		std::string tag;
 		wrl::ComPtr<ID3D12PipelineState> pipelineState;
 		PipelineStateStream pipelineStateStream;

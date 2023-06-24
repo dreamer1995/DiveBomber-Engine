@@ -13,7 +13,7 @@ namespace DiveBomber
 	public:
 		DiveBomberCore();
 		~DiveBomberCore();
-		int GameLoop();
+		[[nodiscard]] int GameLoop();
 		void ExecuteConsoleCommand();
 		void RefreshRenderReport();
 

@@ -12,10 +12,10 @@ namespace DiveBomber::DEException
 	{
 	public:
 		WindowHrException(int line, const char* file, HRESULT hr) noexcept;
-		const wchar_t* whatW() const noexcept override;
-		const wchar_t* GetType() const noexcept override;
-		HRESULT GetErrorCode() const noexcept;
-		std::wstring GetErrorDescription() const noexcept;
+		[[nodiscard]] const wchar_t* whatW() const noexcept override;
+		[[nodiscard]] const wchar_t* GetType() const noexcept override;
+		[[nodiscard]] HRESULT GetErrorCode() const noexcept;
+		[[nodiscard]] std::wstring GetErrorDescription() const noexcept;
 	private:
 		HRESULT hr;
 	};
@@ -23,6 +23,6 @@ namespace DiveBomber::DEException
 	{
 	public:
 		using Exception::Exception;
-		const wchar_t* GetType() const noexcept override;
+		[[nodiscard]] const wchar_t* GetType() const noexcept override;
 	};
 }

@@ -46,31 +46,31 @@ namespace DiveBomber::Hardware
 				x = parent.x;
 				y = parent.y;
 			}
-			Type GetType() const noexcept
+			[[nodiscard]] Type GetType() const noexcept
 			{
 				return type;
 			}
-			std::pair<int, int> GetPos() const noexcept
+			[[nodiscard]] std::pair<int, int> GetPos() const noexcept
 			{
 				return{ x,y };
 			}
-			int GetPosX() const noexcept
+			[[nodiscard]] int GetPosX() const noexcept
 			{
 				return x;
 			}
-			int GetPosY() const noexcept
+			[[nodiscard]] int GetPosY() const noexcept
 			{
 				return y;
 			}
-			bool LeftIsPressed() const noexcept
+			[[nodiscard]] bool LeftIsPressed() const noexcept
 			{
 				return leftIsDown;
 			}
-			bool RightIsPressed() const noexcept
+			[[nodiscard]] bool RightIsPressed() const noexcept
 			{
 				return rightIsDown;
 			}
-			bool WheelIsPressed() const noexcept
+			[[nodiscard]] bool WheelIsPressed() const noexcept
 			{
 				return wheelIsDown;
 			}
@@ -81,35 +81,35 @@ namespace DiveBomber::Hardware
 		Mouse& operator=(const Mouse&) = delete;
 		std::pair<int, int> GetPos() const noexcept;
 		std::optional<RawDelta> ReadRawDelta() noexcept;
-		int GetPosX() const noexcept;
-		int GetPosY() const noexcept;
-		bool IsInWindow() const noexcept;
-		bool LeftIsDown() const noexcept;
-		bool RightIsDown() const noexcept;
-		bool WheelIsDown() const noexcept;
-		std::optional<Mouse::Event> Read() noexcept;
-		bool IsEmpty() const noexcept
+		[[nodiscard]] int GetPosX() const noexcept;
+		[[nodiscard]] int GetPosY() const noexcept;
+		[[nodiscard]] bool IsInWindow() const noexcept;
+		[[nodiscard]] bool LeftIsDown() const noexcept;
+		[[nodiscard]] bool RightIsDown() const noexcept;
+		[[nodiscard]] bool WheelIsDown() const noexcept;
+		[[nodiscard]] std::optional<Mouse::Event> Read() noexcept;
+		[[nodiscard]] bool IsEmpty() const noexcept
 		{
 			return buffer.empty();
 		}
 		void Flush() noexcept;
 		void EnableRaw() noexcept;
 		void DisableRaw() noexcept;
-		bool RawEnabled() const noexcept;
+		[[nodiscard]] bool RawEnabled() const noexcept;
 
 		void OnMouseMove(int x, int y) noexcept;
 		void OnMouseLeave() noexcept;
 		void OnMouseEnter() noexcept;
 		void OnRawDelta(int dx, int dy) noexcept;
-		void OnLeftDown(int x, int y) noexcept;
-		void OnLeftUp(int x, int y) noexcept;
-		void OnRightDown(int x, int y) noexcept;
-		void OnRightUp(int x, int y) noexcept;
-		void OnWheelFront(int x, int y) noexcept;
-		void OnWheelBack(int x, int y) noexcept;
-		void OnWheelDelta(int x, int y, int delta) noexcept;
-		void OnWheelDown(int x, int y) noexcept;
-		void OnWheelUp(int x, int y) noexcept;
+		void OnLeftDown() noexcept;
+		void OnLeftUp() noexcept;
+		void OnRightDown() noexcept;
+		void OnRightUp() noexcept;
+		void OnWheelFront() noexcept;
+		void OnWheelBack() noexcept;
+		void OnWheelDelta(const int delta) noexcept;
+		void OnWheelDown() noexcept;
+		void OnWheelUp() noexcept;
 	private:
 		void TrimBuffer() noexcept;
 		void TrimRawInputBuffer() noexcept;

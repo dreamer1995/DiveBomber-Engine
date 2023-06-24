@@ -22,15 +22,15 @@ namespace DiveBomber::Hardware
 				type = inputType;
 				code = inputCode;
 			}
-			bool IsKeyDown() const noexcept
+			[[nodiscard]] bool IsKeyDown() const noexcept
 			{
 				return type == Type::KBE_KeyDown;
 			}
-			bool IsKeyUp() const noexcept
+			[[nodiscard]] bool IsKeyUp() const noexcept
 			{
 				return type == Type::KBE_KeyUp;
 			}
-			unsigned char GetCode() const noexcept
+			[[nodiscard]] unsigned char GetCode() const noexcept
 			{
 				return code;
 			}
@@ -43,23 +43,23 @@ namespace DiveBomber::Hardware
 		Keyboard(const Keyboard&) = delete;
 		Keyboard& operator=(const Keyboard&) = delete;
 		// key event stuff
-		bool KeyIsDown(unsigned char keycode) const noexcept;
+		[[nodiscard]] bool KeyIsDown(const unsigned char keycode) const noexcept;
 		std::optional<Event> ReadKey() noexcept;
-		bool KeyIsEmpty() const noexcept;
+		[[nodiscard]] bool KeyIsEmpty() const noexcept;
 		void FlushKey() noexcept;
 		// char event stuff
 		std::optional<char> ReadChar() noexcept;
-		bool CharIsEmpty() const noexcept;
+		[[nodiscard]] bool CharIsEmpty() const noexcept;
 		void FlushChar() noexcept;
 		void Flush() noexcept;
 		// autorepeat control
 		void EnableAutorepeat() noexcept;
 		void DisableAutorepeat() noexcept;
-		bool AutorepeatIsEnabled() const noexcept;
+		[[nodiscard]] bool AutorepeatIsEnabled() const noexcept;
 
-		void OnKeyDown(unsigned char keycode) noexcept;
-		void OnKeyUp(unsigned char keycode) noexcept;
-		void OnChar(char character) noexcept;
+		void OnKeyDown(const unsigned char keycode) noexcept;
+		void OnKeyUp(const unsigned char keycode) noexcept;
+		void OnChar(const char character) noexcept;
 		void ClearState() noexcept;
 	private:
 		template<typename T>

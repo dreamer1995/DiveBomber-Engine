@@ -2,7 +2,7 @@
 
 namespace DiveBomber::Hardware
 {
-	bool Keyboard::KeyIsDown(unsigned char keycode) const noexcept
+	bool Keyboard::KeyIsDown(const unsigned char keycode) const noexcept
 	{
 		return keystates[keycode];
 	}
@@ -70,21 +70,21 @@ namespace DiveBomber::Hardware
 		return autorepeatEnabled;
 	}
 
-	void Keyboard::OnKeyDown(unsigned char keycode) noexcept
+	void Keyboard::OnKeyDown(const unsigned char keycode) noexcept
 	{
 		keystates[keycode] = true;
 		keybuffer.push(Keyboard::Event(Keyboard::Event::Type::KBE_KeyDown, keycode));
 		TrimBuffer(keybuffer);
 	}
 
-	void Keyboard::OnKeyUp(unsigned char keycode) noexcept
+	void Keyboard::OnKeyUp(const unsigned char keycode) noexcept
 	{
 		keystates[keycode] = false;
 		keybuffer.push(Keyboard::Event(Keyboard::Event::Type::KBE_KeyUp, keycode));
 		TrimBuffer(keybuffer);
 	}
 
-	void Keyboard::OnChar(char character) noexcept
+	void Keyboard::OnChar(const char character) noexcept
 	{
 		charbuffer.push(character);
 		TrimBuffer(charbuffer);

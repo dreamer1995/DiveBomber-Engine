@@ -134,13 +134,13 @@ namespace DiveBomber::BindObj::VertexProcess
 		{
 		public:
 			Element(ElementType type, size_t offset);
-			size_t GetOffsetAfter() const noxnd;
-			size_t GetOffset() const;
+			[[nodiscard]] size_t GetOffsetAfter() const noxnd;
+			[[nodiscard]] size_t GetOffset() const;
 			size_t Size() const noxnd;
 			static constexpr size_t SizeOf(ElementType type) noxnd;
-			ElementType GetType() const noexcept;
+			[[nodiscard]] ElementType GetType() const noexcept;
 			D3D12_INPUT_ELEMENT_DESC GetDesc() const noxnd;
-			const char* GetCode() const noexcept;
+			[[nodiscard]] const char* GetCode() const noexcept;
 		private:
 			ElementType type;
 			size_t offset;
@@ -162,11 +162,11 @@ namespace DiveBomber::BindObj::VertexProcess
 		}
 		const Element& ResolveByIndex(size_t i) const noxnd;
 		VertexLayout& Append(ElementType type) noxnd;
-		size_t Size() const noxnd;
-		size_t GetElementCount() const noexcept;
-		std::vector<D3D12_INPUT_ELEMENT_DESC> GetD3DLayout() const noxnd;
-		std::string GetCode() const noxnd;
-		bool Has(ElementType type) const noexcept;
+		[[nodiscard]] size_t Size() const noxnd;
+		[[nodiscard]] size_t GetElementCount() const noexcept;
+		[[nodiscard]] std::vector<D3D12_INPUT_ELEMENT_DESC> GetD3DLayout() const noxnd;
+		[[nodiscard]] std::string GetCode() const noxnd;
+		[[nodiscard]] bool Has(ElementType type) const noexcept;
 	private:
 		std::vector<Element> elements;
 	};
@@ -248,11 +248,11 @@ namespace DiveBomber::BindObj::VertexProcess
 	public:
 		VertexData(VertexLayout layout, size_t size = 0u) noxnd;
 		//VertexData(VertexLayout layout, const aiMesh& mesh);
-		const char* GetData() const noxnd;
-		const VertexLayout& GetLayout() const noexcept;
+		[[nodiscard]] const char* GetData() const noxnd;
+		[[nodiscard]] const VertexLayout& GetLayout() const noexcept;
 		void Resize(size_t newSize) noxnd;
-		size_t Size() const noxnd;
-		size_t SizeBytes() const noxnd;
+		[[nodiscard]] size_t Size() const noxnd;
+		[[nodiscard]] size_t SizeBytes() const noxnd;
 		template<typename ...Params>
 		void EmplaceBack(Params&&... params) noxnd
 		{
