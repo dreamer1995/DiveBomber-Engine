@@ -47,9 +47,7 @@ namespace DiveBomber::DEGraphics
 		[[nodiscard]] wrl::ComPtr<ID3D12GraphicsCommandList2> GetCommandList(const D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT) noexcept;
 
 		//temp
-		void Load();
-		void ResizeDepthBuffer(int width, int height);
-		void OnRender();
+		void OnRender(CD3DX12_CPU_DESCRIPTOR_HANDLE dsv);
 
 	private:
 		UINT width = 0;
@@ -75,11 +73,6 @@ namespace DiveBomber::DEGraphics
 
 		//temp
 	public:
-		// Depth buffer.
-		Microsoft::WRL::ComPtr<ID3D12Resource> m_DepthBuffer;
-		// Descriptor heap for depth buffer.
-		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_DSVHeap;
-
 		D3D12_VIEWPORT m_Viewport = CD3DX12_VIEWPORT(0.0f, 0.0f, static_cast<float>(MainWindowWidth), static_cast<float>(MainWindowHeight));
 		D3D12_RECT m_ScissorRect = CD3DX12_RECT(0, 0, LONG_MAX, LONG_MAX);
 

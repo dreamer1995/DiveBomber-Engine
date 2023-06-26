@@ -12,8 +12,8 @@ namespace DiveBomber::BindObj
 	{
 		D3D12_RESOURCE_DESC textureDesc;
 		textureDesc = inputBuffer->GetDesc();
-		width = textureDesc.Width;
-		height = textureDesc.Height;
+		width = (UINT)textureDesc.Width;
+		height = (UINT)textureDesc.Height;
 		renderTargetDescHeap = inputDescHeap;
 		depth = std::max(0u, inputDepth);
 		mipLevels = textureDesc.MipLevels;
@@ -28,6 +28,11 @@ namespace DiveBomber::BindObj
 		}
 
 		gfx.GetDecive()->CreateRenderTargetView(renderTargetBuffer.Get(), nullptr, descriptorHandle);
+	}
+
+	void RenderTarget::Bind(DEGraphics::Graphics& gfx) noxnd
+	{
+
 	}
 
 	RenderTarget::RenderTarget(Graphics& gfx, UINT inputWidth, UINT inputHeight,

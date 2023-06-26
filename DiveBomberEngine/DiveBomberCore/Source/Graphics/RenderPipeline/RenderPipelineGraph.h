@@ -23,10 +23,6 @@ namespace DiveBomber::RenderPipeline
 		std::shared_ptr<BindObj::IndexBuffer> indexBuffer;
 		std::shared_ptr<BindObj::Topology> topology;
 
-		// Pipeline state object.
-		Microsoft::WRL::ComPtr<ID3D12PipelineState> m_PipelineState;
-
-		// Root signature
-		Microsoft::WRL::ComPtr<ID3D12RootSignature> m_RootSignature;
+		std::shared_ptr<BindObj::DepthStencil> mainDS;
 	};
 }

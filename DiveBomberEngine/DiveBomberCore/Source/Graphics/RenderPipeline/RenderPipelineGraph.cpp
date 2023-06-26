@@ -7,6 +7,7 @@ namespace DiveBomber::RenderPipeline
 	using namespace DEGraphics;
 	using namespace DiveBomber::BindObj;
 	using namespace DiveBomber::BindObj::VertexProcess;
+	using namespace DX;
 
 	RenderPipelineGraph::RenderPipelineGraph()
 	{
@@ -33,6 +34,10 @@ namespace DiveBomber::RenderPipeline
 		auto fenceValue = commandQueue->ExecuteCommandList(commandList);
 		commandQueue->WaitForFenceValue(fenceValue);
 
+		std::shared_ptr<DescriptorHeap> dsHeap = std::make_shared<DescriptorHeap>(gfx.GetDecive(),
+			D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1u);
+		mainDS = std::make_shared<DepthStencil>(gfx, MainWindowWidth, MainWindowHeight, std::move(dsHeap), 0u);
+
 		vertexShader = std::make_shared<Shader>(gfx, L"VertexShader.cso", Shader::ShaderType::VertexShader);
 		pixelShader = std::make_shared<Shader>(gfx, L"PixelShader.cso", Shader::ShaderType::PixelShader);
 
@@ -48,12 +53,12 @@ namespace DiveBomber::RenderPipeline
 
 		pipelineStateObject = std::make_shared<PipelineStateObject>(gfx, "sphere1PSO",
 			rootSignature, vertexBuffer, topology, vertexShader, pixelShader, dsvFormat, rtvFormats);
-
-		gfx.Load();
 	}
 
 	void RenderPipelineGraph::Bind(DEGraphics::Graphics& gfx) noxnd
 	{
+		mainDS->ClearDepth(gfx);
+
 		rootSignature->Bind(gfx);
 		pipelineStateObject->Bind(gfx);
 
@@ -62,7 +67,7 @@ namespace DiveBomber::RenderPipeline
 
 		topology->Bind(gfx);
 
-		gfx.OnRender();
+		gfx.OnRender(mainDS->GetDescriptorHandle());
 
 		gfx.GetCommandList()->DrawIndexedInstanced(indexBuffer->GetCount(), 1, 0, 0, 0);
 	}

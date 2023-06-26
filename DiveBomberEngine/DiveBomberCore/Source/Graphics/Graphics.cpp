@@ -32,7 +32,6 @@ namespace DiveBomber::DEGraphics
 		SCRTVDesHeap = std::make_unique<DescriptorHeap>(dxDevice->GetDecive(), D3D12_DESCRIPTOR_HEAP_TYPE_RTV, SwapChainBufferCount);
 		swapChain = std::make_unique<SwapChain>(hWnd, directCommandQueue->GetCommandQueue());
 		swapChain->UpdateMainRT(dxDevice->GetDecive(), SCRTVDesHeap->GetDescriptorHeap());
-		DSVHeap = std::make_unique<DescriptorHeap>(dxDevice->GetDecive(), D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1);
 	}
 
 	Graphics::~Graphics()
@@ -163,76 +162,13 @@ namespace DiveBomber::DEGraphics
 		copyCommandQueue->Flush();
 	}
 
-	void Graphics::Load()
-	{
-		// Create the descriptor heap for the depth-stencil view.
-		D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc = {};
-		dsvHeapDesc.NumDescriptors = 1;
-		dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
-		dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-
-		HRESULT hr;
-		auto device = dxDevice->GetDecive();
-		GFX_THROW_INFO(device->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&m_DSVHeap)));
-
-		m_ContentLoaded = true;
-
-		// Resize/Create the depth buffer.
-		ResizeDepthBuffer(MainWindowWidth, MainWindowHeight);
-	}
-
-	void Graphics::ResizeDepthBuffer(int width, int height)
-	{
-		if (m_ContentLoaded)
-		{
-			// Flush any GPU commands that might be referencing the depth buffer.
-			Flush();
-
-			width = std::max(1, width);
-			height = std::max(1, height);
-
-			auto device = dxDevice->GetDecive();
-
-			// Resize screen dependent resources.
-			// Create a depth buffer.
-			D3D12_CLEAR_VALUE optimizedClearValue = {};
-			optimizedClearValue.Format = DXGI_FORMAT_D32_FLOAT;
-			optimizedClearValue.DepthStencil = { 1.0f, 0 };
-
-			HRESULT hr;
-
-			auto heapProp = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
-			auto resDes = CD3DX12_RESOURCE_DESC::Tex2D(DXGI_FORMAT_D32_FLOAT, width, height,
-				1, 0, 1, 0, D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL);
-
-			GFX_THROW_INFO(device->CreateCommittedResource(
-				&heapProp,
-				D3D12_HEAP_FLAG_NONE,
-				&resDes,
-				D3D12_RESOURCE_STATE_DEPTH_WRITE,
-				&optimizedClearValue,
-				IID_PPV_ARGS(&m_DepthBuffer)
-			));
-
-			// Update the depth-stencil view.
-			D3D12_DEPTH_STENCIL_VIEW_DESC dsv = {};
-			dsv.Format = DXGI_FORMAT_D32_FLOAT;
-			dsv.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
-			dsv.Texture2D.MipSlice = 0;
-			dsv.Flags = D3D12_DSV_FLAG_NONE;
-
-			device->CreateDepthStencilView(m_DepthBuffer.Get(), &dsv,
-				m_DSVHeap->GetCPUDescriptorHandleForHeapStart());
-		}
-	}
-
 	void ClearDepth(wrl::ComPtr<ID3D12GraphicsCommandList2> commandList,
 		D3D12_CPU_DESCRIPTOR_HANDLE dsv, FLOAT depth = 1.0f)
 	{
 		commandList->ClearDepthStencilView(dsv, D3D12_CLEAR_FLAG_DEPTH, depth, 0, 0, nullptr);
 	}
 
-	void Graphics::OnRender()
+	void Graphics::OnRender(CD3DX12_CPU_DESCRIPTOR_HANDLE dsv)
 	{
 		wrl::ComPtr<ID3D12GraphicsCommandList2> commandList = directCommandList;
 
@@ -257,7 +193,6 @@ namespace DiveBomber::DEGraphics
 
 		auto rtv = CD3DX12_CPU_DESCRIPTOR_HANDLE(SCRTVDesHeap->GetDescriptorHeap()->GetCPUDescriptorHandleForHeapStart(),
 			currentBackBufferIndex, dxDevice->GetDecive()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV));
-		auto dsv = m_DSVHeap->GetCPUDescriptorHandleForHeapStart();
 
 		// Clear the render targets.
 		{

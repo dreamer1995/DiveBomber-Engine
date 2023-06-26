@@ -28,13 +28,14 @@ namespace DiveBomber::BindObj
 		//RenderTarget(DEGraphics::Graphics& gfx, UINT inputWidth, UINT inputHeight, D3D12_DESCRIPTOR_HEAP_TYPE inputType,
 		//	DXGI_FORMAT inputFormat = DXGI_FORMAT_B8G8R8A8_UNORM, UINT inputDepth = 0);
 
+		void Bind(DEGraphics::Graphics& gfx) noxnd override;
 		void BindTarget(DEGraphics::Graphics& gfx) noxnd override;
 		void BindTarget(DEGraphics::Graphics& gfx, std::shared_ptr<BindableTarget> depthStencil) noxnd override;
 		[[nodiscard]] wrl::ComPtr<ID3D12Resource> GetRenderTargetBuffer() const noexcept;
 		[[nodiscard]] CD3DX12_CPU_DESCRIPTOR_HANDLE GetDescriptorHandle() const noexcept;
 	private:
-		float width;
-		float height;
+		UINT width;
+		UINT height;
 		UINT depth;
 		DXGI_FORMAT format;
 		UINT mipLevels;

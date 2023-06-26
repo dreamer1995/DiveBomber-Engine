@@ -5,3 +5,5 @@
 #include "IndexBuffer.h"
 #include "Topology.h"
 #include "Shader.h"
+#include "RenderTarget.h"
+#include "DepthStencil.h"

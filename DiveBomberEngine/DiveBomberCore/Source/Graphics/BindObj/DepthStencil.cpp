@@ -9,13 +9,14 @@ namespace DiveBomber::BindObj
 
 	DepthStencil::DepthStencil(Graphics& gfx, UINT inputWidth, UINT inputHeight,
 		std::shared_ptr<DX::DescriptorHeap> inputDescHeap, UINT inputDepth)
-		:
-		descriptorHandle(inputDescHeap->GetDescriptorHeap()->GetCPUDescriptorHandleForHeapStart())
 	{
 		width = std::max(1u, inputWidth);
 		height = std::max(1u, inputHeight);
 		depthStencilDescHeap = inputDescHeap;
 		depth = std::max(0u, inputDepth);
+
+		CD3DX12_CPU_DESCRIPTOR_HANDLE dsvHandle(depthStencilDescHeap->GetDescriptorHeap()->GetCPUDescriptorHandleForHeapStart());
+		descriptorHandle = dsvHandle;
 
 		// Resize screen dependent resources.
 		// Create a depth buffer.
@@ -42,11 +43,16 @@ namespace DiveBomber::BindObj
 		D3D12_DEPTH_STENCIL_VIEW_DESC dsv = {};
 		dsv.Format = DXGI_FORMAT_D32_FLOAT;
 		dsv.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
-		dsv.Texture2D.MipSlice = depth;
+		dsv.Texture2D.MipSlice = 0u;
 		dsv.Flags = D3D12_DSV_FLAG_NONE;
 
 		gfx.GetDecive()->CreateDepthStencilView(depthStencilBuffer.Get(), &dsv,
 			descriptorHandle);
+	}
+
+	void DepthStencil::Bind(DEGraphics::Graphics& gfx) noxnd
+	{
+
 	}
 
 	void DepthStencil::BindTarget(Graphics& gfx) noxnd
@@ -70,5 +76,10 @@ namespace DiveBomber::BindObj
 	CD3DX12_CPU_DESCRIPTOR_HANDLE DepthStencil::GetDescriptorHandle() const noexcept
 	{
 		return descriptorHandle;
+	}
+
+	void DepthStencil::ClearDepth(Graphics& gfx, FLOAT depth) const noexcept
+	{
+		gfx.GetCommandList()->ClearDepthStencilView(GetDescriptorHandle(), D3D12_CLEAR_FLAG_DEPTH, depth, 0, 0, nullptr);
 	}
 }
