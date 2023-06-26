@@ -81,6 +81,7 @@
     <ClInclude Include="Source\Graphics\BindObj\RenderTarget.h" />
     <ClInclude Include="Source\Graphics\BindObj\DepthStencil.h" />
     <ClInclude Include="Source\Graphics\RenderPipeline\RenderPipelineGraph.h" />
+    <ClInclude Include="Source\Graphics\BindObj\BindableTarget.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource\Resource.rc" />

@@ -113,6 +113,7 @@
     <ClCompile Include="Source\Graphics\BindObj\Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Graphics\BindObj\BindableTarget.h" />
     <ClInclude Include="Source\Graphics\BindObj\BindObjCommon.h" />
     <ClInclude Include="Source\Graphics\BindObj\DepthStencil.h" />
     <ClInclude Include="Source\Graphics\BindObj\PipelineStateObject.h" />
