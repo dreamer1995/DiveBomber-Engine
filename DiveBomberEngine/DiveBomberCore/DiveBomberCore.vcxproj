@@ -81,6 +81,8 @@
   <ItemGroup>
     <ClCompile Include="Source\Graphics\BindObj\DepthStencil.cpp" />
     <ClCompile Include="Source\Graphics\BindObj\PipelineStateObject.cpp" />
+    <ClCompile Include="Source\Graphics\DX\ScissorRects.cpp" />
+    <ClCompile Include="Source\Graphics\DX\Viewport.cpp" />
     <ClCompile Include="Source\Graphics\RenderPipeline\RenderPipelineGraph.cpp" />
     <ClCompile Include="Source\Graphics\BindObj\RenderTarget.cpp" />
     <ClCompile Include="Source\Graphics\BindObj\Topology.cpp" />
@@ -117,6 +119,8 @@
     <ClInclude Include="Source\Graphics\BindObj\BindObjCommon.h" />
     <ClInclude Include="Source\Graphics\BindObj\DepthStencil.h" />
     <ClInclude Include="Source\Graphics\BindObj\PipelineStateObject.h" />
+    <ClInclude Include="Source\Graphics\DX\ScissorRects.h" />
+    <ClInclude Include="Source\Graphics\DX\Viewport.h" />
     <ClInclude Include="Source\Graphics\RenderPipeline\RenderPipelineGraph.h" />
     <ClInclude Include="Source\Graphics\BindObj\RenderTarget.h" />
     <ClInclude Include="Source\Graphics\BindObj\Topology.h" />

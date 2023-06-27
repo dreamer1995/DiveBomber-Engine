@@ -33,6 +33,8 @@
     <ClCompile Include="Source\Graphics\BindObj\DepthStencil.cpp" />
     <ClCompile Include="Source\Graphics\RenderPipeline\RenderPipelineGraph.cpp" />
     <ClCompile Include="Source\Utility\RenderStatistics.cpp" />
+    <ClCompile Include="Source\Graphics\DX\Viewport.cpp" />
+    <ClCompile Include="Source\Graphics\DX\ScissorRects.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Utility\Common.h" />
@@ -82,6 +84,8 @@
     <ClInclude Include="Source\Graphics\BindObj\DepthStencil.h" />
     <ClInclude Include="Source\Graphics\RenderPipeline\RenderPipelineGraph.h" />
     <ClInclude Include="Source\Graphics\BindObj\BindableTarget.h" />
+    <ClInclude Include="Source\Graphics\DX\Viewport.h" />
+    <ClInclude Include="Source\Graphics\DX\ScissorRects.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource\Resource.rc" />

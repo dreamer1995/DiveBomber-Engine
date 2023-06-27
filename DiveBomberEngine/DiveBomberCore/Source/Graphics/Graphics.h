@@ -4,6 +4,8 @@
 #include "DX\CommandQueue.h"
 #include "DX\SwapChain.h"
 #include "DX\DescriptorHeap.h"
+#include "DX/Viewport.h"
+#include "DX/ScissorRects.h"
 #include "../Utility/RenderStatistics.h"
 
 namespace DiveBomber::DEGraphics
@@ -57,24 +59,20 @@ namespace DiveBomber::DEGraphics
 		bool imguiEnabled = true;
 		float mFOV = Utility::PI / 3 * 2;
 		HWND hWnd = 0;
-		//wrl::ComPtr<ID3D12DeviceContext> pContext;
 
-		//std::shared_ptr<Bind::RenderTarget> pTarget;
 		std::unique_ptr<DX::GPUAdapter> gpuAdapter;
 		std::unique_ptr<DX::DXDevice> dxDevice;
 		std::shared_ptr<DX::CommandQueue> directCommandQueue;
 		std::shared_ptr<DX::CommandQueue> computeCommandQueue;
 		std::shared_ptr<DX::CommandQueue> copyCommandQueue;
 		std::unique_ptr<DX::SwapChain> swapChain;
-		//std::unique_ptr<DX::DescriptorHeap> SCRTVDesHeap;
+		std::unique_ptr<DX::Viewport> viewport;
+		std::unique_ptr<DX::ScissorRects> scissorRects;
 		HANDLE fenceEvent = 0;
 		uint64_t frameFenceValues[SwapChainBufferCount] = {};
 
 		//temp
 	public:
-		D3D12_VIEWPORT m_Viewport = CD3DX12_VIEWPORT(0.0f, 0.0f, static_cast<float>(MainWindowWidth), static_cast<float>(MainWindowHeight));
-		D3D12_RECT m_ScissorRect = CD3DX12_RECT(0, 0, LONG_MAX, LONG_MAX);
-
 		float m_FoV = 45.0f;
 
 		DirectX::XMMATRIX m_ModelMatrix;

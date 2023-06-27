@@ -31,6 +31,8 @@ namespace DiveBomber::DEGraphics
 		copyCommandQueue = std::make_unique<CommandQueue>(dxDevice->GetDecive(), D3D12_COMMAND_LIST_TYPE_COPY);
 		swapChain = std::make_unique<SwapChain>(hWnd, directCommandQueue->GetCommandQueue());
 		swapChain->UpdateBackBuffer(dxDevice->GetDecive());
+		viewport = std::make_unique<Viewport>();
+		scissorRects = std::make_unique<ScissorRects>();
 	}
 
 	Graphics::~Graphics()
@@ -60,6 +62,9 @@ namespace DiveBomber::DEGraphics
 			FLOAT clearColor[] = ClearMainRTColor;
 			commandList->ClearRenderTargetView(rtv, clearColor, 0, nullptr);
 		}
+
+		viewport->Bind(commandList);
+		scissorRects->Bind(commandList);
 	}
 
 	void Graphics::EndFrame()
@@ -171,9 +176,6 @@ namespace DiveBomber::DEGraphics
 		// Update the projection matrix.
 		float aspectRatio = MainWindowWidth / (float)MainWindowHeight;
 		m_ProjectionMatrix = XMMatrixPerspectiveFovLH(XMConvertToRadians(m_FoV), aspectRatio, 0.1f, 100.0f);
-
-		commandList->RSSetViewports(1, &m_Viewport);
-		commandList->RSSetScissorRects(1, &m_ScissorRect);
 
 		// Update the MVP matrix
 		XMMATRIX mvpMatrix = XMMatrixMultiply(m_ModelMatrix, m_ViewMatrix);
