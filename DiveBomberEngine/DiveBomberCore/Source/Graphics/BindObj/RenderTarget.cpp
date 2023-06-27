@@ -10,8 +10,16 @@ namespace DiveBomber::BindObj
 	RenderTarget::RenderTarget(DEGraphics::Graphics& gfx, wrl::ComPtr<ID3D12Resource> inputBuffer,
 		std::shared_ptr<DX::DescriptorHeap> inputDescHeap, UINT inputDepth)
 	{
+		RenderTarget(gfx.GetDecive(), inputBuffer, inputDescHeap, inputDepth);
+	}
+
+	RenderTarget::RenderTarget(wrl::ComPtr<ID3D12Device2> device, wrl::ComPtr<ID3D12Resource> inputBuffer,
+		std::shared_ptr<DX::DescriptorHeap> inputDescHeap, UINT inputDepth)
+	{
+		renderTargetBuffer = inputBuffer;
+
 		D3D12_RESOURCE_DESC textureDesc;
-		textureDesc = inputBuffer->GetDesc();
+		textureDesc = renderTargetBuffer->GetDesc();
 		width = (UINT)textureDesc.Width;
 		height = (UINT)textureDesc.Height;
 		renderTargetDescHeap = inputDescHeap;
@@ -23,11 +31,11 @@ namespace DiveBomber::BindObj
 		descriptorHandle = rtvHandle;
 		if (depth > 0)
 		{
-			rtvDescriptorSize = gfx.GetDecive()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV) * depth;
+			rtvDescriptorSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV) * depth;
 			descriptorHandle.Offset(rtvDescriptorSize);
 		}
 
-		gfx.GetDecive()->CreateRenderTargetView(renderTargetBuffer.Get(), nullptr, descriptorHandle);
+		device->CreateRenderTargetView(renderTargetBuffer.Get(), nullptr, descriptorHandle);
 	}
 
 	void RenderTarget::Bind(DEGraphics::Graphics& gfx) noxnd

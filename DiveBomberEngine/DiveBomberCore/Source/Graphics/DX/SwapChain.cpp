@@ -1,8 +1,13 @@
 #include "SwapChain.h"
 
+#include "DescriptorHeap.h"
+#include "..\BindObj\RenderTarget.h"
+
 namespace DiveBomber::DX
 {
     using namespace DEException;
+    using namespace DX;
+    using namespace BindObj;
 
     SwapChain::SwapChain(const HWND hWnd, const wrl::ComPtr<ID3D12CommandQueue> commandQueue)
     {
@@ -76,11 +81,9 @@ namespace DiveBomber::DX
         return swapChain;
     }
 
-    void SwapChain::UpdateMainRT(const wrl::ComPtr<ID3D12Device2> device, const wrl::ComPtr<ID3D12DescriptorHeap> SWRTDesHeap)
+    void SwapChain::UpdateBackBuffer(const wrl::ComPtr<ID3D12Device2> device)
     {
-        auto rtvDescriptorSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-
-        CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(SWRTDesHeap->GetCPUDescriptorHandleForHeapStart());
+        rtvDescHeap = std::make_shared<DescriptorHeap>(device, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, SwapChainBufferCount);
 
         for (int i = 0; i < SwapChainBufferCount; ++i)
         {
@@ -88,23 +91,54 @@ namespace DiveBomber::DX
             HRESULT hr;
             GFX_THROW_INFO(swapChain->GetBuffer(i, IID_PPV_ARGS(&backBuffer)));
 
-            device->CreateRenderTargetView(backBuffer.Get(), nullptr, rtvHandle);
-
-            backBuffers[i] = backBuffer;
-
-            rtvHandle.Offset(rtvDescriptorSize);
+            std::shared_ptr<RenderTarget> renderTarget;
+            renderTarget = std::make_shared<RenderTarget>(device, backBuffer, rtvDescHeap, i);
+            backBuffers[i] = renderTarget;
         }
     }
 
     wrl::ComPtr<ID3D12Resource> SwapChain::GetBackBuffer(const int i) noexcept
     {
         assert(i < SwapChainBufferCount);
-        return backBuffers[i];
+        return backBuffers[i]->GetRenderTargetBuffer();
     }
 
-    void SwapChain::ResetBackBuffer(const int i) noexcept
+    void SwapChain::ResetBackBuffer() noexcept
     {
-        assert(i < SwapChainBufferCount);
-        backBuffers[i].Reset();
+        for (int i = 0; i < SwapChainBufferCount; ++i)
+        {
+            backBuffers[i].reset();
+        }
+    }
+
+    void SwapChain::ResetSizeBackBuffer(const wrl::ComPtr<ID3D12Device2> device,
+        const uint32_t inputWidth, const uint32_t inputHeight)
+    {
+        // Any references to the back buffers must be released
+		// before the swap chain can be resized.
+        ResetBackBuffer();
+
+        // Don't allow 0 size swap chain back buffers.
+        uint32_t width = std::max(1u, inputWidth);
+        uint32_t height = std::max(1u, inputHeight);
+
+        HRESULT hr;
+        DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
+        GFX_THROW_INFO(GetSwapChain()->GetDesc(&swapChainDesc));
+        GFX_THROW_INFO(GetSwapChain()->ResizeBuffers(SwapChainBufferCount, width, height,
+            swapChainDesc.BufferDesc.Format, swapChainDesc.Flags));
+
+        UpdateBackBuffer(device);
+    }
+
+    CD3DX12_CPU_DESCRIPTOR_HANDLE SwapChain::GetBackBufferDescriptorHandle() const noexcept
+    {
+        int currentIndex = swapChain->GetCurrentBackBufferIndex();
+        return backBuffers[currentIndex]->GetDescriptorHandle();
+    }
+
+    CD3DX12_CPU_DESCRIPTOR_HANDLE SwapChain::GetBackBufferDescriptorHandle(int i) const noexcept
+    {
+        return backBuffers[i]->GetDescriptorHandle();
     }
 }

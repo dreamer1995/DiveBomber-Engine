@@ -45,9 +45,9 @@ namespace DiveBomber::DEGraphics
 		void Flush() const noexcept;
 		[[nodiscard]] wrl::ComPtr<ID3D12Device2> GetDecive() const noexcept;
 		[[nodiscard]] wrl::ComPtr<ID3D12GraphicsCommandList2> GetCommandList(const D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT) noexcept;
-
+		[[nodiscard]] CD3DX12_CPU_DESCRIPTOR_HANDLE GetRenderTargetDescriptorHandle() const noexcept;
 		//temp
-		void OnRender(CD3DX12_CPU_DESCRIPTOR_HANDLE dsv);
+		void OnRender();
 
 	private:
 		UINT width = 0;
@@ -66,8 +66,7 @@ namespace DiveBomber::DEGraphics
 		std::shared_ptr<DX::CommandQueue> computeCommandQueue;
 		std::shared_ptr<DX::CommandQueue> copyCommandQueue;
 		std::unique_ptr<DX::SwapChain> swapChain;
-		std::unique_ptr<DX::DescriptorHeap> SCRTVDesHeap;
-		std::unique_ptr<DX::DescriptorHeap> DSVHeap;
+		//std::unique_ptr<DX::DescriptorHeap> SCRTVDesHeap;
 		HANDLE fenceEvent = 0;
 		uint64_t frameFenceValues[SwapChainBufferCount] = {};
 

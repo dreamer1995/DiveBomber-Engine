@@ -29,9 +29,8 @@ namespace DiveBomber::DEGraphics
 		directCommandQueue = std::make_unique<CommandQueue>(dxDevice->GetDecive(), D3D12_COMMAND_LIST_TYPE_DIRECT);
 		computeCommandQueue = std::make_unique<CommandQueue>(dxDevice->GetDecive(), D3D12_COMMAND_LIST_TYPE_COMPUTE);
 		copyCommandQueue = std::make_unique<CommandQueue>(dxDevice->GetDecive(), D3D12_COMMAND_LIST_TYPE_COPY);
-		SCRTVDesHeap = std::make_unique<DescriptorHeap>(dxDevice->GetDecive(), D3D12_DESCRIPTOR_HEAP_TYPE_RTV, SwapChainBufferCount);
 		swapChain = std::make_unique<SwapChain>(hWnd, directCommandQueue->GetCommandQueue());
-		swapChain->UpdateMainRT(dxDevice->GetDecive(), SCRTVDesHeap->GetDescriptorHeap());
+		swapChain->UpdateBackBuffer(dxDevice->GetDecive());
 	}
 
 	Graphics::~Graphics()
@@ -56,8 +55,7 @@ namespace DiveBomber::DEGraphics
 
 			commandList->ResourceBarrier(1, &barrier);
 
-			CD3DX12_CPU_DESCRIPTOR_HANDLE rtv(SCRTVDesHeap->GetDescriptorHeap()->GetCPUDescriptorHandleForHeapStart(),
-				currentBackBufferIndex, dxDevice->GetDecive()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV));
+			CD3DX12_CPU_DESCRIPTOR_HANDLE rtv = swapChain->GetBackBufferDescriptorHandle(currentBackBufferIndex);
 
 			FLOAT clearColor[] = ClearMainRTColor;
 			commandList->ClearRenderTargetView(rtv, clearColor, 0, nullptr);
@@ -100,30 +98,16 @@ namespace DiveBomber::DEGraphics
 
 	void Graphics::ReSizeMainRT(const uint32_t inputWidth, const uint32_t inputHeight)
 	{
-		// Don't allow 0 size swap chain back buffers.
-		width = std::max(1u, inputWidth);
-		height = std::max(1u, inputHeight);
-
 		// Flush the GPU queue to make sure the swap chain's back buffers
 		// are not being referenced by an in-flight command list.
 		Flush();
-
+		
 		for (int i = 0; i < SwapChainBufferCount; ++i)
 		{
-			// Any references to the back buffers must be released
-			// before the swap chain can be resized.
-			swapChain->ResetBackBuffer(i);
 			frameFenceValues[i] = frameFenceValues[swapChain->GetSwapChain()->GetCurrentBackBufferIndex()];
 		}
 
-		DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
-
-		HRESULT hr;
-		GFX_THROW_INFO(swapChain->GetSwapChain()->GetDesc(&swapChainDesc));
-		GFX_THROW_INFO(swapChain->GetSwapChain()->ResizeBuffers(SwapChainBufferCount, width, height,
-			swapChainDesc.BufferDesc.Format, swapChainDesc.Flags));
-
-		swapChain->UpdateMainRT(dxDevice->GetDecive(), SCRTVDesHeap->GetDescriptorHeap());
+		swapChain->ResetSizeBackBuffer(GetDecive(), inputWidth, inputHeight);
 	}
 
 	UINT Graphics::GetWidth() const noexcept
@@ -168,7 +152,7 @@ namespace DiveBomber::DEGraphics
 		commandList->ClearDepthStencilView(dsv, D3D12_CLEAR_FLAG_DEPTH, depth, 0, 0, nullptr);
 	}
 
-	void Graphics::OnRender(CD3DX12_CPU_DESCRIPTOR_HANDLE dsv)
+	void Graphics::OnRender()
 	{
 		wrl::ComPtr<ID3D12GraphicsCommandList2> commandList = directCommandList;
 
@@ -188,21 +172,8 @@ namespace DiveBomber::DEGraphics
 		float aspectRatio = MainWindowWidth / (float)MainWindowHeight;
 		m_ProjectionMatrix = XMMatrixPerspectiveFovLH(XMConvertToRadians(m_FoV), aspectRatio, 0.1f, 100.0f);
 
-
-		auto currentBackBufferIndex = swapChain->GetSwapChain()->GetCurrentBackBufferIndex();
-
-		auto rtv = CD3DX12_CPU_DESCRIPTOR_HANDLE(SCRTVDesHeap->GetDescriptorHeap()->GetCPUDescriptorHandleForHeapStart(),
-			currentBackBufferIndex, dxDevice->GetDecive()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV));
-
-		// Clear the render targets.
-		{
-			ClearDepth(commandList, dsv);
-		}
-
 		commandList->RSSetViewports(1, &m_Viewport);
 		commandList->RSSetScissorRects(1, &m_ScissorRect);
-
-		commandList->OMSetRenderTargets(1, &rtv, FALSE, &dsv);
 
 		// Update the MVP matrix
 		XMMATRIX mvpMatrix = XMMatrixMultiply(m_ModelMatrix, m_ViewMatrix);
@@ -213,6 +184,11 @@ namespace DiveBomber::DEGraphics
 	wrl::ComPtr<ID3D12Device2> Graphics::GetDecive() const noexcept
 	{
 		return dxDevice->GetDecive();
+	}
+
+	CD3DX12_CPU_DESCRIPTOR_HANDLE Graphics::GetRenderTargetDescriptorHandle() const noexcept
+	{
+		return swapChain->GetBackBufferDescriptorHandle();
 	}
 
 	wrl::ComPtr<ID3D12GraphicsCommandList2> Graphics::GetCommandList(const D3D12_COMMAND_LIST_TYPE type) noexcept

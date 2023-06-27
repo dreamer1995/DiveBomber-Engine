@@ -67,7 +67,11 @@ namespace DiveBomber::RenderPipeline
 
 		topology->Bind(gfx);
 
-		gfx.OnRender(mainDS->GetDescriptorHandle());
+		gfx.OnRender();
+
+		CD3DX12_CPU_DESCRIPTOR_HANDLE rsv = gfx.GetRenderTargetDescriptorHandle();
+		CD3DX12_CPU_DESCRIPTOR_HANDLE dsv = mainDS->GetDescriptorHandle();
+		gfx.GetCommandList()->OMSetRenderTargets(1, &rsv, FALSE, &dsv);
 
 		gfx.GetCommandList()->DrawIndexedInstanced(indexBuffer->GetCount(), 1, 0, 0, 0);
 	}

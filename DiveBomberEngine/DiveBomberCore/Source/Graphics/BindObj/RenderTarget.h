@@ -22,6 +22,8 @@ namespace DiveBomber::BindObj
 	public:
 		RenderTarget(DEGraphics::Graphics& gfx, wrl::ComPtr<ID3D12Resource> inputBuffer,
 			std::shared_ptr<DX::DescriptorHeap> inputDescHeap, UINT inputDepth = 0);
+		RenderTarget(wrl::ComPtr<ID3D12Device2> device, wrl::ComPtr<ID3D12Resource> inputBuffer,
+			std::shared_ptr<DX::DescriptorHeap> inputDescHeap, UINT inputDepth = 0);
 		RenderTarget(DEGraphics::Graphics& gfx, UINT inputWidth, UINT inputHeight,
 			std::shared_ptr<DX::DescriptorHeap> inputDescHeap, DXGI_FORMAT inputFormat = DXGI_FORMAT_B8G8R8A8_UNORM,
 			UINT inputMipLevels = 0, UINT inputDepth = 0);
