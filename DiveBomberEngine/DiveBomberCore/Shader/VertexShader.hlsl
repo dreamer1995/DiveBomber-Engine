@@ -24,7 +24,7 @@ VertexShaderOutput main(VertexPosColor IN)
 {
     VertexShaderOutput OUT;
 
-    OUT.Position = mul(ModelViewProjectionCB.MVP, float4(IN.pos, 1.0f));
+    OUT.Position = mul(float4(IN.pos, 1.0f), ModelViewProjectionCB.MVP);
     OUT.Color = float4(IN.pos.xyz, 1.0f);
 
     return OUT;

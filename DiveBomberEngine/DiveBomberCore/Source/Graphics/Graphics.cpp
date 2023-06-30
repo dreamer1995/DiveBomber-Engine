@@ -103,6 +103,9 @@ namespace DiveBomber::DEGraphics
 
 	void Graphics::ReSizeMainRT(const uint32_t inputWidth, const uint32_t inputHeight)
 	{
+		width = inputWidth;
+		height = inputHeight;
+
 		// Flush the GPU queue to make sure the swap chain's back buffers
 		// are not being referenced by an in-flight command list.
 		Flush();
@@ -155,32 +158,6 @@ namespace DiveBomber::DEGraphics
 		D3D12_CPU_DESCRIPTOR_HANDLE dsv, FLOAT depth = 1.0f)
 	{
 		commandList->ClearDepthStencilView(dsv, D3D12_CLEAR_FLAG_DEPTH, depth, 0, 0, nullptr);
-	}
-
-	void Graphics::OnRender()
-	{
-		wrl::ComPtr<ID3D12GraphicsCommandList2> commandList = directCommandList;
-
-		using namespace DirectX;
-		// Update the model matrix.
-		float angle = (float)Utility::g_GameTime * 90.0f;
-		const XMVECTOR rotationAxis = XMVectorSet(0, 1, 1, 0);
-		m_ModelMatrix = XMMatrixRotationAxis(rotationAxis, XMConvertToRadians(angle));
-
-		// Update the view matrix.
-		const XMVECTOR eyePositionVector = XMVectorSet(eyePosition.x, eyePosition.y, eyePosition.z, eyePosition.w);
-		const XMVECTOR focusPoint = XMVectorSet(0, 0, 0, 1);
-		const XMVECTOR upDirection = XMVectorSet(0, 1, 0, 0);
-		m_ViewMatrix = XMMatrixLookAtLH(eyePositionVector, focusPoint, upDirection);
-
-		// Update the projection matrix.
-		float aspectRatio = MainWindowWidth / (float)MainWindowHeight;
-		m_ProjectionMatrix = XMMatrixPerspectiveFovLH(XMConvertToRadians(m_FoV), aspectRatio, 0.1f, 100.0f);
-
-		// Update the MVP matrix
-		XMMATRIX mvpMatrix = XMMatrixMultiply(m_ModelMatrix, m_ViewMatrix);
-		mvpMatrix = XMMatrixMultiply(mvpMatrix, m_ProjectionMatrix);
-		commandList->SetGraphicsRoot32BitConstants(0, sizeof(XMMATRIX) / 4, &mvpMatrix, 0);
 	}
 
 	wrl::ComPtr<ID3D12Device2> Graphics::GetDecive() const noexcept

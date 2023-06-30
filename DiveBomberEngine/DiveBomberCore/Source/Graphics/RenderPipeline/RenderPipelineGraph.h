@@ -1,7 +1,8 @@
 #pragma once
 #include "..\Graphics.h"
 #include "..\BindObj\BindObjCommon.h"
-#include "..\BindObj\Geometry\Sphere.h"
+#include "..\Gizmo\Geometry\Sphere.h"
+#include "..\Component\Camera.h"
 
 namespace DiveBomber::RenderPipeline
 {
@@ -11,6 +12,7 @@ namespace DiveBomber::RenderPipeline
 		RenderPipelineGraph();
 		void LoadContent(DEGraphics::Graphics& gfx);
 		void Bind(DEGraphics::Graphics& gfx) noxnd;
+		std::shared_ptr<Component::Camera> GetMainCamera() const noexcept;
 	private:
 		std::shared_ptr<BindObj::RootSignature> rootSignature;
 		std::shared_ptr<BindObj::PipelineStateObject> pipelineStateObject;
@@ -24,5 +26,7 @@ namespace DiveBomber::RenderPipeline
 		std::shared_ptr<BindObj::Topology> topology;
 
 		std::shared_ptr<BindObj::DepthStencil> mainDS;
+
+		std::shared_ptr<Component::Camera> mainCamera;
 	};
 }

@@ -48,8 +48,6 @@ namespace DiveBomber::DEGraphics
 		[[nodiscard]] wrl::ComPtr<ID3D12Device2> GetDecive() const noexcept;
 		[[nodiscard]] wrl::ComPtr<ID3D12GraphicsCommandList2> GetCommandList(const D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT) noexcept;
 		[[nodiscard]] CD3DX12_CPU_DESCRIPTOR_HANDLE GetRenderTargetDescriptorHandle() const noexcept;
-		//temp
-		void OnRender();
 
 	private:
 		UINT width = 0;
@@ -68,23 +66,10 @@ namespace DiveBomber::DEGraphics
 		std::unique_ptr<DX::SwapChain> swapChain;
 		std::unique_ptr<DX::Viewport> viewport;
 		std::unique_ptr<DX::ScissorRects> scissorRects;
+
 		HANDLE fenceEvent = 0;
 		uint64_t frameFenceValues[SwapChainBufferCount] = {};
 
-		//temp
-	public:
-		float m_FoV = 45.0f;
-
-		DirectX::XMMATRIX m_ModelMatrix;
-		DirectX::XMMATRIX m_ViewMatrix;
-		DirectX::XMMATRIX m_ProjectionMatrix;
-
-		bool m_ContentLoaded = false;
-
-		DirectX::XMFLOAT4 eyePosition = { 0, 0, -10, 1 };
-		UINT m_CurrentBackBufferIndex;
-
-	private:
 		wrl::ComPtr<ID3D12GraphicsCommandList2> copyCommandList;
 		wrl::ComPtr<ID3D12GraphicsCommandList2> directCommandList;
 

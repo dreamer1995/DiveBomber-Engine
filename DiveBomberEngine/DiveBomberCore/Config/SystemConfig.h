@@ -12,6 +12,8 @@ namespace DiveBomber::Config
 
 #define TimerSpeed 1.0f
 
+#define EnableTAA true
+
 // Miscellaneous Settings
 #define ThrowLanguage LANG_ENGLISH
 #define EnableConsole true

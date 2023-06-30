@@ -79,8 +79,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Graphics\BindObj\ConstantBuffer.cpp" />
     <ClCompile Include="Source\Graphics\BindObj\DepthStencil.cpp" />
     <ClCompile Include="Source\Graphics\BindObj\PipelineStateObject.cpp" />
+    <ClCompile Include="Source\Graphics\Component\Camera.cpp" />
+    <ClCompile Include="Source\Graphics\Component\Projection.cpp" />
     <ClCompile Include="Source\Graphics\DX\ScissorRects.cpp" />
     <ClCompile Include="Source\Graphics\DX\Viewport.cpp" />
     <ClCompile Include="Source\Graphics\RenderPipeline\RenderPipelineGraph.cpp" />
@@ -117,8 +120,11 @@
   <ItemGroup>
     <ClInclude Include="Source\Graphics\BindObj\BindableTarget.h" />
     <ClInclude Include="Source\Graphics\BindObj\BindObjCommon.h" />
+    <ClInclude Include="Source\Graphics\BindObj\ConstantBuffer.h" />
     <ClInclude Include="Source\Graphics\BindObj\DepthStencil.h" />
     <ClInclude Include="Source\Graphics\BindObj\PipelineStateObject.h" />
+    <ClInclude Include="Source\Graphics\Component\Camera.h" />
+    <ClInclude Include="Source\Graphics\Component\Projection.h" />
     <ClInclude Include="Source\Graphics\DX\ScissorRects.h" />
     <ClInclude Include="Source\Graphics\DX\Viewport.h" />
     <ClInclude Include="Source\Graphics\RenderPipeline\RenderPipelineGraph.h" />
@@ -126,11 +132,11 @@
     <ClInclude Include="Source\Graphics\BindObj\Topology.h" />
     <ClInclude Include="Source\Graphics\DX\CommandContext.h" />
     <ClInclude Include="Source\Graphics\BindObj\BindableCodex.h" />
-    <ClInclude Include="Source\Graphics\BindObj\Geometry\Cube.h" />
-    <ClInclude Include="Source\Graphics\BindObj\Geometry\IndexedTriangleList.h" />
-    <ClInclude Include="Source\Graphics\BindObj\Geometry\MiscShape.h" />
-    <ClInclude Include="Source\Graphics\BindObj\Geometry\Plane.h" />
-    <ClInclude Include="Source\Graphics\BindObj\Geometry\Sphere.h" />
+    <ClInclude Include="Source\Graphics\Gizmo\Geometry\Cube.h" />
+    <ClInclude Include="Source\Graphics\Gizmo\Geometry\IndexedTriangleList.h" />
+    <ClInclude Include="Source\Graphics\Gizmo\Geometry\MiscShape.h" />
+    <ClInclude Include="Source\Graphics\Gizmo\Geometry\Plane.h" />
+    <ClInclude Include="Source\Graphics\Gizmo\Geometry\Sphere.h" />
     <ClInclude Include="Source\Graphics\BindObj\Bindable.h" />
     <ClInclude Include="Source\Graphics\BindObj\IndexBuffer.h" />
     <ClInclude Include="Source\Graphics\DX\CommandQueue.h" />

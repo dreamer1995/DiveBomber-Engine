@@ -9,8 +9,9 @@ namespace DiveBomber::BindObj
 
 	RenderTarget::RenderTarget(DEGraphics::Graphics& gfx, wrl::ComPtr<ID3D12Resource> inputBuffer,
 		std::shared_ptr<DX::DescriptorHeap> inputDescHeap, UINT inputDepth)
+		:
+		RenderTarget{ gfx.GetDecive(), inputBuffer, inputDescHeap, inputDepth }
 	{
-		RenderTarget(gfx.GetDecive(), inputBuffer, inputDescHeap, inputDepth);
 	}
 
 	RenderTarget::RenderTarget(wrl::ComPtr<ID3D12Device2> device, wrl::ComPtr<ID3D12Resource> inputBuffer,

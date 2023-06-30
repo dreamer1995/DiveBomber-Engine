@@ -8,6 +8,7 @@ namespace DiveBomber::RenderPipeline
 	using namespace DiveBomber::BindObj;
 	using namespace DiveBomber::BindObj::VertexProcess;
 	using namespace DX;
+	using namespace Component;
 
 	RenderPipelineGraph::RenderPipelineGraph()
 	{
@@ -36,7 +37,7 @@ namespace DiveBomber::RenderPipeline
 
 		std::shared_ptr<DescriptorHeap> dsHeap = std::make_shared<DescriptorHeap>(gfx.GetDecive(),
 			D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1u);
-		mainDS = std::make_shared<DepthStencil>(gfx, MainWindowWidth, MainWindowHeight, std::move(dsHeap), 0u);
+		mainDS = std::make_shared<DepthStencil>(gfx, gfx.GetWidth(), gfx.GetHeight(), std::move(dsHeap), 0u);
 
 		vertexShader = std::make_shared<Shader>(gfx, L"VertexShader.cso", Shader::ShaderType::VertexShader);
 		pixelShader = std::make_shared<Shader>(gfx, L"PixelShader.cso", Shader::ShaderType::PixelShader);
@@ -53,6 +54,10 @@ namespace DiveBomber::RenderPipeline
 
 		pipelineStateObject = std::make_shared<PipelineStateObject>(gfx, "sphere1PSO",
 			rootSignature, vertexBuffer, topology, vertexShader, pixelShader, dsvFormat, rtvFormats);
+
+		Camera::CameraAttributes cameraAttr;
+		cameraAttr.position.z = -6.0f;
+		mainCamera = std::make_shared<Camera>(gfx, "Main Camera", cameraAttr, false);
 	}
 
 	void RenderPipelineGraph::Bind(DEGraphics::Graphics& gfx) noxnd
@@ -67,12 +72,31 @@ namespace DiveBomber::RenderPipeline
 
 		topology->Bind(gfx);
 
-		gfx.OnRender();
+		using namespace DirectX;
+		// Update the model matrix.
+		float angle = (float)Utility::g_GameTime * 90.0f;
+		const XMVECTOR rotationAxis = XMVectorSet(0, 1, 1, 0);
+		auto modelMatrix = XMMatrixRotationAxis(rotationAxis, XMConvertToRadians(angle));
+
+		auto viewMatrix = mainCamera->GetMatrix();
+
+		auto projectionMatrix = mainCamera->GetProjection(gfx);
+
+		// Update the MVP matrix
+		XMMATRIX mvpMatrix = XMMatrixMultiply(modelMatrix, viewMatrix);
+		mvpMatrix = XMMatrixMultiply(mvpMatrix, projectionMatrix);
+		mvpMatrix = XMMatrixTranspose(mvpMatrix);
+		gfx.GetCommandList()->SetGraphicsRoot32BitConstants(0, sizeof(XMMATRIX) / 4, &mvpMatrix, 0);
 
 		CD3DX12_CPU_DESCRIPTOR_HANDLE rsv = gfx.GetRenderTargetDescriptorHandle();
 		CD3DX12_CPU_DESCRIPTOR_HANDLE dsv = mainDS->GetDescriptorHandle();
 		gfx.GetCommandList()->OMSetRenderTargets(1, &rsv, FALSE, &dsv);
 
 		gfx.GetCommandList()->DrawIndexedInstanced(indexBuffer->GetCount(), 1, 0, 0, 0);
+	}
+
+	std::shared_ptr<Component::Camera> RenderPipelineGraph::GetMainCamera() const noexcept
+	{
+		return mainCamera;
 	}
 }

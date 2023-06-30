@@ -35,6 +35,9 @@
     <ClCompile Include="Source\Utility\RenderStatistics.cpp" />
     <ClCompile Include="Source\Graphics\DX\Viewport.cpp" />
     <ClCompile Include="Source\Graphics\DX\ScissorRects.cpp" />
+    <ClCompile Include="Source\Graphics\BindObj\ConstantBuffer.cpp" />
+    <ClCompile Include="Source\Graphics\Component\Camera.cpp" />
+    <ClCompile Include="Source\Graphics\Component\Projection.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Utility\Common.h" />
@@ -67,11 +70,11 @@
     <ClInclude Include="Source\Graphics\BindObj\Bindable.h" />
     <ClInclude Include="Source\Graphics\BindObj\VertexBuffer.h" />
     <ClInclude Include="Source\Graphics\BindObj\BindableCodex.h" />
-    <ClInclude Include="Source\Graphics\BindObj\Geometry\Cube.h" />
-    <ClInclude Include="Source\Graphics\BindObj\Geometry\IndexedTriangleList.h" />
-    <ClInclude Include="Source\Graphics\BindObj\Geometry\MiscShape.h" />
-    <ClInclude Include="Source\Graphics\BindObj\Geometry\Plane.h" />
-    <ClInclude Include="Source\Graphics\BindObj\Geometry\Sphere.h" />
+    <ClInclude Include="Source\Graphics\Gizmo\Geometry\Cube.h" />
+    <ClInclude Include="Source\Graphics\Gizmo\Geometry\IndexedTriangleList.h" />
+    <ClInclude Include="Source\Graphics\Gizmo\Geometry\MiscShape.h" />
+    <ClInclude Include="Source\Graphics\Gizmo\Geometry\Plane.h" />
+    <ClInclude Include="Source\Graphics\Gizmo\Geometry\Sphere.h" />
     <ClInclude Include="Source\Utility\DEMath.h" />
     <ClInclude Include="Source\Graphics\BindObj\IndexBuffer.h" />
     <ClInclude Include="Source\Graphics\DX\CommandContext.h" />
@@ -86,6 +89,9 @@
     <ClInclude Include="Source\Graphics\BindObj\BindableTarget.h" />
     <ClInclude Include="Source\Graphics\DX\Viewport.h" />
     <ClInclude Include="Source\Graphics\DX\ScissorRects.h" />
+    <ClInclude Include="Source\Graphics\BindObj\ConstantBuffer.h" />
+    <ClInclude Include="Source\Graphics\Component\Camera.h" />
+    <ClInclude Include="Source\Graphics\Component\Projection.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource\Resource.rc" />
