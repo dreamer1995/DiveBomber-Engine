@@ -7,3 +7,5 @@
 #include "Shader.h"
 #include "RenderTarget.h"
 #include "DepthStencil.h"
+#include "ConstantBuffer.h"
+#include "ConstantTransformBuffer.h"

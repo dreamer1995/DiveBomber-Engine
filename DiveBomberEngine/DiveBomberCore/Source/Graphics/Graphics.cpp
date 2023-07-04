@@ -1,5 +1,7 @@
 #include "Graphics.h"
 
+#include "Component/Camera.h"
+
 #include <iostream>
 
 namespace DiveBomber::DEGraphics
@@ -200,5 +202,25 @@ namespace DiveBomber::DEGraphics
 			assert(false && "Invalid command queue type.");
 			return nullptr;
 		}
+	}
+
+	void Graphics::SetCamera(const std::shared_ptr<Component::Camera> camera) noexcept
+	{
+		renderCamera = camera;
+	}
+
+	DirectX::XMMATRIX Graphics::GetCameraMatrix() const noexcept
+	{
+		return renderCamera->GetMatrix();
+	}
+
+	DirectX::XMMATRIX Graphics::GetProjetionMatrix() const noexcept
+	{
+		return renderCamera->GetProjection(GetWidth(), GetHeight());
+	}
+
+	float Graphics::GetFOV() const noexcept
+	{
+		return renderCamera->GetFOV();
 	}
 }

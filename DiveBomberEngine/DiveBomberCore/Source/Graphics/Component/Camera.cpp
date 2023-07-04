@@ -28,9 +28,9 @@ namespace DiveBomber::Component
 		Reset(gfx);
 	}
 
-	void Camera::BindToGraphics(Graphics& gfx) const
+	void Camera::BindToGraphics(DEGraphics::Graphics& gfx, std::shared_ptr<Camera> camera) const
 	{
-		//gfx.SetCamera(GetMatrix());
+		gfx.SetCamera(camera);
 		//gfx.SetProjection(proj.GetMatrix());
 		//gfx.SetFOV(proj.GetFOV());
 	}
@@ -65,6 +65,16 @@ namespace DiveBomber::Component
 	DirectX::XMMATRIX Camera::GetProjection(DEGraphics::Graphics& gfx) const noexcept
 	{
 		return projection->GetMatrix(gfx);
+	}
+
+	DirectX::XMMATRIX Camera::GetProjection(UINT renderTargetWidth, UINT renderTargetHeight) const noexcept
+	{
+		return projection->GetMatrix(renderTargetWidth, renderTargetHeight);
+	}
+
+	float Camera::GetFOV() const noexcept
+	{
+		return projection->GetFOV();
 	}
 
 	//void Camera::SpawnControlWidgets(Graphics& gfx) noexcept
@@ -104,7 +114,7 @@ namespace DiveBomber::Component
 	//	}
 	//}
 
-	void Camera::Reset(Graphics& gfx) noexcept
+	void Camera::Reset(const Graphics& gfx) noexcept
 	{
 		if (!tethered)
 		{
@@ -120,7 +130,7 @@ namespace DiveBomber::Component
 		//proj.Reset(gfx);
 	}
 
-	void Camera::Rotate(float dx, float dy) noexcept
+	void Camera::Rotate(const float dx, const float dy) noexcept
 	{
 		rotation.y = wrap_angle(rotation.y + dx * rotationSpeed);
 		//pitch = std::clamp( pitch + dy * rotationSpeed,0.995f * -PI / 2.0f,0.995f * PI / 2.0f );
@@ -184,7 +194,7 @@ namespace DiveBomber::Component
 	//	}
 	//}
 
-	void Camera::LookZero(DirectX::XMFLOAT3 inputPos) noexcept
+	void Camera::LookZero(const DirectX::XMFLOAT3 inputPos) noexcept
 	{
 		DirectX::XMFLOAT3 delta = { position.x - inputPos.x,position.y - inputPos.y, position.z - inputPos.z };
 		rotation.x = wrap_angle(atan2(delta.y, sqrt(delta.x * delta.x + delta.z * delta.z)));
@@ -192,7 +202,7 @@ namespace DiveBomber::Component
 		yaw_ = rotation.y;
 	}
 
-	void Camera::KeepLookFront(DirectX::XMFLOAT3 inputPos) noexcept
+	void Camera::KeepLookFront(const DirectX::XMFLOAT3 inputPos) noexcept
 	{
 		DirectX::XMFLOAT3 delta = { position.x - inputPos.x,position.y - inputPos.y, position.z - inputPos.z };
 		if (-PI / 2.0f >= rotation.x || rotation.x >= PI / 2.0f)
@@ -224,22 +234,22 @@ namespace DiveBomber::Component
 		yaw_ = rotation.y;
 	}
 
-	void Camera::RotateAround(float dx, float dy, DirectX::XMFLOAT3 centralPoint) noexcept
+	void Camera::RotateAround(const float dx, const float dy, const DirectX::XMFLOAT3 centralPoint) noexcept
 	{
-		using namespace dx;
+		using namespace DirectX;
 		// Rotate camera around a point
 		{
 			DirectX::XMFLOAT3 lookVector, destination;
 			XMVECTOR rotateVector = XMVectorSubtract(XMLoadFloat3(&position), XMLoadFloat3(&centralPoint));
-			dx::XMStoreFloat3(&lookVector, XMVector3Transform(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), XMMatrixRotationRollPitchYaw(rotation.x, rotation.y, rotation.z)));
+			XMStoreFloat3(&lookVector, XMVector3Transform(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), XMMatrixRotationRollPitchYaw(rotation.x, rotation.y, rotation.z)));
 			XMFLOAT3 finalRatationViewVector;
-			XMStoreFloat3(&finalRatationViewVector, dx::XMVector3Transform(rotateVector,
-				dx::XMMatrixTranslation(lookVector.x, lookVector.y, lookVector.z) *
+			XMStoreFloat3(&finalRatationViewVector, XMVector3Transform(rotateVector,
+				XMMatrixTranslation(lookVector.x, lookVector.y, lookVector.z) *
 				XMMatrixRotationQuaternion(XMQuaternionRotationAxis(XMVector3Transform(XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f),
 					XMMatrixRotationRollPitchYaw(0.0f, rotation.y, 0.0f)), dy * rotationSpeed))
 				* XMMatrixRotationQuaternion(XMQuaternionRotationAxis(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), dx * rotationSpeed))
 			));
-			dx::XMStoreFloat3(&destination,
+			XMStoreFloat3(&destination,
 				XMVector3Transform(XMLoadFloat3(&centralPoint), XMMatrixTranslation(finalRatationViewVector.x, finalRatationViewVector.y, finalRatationViewVector.z)));
 			XMFLOAT3 finalRatationVector;
 			XMStoreFloat3(&finalRatationVector, XMVector3Transform(rotateVector,
@@ -253,7 +263,7 @@ namespace DiveBomber::Component
 		}
 	}
 
-	void Camera::Bind(Graphics& gfx) const noexcept
+	void Camera::Bind(const Graphics& gfx) const noexcept
 	{
 		using namespace dx;
 		const dx::XMVECTOR forwardBaseVector = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
@@ -276,7 +286,7 @@ namespace DiveBomber::Component
 		//const_cast<Camera*>(this)->proj.UpdateScreenResolution(gfx);
 	}
 
-	void Camera::SetRotation(float pitch, float yaw) noexcept
+	void Camera::SetRotation(const float pitch, const float yaw) noexcept
 	{
 		rotation.x = pitch;
 		rotation.y = yaw;
@@ -329,8 +339,8 @@ namespace DiveBomber::Component
 	//	UVToViewB.x = HalfTanFovX; UVToViewB.y = -1 * HalfTanFovY;
 	//}
 
-	//void Camera::SetOffsetPixels(float offsetX, float offsetY) noxnd
-	//{
-	//	proj.SetOffsetPixels(offsetX, offsetY);
-	//}
+	void Camera::SetOffsetPixels(const float offsetX, const float offsetY) noxnd
+	{
+		projection->SetOffsetPixels(offsetX, offsetY);
+	}
 }

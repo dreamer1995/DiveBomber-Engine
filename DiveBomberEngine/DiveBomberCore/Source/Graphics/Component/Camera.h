@@ -22,26 +22,28 @@ namespace DiveBomber::Component
 	public:
 		Camera(DEGraphics::Graphics& gfx, std::string inputName, CameraAttributes attributes, bool inputTethered = false) noexcept;
 		Camera(DEGraphics::Graphics& gfx, std::string inputName, bool tethered = false) noexcept;
-		void BindToGraphics(DEGraphics::Graphics& gfx) const;
-		DirectX::XMMATRIX GetMatrix() const noexcept;
-		DirectX::XMMATRIX GetProjection(DEGraphics::Graphics& gfx) const noexcept;
+		void BindToGraphics(DEGraphics::Graphics& gfx, std::shared_ptr<Camera> camera) const;
+		[[nodiscard]] DirectX::XMMATRIX GetMatrix() const noexcept;
+		[[nodiscard]] DirectX::XMMATRIX GetProjection(DEGraphics::Graphics& gfx) const noexcept;
+		[[nodiscard]] DirectX::XMMATRIX GetProjection(UINT renderTargetWidth, UINT renderTargetHeight) const noexcept;
+		[[nodiscard]] float GetFOV() const noexcept;
 		//void SpawnControlWidgets(DEGraphics::Graphics& gfx) noexcept;
-		void Reset(DEGraphics::Graphics& gfx) noexcept;
-		void Rotate(float dx, float dy) noexcept;
-		void Translate(DirectX::XMFLOAT3 translation) noexcept;
-		DirectX::XMFLOAT3 GetPos() const noexcept;
+		void Reset(const DEGraphics::Graphics& gfx) noexcept;
+		void Rotate(const float dx, const float dy) noexcept;
+		void Translate(const DirectX::XMFLOAT3 translation) noexcept;
+		[[nodiscard]] DirectX::XMFLOAT3 GetPos() const noexcept;
 		void SetPos(const DirectX::XMFLOAT3& inputPos) noexcept;
-		const std::string& GetName() const noexcept;
+		[[nodiscard]] const std::string& GetName() const noexcept;
 		//void LinkTechniques(Rgph::RenderGraph& rg);
 		//void Submit(size_t channel) const;
 
-		void LookZero(DirectX::XMFLOAT3 inputPos) noexcept;
-		void RotateAround(float dx, float dy, DirectX::XMFLOAT3 centralPoint) noexcept;
-		void Bind(DEGraphics::Graphics& gfx) const noexcept;
-		void SetRotation(float pitch, float yaw) noexcept;
+		void LookZero(const DirectX::XMFLOAT3 inputPos) noexcept;
+		void RotateAround(const float dx, const float dy, const DirectX::XMFLOAT3 centralPoint) noexcept;
+		void Bind(const DEGraphics::Graphics& gfx) const noexcept;
+		void SetRotation(const float pitch, const float yaw) noexcept;
 		void ProjectScreenToWorldExpansionBasis(DirectX::XMFLOAT4& vWBasisX, DirectX::XMFLOAT4& vWBasisY, DirectX::XMFLOAT4& vWBasisZ,
 			DirectX::XMFLOAT2& UVToViewA, DirectX::XMFLOAT2& UVToViewB) const noxnd;
-		void SetOffsetPixels(float offsetX, float offsetY) noxnd;
+		void SetOffsetPixels(const float offsetX, const float offsetY) noxnd;
 
 	private:
 		struct CameraCBuf
@@ -57,7 +59,7 @@ namespace DiveBomber::Component
 		};
 
 	private:
-		void KeepLookFront(DirectX::XMFLOAT3 inputPos) noexcept;
+		void KeepLookFront(const DirectX::XMFLOAT3 inputPos) noexcept;
 
 	private:
 		float yaw_;

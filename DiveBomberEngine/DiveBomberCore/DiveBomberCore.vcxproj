@@ -79,7 +79,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Graphics\BindObj\ConstantBuffer.cpp" />
+    <ClCompile Include="Source\Graphics\BindObj\ConstantTransformBuffer.cpp" />
     <ClCompile Include="Source\Graphics\BindObj\DepthStencil.cpp" />
     <ClCompile Include="Source\Graphics\BindObj\PipelineStateObject.cpp" />
     <ClCompile Include="Source\Graphics\Component\Camera.cpp" />
@@ -118,9 +118,11 @@
     <ClCompile Include="Source\Graphics\BindObj\Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Exception\GraphicsExceptionEX.h" />
     <ClInclude Include="Source\Graphics\BindObj\BindableTarget.h" />
     <ClInclude Include="Source\Graphics\BindObj\BindObjCommon.h" />
     <ClInclude Include="Source\Graphics\BindObj\ConstantBuffer.h" />
+    <ClInclude Include="Source\Graphics\BindObj\ConstantTransformBuffer.h" />
     <ClInclude Include="Source\Graphics\BindObj\DepthStencil.h" />
     <ClInclude Include="Source\Graphics\BindObj\PipelineStateObject.h" />
     <ClInclude Include="Source\Graphics\Component\Camera.h" />

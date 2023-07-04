@@ -40,6 +40,11 @@ namespace DiveBomber::Component
 	// need to be re-designed, make sure the cost is fine
 	DirectX::XMMATRIX Projection::GetMatrix(Graphics& gfx) const
 	{
+		return GetMatrix(gfx.GetWidth(), gfx.GetHeight());
+	}
+
+	DirectX::XMMATRIX Projection::GetMatrix(UINT renderTargetWidth, UINT renderTargetHeight) const
+	{
 		if (isPerspective)
 		{
 			DirectX::XMFLOAT4X4 projArray4x4;
@@ -47,8 +52,8 @@ namespace DiveBomber::Component
 			//float vDirection = -1 //For OpenGL? Fuck mesxiah;
 			if (EnableTAA)
 			{
-				projArray4x4._31 = -2.0f * offsetPixelX / gfx.GetWidth();
-				projArray4x4._32 = 2.0f * offsetPixelY / gfx.GetHeight();
+				projArray4x4._31 = -2.0f * offsetPixelX / renderTargetWidth;
+				projArray4x4._32 = 2.0f * offsetPixelY / renderTargetHeight;
 			}
 			return DirectX::XMLoadFloat4x4(&projArray4x4);
 		}
@@ -59,8 +64,8 @@ namespace DiveBomber::Component
 
 			if (EnableTAA)
 			{
-				projArray4x4._31 = -2.0f * offsetPixelX / gfx.GetWidth();
-				projArray4x4._32 = -2.0f * offsetPixelY / gfx.GetHeight();
+				projArray4x4._31 = -2.0f * offsetPixelX / renderTargetWidth;
+				projArray4x4._32 = -2.0f * offsetPixelY / renderTargetHeight;
 			}
 			return DirectX::XMLoadFloat4x4(&projArray4x4);
 		}
@@ -100,12 +105,12 @@ namespace DiveBomber::Component
 	//	}
 	//}
 
-	void Projection::SetPos(DirectX::XMFLOAT3 pos)
+	void Projection::SetPos(const DirectX::XMFLOAT3 pos)
 	{
 		//frust->SetPos(pos);
 	}
 
-	void Projection::SetRotation(DirectX::XMFLOAT3 rot)
+	void Projection::SetRotation(const DirectX::XMFLOAT3 rot)
 	{
 		//frust->SetRotation(rot);
 	}
@@ -120,7 +125,7 @@ namespace DiveBomber::Component
 	//	frust->LinkTechniques(rg);
 	//}
 
-	void Projection::Reset(Graphics& gfx)
+	void Projection::Reset(const Graphics& gfx)
 	{
 		width = homeWidth;
 		height = homeHeight;
@@ -131,7 +136,8 @@ namespace DiveBomber::Component
 		//frust->SetVertices(gfx, width, height, nearZ, farZ);
 	}
 
-	void Projection::SetProjection(float inputFOV, float inputAspectRatio, float inputNearPlane, float inputFarPlaneZ)
+	void Projection::SetProjection(const float inputFOV, const float inputAspectRatio,
+		const float inputNearPlane, const float inputFarPlaneZ)
 	{
 		FOV = inputFOV;
 		aspectRatio = inputAspectRatio;
@@ -166,7 +172,7 @@ namespace DiveBomber::Component
 		return aspectRatio;
 	}
 
-	void Projection::SetOffsetPixels(float offsetX, float offsetY) noxnd
+	void Projection::SetOffsetPixels(const float offsetX, const float offsetY) noxnd
 	{
 		offsetPixelX = offsetX;
 		offsetPixelY = offsetY;

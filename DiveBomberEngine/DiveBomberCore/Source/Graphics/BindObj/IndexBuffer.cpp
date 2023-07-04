@@ -19,8 +19,8 @@ namespace DiveBomber::BindObj
 
 		HRESULT hr;
 
-		auto heapProp = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
-		auto resDes = CD3DX12_RESOURCE_DESC::Buffer(bufferSize, D3D12_RESOURCE_FLAG_NONE);
+		const CD3DX12_HEAP_PROPERTIES heapProp{ D3D12_HEAP_TYPE_DEFAULT };
+		const CD3DX12_RESOURCE_DESC resDes = CD3DX12_RESOURCE_DESC::Buffer(bufferSize, D3D12_RESOURCE_FLAG_NONE);
 
 		// Create a committed resource for the GPU resource in a default heap.
 		GFX_THROW_INFO(gfx.GetDecive()->CreateCommittedResource(
@@ -34,13 +34,13 @@ namespace DiveBomber::BindObj
 		// Create an committed resource for the upload.
 		if (indices.data())
 		{
-			auto heapProp1 = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
-			auto resDes1 = CD3DX12_RESOURCE_DESC::Buffer(bufferSize);
+			const CD3DX12_HEAP_PROPERTIES heapProp{ D3D12_HEAP_TYPE_UPLOAD };
+			const CD3DX12_RESOURCE_DESC resDes = CD3DX12_RESOURCE_DESC::Buffer(bufferSize);
 
 			GFX_THROW_INFO(gfx.GetDecive()->CreateCommittedResource(
-				&heapProp1,
+				&heapProp,
 				D3D12_HEAP_FLAG_NONE,
-				&resDes1,
+				&resDes,
 				D3D12_RESOURCE_STATE_GENERIC_READ,
 				nullptr,
 				IID_PPV_ARGS(&indexUploadBuffer)));
@@ -50,8 +50,7 @@ namespace DiveBomber::BindObj
 			subresourceData.RowPitch = bufferSize;
 			subresourceData.SlicePitch = subresourceData.RowPitch;
 
-			auto commandList = gfx.GetCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
-			UpdateSubresources(commandList.Get(),
+			UpdateSubresources(gfx.GetCommandList(D3D12_COMMAND_LIST_TYPE_COPY).Get(),
 				indexBuffer.Get(), indexUploadBuffer.Get(),
 				0, 0, 1, &subresourceData);
 		}

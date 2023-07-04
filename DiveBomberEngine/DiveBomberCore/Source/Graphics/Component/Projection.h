@@ -20,18 +20,20 @@ namespace DiveBomber::Component
 
 	public:
 		Projection(DEGraphics::Graphics& gfx, ProjectionAttributes projectionAttributes);
-		DirectX::XMMATRIX GetMatrix(DEGraphics::Graphics& gfx) const;
+		[[nodiscard]] DirectX::XMMATRIX GetMatrix(DEGraphics::Graphics& gfx) const;
+		[[nodiscard]] DirectX::XMMATRIX GetMatrix(UINT renderTargetWidth, UINT renderTargetHeight) const;
 		//void RenderWidgets(DEGraphics::Graphics& gfx);
-		void SetPos(DirectX::XMFLOAT3);
-		void SetRotation(DirectX::XMFLOAT3);
+		void SetPos(const DirectX::XMFLOAT3);
+		void SetRotation(const DirectX::XMFLOAT3);
 		void Submit(size_t channel) const;
 		//void LinkTechniques(Rgph::RenderGraph& rg);
-		void Reset(DEGraphics::Graphics& gfx);
-		void SetProjection(float inputFOV, float inputAspectRatio, float inputNearPlane, float inputFarPlane);
-		DirectX::XMFLOAT2 GetFarNearPlane() const;
+		void Reset(const DEGraphics::Graphics& gfx);
+		void SetProjection(const float inputFOV, const float inputAspectRatio,
+			const float inputNearPlane, const float inputFarPlane);
+		[[nodiscard]] DirectX::XMFLOAT2 GetFarNearPlane() const;
 		float GetFOV() const;
 		float GetAspectRatio() const;
-		void SetOffsetPixels(float offsetX, float offsetY) noxnd;
+		void SetOffsetPixels(const float offsetX, const float offsetY) noxnd;
 	private:
 		float width;
 		float height;

@@ -8,6 +8,11 @@
 #include "DX/ScissorRects.h"
 #include "../Utility/RenderStatistics.h"
 
+namespace DiveBomber::Component
+{
+	class Camera;
+}
+
 namespace DiveBomber::DEGraphics
 {
 	class Graphics final
@@ -20,10 +25,10 @@ namespace DiveBomber::DEGraphics
 		void DrawIndexed(UINT count) noxnd;
 		void DrawInstanced(UINT vertexCount, UINT instanceCount) noxnd;
 		void Dispatch(const UINT x, const UINT y, UINT const group) noxnd;
-		void SetProjection(DirectX::FXMMATRIX const proj) noexcept;
-		[[nodiscard]] DirectX::XMMATRIX GetProjection() const noexcept;
-		void SetCamera(const DirectX::FXMMATRIX cam) noexcept;
-		[[nodiscard]] DirectX::XMMATRIX GetCamera() const noexcept;
+		void SetCamera(const std::shared_ptr<Component::Camera> camera) noexcept;
+		[[nodiscard]] DirectX::XMMATRIX GetCameraMatrix() const noexcept;
+		[[nodiscard]] DirectX::XMMATRIX GetProjetionMatrix() const noexcept;
+		[[nodiscard]] float GetFOV() const noexcept;
 		void EnableImgui() noexcept;
 		void DisableImgui() noexcept;
 		[[nodiscard]] bool IsImguiEnabled() const noexcept;
@@ -33,8 +38,6 @@ namespace DiveBomber::DEGraphics
 		void ClearShaderResources(const UINT slot) noexcept;
 		void UnbindTessellationShaders() noexcept;
 		void ClearConstantBuffers(const UINT slot) noexcept;
-		void SetFOV(const float FOV) noexcept;
-		[[nodiscard]] float GetFOV() const noexcept;
 		void ClearRenderTarget() noexcept;
 		void ClearUAV(const UINT slot) noexcept;
 		void ClearShader() noexcept;
@@ -52,8 +55,6 @@ namespace DiveBomber::DEGraphics
 	private:
 		UINT width = 0;
 		UINT height = 0;
-		DirectX::XMMATRIX projection = DirectX::XMMATRIX();
-		DirectX::XMMATRIX camera = DirectX::XMMATRIX();
 		bool imguiEnabled = true;
 		float mFOV = Utility::PI / 3 * 2;
 		HWND hWnd = 0;
@@ -72,6 +73,8 @@ namespace DiveBomber::DEGraphics
 
 		wrl::ComPtr<ID3D12GraphicsCommandList2> copyCommandList;
 		wrl::ComPtr<ID3D12GraphicsCommandList2> directCommandList;
+
+		std::shared_ptr<Component::Camera> renderCamera;
 
 	public:
 		bool isWireFrame = false;

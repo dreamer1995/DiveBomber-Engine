@@ -35,9 +35,9 @@
     <ClCompile Include="Source\Utility\RenderStatistics.cpp" />
     <ClCompile Include="Source\Graphics\DX\Viewport.cpp" />
     <ClCompile Include="Source\Graphics\DX\ScissorRects.cpp" />
-    <ClCompile Include="Source\Graphics\BindObj\ConstantBuffer.cpp" />
     <ClCompile Include="Source\Graphics\Component\Camera.cpp" />
     <ClCompile Include="Source\Graphics\Component\Projection.cpp" />
+    <ClCompile Include="Source\Graphics\BindObj\ConstantTransformBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Utility\Common.h" />
@@ -92,6 +92,8 @@
     <ClInclude Include="Source\Graphics\BindObj\ConstantBuffer.h" />
     <ClInclude Include="Source\Graphics\Component\Camera.h" />
     <ClInclude Include="Source\Graphics\Component\Projection.h" />
+    <ClInclude Include="Source\Graphics\BindObj\ConstantTransformBuffer.h" />
+    <ClInclude Include="Source\Exception\GraphicsExceptionEX.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource\Resource.rc" />
