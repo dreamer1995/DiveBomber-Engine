@@ -16,14 +16,15 @@ namespace DiveBomber::BindObj
 			slot = inputSlot;
 			bufferSize = UINT(sizeof(constantData));
 
-			if (constantData)
+			if (bufferSize > 0)
 			{
 				InitializeConstantBufferSize(gfx);
 				Update(gfx, constantData);
 			}
 			else
 			{
-				throw std::exception("Constant in " + tag + " has no data!");
+				std::string outPutString = "Constant in " + tag + " has no data!";
+				throw std::exception(outPutString.c_str());
 			}
 
 		}
