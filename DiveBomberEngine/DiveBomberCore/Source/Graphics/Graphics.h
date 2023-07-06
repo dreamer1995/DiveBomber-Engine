@@ -6,7 +6,7 @@
 #include "DX\DescriptorHeap.h"
 #include "DX/Viewport.h"
 #include "DX/ScissorRects.h"
-#include "../Utility/RenderStatistics.h"
+#include "../Utility/GlobalParameters.h"
 
 namespace DiveBomber::Component
 {

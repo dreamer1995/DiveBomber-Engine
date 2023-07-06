@@ -32,7 +32,7 @@
     <ClCompile Include="Source\Graphics\BindObj\RenderTarget.cpp" />
     <ClCompile Include="Source\Graphics\BindObj\DepthStencil.cpp" />
     <ClCompile Include="Source\Graphics\RenderPipeline\RenderPipelineGraph.cpp" />
-    <ClCompile Include="Source\Utility\RenderStatistics.cpp" />
+    <ClCompile Include="Source\Utility\GlobalParameters.cpp" />
     <ClCompile Include="Source\Graphics\DX\Viewport.cpp" />
     <ClCompile Include="Source\Graphics\DX\ScissorRects.cpp" />
     <ClCompile Include="Source\Graphics\Component\Camera.cpp" />
@@ -51,7 +51,7 @@
     <ClInclude Include="Resource\resource.h" />
     <ClInclude Include="Source\Hardware\Mouse.h" />
     <ClInclude Include="Source\Hardware\Keyboard.h" />
-    <ClInclude Include="Source\Utility\RenderStatistics.h" />
+    <ClInclude Include="Source\Utility\GlobalParameters.h" />
     <ClInclude Include="Source\Exception\DxgiInfoManager.h" />
     <ClInclude Include="Source\Graphics\Graphics.h" />
     <ClInclude Include="Source\Exception\GraphicsException.h" />

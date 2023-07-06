@@ -107,7 +107,7 @@
     <ClCompile Include="Source\Hardware\Keyboard.cpp" />
     <ClCompile Include="Source\Hardware\Mouse.cpp" />
     <ClCompile Include="Source\Graphics\DX\SwapChain.cpp" />
-    <ClCompile Include="Source\Utility\RenderStatistics.cpp" />
+    <ClCompile Include="Source\Utility\GlobalParameters.cpp" />
     <ClCompile Include="Source\Utility\Timer.cpp" />
     <ClCompile Include="Source\Window\Window.cpp" />
     <ClCompile Include="Source\Exception\WindowException.cpp" />
@@ -156,7 +156,7 @@
     <ClInclude Include="Source\Exception\GraphicsException.h" />
     <ClInclude Include="Source\Graphics\GraphicsResource.h" />
     <ClInclude Include="Source\Utility\DEMath.h" />
-    <ClInclude Include="Source\Utility\RenderStatistics.h" />
+    <ClInclude Include="Source\Utility\GlobalParameters.h" />
     <ClInclude Include="Source\Hardware\Keyboard.h" />
     <ClInclude Include="Source\Hardware\Mouse.h" />
     <ClInclude Include="Resource\resource.h" />

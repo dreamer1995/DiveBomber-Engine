@@ -1,9 +1,5 @@
 #include "DiveBomberCore.h"
 
-#include "..\Config\SystemConfig.h"
-#include "Utility\RenderStatistics.h"
-#include "Graphics/Component/Camera.h"
-
 #include <iostream>
 
 namespace DiveBomber
@@ -68,8 +64,11 @@ namespace DiveBomber
 	void DiveBomberCore::Update()
 	{
 		g_FrameCounter++;
-		g_DeltaTime = coreTimer.Mark() * TimerSpeed;
+		g_RawDeltaTime = coreTimer.Mark();
+		g_EngineTime += g_RawDeltaTime;
+		g_DeltaTime = g_RawDeltaTime * g_TimerSpeed;
 		g_GameTime += g_DeltaTime;
+
 		RefreshRenderReport();
 
 		ProcessInput();
@@ -116,16 +115,16 @@ namespace DiveBomber
 				}
 				break;
 
-			//case VK_SPACE:
-				//if (isRotate)
-				//{
-				//	isRotate = false;
-				//}
-				//else
-				//{
-				//	isRotate = true;
-				//}
-				//break;
+			case VK_SPACE:
+				if (g_TimerSpeed != 0.0f)
+				{
+					g_TimerSpeed = 0.0f;
+				}
+				else
+				{
+					g_TimerSpeed = TimerSpeed;
+				}
+				break;
 
 			//case VK_RETURN:
 				//savingDepth = true;
@@ -134,7 +133,7 @@ namespace DiveBomber
 		}
 
 		std::shared_ptr<Component::Camera> mainCamera = mainRenderPipeline->GetMainCamera();
-		float deltaTime = (float)g_DeltaTime;
+		float deltaTime = (float)g_RawDeltaTime;
 
 		static float cameraSpeed = 1.0f;
 		while (!wnd->mouse.IsEmpty())
@@ -301,21 +300,21 @@ namespace DiveBomber
 
 	void DiveBomberCore::RefreshRenderReport()
 	{
-		//static double elapsedSeconds = 0.0;
-		//static uint64_t elapsedFrames = 0;
+		static double elapsedSeconds = 0.0;
+		static uint64_t elapsedFrames = 0;
 
-		//elapsedSeconds += g_DeltaTime;
-		//elapsedFrames++;
+		elapsedSeconds += g_RawDeltaTime;
+		elapsedFrames++;
 
-		//if (elapsedSeconds > 1.0f)
-		//{
-		//	g_FramePerSnd = elapsedFrames / elapsedSeconds / 1000;
-		//	std::wcout << g_FramePerSnd << std::endl;
-		//	elapsedSeconds = 0.0;
-		//	elapsedFrames = 0;
-		//}
+		if (elapsedSeconds > 1.0f)
+		{
+			g_FramePerSnd = float(elapsedFrames / elapsedSeconds);
+			std::wcout << g_FramePerSnd << std::endl;
+			elapsedSeconds = 0.0;
+			elapsedFrames = 0;
+		}
 
-		//std::wcout << wnd->Gfx().GetWidth() << std::endl;
-		//std::wcout << wnd->windowWidth << std::endl;
+		//std::wcout << g_FramePerSnd << std::endl;
+		//std::wcout << g_GameTime << std::endl;
 	}
 }

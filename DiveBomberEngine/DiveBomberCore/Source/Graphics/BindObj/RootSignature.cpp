@@ -29,7 +29,7 @@ namespace DiveBomber::BindObj
 
 		// A single 32-bit constant root parameter that is used by the vertex shader.
 		CD3DX12_ROOT_PARAMETER1 rootParameters[1]{};
-		rootParameters[0].InitAsConstantBufferView(0, 0, D3D12_ROOT_DESCRIPTOR_FLAG_NONE, D3D12_SHADER_VISIBILITY_VERTEX);
+		rootParameters[0].InitAsConstantBufferView(0, 0, D3D12_ROOT_DESCRIPTOR_FLAG_NONE, D3D12_SHADER_VISIBILITY_ALL);
 
 		CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC rootSignatureDescription;
 		rootSignatureDescription.Init_1_1(_countof(rootParameters), rootParameters, 0, nullptr, rootSignatureFlags);
