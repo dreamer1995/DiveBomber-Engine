@@ -27,7 +27,7 @@ namespace DiveBomber::BindObj
 		void Bind(DEGraphics::Graphics& gfx) noxnd override;
 		[[nodiscard]] Transforms GetTransformMatrices() const noexcept;
 		[[nodiscard]] Transforms CalculateTransformMatrices(const DEGraphics::Graphics& gfx) noxnd;
-		void InitializeParentReference(DirectX::XMMATRIX modelMatrix) noexcept;
+		void InitializeParentReference(DirectX::XMMATRIX inputModelMatrix) noexcept;
 
 
 		//Maybe Transform info should be unique, or some of the matrices should be unique.

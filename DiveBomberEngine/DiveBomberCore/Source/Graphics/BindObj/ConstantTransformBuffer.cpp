@@ -54,8 +54,8 @@ namespace DiveBomber::BindObj
 		};
 	}
 
-	void ConstantTransformBuffer::InitializeParentReference(DirectX::XMMATRIX modelMatrix) noexcept
+	void ConstantTransformBuffer::InitializeParentReference(DirectX::XMMATRIX inputModelMatrix) noexcept
 	{
-		modelMatrix = modelMatrix;
+		modelMatrix = inputModelMatrix;
 	}
 }

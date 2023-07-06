@@ -40,8 +40,9 @@ namespace DiveBomber::BindObj
 		{
 			HRESULT hr;
 
+			size_t initBufferSize = bufferSize != 0 ? bufferSize : 1u;
 			const CD3DX12_HEAP_PROPERTIES heapProp{ D3D12_HEAP_TYPE_DEFAULT };
-			const CD3DX12_RESOURCE_DESC resDes = CD3DX12_RESOURCE_DESC::Buffer(bufferSize, D3D12_RESOURCE_FLAG_NONE);
+			const CD3DX12_RESOURCE_DESC resDes = CD3DX12_RESOURCE_DESC::Buffer(initBufferSize, D3D12_RESOURCE_FLAG_NONE);
 
 			// Create a committed resource for the GPU resource in a default heap.
 			GFX_THROW_INFO_NAMESPACE(gfx.GetDecive()->CreateCommittedResource(
@@ -54,7 +55,7 @@ namespace DiveBomber::BindObj
 
 			{
 				const CD3DX12_HEAP_PROPERTIES heapProp{ D3D12_HEAP_TYPE_UPLOAD };
-				const CD3DX12_RESOURCE_DESC resDes = CD3DX12_RESOURCE_DESC::Buffer(bufferSize);
+				const CD3DX12_RESOURCE_DESC resDes = CD3DX12_RESOURCE_DESC::Buffer(initBufferSize);
 
 				GFX_THROW_INFO_NAMESPACE(gfx.GetDecive()->CreateCommittedResource(
 					&heapProp,
@@ -84,9 +85,19 @@ namespace DiveBomber::BindObj
 				subresourceData.RowPitch = bufferSize;
 				subresourceData.SlicePitch = subresourceData.RowPitch;
 
+				CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
+					constantBuffer.Get(),
+					D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, D3D12_RESOURCE_STATE_COPY_DEST);
+				gfx.GetCommandList()->ResourceBarrier(1, &barrier);
+
 				UpdateSubresources(gfx.GetCommandList().Get(),
 					constantBuffer.Get(), constantUploadBuffer.Get(),
 					0, 0, 1, &subresourceData);
+
+				barrier = CD3DX12_RESOURCE_BARRIER::Transition(
+					constantBuffer.Get(),
+					D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
+				gfx.GetCommandList()->ResourceBarrier(1, &barrier);
 			}
 			else
 			{
@@ -132,6 +143,6 @@ namespace DiveBomber::BindObj
 		wrl::ComPtr<ID3D12Resource> constantUploadBuffer;
 		std::string tag;
 		UINT slot;
-		size_t bufferSize = 1u;//0u;
+		size_t bufferSize = 0u;
 	};
 }

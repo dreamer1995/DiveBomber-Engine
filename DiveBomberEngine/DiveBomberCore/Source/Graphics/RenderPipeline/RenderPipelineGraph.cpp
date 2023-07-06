@@ -80,15 +80,9 @@ namespace DiveBomber::RenderPipeline
 		float angle = (float)Utility::g_GameTime * 90.0f;
 		const XMVECTOR rotationAxis = XMVectorSet(0, 1, 1, 0);
 		auto modelMatrix = XMMatrixRotationAxis(rotationAxis, XMConvertToRadians(angle));
+
 		transformCBuffer->InitializeParentReference(modelMatrix);
 		transformCBuffer->Bind(gfx);
-
-		//auto viewMatrix = mainCamera->GetMatrix();
-		//auto projectionMatrix = mainCamera->GetProjection(gfx);
-		//XMMATRIX mvpMatrix = XMMatrixMultiply(modelMatrix, viewMatrix);
-		//mvpMatrix = XMMatrixMultiply(mvpMatrix, projectionMatrix);
-		//mvpMatrix = XMMatrixTranspose(mvpMatrix);
-		//gfx.GetCommandList()->SetGraphicsRoot32BitConstants(0, sizeof(XMMATRIX) / 4, &mvpMatrix, 0);
 
 		CD3DX12_CPU_DESCRIPTOR_HANDLE rsv = gfx.GetRenderTargetDescriptorHandle();
 		CD3DX12_CPU_DESCRIPTOR_HANDLE dsv = mainDS->GetDescriptorHandle();

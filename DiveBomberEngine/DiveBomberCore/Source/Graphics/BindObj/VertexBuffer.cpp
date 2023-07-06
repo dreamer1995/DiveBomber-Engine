@@ -57,6 +57,11 @@ namespace DiveBomber::BindObj
 				0, 0, 1, &subresourceData);
 		}
 
+		const CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
+			vertexBuffer.Get(),
+			D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
+		gfx.GetCommandList()->ResourceBarrier(1, &barrier);
+
 		// Create the vertex buffer view.
 		vertexBufferView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
 		vertexBufferView.SizeInBytes = (UINT)bufferSize;

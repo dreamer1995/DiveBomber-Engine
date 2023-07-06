@@ -55,6 +55,11 @@ namespace DiveBomber::BindObj
 				0, 0, 1, &subresourceData);
 		}
 
+		const CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
+			indexBuffer.Get(),
+			D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
+		gfx.GetCommandList()->ResourceBarrier(1, &barrier);
+
 		// Create index buffer view.
 		indexBufferView.BufferLocation = indexBuffer->GetGPUVirtualAddress();
 		indexBufferView.Format = DXGI_FORMAT_R16_UINT;
