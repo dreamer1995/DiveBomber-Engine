@@ -25,8 +25,6 @@ namespace DiveBomber::RenderPipeline
 		std::shared_ptr<BindObj::IndexBuffer> indexBuffer;
 		std::shared_ptr<BindObj::Topology> topology;
 
-		std::shared_ptr<BindObj::DepthStencil> mainDS;
-
 		std::shared_ptr<Component::Camera> mainCamera;
 
 		std::shared_ptr<BindObj::ConstantTransformBuffer> transformCBuffer;

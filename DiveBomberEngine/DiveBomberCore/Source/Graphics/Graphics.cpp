@@ -1,6 +1,7 @@
 #include "Graphics.h"
 
 #include "Component/Camera.h"
+#include "BindObj/DepthStencil.h"
 
 #include <iostream>
 
@@ -8,6 +9,7 @@ namespace DiveBomber::DEGraphics
 {
 	using namespace DX;
 	using namespace DEException;
+	using namespace BindObj;
 
 	Graphics::Graphics(HWND inputHWnd, UINT includeWidth, UINT includeHeight)
 	{
@@ -35,6 +37,10 @@ namespace DiveBomber::DEGraphics
 		swapChain->UpdateBackBuffer(dxDevice->GetDecive());
 		viewport = std::make_unique<Viewport>();
 		scissorRects = std::make_unique<ScissorRects>();
+
+		std::shared_ptr<DescriptorHeap> dsHeap = std::make_shared<DescriptorHeap>(dxDevice->GetDecive(),
+			D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1u);
+		mainDS = std::make_shared<DepthStencil>(dxDevice->GetDecive(), width, height, std::move(dsHeap), 0u);
 	}
 
 	Graphics::~Graphics()
@@ -63,6 +69,8 @@ namespace DiveBomber::DEGraphics
 
 			FLOAT clearColor[] = ClearMainRTColor;
 			commandList->ClearRenderTargetView(rtv, clearColor, 0, nullptr);
+
+			mainDS->ClearDepth(commandList);
 		}
 
 		viewport->Bind(commandList);
@@ -117,7 +125,13 @@ namespace DiveBomber::DEGraphics
 			frameFenceValues[i] = frameFenceValues[swapChain->GetSwapChain()->GetCurrentBackBufferIndex()];
 		}
 
-		swapChain->ResetSizeBackBuffer(GetDecive(), inputWidth, inputHeight);
+		swapChain->ResetSizeBackBuffer(GetDecive(), width, height);
+
+		mainDS->Resize(GetDecive(), width, height);
+
+		renderCamera->ResizeAspectRatio(width, height);
+
+		viewport->ResizeViewport(width, height);
 	}
 
 	UINT Graphics::GetWidth() const noexcept
@@ -156,12 +170,6 @@ namespace DiveBomber::DEGraphics
 		copyCommandQueue->Flush();
 	}
 
-	void ClearDepth(wrl::ComPtr<ID3D12GraphicsCommandList2> commandList,
-		D3D12_CPU_DESCRIPTOR_HANDLE dsv, FLOAT depth = 1.0f)
-	{
-		commandList->ClearDepthStencilView(dsv, D3D12_CLEAR_FLAG_DEPTH, depth, 0, 0, nullptr);
-	}
-
 	wrl::ComPtr<ID3D12Device2> Graphics::GetDecive() const noexcept
 	{
 		return dxDevice->GetDecive();
@@ -170,6 +178,11 @@ namespace DiveBomber::DEGraphics
 	CD3DX12_CPU_DESCRIPTOR_HANDLE Graphics::GetRenderTargetDescriptorHandle() const noexcept
 	{
 		return swapChain->GetBackBufferDescriptorHandle();
+	}
+
+	CD3DX12_CPU_DESCRIPTOR_HANDLE Graphics::GetDepthStencilDescriptorHandle() const noexcept
+	{
+		return mainDS->GetDescriptorHandle();
 	}
 
 	wrl::ComPtr<ID3D12GraphicsCommandList2> Graphics::GetCommandList(const D3D12_COMMAND_LIST_TYPE type) noexcept

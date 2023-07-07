@@ -11,7 +11,7 @@ namespace DiveBomber::Component
 	public:
 		struct ProjectionAttributes
 		{
-			float aspectRatio = 16.0f / 9.0f;
+			float aspectRatio = (float)MainWindowWidth / MainWindowHeight;
 			float nearPlane = 0.5f;
 			float farPlane = 400.0f;
 			bool isPerspective = true;
@@ -33,7 +33,9 @@ namespace DiveBomber::Component
 		[[nodiscard]] DirectX::XMFLOAT2 GetFarNearPlane() const;
 		float GetFOV() const;
 		float GetAspectRatio() const;
-		void SetOffsetPixels(const float offsetX, const float offsetY) noxnd;
+		void SetOffsetPixels(const float offsetX, const float offsetY) noexcept;
+		void ResizeAspectRatio(const DEGraphics::Graphics& gfx) noexcept;
+		void ResizeAspectRatio(const UINT inputWidth, const UINT inputHeight) noexcept;
 	private:
 		float width;
 		float height;

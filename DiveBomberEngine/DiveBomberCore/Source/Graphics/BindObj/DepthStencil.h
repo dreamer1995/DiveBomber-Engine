@@ -11,13 +11,18 @@ namespace DiveBomber::BindObj
 	public:
 		DepthStencil(DEGraphics::Graphics& gfx, UINT inputWidth, UINT inputHeight,
 			std::shared_ptr<DX::DescriptorHeap> inputDescHeap, UINT inputDepth = 0);
+		DepthStencil(wrl::ComPtr<ID3D12Device2> device, UINT inputWidth, UINT inputHeight,
+			std::shared_ptr<DX::DescriptorHeap> inputDescHeap, UINT inputDepth = 0);
 
 		void Bind(DEGraphics::Graphics& gfx) noxnd override;
 		void BindTarget(DEGraphics::Graphics& gfx) noxnd override;
 		void BindTarget(DEGraphics::Graphics& gfx, std::shared_ptr<BindableTarget> renderTarget) noxnd override;
 		[[nodiscard]] wrl::ComPtr<ID3D12Resource> GetDepthStencilBuffer() const noexcept;
 		[[nodiscard]] CD3DX12_CPU_DESCRIPTOR_HANDLE GetDescriptorHandle() const noexcept;
-		void ClearDepth(DEGraphics::Graphics& gfx, FLOAT depth = 1.0f) const noexcept;
+		void ClearDepth(DEGraphics::Graphics& gfx, FLOAT clearDepth = 1.0f) const noexcept;
+		void ClearDepth(wrl::ComPtr<ID3D12GraphicsCommandList2> commandList, FLOAT clearDepth = 1.0f) const noexcept;
+		void Resize(DEGraphics::Graphics& gfx, const UINT inputWidth, const UINT inputHeight, const UINT inputDepth = 0);
+		void Resize(wrl::ComPtr<ID3D12Device2> device, const UINT inputWidth, const UINT inputHeight, const UINT inputDepth = 0);
 	private:
 		UINT width;
 		UINT height;
@@ -25,5 +30,7 @@ namespace DiveBomber::BindObj
 		wrl::ComPtr<ID3D12Resource> depthStencilBuffer;
 		std::shared_ptr<DX::DescriptorHeap> depthStencilDescHeap;
 		CD3DX12_CPU_DESCRIPTOR_HANDLE descriptorHandle;
+		D3D12_CLEAR_VALUE optimizedClearValue;
+		D3D12_DEPTH_STENCIL_VIEW_DESC dsv;
 	};
 }

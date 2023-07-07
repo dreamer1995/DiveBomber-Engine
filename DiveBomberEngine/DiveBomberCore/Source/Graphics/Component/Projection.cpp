@@ -13,9 +13,9 @@ namespace DiveBomber::Component
 		isPerspective = attributes.isPerspective;
 		FOV = attributes.FOV;
 
-		homeAspectRatio = aspectRatio;
 		homeNearPlane = nearPlane;
 		homeFarPlane = farPlane;
+		homeAspectRatio = aspectRatio;
 		homeFOV = FOV;
 
 		if (isPerspective)
@@ -133,16 +133,18 @@ namespace DiveBomber::Component
 		farPlane = homeFarPlane;
 		aspectRatio = homeAspectRatio;
 		FOV = homeFOV;
+
+		SetProjection(FOV, aspectRatio, nearPlane, farPlane);
 		//frust->SetVertices(gfx, width, height, nearZ, farZ);
 	}
 
 	void Projection::SetProjection(const float inputFOV, const float inputAspectRatio,
-		const float inputNearPlane, const float inputFarPlaneZ)
+		const float inputNearPlane, const float inputFarPlane)
 	{
 		FOV = inputFOV;
 		aspectRatio = inputAspectRatio;
 		nearPlane = inputNearPlane;
-		farPlane = inputFarPlaneZ;
+		farPlane = inputFarPlane;
 		if (isPerspective)
 		{
 			height = 2 * nearPlane * std::tan(FOV / 2.0f);
@@ -172,9 +174,20 @@ namespace DiveBomber::Component
 		return aspectRatio;
 	}
 
-	void Projection::SetOffsetPixels(const float offsetX, const float offsetY) noxnd
+	void Projection::SetOffsetPixels(const float offsetX, const float offsetY) noexcept
 	{
 		offsetPixelX = offsetX;
 		offsetPixelY = offsetY;
+	}
+
+	void Projection::ResizeAspectRatio(const Graphics& gfx) noexcept
+	{
+		ResizeAspectRatio(gfx.GetWidth(), gfx.GetHeight());
+	}
+
+	void Projection::ResizeAspectRatio(const UINT inputWidth, const UINT inputHeight) noexcept
+	{
+		float inputAspectRatio = (float)inputWidth / inputHeight;
+		SetProjection(FOV, inputAspectRatio, nearPlane, farPlane);
 	}
 }

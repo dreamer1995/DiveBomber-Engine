@@ -343,4 +343,13 @@ namespace DiveBomber::Component
 	{
 		projection->SetOffsetPixels(offsetX, offsetY);
 	}
+
+	void Camera::ResizeAspectRatio(const Graphics& gfx) noexcept
+	{
+		ResizeAspectRatio(gfx.GetWidth(), gfx.GetHeight());
+	}
+	void Camera::ResizeAspectRatio(const UINT width, const UINT height) noexcept
+	{
+		projection->ResizeAspectRatio(width, height);
+	}
 }

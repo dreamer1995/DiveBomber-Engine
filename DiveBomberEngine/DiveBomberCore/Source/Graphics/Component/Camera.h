@@ -44,6 +44,8 @@ namespace DiveBomber::Component
 		void ProjectScreenToWorldExpansionBasis(DirectX::XMFLOAT4& vWBasisX, DirectX::XMFLOAT4& vWBasisY, DirectX::XMFLOAT4& vWBasisZ,
 			DirectX::XMFLOAT2& UVToViewA, DirectX::XMFLOAT2& UVToViewB) const noxnd;
 		void SetOffsetPixels(const float offsetX, const float offsetY) noxnd;
+		void ResizeAspectRatio(const DEGraphics::Graphics& gfx) noexcept;
+		void ResizeAspectRatio(const UINT width, const UINT height) noexcept;
 
 	private:
 		struct CameraCBuf

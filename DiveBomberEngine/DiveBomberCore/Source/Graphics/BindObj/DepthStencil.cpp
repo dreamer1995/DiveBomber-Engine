@@ -9,45 +9,34 @@ namespace DiveBomber::BindObj
 
 	DepthStencil::DepthStencil(Graphics& gfx, UINT inputWidth, UINT inputHeight,
 		std::shared_ptr<DX::DescriptorHeap> inputDescHeap, UINT inputDepth)
+		:
+		DepthStencil{ gfx.GetDecive(), inputWidth, inputHeight, inputDescHeap, inputDepth }
 	{
-		width = std::max(1u, inputWidth);
-		height = std::max(1u, inputHeight);
+		
+	}
+
+	DepthStencil::DepthStencil(wrl::ComPtr<ID3D12Device2> device, UINT inputWidth, UINT inputHeight,
+		std::shared_ptr<DX::DescriptorHeap> inputDescHeap, UINT inputDepth)
+	{
 		depthStencilDescHeap = inputDescHeap;
-		depth = std::max(0u, inputDepth);
 
 		CD3DX12_CPU_DESCRIPTOR_HANDLE dsvHandle(depthStencilDescHeap->GetDescriptorHeap()->GetCPUDescriptorHandleForHeapStart());
 		descriptorHandle = dsvHandle;
 
 		// Resize screen dependent resources.
 		// Create a depth buffer.
-		D3D12_CLEAR_VALUE optimizedClearValue = {};
+		optimizedClearValue = {};
 		optimizedClearValue.Format = DXGI_FORMAT_D32_FLOAT;
 		optimizedClearValue.DepthStencil = { 1.0f, 0 };
 
-		HRESULT hr;
-
-		auto heapProp = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
-		auto resDes = CD3DX12_RESOURCE_DESC::Tex2D(DXGI_FORMAT_D32_FLOAT, width, height,
-			1, 0, 1, 0, D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL);
-
-		GFX_THROW_INFO(gfx.GetDecive()->CreateCommittedResource(
-			&heapProp,
-			D3D12_HEAP_FLAG_NONE,
-			&resDes,
-			D3D12_RESOURCE_STATE_DEPTH_WRITE,
-			&optimizedClearValue,
-			IID_PPV_ARGS(&depthStencilBuffer)
-		));
-
 		// Update the depth-stencil view.
-		D3D12_DEPTH_STENCIL_VIEW_DESC dsv = {};
+		dsv = {};
 		dsv.Format = DXGI_FORMAT_D32_FLOAT;
 		dsv.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
 		dsv.Texture2D.MipSlice = 0u;
 		dsv.Flags = D3D12_DSV_FLAG_NONE;
 
-		gfx.GetDecive()->CreateDepthStencilView(depthStencilBuffer.Get(), &dsv,
-			descriptorHandle);
+		Resize(device, inputWidth, inputHeight, inputDepth);
 	}
 
 	void DepthStencil::Bind(DEGraphics::Graphics& gfx) noxnd
@@ -78,8 +67,43 @@ namespace DiveBomber::BindObj
 		return descriptorHandle;
 	}
 
-	void DepthStencil::ClearDepth(Graphics& gfx, FLOAT depth) const noexcept
+	void DepthStencil::ClearDepth(Graphics& gfx, FLOAT clearDepth) const noexcept
 	{
-		gfx.GetCommandList()->ClearDepthStencilView(GetDescriptorHandle(), D3D12_CLEAR_FLAG_DEPTH, depth, 0, 0, nullptr);
+		ClearDepth(gfx.GetCommandList(), clearDepth);
+	}
+
+	void DepthStencil::ClearDepth(wrl::ComPtr<ID3D12GraphicsCommandList2> commandList, FLOAT clearDepth) const noexcept
+	{
+		commandList->ClearDepthStencilView(GetDescriptorHandle(), D3D12_CLEAR_FLAG_DEPTH, clearDepth, 0, 0, nullptr);
+	}
+
+	void DepthStencil::Resize(Graphics& gfx, const UINT inputWidth, const UINT inputHeight, const UINT inputDepth)
+	{
+		Resize(gfx.GetDecive(), inputWidth, inputHeight, inputDepth);
+	}
+
+	void DepthStencil::Resize(wrl::ComPtr<ID3D12Device2> device, const UINT inputWidth, const UINT inputHeight, const UINT inputDepth)
+	{
+		width = std::max(1u, inputWidth);
+		height = std::max(1u, inputHeight);
+		depth = std::max(1u, inputDepth);
+
+		HRESULT hr;
+
+		auto heapProp = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
+		auto resDes = CD3DX12_RESOURCE_DESC::Tex2D(DXGI_FORMAT_D32_FLOAT, width, height,
+			1, 0, 1, 0, D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL);
+
+		GFX_THROW_INFO(device->CreateCommittedResource(
+			&heapProp,
+			D3D12_HEAP_FLAG_NONE,
+			&resDes,
+			D3D12_RESOURCE_STATE_DEPTH_WRITE,
+			&optimizedClearValue,
+			IID_PPV_ARGS(&depthStencilBuffer)
+		));
+
+		device->CreateDepthStencilView(depthStencilBuffer.Get(), &dsv,
+			descriptorHandle);
 	}
 }

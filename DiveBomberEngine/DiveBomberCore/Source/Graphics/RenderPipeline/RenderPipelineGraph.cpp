@@ -35,10 +35,6 @@ namespace DiveBomber::RenderPipeline
 		auto fenceValue = commandQueue->ExecuteCommandList(commandList);
 		commandQueue->WaitForFenceValue(fenceValue);
 
-		std::shared_ptr<DescriptorHeap> dsHeap = std::make_shared<DescriptorHeap>(gfx.GetDecive(),
-			D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1u);
-		mainDS = std::make_shared<DepthStencil>(gfx, gfx.GetWidth(), gfx.GetHeight(), std::move(dsHeap), 0u);
-
 		vertexShader = std::make_shared<Shader>(gfx, L"VertexShader.cso", Shader::ShaderType::VertexShader);
 		pixelShader = std::make_shared<Shader>(gfx, L"PixelShader.cso", Shader::ShaderType::PixelShader);
 
@@ -65,8 +61,6 @@ namespace DiveBomber::RenderPipeline
 
 	void RenderPipelineGraph::Bind(DEGraphics::Graphics& gfx) noxnd
 	{
-		mainDS->ClearDepth(gfx);
-
 		rootSignature->Bind(gfx);
 		pipelineStateObject->Bind(gfx);
 
@@ -85,7 +79,7 @@ namespace DiveBomber::RenderPipeline
 		transformCBuffer->Bind(gfx);
 
 		CD3DX12_CPU_DESCRIPTOR_HANDLE rsv = gfx.GetRenderTargetDescriptorHandle();
-		CD3DX12_CPU_DESCRIPTOR_HANDLE dsv = mainDS->GetDescriptorHandle();
+		CD3DX12_CPU_DESCRIPTOR_HANDLE dsv = gfx.GetDepthStencilDescriptorHandle();
 		gfx.GetCommandList()->OMSetRenderTargets(1, &rsv, FALSE, &dsv);
 
 		gfx.GetCommandList()->DrawIndexedInstanced(indexBuffer->GetCount(), 1, 0, 0, 0);

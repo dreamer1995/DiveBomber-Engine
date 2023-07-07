@@ -13,6 +13,11 @@ namespace DiveBomber::Component
 	class Camera;
 }
 
+namespace DiveBomber::BindObj
+{
+	class DepthStencil;
+}
+
 namespace DiveBomber::DEGraphics
 {
 	class Graphics final
@@ -51,6 +56,7 @@ namespace DiveBomber::DEGraphics
 		[[nodiscard]] wrl::ComPtr<ID3D12Device2> GetDecive() const noexcept;
 		[[nodiscard]] wrl::ComPtr<ID3D12GraphicsCommandList2> GetCommandList(const D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT) noexcept;
 		[[nodiscard]] CD3DX12_CPU_DESCRIPTOR_HANDLE GetRenderTargetDescriptorHandle() const noexcept;
+		[[nodiscard]] CD3DX12_CPU_DESCRIPTOR_HANDLE GetDepthStencilDescriptorHandle() const noexcept;
 
 	private:
 		UINT width = 0;
@@ -75,6 +81,8 @@ namespace DiveBomber::DEGraphics
 		wrl::ComPtr<ID3D12GraphicsCommandList2> directCommandList;
 
 		std::shared_ptr<Component::Camera> renderCamera;
+
+		std::shared_ptr<BindObj::DepthStencil> mainDS;
 
 	public:
 		bool isWireFrame = false;
