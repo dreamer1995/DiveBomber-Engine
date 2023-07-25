@@ -55,7 +55,6 @@
     <ClInclude Include="Source\Exception\DxgiInfoManager.h" />
     <ClInclude Include="Source\Graphics\Graphics.h" />
     <ClInclude Include="Source\Exception\GraphicsException.h" />
-    <ClInclude Include="Source\Graphics\GraphicsResource.h" />
     <ClInclude Include="Source\Graphics\DX\SwapChain.h" />
     <ClInclude Include="Source\Graphics\DX\CommandQueue.h" />
     <ClInclude Include="Source\Graphics\DX\DescriptorHeap.h" />
@@ -65,7 +64,6 @@
     <ClInclude Include="Source\Console\Console.h" />
     <ClInclude Include="Source\DiveBomberCore.h" />
     <ClInclude Include="Config\SystemConfig.h" />
-    <ClInclude Include="Source\Window\WindowResource.h" />
     <ClInclude Include="Source\Graphics\BindObj\Vertex.h" />
     <ClInclude Include="Source\Graphics\BindObj\Bindable.h" />
     <ClInclude Include="Source\Graphics\BindObj\VertexBuffer.h" />
@@ -94,6 +92,8 @@
     <ClInclude Include="Source\Graphics\Component\Projection.h" />
     <ClInclude Include="Source\Graphics\BindObj\ConstantTransformBuffer.h" />
     <ClInclude Include="Source\Exception\GraphicsExceptionEX.h" />
+    <ClInclude Include="Source\Graphics\GraphicsHeader.h" />
+    <ClInclude Include="Source\Graphics\GraphicsSource.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource\Resource.rc" />

@@ -1,13 +1,19 @@
 #pragma once
 #include "Bindable.h"
-#include "..\Graphics.h"
-#include "RootSignature.h"
-#include "VertexBuffer.h"
-#include "Topology.h"
-#include "Shader.h"
+#include "..\GraphicsHeader.h"
+
+namespace DiveBomber::DEGraphics
+{
+	class Graphics;
+}
 
 namespace DiveBomber::BindObj
 {
+	class RootSignature;
+	class VertexBuffer;
+	class Topology;
+	class Shader;
+
 	class PipelineStateObject final : public Bindable
 	{
 	public:

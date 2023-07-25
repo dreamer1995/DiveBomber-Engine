@@ -1,8 +1,29 @@
 #pragma once
-#include "..\Graphics.h"
-#include "..\BindObj\BindObjCommon.h"
-#include "..\Gizmo\Geometry\Sphere.h"
-#include "..\Component\Camera.h"
+#include "..\..\Utility\Common.h"
+
+#include <memory>
+
+namespace DiveBomber::DEGraphics
+{
+	class Graphics;
+}
+
+namespace DiveBomber::Component
+{
+	class Camera;
+}
+
+namespace DiveBomber::BindObj
+{
+	class RootSignature;
+	class PipelineStateObject;
+	class VertexBuffer;
+	class IndexBuffer;
+	class Topology;
+	class Shader;
+	class ConstantTransformBuffer;
+	class IndexedTriangleList;
+}
 
 namespace DiveBomber::RenderPipeline
 {

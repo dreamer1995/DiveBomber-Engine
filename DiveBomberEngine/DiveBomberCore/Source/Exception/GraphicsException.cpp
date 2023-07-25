@@ -1,5 +1,7 @@
 #include "GraphicsException.h"
 
+#include "..\Utility\Common.h"
+
 namespace DiveBomber::DEException
 {
 	using namespace Utility;

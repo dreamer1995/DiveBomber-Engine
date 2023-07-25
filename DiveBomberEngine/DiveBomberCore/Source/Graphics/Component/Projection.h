@@ -1,8 +1,17 @@
 #pragma once
-#include "..\Graphics.h"
+#include "..\..\Window\DEWindows.h"
+#include "..\..\Utility\Common.h"
+#include "..\..\Utility\DEMath.h"
+#include "..\..\..\Config\SystemConfig.h"
 //#include "Frustum.h"
 
+#include <memory>
 #include <DirectXMath.h>
+
+namespace DiveBomber::DEGraphics
+{
+	class Graphics;
+}
 
 namespace DiveBomber::Component
 {

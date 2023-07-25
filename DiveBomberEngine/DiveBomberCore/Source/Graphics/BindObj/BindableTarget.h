@@ -1,5 +1,8 @@
 #pragma once
-#include "..\Graphics.h"
+namespace DiveBomber::DEGraphics
+{
+	class Graphics;
+}
 
 namespace DiveBomber::BindObj
 {

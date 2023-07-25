@@ -10,10 +10,24 @@
 ******************************************************************************************/
 #pragma once
 
-#include "..\Hardware\Keyboard.h"
-#include "..\Hardware\Mouse.h"
-#include "..\Graphics\Graphics.h"
+#include "..\Window\DEWindows.h"
 
+#include "..\..\Config\SystemConfig.h"
+#include <string>
+#include <optional>
+#include <memory>
+#include <vector>
+
+namespace DiveBomber::DEGraphics
+{
+	class Graphics;
+}
+
+namespace DiveBomber::Hardware
+{
+	class Keyboard;
+	class Mouse;
+}
 
 namespace DiveBomber::DEWindow
 {
@@ -48,8 +62,8 @@ namespace DiveBomber::DEWindow
 		void SetFullScreen(bool fullScreen) noexcept;
 
 		const wchar_t* title;
-		Hardware::Keyboard kbd;
-		Hardware::Mouse mouse;
+		std::unique_ptr<Hardware::Keyboard> kbd;
+		std::unique_ptr<Hardware::Mouse> mouse;
 		bool isFullScreen = false;
 
 	private:

@@ -4,7 +4,6 @@
 #include "..\.\..\..\Utility\DEMath.h"
 
 #include <optional>
-#include <DirectXMath.h>
 
 namespace DiveBomber::BindObj
 {

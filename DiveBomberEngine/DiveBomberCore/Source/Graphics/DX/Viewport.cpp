@@ -1,5 +1,8 @@
 #include "Viewport.h"
 
+#include "..\..\Exception\GraphicsException.h"
+#include "d3dx12.h"
+
 namespace DiveBomber::DX
 {
     using namespace DEException;

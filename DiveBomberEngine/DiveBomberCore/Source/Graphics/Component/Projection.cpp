@@ -1,4 +1,6 @@
 #include "Projection.h"
+
+#include "..\Graphics.h"
 //#include "imgui/imgui.h"
 
 namespace DiveBomber::Component

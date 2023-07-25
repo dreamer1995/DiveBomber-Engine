@@ -2,10 +2,7 @@
 
 #include "..\..\BindObj\Vertex.h"
 #include "IndexedTriangleList.h"
-#include "..\.\..\..\Utility\DEMath.h"
 
-#include <optional>
-#include <DirectXMath.h>
 #include <array>
 
 namespace DiveBomber::BindObj

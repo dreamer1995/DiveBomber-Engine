@@ -1,5 +1,4 @@
 #pragma once
-#include "..\Utility\Common.h"
 #include "..\Window\DEWindows.h"
 
 #include <string>

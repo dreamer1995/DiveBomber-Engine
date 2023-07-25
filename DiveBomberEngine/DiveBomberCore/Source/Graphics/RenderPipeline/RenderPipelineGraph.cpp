@@ -1,5 +1,12 @@
 #include "RenderPipelineGraph.h"
 
+#include "..\Graphics.h"
+#include "..\BindObj\BindObjCommon.h"
+#include "..\Gizmo\Geometry\Sphere.h"
+#include "..\Component\Camera.h"
+#include "..\DX\CommandQueue.h"
+#include "..\..\Utility\GlobalParameters.h"
+
 #include <iostream>
 
 namespace DiveBomber::RenderPipeline

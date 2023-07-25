@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
@@ -125,10 +125,12 @@
     <ClInclude Include="Source\Graphics\BindObj\ConstantTransformBuffer.h" />
     <ClInclude Include="Source\Graphics\BindObj\DepthStencil.h" />
     <ClInclude Include="Source\Graphics\BindObj\PipelineStateObject.h" />
+    <ClInclude Include="Source\Graphics\GraphicsHeader.h" />
     <ClInclude Include="Source\Graphics\Component\Camera.h" />
     <ClInclude Include="Source\Graphics\Component\Projection.h" />
     <ClInclude Include="Source\Graphics\DX\ScissorRects.h" />
     <ClInclude Include="Source\Graphics\DX\Viewport.h" />
+    <ClInclude Include="Source\Graphics\GraphicsSource.h" />
     <ClInclude Include="Source\Graphics\RenderPipeline\RenderPipelineGraph.h" />
     <ClInclude Include="Source\Graphics\BindObj\RenderTarget.h" />
     <ClInclude Include="Source\Graphics\BindObj\Topology.h" />
@@ -154,7 +156,6 @@
     <ClInclude Include="Source\Graphics\DX\GPUAdapter.h" />
     <ClInclude Include="Source\Graphics\Graphics.h" />
     <ClInclude Include="Source\Exception\GraphicsException.h" />
-    <ClInclude Include="Source\Graphics\GraphicsResource.h" />
     <ClInclude Include="Source\Utility\DEMath.h" />
     <ClInclude Include="Source\Utility\GlobalParameters.h" />
     <ClInclude Include="Source\Hardware\Keyboard.h" />
@@ -166,7 +167,6 @@
     <ClInclude Include="Source\Window\Window.h" />
     <ClInclude Include="Source\Exception\WindowException.h" />
     <ClInclude Include="Source\Window\DEWindows.h" />
-    <ClInclude Include="Source\Window\WindowResource.h" />
     <ClInclude Include="Source\Window\WindowsMessageMap.h" />
     <ClInclude Include="Source\Graphics\DEWrl.h" />
     <ClInclude Include="Source\Graphics\BindObj\Vertex.h" />

@@ -1,8 +1,11 @@
 #pragma once
-#include "..\GraphicsResource.h"
-#include "..\Graphics.h"
 #include "Bindable.h"
 #include "Vertex.h"
+
+namespace DiveBomber::DEGraphics
+{
+	class Graphics;
+}
 
 namespace DiveBomber::BindObj
 {

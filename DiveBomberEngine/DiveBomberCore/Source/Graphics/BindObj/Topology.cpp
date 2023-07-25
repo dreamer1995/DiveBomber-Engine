@@ -1,6 +1,8 @@
 #include "Topology.h"
 
 #include "BindableCodex.h"
+#include "..\Graphics.h"
+#include "..\..\Exception\GraphicsException.h"
 
 namespace DiveBomber::BindObj
 {

@@ -1,8 +1,18 @@
 #pragma once
-#include "ConstantBuffer.h"
+#include "Bindable.h"
+
+#include <DirectXMath.h>
+
+namespace DiveBomber::DEGraphics
+{
+	class Graphics;
+}
 
 namespace DiveBomber::BindObj
 {
+	template<typename C>
+	class ConstantBuffer;
+
 	class ConstantTransformBuffer final : Bindable
 	{
 	public:

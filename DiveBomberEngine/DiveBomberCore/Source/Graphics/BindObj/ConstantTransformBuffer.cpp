@@ -1,6 +1,6 @@
 #include "ConstantTransformBuffer.h"
 
-#include "BindableCodex.h"
+#include "ConstantBuffer.h"
 
 namespace DiveBomber::BindObj
 {

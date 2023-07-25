@@ -1,5 +1,7 @@
 #include "CommandQueue.h"
 
+#include "..\..\Exception\GraphicsException.h"
+
 namespace DiveBomber::DX
 {
     using namespace DEException;

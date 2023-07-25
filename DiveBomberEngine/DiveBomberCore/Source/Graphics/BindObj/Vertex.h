@@ -1,11 +1,10 @@
 #pragma once
-#include "..\GraphicsResource.h"
+#include "..\GraphicsHeader.h"
 #include "..\..\Utility\Color.h"
 
 #include <vector>
-#include <type_traits>
+//#include <type_traits>
 //#include <assimp/scene.h>
-#include <utility>
 
 namespace DiveBomber::BindObj::VertexProcess
 {
@@ -38,7 +37,7 @@ namespace DiveBomber::BindObj::VertexProcess
 		template<ElementType> struct Map;
 		template<> struct Map<Position2D>
 		{
-			using SysType = DirectX::XMFLOAT2;
+			using SysType = dx::XMFLOAT2;
 			static constexpr DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32_FLOAT;
 			static constexpr const char* semantic = "Position";
 			static constexpr const char* code = "P2";
@@ -46,7 +45,7 @@ namespace DiveBomber::BindObj::VertexProcess
 		};
 		template<> struct Map<Position3D>
 		{
-			using SysType = DirectX::XMFLOAT3;
+			using SysType = dx::XMFLOAT3;
 			static constexpr DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32_FLOAT;
 			static constexpr const char* semantic = "Position";
 			static constexpr const char* code = "P3";
@@ -54,7 +53,7 @@ namespace DiveBomber::BindObj::VertexProcess
 		};
 		template<> struct Map<Texture2D>
 		{
-			using SysType = DirectX::XMFLOAT2;
+			using SysType = dx::XMFLOAT2;
 			static constexpr DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32_FLOAT;
 			static constexpr const char* semantic = "Texcoord";
 			static constexpr const char* code = "T2";
@@ -62,7 +61,7 @@ namespace DiveBomber::BindObj::VertexProcess
 		};
 		template<> struct Map<Normal>
 		{
-			using SysType = DirectX::XMFLOAT3;
+			using SysType = dx::XMFLOAT3;
 			static constexpr DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32_FLOAT;
 			static constexpr const char* semantic = "Normal";
 			static constexpr const char* code = "N";
@@ -70,7 +69,7 @@ namespace DiveBomber::BindObj::VertexProcess
 		};
 		template<> struct Map<Tangent>
 		{
-			using SysType = DirectX::XMFLOAT3;
+			using SysType = dx::XMFLOAT3;
 			static constexpr DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32_FLOAT;
 			static constexpr const char* semantic = "Tangent";
 			static constexpr const char* code = "T";
@@ -78,7 +77,7 @@ namespace DiveBomber::BindObj::VertexProcess
 		};
 		template<> struct Map<Binormal>
 		{
-			using SysType = DirectX::XMFLOAT3;
+			using SysType = dx::XMFLOAT3;
 			static constexpr DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32_FLOAT;
 			static constexpr const char* semantic = "Binormal";
 			static constexpr const char* code = "B";
@@ -86,7 +85,7 @@ namespace DiveBomber::BindObj::VertexProcess
 		};
 		template<> struct Map<Float3Color>
 		{
-			using SysType = DirectX::XMFLOAT3;
+			using SysType = dx::XMFLOAT3;
 			static constexpr DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32_FLOAT;
 			static constexpr const char* semantic = "Color";
 			static constexpr const char* code = "C3";
@@ -94,7 +93,7 @@ namespace DiveBomber::BindObj::VertexProcess
 		};
 		template<> struct Map<Float4Color>
 		{
-			using SysType = DirectX::XMFLOAT4;
+			using SysType = dx::XMFLOAT4;
 			static constexpr DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32A32_FLOAT;
 			static constexpr const char* semantic = "Color";
 			static constexpr const char* code = "C4";

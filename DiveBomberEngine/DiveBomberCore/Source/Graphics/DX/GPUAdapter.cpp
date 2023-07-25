@@ -1,5 +1,9 @@
 #include "GPUAdapter.h"
 
+#include "..\..\Exception\GraphicsException.h"
+
+#pragma comment(lib,"d3d12.lib")
+
 namespace DiveBomber::DX
 {
     using namespace DEException;

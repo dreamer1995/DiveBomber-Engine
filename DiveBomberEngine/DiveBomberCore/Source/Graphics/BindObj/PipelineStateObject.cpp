@@ -1,6 +1,12 @@
 #include "PipelineStateObject.h"
 
 #include "BindableCodex.h"
+#include "..\Graphics.h"
+#include "..\..\Exception\GraphicsException.h"
+#include "RootSignature.h"
+#include "VertexBuffer.h"
+#include "Topology.h"
+#include "Shader.h"
 
 namespace DiveBomber::BindObj
 {

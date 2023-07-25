@@ -1,11 +1,20 @@
 #pragma once
-#include "..\Graphics.h"
-#include "..\BindObj\ConstantBuffer.h"
 #include "Projection.h"
 //#include "CameraIndicator.h"
 
 #include <DirectXMath.h>
 #include <string>
+
+namespace DiveBomber::DEGraphics
+{
+	class Graphics;
+}
+
+namespace DiveBomber::BindObj
+{
+	template<typename C>
+	class ConstantBuffer;
+}
 
 namespace DiveBomber::Component
 {

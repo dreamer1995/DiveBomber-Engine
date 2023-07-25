@@ -1,4 +1,8 @@
 #include "CommandContext.h"
+
+#include "..\Graphics.h"
+#include "CommandQueue.h"
+
 namespace DiveBomber::DX
 {
 	using namespace DEGraphics;

@@ -1,7 +1,7 @@
 #pragma once
 #include "Bindable.h"
-#include "..\Graphics.h"
 #include "BindableCodex.h"
+#include "..\Graphics.h"
 #include "..\..\Exception\GraphicsExceptionEX.h"
 
 namespace DiveBomber::BindObj

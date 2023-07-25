@@ -1,10 +1,6 @@
 #pragma once
 #include "..\..\BindObj\Vertex.h"
 #include "IndexedTriangleList.h"
-#include "..\.\..\..\Utility\DEMath.h"
-
-#include <optional>
-#include <DirectXMath.h>
 
 namespace DiveBomber::BindObj
 {

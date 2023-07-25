@@ -1,5 +1,7 @@
 #pragma once
-#include "..\GraphicsResource.h"
+#include "..\GraphicsHeader.h"
+
+#include <dxgi1_6.h>
 
 namespace DiveBomber::DX
 {

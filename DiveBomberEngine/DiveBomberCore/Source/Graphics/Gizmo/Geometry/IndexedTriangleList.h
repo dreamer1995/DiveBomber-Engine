@@ -1,9 +1,6 @@
 #pragma once
 #include "..\..\BindObj\Vertex.h"
 
-#include <vector>
-#include <DirectXMath.h>
-
 namespace DiveBomber::BindObj
 {
 	class IndexedTriangleList

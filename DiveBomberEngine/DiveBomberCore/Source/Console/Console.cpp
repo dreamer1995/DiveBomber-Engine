@@ -1,6 +1,7 @@
 #include "Console.h"
 
-#include "..\Window\WindowResource.h"
+#include "..\Window\DEWindows.h"
+#include "..\Exception\WindowException.h"
 
 #include <iostream>
 

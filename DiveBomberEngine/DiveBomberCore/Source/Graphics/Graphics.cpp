@@ -1,7 +1,15 @@
 #include "Graphics.h"
 
-#include "Component/Camera.h"
-#include "BindObj/DepthStencil.h"
+#include "Component\Camera.h"
+#include "BindObj\DepthStencil.h"
+#include "..\Exception\GraphicsException.h"
+#include "DX\GPUAdapter.h"
+#include "DX\DXDevice.h"
+#include "DX\CommandQueue.h"
+#include "DX\SwapChain.h"
+#include "DX\DescriptorHeap.h"
+#include "DX\Viewport.h"
+#include "DX\ScissorRects.h"
 
 #include <iostream>
 

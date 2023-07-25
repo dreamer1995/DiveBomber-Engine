@@ -1,5 +1,9 @@
 #include "DXDevice.h"
 
+#include "..\..\Exception\GraphicsException.h"
+
+#pragma comment(lib,"dxgi.lib")
+
 namespace DiveBomber::DX
 {
     using namespace DEException;

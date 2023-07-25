@@ -1,13 +1,30 @@
 #pragma once
-#include "Window\Window.h"
-#include "Console\Console.h"
-#include "Utility\Timer.h"
-#include "Graphics\RenderPipeline\RenderPipelineGraph.h"
-
 #include <thread>
+#include <vector>
+#include <string>
 
 namespace DiveBomber
 {
+	namespace DEWindow
+	{
+		class Window;
+	}
+
+	namespace DEConsole
+	{
+		class Console;
+	}
+
+	namespace Utility
+	{
+		class Timer;
+	}
+
+	namespace RenderPipeline
+	{
+		class RenderPipelineGraph;
+	}
+
 	class DiveBomberCore final
 	{
 	public:
@@ -29,7 +46,7 @@ namespace DiveBomber
 		std::vector<std::thread> threadTasks;
 		std::wstring command;
 
-		Utility::Timer coreTimer;
+		std::unique_ptr<Utility::Timer> coreTimer;
 
 		std::unique_ptr<RenderPipeline::RenderPipelineGraph> mainRenderPipeline;
 	};

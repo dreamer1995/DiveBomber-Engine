@@ -1,6 +1,9 @@
 #include "DepthStencil.h"
 
 #include "RenderTarget.h"
+#include "..\Graphics.h"
+#include "..\..\Exception\GraphicsException.h"
+#include "..\DX\DescriptorHeap.h"
 
 namespace DiveBomber::BindObj
 {

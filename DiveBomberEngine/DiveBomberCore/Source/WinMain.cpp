@@ -1,5 +1,12 @@
 #include "DiveBomberCore.h"
 
+#include "Graphics/DEWrl.h"
+#include "Exception/Exception.h"
+#include "Utility/Common.h"
+
+#include <dxgi1_6.h>
+#include <dxgidebug.h>
+
 #include <Shlwapi.h>
 #pragma comment(lib, "Shlwapi.lib")
 

@@ -1,12 +1,17 @@
 #pragma once
-#include "DX\GPUAdapter.h"
-#include "DX\DXDevice.h"
-#include "DX\CommandQueue.h"
-#include "DX\SwapChain.h"
-#include "DX\DescriptorHeap.h"
-#include "DX/Viewport.h"
-#include "DX/ScissorRects.h"
-#include "../Utility/GlobalParameters.h"
+
+#include "GraphicsHeader.h"
+
+namespace DiveBomber::DX
+{
+	class GPUAdapter;
+	class DXDevice;
+	class CommandQueue;
+	class SwapChain;
+	class DescriptorHeap;
+	class Viewport;
+	class ScissorRects;
+}
 
 namespace DiveBomber::Component
 {

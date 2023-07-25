@@ -1,6 +1,7 @@
 #include "Exception.h"
 
 #include "..\..\Config\SystemConfig.h"
+#include "..\Utility\Common.h"
 
 #include <exception>
 

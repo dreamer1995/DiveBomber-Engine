@@ -1,9 +1,13 @@
 #pragma once
-#include "..\Graphics.h"
+#include "..\..\Utility\Common.h"
 
 #include <memory>
-#include <string>
-#include <filesystem>
+#include <cassert>
+
+namespace DiveBomber::DEGraphics
+{
+	class Graphics;
+}
 
 namespace DiveBomber::BindObj
 {

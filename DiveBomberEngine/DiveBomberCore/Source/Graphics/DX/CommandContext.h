@@ -1,9 +1,17 @@
 #pragma once
-#include "..\GraphicsResource.h"
-#include "..\Graphics.h"
+#include "..\GraphicsHeader.h"
+
+#include <memory>
+
+namespace DiveBomber::DEGraphics
+{
+	class Graphics;
+}
 
 namespace DiveBomber::DX
 {
+	class CommandQueue;
+
 	class CommandContext final
 	{
 	public:

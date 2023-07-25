@@ -1,7 +1,10 @@
 #include "Window.h"
 
-#include "WindowResource.h"
-#include "../../Resource/resource.h"
+#include "..\Exception\WindowException.h"
+#include "..\..\Resource\resource.h"
+#include "..\Hardware\Keyboard.h"
+#include "..\Hardware\Mouse.h"
+#include "..\Graphics\Graphics.h"
 
 #include <shellapi.h> // For CommandLineToArgvW
 #include <optional>
@@ -131,6 +134,9 @@ namespace DiveBomber::DEWindow
 		// create graphics object
 		pGfx = std::make_unique<Graphics>(hWnd, windowWidth, windowHeight);
 
+		kbd = std::make_unique<Keyboard>();
+		mouse = std::make_unique<Mouse>();
+
 		// newly created windows start off as hidden
 		::ShowWindow(hWnd, SW_SHOW);
 	}
@@ -201,7 +207,7 @@ namespace DiveBomber::DEWindow
 
 		// clear keystate when window loses focus to prevent input getting "stuck"
 		case WM_KILLFOCUS:
-			kbd.ClearState();
+			kbd->ClearState();
 			break;
 		case WM_ACTIVATE:
 			// confine/free cursor on window to foreground/background if cursor disabled
@@ -229,9 +235,9 @@ namespace DiveBomber::DEWindow
 			//{
 			//	break;
 			//}
-			if (!(lParam & 0x40000000) || kbd.AutorepeatIsEnabled()) // filter autorepeat
+			if (!(lParam & 0x40000000) || kbd->AutorepeatIsEnabled()) // filter autorepeat
 			{
-				kbd.OnKeyDown(static_cast<unsigned char>(wParam));
+				kbd->OnKeyDown(static_cast<unsigned char>(wParam));
 			}
 			break;
 		case WM_KEYUP:
@@ -241,7 +247,7 @@ namespace DiveBomber::DEWindow
 			//{
 			//	break;
 			//}
-			kbd.OnKeyUp(static_cast<unsigned char>(wParam));
+			kbd->OnKeyUp(static_cast<unsigned char>(wParam));
 			break;
 		case WM_CHAR:
 			// stifle this keyboard message if imgui wants to capture
@@ -249,7 +255,7 @@ namespace DiveBomber::DEWindow
 			//{
 			//	break;
 			//}
-			kbd.OnChar(static_cast<unsigned char>(wParam));
+			kbd->OnChar(static_cast<unsigned char>(wParam));
 			break;
 			/*********** END KEYBOARD MESSAGES ***********/
 
@@ -260,10 +266,10 @@ namespace DiveBomber::DEWindow
 			// cursorless exclusive gets first dibs
 			if (!cursorEnabled)
 			{
-				if (!mouse.IsInWindow())
+				if (!mouse->IsInWindow())
 				{
 					SetCapture(hWnd);
-					mouse.OnMouseEnter();
+					mouse->OnMouseEnter();
 					HideCursor();
 				}
 				break;
@@ -276,11 +282,11 @@ namespace DiveBomber::DEWindow
 			// in client region -> log move, and log enter + capture mouse (if not previously in window)
 			if (pt.x >= 0 && pt.x < windowWidth && pt.y >= 0 && pt.y < windowHeight)
 			{
-				mouse.OnMouseMove(pt.x, pt.y);
-				if (!mouse.IsInWindow())
+				mouse->OnMouseMove(pt.x, pt.y);
+				if (!mouse->IsInWindow())
 				{
 					SetCapture(hWnd);
-					mouse.OnMouseEnter();
+					mouse->OnMouseEnter();
 				}
 			}
 			// not in client -> log move / maintain capture if button down
@@ -288,13 +294,13 @@ namespace DiveBomber::DEWindow
 			{
 				if (wParam & (MK_LBUTTON | MK_RBUTTON | MK_MBUTTON))
 				{
-					mouse.OnMouseMove(pt.x, pt.y);
+					mouse->OnMouseMove(pt.x, pt.y);
 				}
 				// button up -> release capture / log event for leaving
 				else
 				{
 					ReleaseCapture();
-					mouse.OnMouseLeave();
+					mouse->OnMouseLeave();
 				}
 			}
 			break;
@@ -312,7 +318,7 @@ namespace DiveBomber::DEWindow
 			//{
 			//	break;
 			//}
-			mouse.OnLeftDown();
+			mouse->OnLeftDown();
 			break;
 		}
 		case WM_RBUTTONDOWN:
@@ -322,7 +328,7 @@ namespace DiveBomber::DEWindow
 			//{
 			//	break;
 			//}
-			mouse.OnRightDown();
+			mouse->OnRightDown();
 			break;
 		}
 		case WM_MBUTTONDOWN:
@@ -332,7 +338,7 @@ namespace DiveBomber::DEWindow
 			//{
 			//	break;
 			//}
-			mouse.OnWheelDown();
+			mouse->OnWheelDown();
 			break;
 		}
 		case WM_LBUTTONUP:
@@ -343,12 +349,12 @@ namespace DiveBomber::DEWindow
 			//	break;
 			//}
 			const POINTS pt = MAKEPOINTS(lParam);
-			mouse.OnLeftUp();
+			mouse->OnLeftUp();
 			// release mouse if outside of window
 			if (pt.x < 0 || pt.x >= windowWidth || pt.y < 0 || pt.y >= windowHeight)
 			{
 				ReleaseCapture();
-				mouse.OnMouseLeave();
+				mouse->OnMouseLeave();
 			}
 			break;
 		}
@@ -360,12 +366,12 @@ namespace DiveBomber::DEWindow
 			//	break;
 			//}
 			const POINTS pt = MAKEPOINTS(lParam);
-			mouse.OnRightUp();
+			mouse->OnRightUp();
 			// release mouse if outside of window
 			if (pt.x < 0 || pt.x >= windowWidth || pt.y < 0 || pt.y >= windowHeight)
 			{
 				ReleaseCapture();
-				mouse.OnMouseLeave();
+				mouse->OnMouseLeave();
 			}
 			break;
 		}
@@ -377,12 +383,12 @@ namespace DiveBomber::DEWindow
 			//	break;
 			//}
 			const POINTS pt = MAKEPOINTS(lParam);
-			mouse.OnWheelUp();
+			mouse->OnWheelUp();
 			// release mouse if outside of window
 			if (pt.x < 0 || pt.x >= windowWidth || pt.y < 0 || pt.y >= windowHeight)
 			{
 				ReleaseCapture();
-				mouse.OnMouseLeave();
+				mouse->OnMouseLeave();
 			}
 			break;
 		}
@@ -395,7 +401,7 @@ namespace DiveBomber::DEWindow
 			//}
 			const POINTS pt = MAKEPOINTS(lParam);
 			const int delta = GET_WHEEL_DELTA_WPARAM(wParam);
-			mouse.OnWheelDelta(delta);
+			mouse->OnWheelDelta(delta);
 			break;
 		}
 		/************** END MOUSE MESSAGES **************/
@@ -403,7 +409,7 @@ namespace DiveBomber::DEWindow
 		/************** RAW MOUSE MESSAGES **************/
 		case WM_INPUT:
 		{
-			if (!mouse.RawEnabled())
+			if (!mouse->RawEnabled())
 			{
 				break;
 			}
@@ -436,7 +442,7 @@ namespace DiveBomber::DEWindow
 			if (ri.header.dwType == RIM_TYPEMOUSE &&
 				(ri.data.mouse.lLastX != 0 || ri.data.mouse.lLastY != 0))
 			{
-				mouse.OnRawDelta(ri.data.mouse.lLastX, ri.data.mouse.lLastY);
+				mouse->OnRawDelta(ri.data.mouse.lLastX, ri.data.mouse.lLastY);
 			}
 			break;
 		}

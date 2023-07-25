@@ -2,6 +2,7 @@
 
 #include "DescriptorHeap.h"
 #include "..\BindObj\RenderTarget.h"
+#include "..\..\Exception\GraphicsException.h"
 
 namespace DiveBomber::DX
 {

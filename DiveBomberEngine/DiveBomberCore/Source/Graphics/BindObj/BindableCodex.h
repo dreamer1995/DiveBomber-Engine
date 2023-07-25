@@ -1,13 +1,12 @@
 #pragma once
 
-#include "Bindable.h"
-
 #include <type_traits>
-#include <memory>
 #include <unordered_map>
 
 namespace DiveBomber::BindObj
 {
+	class Bindable;
+
 	class Codex final
 	{
 	public:
