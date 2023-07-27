@@ -18,7 +18,7 @@
 *	along with The Chili Direct3D Engine.  If not, see <http://www.gnu.org/licenses/>.    *
 ******************************************************************************************/
 #pragma once
-#include "DEWindows.h"
+#include "..\Source\Window\DEWindows.h"
 
 #include <unordered_map>
 #include <string>

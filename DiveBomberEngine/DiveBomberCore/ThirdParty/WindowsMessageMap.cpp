@@ -19,7 +19,7 @@
 ******************************************************************************************/
 #include "WindowsMessageMap.h"
 
-#include "../Utility/Common.h"
+#include "..\Source\Utility\Common.h"
 
 #include <string>
 #include <sstream>

@@ -74,6 +74,20 @@ namespace DiveBomber::DEConsole
 
 	void Console::GetInput(std::wstring& command)
 	{
+		if (!waitForInput)
+			return;
+
 		std::getline(std::wcin, command);
+		waitForInput = false;
+	}
+
+	bool Console::GetWaitForInput() const noexcept
+	{
+		return waitForInput;
+	}
+
+	void Console::SetWaitForInput(bool inputWaitForInput) noexcept
+	{
+		waitForInput = inputWaitForInput;
 	}
 }

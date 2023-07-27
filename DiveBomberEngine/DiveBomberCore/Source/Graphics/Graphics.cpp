@@ -10,6 +10,7 @@
 #include "DX\DescriptorHeap.h"
 #include "DX\Viewport.h"
 #include "DX\ScissorRects.h"
+#include "DX\CommandLIst.h"
 
 #include <iostream>
 
@@ -63,7 +64,7 @@ namespace DiveBomber::DEGraphics
 
 		auto commandQueue = GetCommandQueue();
 		directCommandList = commandQueue->GetCommandList();
-		wrl::ComPtr<ID3D12GraphicsCommandList2> commandList = directCommandList;
+		wrl::ComPtr<ID3D12GraphicsCommandList2> commandList = directCommandList->GetGraphicsCommandList();
 
 		// Clear the render target.
 		{
@@ -91,7 +92,7 @@ namespace DiveBomber::DEGraphics
 		auto backBuffer = swapChain->GetBackBuffer(currentBackBufferIndex);
 
 		auto commandQueue = GetCommandQueue();
-		wrl::ComPtr<ID3D12GraphicsCommandList2> commandList = directCommandList;
+		wrl::ComPtr<ID3D12GraphicsCommandList2> commandList = directCommandList->GetGraphicsCommandList();
 
 		// Present
 		{
@@ -100,7 +101,7 @@ namespace DiveBomber::DEGraphics
 				D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 			commandList->ResourceBarrier(1, &barrier);
 
-			frameFenceValues[currentBackBufferIndex] = commandQueue->ExecuteCommandList(commandList);
+			frameFenceValues[currentBackBufferIndex] = commandQueue->ExecuteCommandList(directCommandList);
 
 			HRESULT hr;
 			bool enableVSync = VSync;
@@ -199,11 +200,11 @@ namespace DiveBomber::DEGraphics
 		{
 		case D3D12_COMMAND_LIST_TYPE_DIRECT:
 			if (directCommandList)
-				return directCommandList;
+				return directCommandList->GetGraphicsCommandList();
 			else
 			{
 				directCommandList = GetCommandQueue(D3D12_COMMAND_LIST_TYPE_DIRECT)->GetCommandList();
-				return directCommandList;
+				return directCommandList->GetGraphicsCommandList();
 			}
 			break;
 		case D3D12_COMMAND_LIST_TYPE_COMPUTE:
@@ -211,12 +212,12 @@ namespace DiveBomber::DEGraphics
 			break;
 		case D3D12_COMMAND_LIST_TYPE_COPY:
 			if (copyCommandList)
-				return copyCommandList;
+				return copyCommandList->GetGraphicsCommandList();
 			else
 			{
 				copyCommandList = GetCommandQueue(D3D12_COMMAND_LIST_TYPE_COPY)->GetCommandList();
 
-				return copyCommandList;
+				return copyCommandList->GetGraphicsCommandList();
 			}
 			break;
 		default:
@@ -243,5 +244,10 @@ namespace DiveBomber::DEGraphics
 	float Graphics::GetFOV() const noexcept
 	{
 		return renderCamera->GetFOV();
+	}
+
+	uint64_t Graphics::ExecuteCommandList()
+	{
+		return copyCommandQueue->ExecuteCommandList(copyCommandList);
 	}
 }

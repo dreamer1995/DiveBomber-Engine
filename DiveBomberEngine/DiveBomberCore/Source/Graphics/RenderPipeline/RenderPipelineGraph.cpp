@@ -39,7 +39,7 @@ namespace DiveBomber::RenderPipeline
 		vertexBuffer = std::make_shared<VertexBuffer>(gfx, geometryTag, mesh->vertices);
 		indexBuffer = std::make_shared<IndexBuffer>(gfx, geometryTag, mesh->indices);
 
-		auto fenceValue = commandQueue->ExecuteCommandList(commandList);
+		auto fenceValue = gfx.ExecuteCommandList();
 		commandQueue->WaitForFenceValue(fenceValue);
 
 		vertexShader = std::make_shared<Shader>(gfx, L"VertexShader.cso", Shader::ShaderType::VertexShader);

@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <atomic>
 
 namespace DiveBomber::DEConsole
 {
@@ -11,7 +12,10 @@ namespace DiveBomber::DEConsole
 		Console(const Console&) = delete;
 		Console& operator=(const Console&) = delete;
 		void GetInput(std::wstring& command);
+		[[nodiscard]] bool GetWaitForInput() const noexcept;
+		void SetWaitForInput(bool inputWaitForInput) noexcept;
 
-		bool waitForInput = true;
+	private:
+		std::atomic_bool waitForInput = true;
 	};
 }

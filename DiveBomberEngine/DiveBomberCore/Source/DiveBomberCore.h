@@ -1,6 +1,6 @@
 #pragma once
 #include <thread>
-#include <vector>
+#include <queue>
 #include <string>
 
 namespace DiveBomber
@@ -43,7 +43,7 @@ namespace DiveBomber
 
 		std::unique_ptr<DEWindow::Window> wnd;
 		std::unique_ptr<DEConsole::Console> console;
-		std::vector<std::thread> threadTasks;
+		std::queue<std::thread> threadTasks;
 		std::wstring command;
 
 		std::unique_ptr<Utility::Timer> coreTimer;

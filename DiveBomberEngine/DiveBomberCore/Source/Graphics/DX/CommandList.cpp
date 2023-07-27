@@ -1,0 +1,33 @@
+#include "CommandList.h"
+
+#include "..\..\Exception\GraphicsException.h"
+#include "..\Graphics.h"
+
+namespace DiveBomber::DX
+{
+	//using namespace DEGraphics;
+	using namespace DEException;
+	CommandList::CommandList(wrl::ComPtr<ID3D12Device2> device, D3D12_COMMAND_LIST_TYPE type)
+	{
+		HRESULT hr;
+		GFX_THROW_INFO(device->CreateCommandAllocator(type, IID_PPV_ARGS(&commandAllocator)));
+		GFX_THROW_INFO(device->CreateCommandList(0, type, commandAllocator.Get(), nullptr, IID_PPV_ARGS(&commandList)));
+	}
+	
+	void CommandList::Reset()
+	{
+		HRESULT hr;
+		GFX_THROW_INFO(commandList->Reset(commandAllocator.Get(), nullptr));
+	}
+
+	wrl::ComPtr<ID3D12GraphicsCommandList2> CommandList::GetGraphicsCommandList() const
+	{
+		return commandList;
+	}
+
+	void CommandList::Close()
+	{
+		HRESULT hr;
+		GFX_THROW_INFO(commandList->Close());
+	}
+}

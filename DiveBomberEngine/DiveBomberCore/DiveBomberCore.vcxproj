@@ -89,7 +89,7 @@
     <ClCompile Include="Source\Graphics\RenderPipeline\RenderPipelineGraph.cpp" />
     <ClCompile Include="Source\Graphics\BindObj\RenderTarget.cpp" />
     <ClCompile Include="Source\Graphics\BindObj\Topology.cpp" />
-    <ClCompile Include="Source\Graphics\DX\CommandContext.cpp" />
+    <ClCompile Include="Source\Graphics\DX\CommandList.cpp" />
     <ClCompile Include="Source\Graphics\BindObj\IndexBuffer.cpp" />
     <ClCompile Include="Source\Graphics\DX\CommandQueue.cpp" />
     <ClCompile Include="Source\Graphics\BindObj\RootSignature.cpp" />
@@ -111,7 +111,7 @@
     <ClCompile Include="Source\Utility\Timer.cpp" />
     <ClCompile Include="Source\Window\Window.cpp" />
     <ClCompile Include="Source\Exception\WindowException.cpp" />
-    <ClCompile Include="Source\Window\WindowsMessageMap.cpp" />
+    <ClCompile Include="ThirdParty\WindowsMessageMap.cpp" />
     <ClCompile Include="Source\WinMain.cpp" />
     <ClCompile Include="Source\Graphics\BindObj\Vertex.cpp" />
     <ClCompile Include="Source\Graphics\BindObj\VertexBuffer.cpp" />
@@ -134,7 +134,7 @@
     <ClInclude Include="Source\Graphics\RenderPipeline\RenderPipelineGraph.h" />
     <ClInclude Include="Source\Graphics\BindObj\RenderTarget.h" />
     <ClInclude Include="Source\Graphics\BindObj\Topology.h" />
-    <ClInclude Include="Source\Graphics\DX\CommandContext.h" />
+    <ClInclude Include="Source\Graphics\DX\CommandLIst.h" />
     <ClInclude Include="Source\Graphics\BindObj\BindableCodex.h" />
     <ClInclude Include="Source\Graphics\Gizmo\Geometry\Cube.h" />
     <ClInclude Include="Source\Graphics\Gizmo\Geometry\IndexedTriangleList.h" />
@@ -167,11 +167,12 @@
     <ClInclude Include="Source\Window\Window.h" />
     <ClInclude Include="Source\Exception\WindowException.h" />
     <ClInclude Include="Source\Window\DEWindows.h" />
-    <ClInclude Include="Source\Window\WindowsMessageMap.h" />
+    <ClInclude Include="ThirdParty\WindowsMessageMap.h" />
     <ClInclude Include="Source\Graphics\DEWrl.h" />
     <ClInclude Include="Source\Graphics\BindObj\Vertex.h" />
     <ClInclude Include="Source\Graphics\BindObj\VertexBuffer.h" />
     <ClInclude Include="Source\Graphics\BindObj\Shader.h" />
+    <ClInclude Include="ThirdParty\ThreadSafeQueue.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource\Resource.rc" />

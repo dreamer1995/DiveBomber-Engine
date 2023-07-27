@@ -11,6 +11,7 @@ namespace DiveBomber::DX
 	class DescriptorHeap;
 	class Viewport;
 	class ScissorRects;
+	class CommandList;
 }
 
 namespace DiveBomber::Component
@@ -62,6 +63,8 @@ namespace DiveBomber::DEGraphics
 		[[nodiscard]] wrl::ComPtr<ID3D12GraphicsCommandList2> GetCommandList(const D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT) noexcept;
 		[[nodiscard]] CD3DX12_CPU_DESCRIPTOR_HANDLE GetRenderTargetDescriptorHandle() const noexcept;
 		[[nodiscard]] CD3DX12_CPU_DESCRIPTOR_HANDLE GetDepthStencilDescriptorHandle() const noexcept;
+		//temp
+		uint64_t ExecuteCommandList();
 
 	private:
 		UINT width = 0;
@@ -82,8 +85,8 @@ namespace DiveBomber::DEGraphics
 		HANDLE fenceEvent = 0;
 		uint64_t frameFenceValues[SwapChainBufferCount] = {};
 
-		wrl::ComPtr<ID3D12GraphicsCommandList2> copyCommandList;
-		wrl::ComPtr<ID3D12GraphicsCommandList2> directCommandList;
+		std::shared_ptr<DX::CommandList> copyCommandList;
+		std::shared_ptr<DX::CommandList> directCommandList;
 
 		std::shared_ptr<Component::Camera> renderCamera;
 

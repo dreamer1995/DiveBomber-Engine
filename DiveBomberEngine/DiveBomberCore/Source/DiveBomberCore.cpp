@@ -26,7 +26,7 @@ namespace DiveBomber
 		if (EnableConsole)
 		{
 			console = std::make_unique<Console>();
-			threadTasks.emplace_back(std::thread{
+			threadTasks.emplace(std::thread{
 				&Console::GetInput, console.get(), std::ref(command)
 				});
 		}
@@ -38,11 +38,13 @@ namespace DiveBomber
 	{
 		if (EnableConsole)
 		{
-			console->waitForInput = false;
+			console->SetWaitForInput(false);
 			FreeConsole();
-			for (std::thread& task : threadTasks)
+			while (!threadTasks.empty())
 			{
+				std::thread& task = threadTasks.front();
 				task.join();
+				threadTasks.pop();
 			}
 		}
 	}
@@ -290,14 +292,20 @@ namespace DiveBomber
 	{
 		if (!EnableConsole)
 			return;
-		if (!command.empty())
+		if (!console->GetWaitForInput())
 		{
-			if (console->waitForInput)
+			if (!command.empty())
 			{
 				std::wcout << L"[Execute]" << command << std::endl;
 			}
 			command.clear();
-			threadTasks.emplace_back(std::thread{ &Console::GetInput, console.get(), std::ref(command) });
+
+			std::thread& task = threadTasks.front();
+			task.join();
+			threadTasks.pop();
+
+			console->SetWaitForInput(true);
+			threadTasks.emplace(std::thread{ &Console::GetInput, console.get(), std::ref(command) });
 		}
 	};
 
@@ -321,7 +329,7 @@ namespace DiveBomber
 		if (elapsedSeconds > 1.0f)
 		{
 			g_FramePerSnd = float(elapsedFrames / elapsedSeconds);
-			std::wcout << g_FramePerSnd << std::endl;
+			//std::wcout << g_FramePerSnd << std::endl;
 			elapsedSeconds = 0.0;
 			elapsedFrames = 0;
 		}

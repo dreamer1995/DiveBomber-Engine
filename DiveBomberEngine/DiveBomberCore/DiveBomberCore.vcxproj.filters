@@ -5,7 +5,7 @@
     <ClCompile Include="Source\Utility\Timer.cpp" />
     <ClCompile Include="Source\Window\Window.cpp" />
     <ClCompile Include="Source\Exception\WindowException.cpp" />
-    <ClCompile Include="Source\Window\WindowsMessageMap.cpp" />
+    <ClCompile Include="ThirdParty\WindowsMessageMap.cpp" />
     <ClCompile Include="Source\Hardware\Keyboard.cpp" />
     <ClCompile Include="Source\Hardware\Mouse.cpp" />
     <ClCompile Include="Source\Exception\DxgiInfoManager.cpp" />
@@ -24,7 +24,7 @@
     <ClCompile Include="Source\Utility\Color.h" />
     <ClCompile Include="Source\Graphics\BindObj\VertexBuffer.cpp" />
     <ClCompile Include="Source\Graphics\BindObj\IndexBuffer.cpp" />
-    <ClCompile Include="Source\Graphics\DX\CommandContext.cpp" />
+    <ClCompile Include="Source\Graphics\DX\CommandList.cpp" />
     <ClCompile Include="Source\Graphics\BindObj\Shader.cpp" />
     <ClCompile Include="Source\Graphics\BindObj\RootSignature.cpp" />
     <ClCompile Include="Source\Graphics\BindObj\PipelineStateObject.cpp" />
@@ -47,7 +47,7 @@
     <ClInclude Include="Source\Window\Window.h" />
     <ClInclude Include="Source\Exception\WindowException.h" />
     <ClInclude Include="Source\Window\DEWindows.h" />
-    <ClInclude Include="Source\Window\WindowsMessageMap.h" />
+    <ClInclude Include="ThirdParty\WindowsMessageMap.h" />
     <ClInclude Include="Resource\resource.h" />
     <ClInclude Include="Source\Hardware\Mouse.h" />
     <ClInclude Include="Source\Hardware\Keyboard.h" />
@@ -75,7 +75,7 @@
     <ClInclude Include="Source\Graphics\Gizmo\Geometry\Sphere.h" />
     <ClInclude Include="Source\Utility\DEMath.h" />
     <ClInclude Include="Source\Graphics\BindObj\IndexBuffer.h" />
-    <ClInclude Include="Source\Graphics\DX\CommandContext.h" />
+    <ClInclude Include="Source\Graphics\DX\CommandLIst.h" />
     <ClInclude Include="Source\Graphics\BindObj\Shader.h" />
     <ClInclude Include="Source\Graphics\BindObj\RootSignature.h" />
     <ClInclude Include="Source\Graphics\BindObj\PipelineStateObject.h" />
@@ -94,6 +94,7 @@
     <ClInclude Include="Source\Exception\GraphicsExceptionEX.h" />
     <ClInclude Include="Source\Graphics\GraphicsHeader.h" />
     <ClInclude Include="Source\Graphics\GraphicsSource.h" />
+    <ClInclude Include="ThirdParty\ThreadSafeQueue.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource\Resource.rc" />
