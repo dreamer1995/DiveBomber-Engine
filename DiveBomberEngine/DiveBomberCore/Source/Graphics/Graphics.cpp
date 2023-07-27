@@ -62,9 +62,7 @@ namespace DiveBomber::DEGraphics
 		auto currentBackBufferIndex = swapChain->GetSwapChain()->GetCurrentBackBufferIndex();
 		auto backBuffer = swapChain->GetBackBuffer(currentBackBufferIndex);
 
-		auto commandQueue = GetCommandQueue();
-		directCommandList = commandQueue->GetCommandList();
-		wrl::ComPtr<ID3D12GraphicsCommandList2> commandList = directCommandList->GetGraphicsCommandList();
+		wrl::ComPtr<ID3D12GraphicsCommandList2> commandList = GetCommandList();
 
 		// Clear the render target.
 		{
@@ -92,7 +90,7 @@ namespace DiveBomber::DEGraphics
 		auto backBuffer = swapChain->GetBackBuffer(currentBackBufferIndex);
 
 		auto commandQueue = GetCommandQueue();
-		wrl::ComPtr<ID3D12GraphicsCommandList2> commandList = directCommandList->GetGraphicsCommandList();
+		wrl::ComPtr<ID3D12GraphicsCommandList2> commandList = GetCommandList();
 
 		// Present
 		{
@@ -101,7 +99,7 @@ namespace DiveBomber::DEGraphics
 				D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 			commandList->ResourceBarrier(1, &barrier);
 
-			frameFenceValues[currentBackBufferIndex] = commandQueue->ExecuteCommandList(directCommandList);
+			frameFenceValues[currentBackBufferIndex] = ExecuteCommandList();
 
 			HRESULT hr;
 			bool enableVSync = VSync;
@@ -208,7 +206,13 @@ namespace DiveBomber::DEGraphics
 			}
 			break;
 		case D3D12_COMMAND_LIST_TYPE_COMPUTE:
-			return nullptr;
+			if (computeCommandList)
+				return computeCommandList->GetGraphicsCommandList();
+			else
+			{
+				computeCommandList = GetCommandQueue(D3D12_COMMAND_LIST_TYPE_COMPUTE)->GetCommandList();
+				return computeCommandList->GetGraphicsCommandList();
+			}
 			break;
 		case D3D12_COMMAND_LIST_TYPE_COPY:
 			if (copyCommandList)
@@ -246,8 +250,53 @@ namespace DiveBomber::DEGraphics
 		return renderCamera->GetFOV();
 	}
 
-	uint64_t Graphics::ExecuteCommandList()
+	uint64_t Graphics::ExecuteCommandList(const D3D12_COMMAND_LIST_TYPE type)
 	{
-		return copyCommandQueue->ExecuteCommandList(copyCommandList);
+		switch (type)
+		{
+		case D3D12_COMMAND_LIST_TYPE_DIRECT:
+			return directCommandQueue->ExecuteCommandList(std::move(directCommandList));
+		case D3D12_COMMAND_LIST_TYPE_COMPUTE:
+			return computeCommandQueue->ExecuteCommandList(std::move(computeCommandList));
+		case D3D12_COMMAND_LIST_TYPE_COPY:
+			return copyCommandQueue->ExecuteCommandList(std::move(copyCommandList));
+		default:
+			assert(false && "Invalid command queue type.");
+			return -1;
+		}
+	}
+
+	uint64_t Graphics::ExecuteCommandList(std::shared_ptr<CommandList> commandList, const D3D12_COMMAND_LIST_TYPE type)
+	{
+		assert(commandList->GetCommandListType() == type);
+
+		switch (type)
+		{
+		case D3D12_COMMAND_LIST_TYPE_DIRECT:
+			return directCommandQueue->ExecuteCommandList(std::move(commandList));
+		case D3D12_COMMAND_LIST_TYPE_COMPUTE:
+			return computeCommandQueue->ExecuteCommandList(std::move(commandList));
+		case D3D12_COMMAND_LIST_TYPE_COPY:
+			return copyCommandQueue->ExecuteCommandList(std::move(commandList));
+		default:
+			assert(false && "Invalid command queue type.");
+			return -1;
+		}
+	}
+
+	uint64_t Graphics::ExecuteCommandLists(std::vector<std::shared_ptr<CommandList>> commandLists, const D3D12_COMMAND_LIST_TYPE type)
+	{
+		switch (type)
+		{
+		case D3D12_COMMAND_LIST_TYPE_DIRECT:
+			return directCommandQueue->ExecuteCommandLists(std::move(commandLists));
+		case D3D12_COMMAND_LIST_TYPE_COMPUTE:
+			return computeCommandQueue->ExecuteCommandLists(std::move(commandLists));
+		case D3D12_COMMAND_LIST_TYPE_COPY:
+			return copyCommandQueue->ExecuteCommandLists(std::move(commandLists));
+		default:
+			assert(false && "Invalid command queue type.");
+			return -1;
+		}
 	}
 }

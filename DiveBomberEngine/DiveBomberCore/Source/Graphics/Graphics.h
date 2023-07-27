@@ -63,8 +63,9 @@ namespace DiveBomber::DEGraphics
 		[[nodiscard]] wrl::ComPtr<ID3D12GraphicsCommandList2> GetCommandList(const D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT) noexcept;
 		[[nodiscard]] CD3DX12_CPU_DESCRIPTOR_HANDLE GetRenderTargetDescriptorHandle() const noexcept;
 		[[nodiscard]] CD3DX12_CPU_DESCRIPTOR_HANDLE GetDepthStencilDescriptorHandle() const noexcept;
-		//temp
-		uint64_t ExecuteCommandList();
+		uint64_t ExecuteCommandList(const D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT);
+		uint64_t ExecuteCommandList(std::shared_ptr<DX::CommandList> commandList, const D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT);
+		uint64_t ExecuteCommandLists(std::vector<std::shared_ptr<DX::CommandList>> commandLists, const D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT);
 
 	private:
 		UINT width = 0;
@@ -87,6 +88,7 @@ namespace DiveBomber::DEGraphics
 
 		std::shared_ptr<DX::CommandList> copyCommandList;
 		std::shared_ptr<DX::CommandList> directCommandList;
+		std::shared_ptr<DX::CommandList> computeCommandList;
 
 		std::shared_ptr<Component::Camera> renderCamera;
 

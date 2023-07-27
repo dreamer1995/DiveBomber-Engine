@@ -34,12 +34,11 @@ namespace DiveBomber::RenderPipeline
 		const auto geometryTag = "$sphere." + std::to_string(1);
 
 		auto commandQueue = gfx.GetCommandQueue(D3D12_COMMAND_LIST_TYPE_COPY);
-		auto commandList = gfx.GetCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
 
 		vertexBuffer = std::make_shared<VertexBuffer>(gfx, geometryTag, mesh->vertices);
 		indexBuffer = std::make_shared<IndexBuffer>(gfx, geometryTag, mesh->indices);
 
-		auto fenceValue = gfx.ExecuteCommandList();
+		auto fenceValue = gfx.ExecuteCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
 		commandQueue->WaitForFenceValue(fenceValue);
 
 		vertexShader = std::make_shared<Shader>(gfx, L"VertexShader.cso", Shader::ShaderType::VertexShader);

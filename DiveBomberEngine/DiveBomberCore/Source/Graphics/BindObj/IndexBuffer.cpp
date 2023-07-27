@@ -60,7 +60,7 @@ namespace DiveBomber::BindObj
 
 		const CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
 			indexBuffer.Get(),
-			D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
+			D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER);
 		gfx.GetCommandList()->ResourceBarrier(1, &barrier);
 
 		// Create index buffer view.
