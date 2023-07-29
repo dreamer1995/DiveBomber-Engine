@@ -38,6 +38,7 @@
     <ClCompile Include="Source\Graphics\Component\Camera.cpp" />
     <ClCompile Include="Source\Graphics\Component\Projection.cpp" />
     <ClCompile Include="Source\Graphics\BindObj\ConstantTransformBuffer.cpp" />
+    <ClCompile Include="Source\Graphics\Component\UploadBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Utility\Common.h" />
@@ -95,6 +96,7 @@
     <ClInclude Include="Source\Graphics\GraphicsHeader.h" />
     <ClInclude Include="Source\Graphics\GraphicsSource.h" />
     <ClInclude Include="ThirdParty\ThreadSafeQueue.h" />
+    <ClInclude Include="Source\Graphics\Component\UploadBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource\Resource.rc" />

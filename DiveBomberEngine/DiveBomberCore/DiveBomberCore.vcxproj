@@ -84,6 +84,7 @@
     <ClCompile Include="Source\Graphics\BindObj\PipelineStateObject.cpp" />
     <ClCompile Include="Source\Graphics\Component\Camera.cpp" />
     <ClCompile Include="Source\Graphics\Component\Projection.cpp" />
+    <ClCompile Include="Source\Graphics\Component\UploadBuffer.cpp" />
     <ClCompile Include="Source\Graphics\DX\ScissorRects.cpp" />
     <ClCompile Include="Source\Graphics\DX\Viewport.cpp" />
     <ClCompile Include="Source\Graphics\RenderPipeline\RenderPipelineGraph.cpp" />
@@ -125,6 +126,7 @@
     <ClInclude Include="Source\Graphics\BindObj\ConstantTransformBuffer.h" />
     <ClInclude Include="Source\Graphics\BindObj\DepthStencil.h" />
     <ClInclude Include="Source\Graphics\BindObj\PipelineStateObject.h" />
+    <ClInclude Include="Source\Graphics\Component\UploadBuffer.h" />
     <ClInclude Include="Source\Graphics\GraphicsHeader.h" />
     <ClInclude Include="Source\Graphics\Component\Camera.h" />
     <ClInclude Include="Source\Graphics\Component\Projection.h" />

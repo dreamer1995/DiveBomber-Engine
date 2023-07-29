@@ -88,43 +88,43 @@ namespace DiveBomber::BindObj
 			{
 				for (unsigned short iLong = 0; iLong < longDiv - 1; iLong++)
 				{
-					indices.push_back(calcIdx(iLat, iLong));
-					indices.push_back(calcIdx(iLat + 1, iLong));
-					indices.push_back(calcIdx(iLat, iLong + 1));
-					indices.push_back(calcIdx(iLat, iLong + 1));
-					indices.push_back(calcIdx(iLat + 1, iLong));
-					indices.push_back(calcIdx(iLat + 1, iLong + 1));
+					indices.emplace_back(calcIdx(iLat, iLong));
+					indices.emplace_back(calcIdx(iLat + 1, iLong));
+					indices.emplace_back(calcIdx(iLat, iLong + 1));
+					indices.emplace_back(calcIdx(iLat, iLong + 1));
+					indices.emplace_back(calcIdx(iLat + 1, iLong));
+					indices.emplace_back(calcIdx(iLat + 1, iLong + 1));
 				}
 				// wrap band
-				indices.push_back(calcIdx(iLat, longDiv - 1));
-				indices.push_back(calcIdx(iLat + 1, longDiv - 1));
-				indices.push_back(calcIdx(iLat, 0));
-				indices.push_back(calcIdx(iLat, 0));
-				indices.push_back(calcIdx(iLat + 1, longDiv - 1));
-				indices.push_back(calcIdx(iLat + 1, 0));
+				indices.emplace_back(calcIdx(iLat, longDiv - 1));
+				indices.emplace_back(calcIdx(iLat + 1, longDiv - 1));
+				indices.emplace_back(calcIdx(iLat, 0));
+				indices.emplace_back(calcIdx(iLat, 0));
+				indices.emplace_back(calcIdx(iLat + 1, longDiv - 1));
+				indices.emplace_back(calcIdx(iLat + 1, 0));
 			}
 
 			// cap fans
 			for (unsigned short iLong = 0; iLong < longDiv - 1; iLong++)
 			{
 				// north
-				indices.push_back(iNorthPole);
-				indices.push_back(calcIdx(0, iLong));
-				indices.push_back(calcIdx(0, iLong + 1));
+				indices.emplace_back(iNorthPole);
+				indices.emplace_back(calcIdx(0, iLong));
+				indices.emplace_back(calcIdx(0, iLong + 1));
 				// south
-				indices.push_back(calcIdx(latDiv - 2, iLong + 1));
-				indices.push_back(calcIdx(latDiv - 2, iLong));
-				indices.push_back(iSouthPole);
+				indices.emplace_back(calcIdx(latDiv - 2, iLong + 1));
+				indices.emplace_back(calcIdx(latDiv - 2, iLong));
+				indices.emplace_back(iSouthPole);
 			}
 			// wrap triangles
 			// north
-			indices.push_back(iNorthPole);
-			indices.push_back(calcIdx(0, longDiv - 1));
-			indices.push_back(calcIdx(0, 0));
+			indices.emplace_back(iNorthPole);
+			indices.emplace_back(calcIdx(0, longDiv - 1));
+			indices.emplace_back(calcIdx(0, 0));
 			// south
-			indices.push_back(calcIdx(latDiv - 2, 0));
-			indices.push_back(calcIdx(latDiv - 2, longDiv - 1));
-			indices.push_back(iSouthPole);
+			indices.emplace_back(calcIdx(latDiv - 2, 0));
+			indices.emplace_back(calcIdx(latDiv - 2, longDiv - 1));
+			indices.emplace_back(iSouthPole);
 
 			return { std::move(vd),std::move(indices) };
 		}
@@ -311,12 +311,12 @@ namespace DiveBomber::BindObj
 			{
 				for (unsigned short iLong = 0; iLong < longDiv; iLong++)
 				{
-					indices.push_back(calcIdx(iLat, iLong));
-					indices.push_back(calcIdx(iLat + 1, iLong));
-					indices.push_back(calcIdx(iLat, iLong + 1));
-					indices.push_back(calcIdx(iLat, iLong + 1));
-					indices.push_back(calcIdx(iLat + 1, iLong));
-					indices.push_back(calcIdx(iLat + 1, iLong + 1));
+					indices.emplace_back(calcIdx(iLat, iLong));
+					indices.emplace_back(calcIdx(iLat + 1, iLong));
+					indices.emplace_back(calcIdx(iLat, iLong + 1));
+					indices.emplace_back(calcIdx(iLat, iLong + 1));
+					indices.emplace_back(calcIdx(iLat + 1, iLong));
+					indices.emplace_back(calcIdx(iLat + 1, iLong + 1));
 				}
 			}
 
@@ -324,13 +324,13 @@ namespace DiveBomber::BindObj
 			for (unsigned short iLong = 0; iLong < longDiv; iLong++)
 			{
 				// north
-				indices.push_back(iNorthPole + iLong);
-				indices.push_back(calcIdx(0, iLong));
-				indices.push_back(calcIdx(0, iLong + 1));
+				indices.emplace_back(iNorthPole + iLong);
+				indices.emplace_back(calcIdx(0, iLong));
+				indices.emplace_back(calcIdx(0, iLong + 1));
 				// south
-				indices.push_back(calcIdx(latDiv - 2, iLong + 1));
-				indices.push_back(calcIdx(latDiv - 2, iLong));
-				indices.push_back(iSouthPole + iLong);
+				indices.emplace_back(calcIdx(latDiv - 2, iLong + 1));
+				indices.emplace_back(calcIdx(latDiv - 2, iLong));
+				indices.emplace_back(iSouthPole + iLong);
 			}
 
 			return { std::move(vd),std::move(indices) };

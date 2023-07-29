@@ -40,7 +40,7 @@ namespace DiveBomber::BindObj::VertexProcess
 		desc.reserve(GetElementCount());
 		for (const auto& e : elements)
 		{
-			desc.push_back(e.GetDesc());
+			desc.emplace_back(e.GetDesc());
 		}
 		return desc;
 	}

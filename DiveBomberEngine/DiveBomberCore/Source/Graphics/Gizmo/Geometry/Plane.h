@@ -107,19 +107,19 @@ namespace DiveBomber::BindObj
 					{
 						const std::array<unsigned short, 4> indexArray =
 						{ vxy2i(x,y),vxy2i(x + 1,y),vxy2i(x,y + 1),vxy2i(x + 1,y + 1) };
-						indices.push_back(indexArray[0]);
-						indices.push_back(indexArray[2]);
+						indices.emplace_back(indexArray[0]);
+						indices.emplace_back(indexArray[2]);
 						if (tessellated)
 						{
-							indices.push_back(indexArray[3]);
-							indices.push_back(indexArray[1]);
+							indices.emplace_back(indexArray[3]);
+							indices.emplace_back(indexArray[1]);
 						}
 						else
 						{
-							indices.push_back(indexArray[1]);
-							indices.push_back(indexArray[1]);
-							indices.push_back(indexArray[2]);
-							indices.push_back(indexArray[3]);
+							indices.emplace_back(indexArray[1]);
+							indices.emplace_back(indexArray[1]);
+							indices.emplace_back(indexArray[2]);
+							indices.emplace_back(indexArray[3]);
 						}
 					}
 				}
