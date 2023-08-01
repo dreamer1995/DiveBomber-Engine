@@ -1,7 +1,7 @@
 #include "CommandQueue.h"
 
 #include "..\..\Exception\GraphicsException.h"
-#include "CommandLIst.h"
+#include "CommandList.h"
 
 namespace DiveBomber::DX
 {

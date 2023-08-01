@@ -39,9 +39,9 @@ namespace DiveBomber::Component
 		UploadBuffer(wrl::ComPtr<ID3D12Device2> inputDevice, size_t inputPageSize = _2MB);
 		~UploadBuffer();
 
-		[[nodiscard]] size_t GetPageSize() const;
+		[[nodiscard]] size_t GetPageSize() const noexcept;
 		[[nodiscard]] AllocationInfo Allocate(const size_t size, const size_t alignment);
-		void Reset();
+		void Reset() noexcept;
 
 	private:
 		struct Page
@@ -50,9 +50,9 @@ namespace DiveBomber::Component
 			Page(wrl::ComPtr<ID3D12Device2> device, size_t inputPageSize);
 			~Page();
 
-			[[nodiscard]] bool AvailableSpace(size_t size, size_t alignment) const;
-			AllocationInfo Allocate(const size_t size, const size_t alignment);
-			void Reset();
+			[[nodiscard]] bool AvailableSpace(const size_t size, const size_t alignment) const noexcept;
+			[[nodiscard]] AllocationInfo Allocate(const size_t size, const size_t alignment);
+			void Reset() noexcept;
 		private:
 			wrl::ComPtr<ID3D12Resource> resourceBuffer;
 			void* CPUAddress = nullptr;

@@ -39,6 +39,9 @@
     <ClCompile Include="Source\Graphics\Component\Projection.cpp" />
     <ClCompile Include="Source\Graphics\BindObj\ConstantTransformBuffer.cpp" />
     <ClCompile Include="Source\Graphics\Component\UploadBuffer.cpp" />
+    <ClCompile Include="Source\Graphics\Component\DescriptorAllocation.cpp" />
+    <ClCompile Include="Source\Graphics\Component\DescriptorAllocator.cpp" />
+    <ClCompile Include="Source\Graphics\Component\DescriptorAllocatorPage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Utility\Common.h" />
@@ -76,7 +79,7 @@
     <ClInclude Include="Source\Graphics\Gizmo\Geometry\Sphere.h" />
     <ClInclude Include="Source\Utility\DEMath.h" />
     <ClInclude Include="Source\Graphics\BindObj\IndexBuffer.h" />
-    <ClInclude Include="Source\Graphics\DX\CommandLIst.h" />
+    <ClInclude Include="Source\Graphics\DX\CommandList.h" />
     <ClInclude Include="Source\Graphics\BindObj\Shader.h" />
     <ClInclude Include="Source\Graphics\BindObj\RootSignature.h" />
     <ClInclude Include="Source\Graphics\BindObj\PipelineStateObject.h" />
@@ -97,6 +100,9 @@
     <ClInclude Include="Source\Graphics\GraphicsSource.h" />
     <ClInclude Include="ThirdParty\ThreadSafeQueue.h" />
     <ClInclude Include="Source\Graphics\Component\UploadBuffer.h" />
+    <ClInclude Include="Source\Graphics\Component\DescriptorAllocation.h" />
+    <ClInclude Include="Source\Graphics\Component\DescriptorAllocator.h" />
+    <ClInclude Include="Source\Graphics\Component\DescriptorAllocatorPage.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource\Resource.rc" />

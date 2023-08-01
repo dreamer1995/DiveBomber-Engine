@@ -24,7 +24,7 @@ namespace DiveBomber::Component
 	{
 	}
 
-	size_t UploadBuffer::GetPageSize() const
+	size_t UploadBuffer::GetPageSize() const noexcept
 	{
 		return pageSize;
 	}
@@ -44,7 +44,7 @@ namespace DiveBomber::Component
 		return currentPage->Allocate(size, alignment);
 	}
 
-	void UploadBuffer::Reset()
+	void UploadBuffer::Reset() noexcept
 	{
 		currentPage = nullptr;
 		availablePages = pagePool;
@@ -101,7 +101,7 @@ namespace DiveBomber::Component
 		GPUAddress = D3D12_GPU_VIRTUAL_ADDRESS(0);
 	}
 
-	bool UploadBuffer::Page::AvailableSpace(size_t size, size_t alignment) const
+	bool UploadBuffer::Page::AvailableSpace(const size_t size, const size_t alignment) const noexcept
 	{
 		size_t alignedSize = Utility::AlignUp(size, alignment);
 		size_t alignedOffset = Utility::AlignUp(offset, alignment);
@@ -128,7 +128,7 @@ namespace DiveBomber::Component
 
 		return allocationInfo;
 	}
-	void UploadBuffer::Page::Reset()
+	void UploadBuffer::Page::Reset() noexcept
 	{
 		offset = 0;
 	}

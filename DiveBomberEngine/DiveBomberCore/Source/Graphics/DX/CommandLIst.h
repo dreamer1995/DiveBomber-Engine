@@ -8,6 +8,11 @@ namespace DiveBomber::DEGraphics
 	class Graphics;
 }
 
+namespace DiveBomber::Component
+{
+	class UploadBuffer;
+}
+
 namespace DiveBomber::DX
 {
 	class CommandList final
@@ -22,6 +27,7 @@ namespace DiveBomber::DX
 		D3D12_COMMAND_LIST_TYPE type;
 		wrl::ComPtr<ID3D12CommandAllocator> commandAllocator;
 		wrl::ComPtr<ID3D12GraphicsCommandList2> commandList;
+		std::shared_ptr<Component::UploadBuffer> uploadBuffer;
 	};
 }
 

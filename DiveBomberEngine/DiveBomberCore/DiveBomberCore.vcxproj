@@ -83,6 +83,9 @@
     <ClCompile Include="Source\Graphics\BindObj\DepthStencil.cpp" />
     <ClCompile Include="Source\Graphics\BindObj\PipelineStateObject.cpp" />
     <ClCompile Include="Source\Graphics\Component\Camera.cpp" />
+    <ClCompile Include="Source\Graphics\Component\DescriptorAllocation.cpp" />
+    <ClCompile Include="Source\Graphics\Component\DescriptorAllocator.cpp" />
+    <ClCompile Include="Source\Graphics\Component\DescriptorAllocatorPage.cpp" />
     <ClCompile Include="Source\Graphics\Component\Projection.cpp" />
     <ClCompile Include="Source\Graphics\Component\UploadBuffer.cpp" />
     <ClCompile Include="Source\Graphics\DX\ScissorRects.cpp" />
@@ -126,6 +129,9 @@
     <ClInclude Include="Source\Graphics\BindObj\ConstantTransformBuffer.h" />
     <ClInclude Include="Source\Graphics\BindObj\DepthStencil.h" />
     <ClInclude Include="Source\Graphics\BindObj\PipelineStateObject.h" />
+    <ClInclude Include="Source\Graphics\Component\DescriptorAllocation.h" />
+    <ClInclude Include="Source\Graphics\Component\DescriptorAllocator.h" />
+    <ClInclude Include="Source\Graphics\Component\DescriptorAllocatorPage.h" />
     <ClInclude Include="Source\Graphics\Component\UploadBuffer.h" />
     <ClInclude Include="Source\Graphics\GraphicsHeader.h" />
     <ClInclude Include="Source\Graphics\Component\Camera.h" />
@@ -136,7 +142,7 @@
     <ClInclude Include="Source\Graphics\RenderPipeline\RenderPipelineGraph.h" />
     <ClInclude Include="Source\Graphics\BindObj\RenderTarget.h" />
     <ClInclude Include="Source\Graphics\BindObj\Topology.h" />
-    <ClInclude Include="Source\Graphics\DX\CommandLIst.h" />
+    <ClInclude Include="Source\Graphics\DX\CommandList.h" />
     <ClInclude Include="Source\Graphics\BindObj\BindableCodex.h" />
     <ClInclude Include="Source\Graphics\Gizmo\Geometry\Cube.h" />
     <ClInclude Include="Source\Graphics\Gizmo\Geometry\IndexedTriangleList.h" />
