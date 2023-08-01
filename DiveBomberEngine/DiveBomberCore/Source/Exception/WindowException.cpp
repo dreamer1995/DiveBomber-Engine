@@ -3,10 +3,10 @@
 namespace DiveBomber::DEException
 {
 	// Window Exception Stuff
-	WindowHrException::WindowHrException(int line, const char* file, HRESULT hr) noexcept
+	WindowHrException::WindowHrException(int line, const char* file, HRESULT inputHr) noexcept
 		:
 		Exception(line, file),
-		hr(hr)
+		hr(inputHr)
 	{}
 
 	const wchar_t* WindowHrException::whatW() const noexcept

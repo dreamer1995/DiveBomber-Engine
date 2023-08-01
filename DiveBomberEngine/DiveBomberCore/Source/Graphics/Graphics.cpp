@@ -20,7 +20,11 @@ namespace DiveBomber::DEGraphics
 	using namespace DEException;
 	using namespace BindObj;
 
-	Graphics::Graphics(HWND inputHWnd, UINT includeWidth, UINT includeHeight)
+	Graphics::Graphics(HWND inputHWnd, UINT inputWidth, UINT inputHeight)
+		:
+		hWnd(inputHWnd),
+		width(inputWidth),
+		height(inputHeight)
 	{
 		// Check for DirectX Math library support.
 		if (!DirectX::XMVerifyCPUSupport())
@@ -28,10 +32,6 @@ namespace DiveBomber::DEGraphics
 			MessageBoxA(nullptr, "Failed to verify DirectX Math library support.", "Error", MB_OK | MB_ICONERROR);
 			return;
 		}
-
-		hWnd = inputHWnd;
-		width = includeWidth;
-		height = includeHeight;
 
 		gpuAdapter = std::make_unique<GPUAdapter>();
 		dxDevice = std::make_unique<DXDevice>(gpuAdapter->GetAdapter());

@@ -15,9 +15,10 @@ namespace DiveBomber::Component
 	}
 
 	UploadBuffer::UploadBuffer(wrl::ComPtr<ID3D12Device2> inputDevice, size_t inputPageSize)
+		:
+		pageSize(inputPageSize),
+		device(inputDevice)
 	{
-		pageSize = inputPageSize;
-		device = inputDevice;
 	}
 
 	UploadBuffer::~UploadBuffer()
@@ -74,9 +75,9 @@ namespace DiveBomber::Component
 	}
 
 	UploadBuffer::Page::Page(wrl::ComPtr<ID3D12Device2> device, size_t inputPageSize)
+		:
+		pageSize(inputPageSize)
 	{
-		pageSize = inputPageSize;
-
 		const CD3DX12_HEAP_PROPERTIES heapProp{ D3D12_HEAP_TYPE_UPLOAD };
 		const CD3DX12_RESOURCE_DESC resDes = CD3DX12_RESOURCE_DESC::Buffer(pageSize);
 

@@ -8,18 +8,18 @@ namespace DiveBomber::Component
 	using namespace DEGraphics;
 
 	Projection::Projection(Graphics& gfx, ProjectionAttributes attributes)
+		:
+		aspectRatio(attributes.aspectRatio),
+		nearPlane(attributes.nearPlane),
+		farPlane(attributes.farPlane),
+		isPerspective(attributes.isPerspective),
+		FOV(attributes.FOV),
+
+		homeNearPlane(nearPlane),
+		homeFarPlane(farPlane),
+		homeAspectRatio(aspectRatio),
+		homeFOV(FOV)
 	{
-		aspectRatio = attributes.aspectRatio;
-		nearPlane = attributes.nearPlane;
-		farPlane = attributes.farPlane;
-		isPerspective = attributes.isPerspective;
-		FOV = attributes.FOV;
-
-		homeNearPlane = nearPlane;
-		homeFarPlane = farPlane;
-		homeAspectRatio = aspectRatio;
-		homeFOV = FOV;
-
 		if (isPerspective)
 		{
 			height = 2 * nearPlane * std::tan(FOV / 2.0f);

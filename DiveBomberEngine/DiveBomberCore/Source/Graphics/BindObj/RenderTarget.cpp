@@ -19,16 +19,19 @@ namespace DiveBomber::BindObj
 
 	RenderTarget::RenderTarget(wrl::ComPtr<ID3D12Device2> device, wrl::ComPtr<ID3D12Resource> inputBuffer,
 		std::shared_ptr<DX::DescriptorHeap> inputDescHeap, UINT inputDepth)
+		:
+		renderTargetBuffer(inputBuffer),
+		renderTargetDescHeap(inputDescHeap),
+		depth(std::max(0u, inputDepth)),
+		optimizedClearValue(),
+		rsv()
 	{
-		renderTargetBuffer = inputBuffer;
-
 		D3D12_RESOURCE_DESC textureDesc;
 		textureDesc = renderTargetBuffer->GetDesc();
 		width = (UINT)textureDesc.Width;
 		height = (UINT)textureDesc.Height;
-		renderTargetDescHeap = inputDescHeap;
-		depth = std::max(0u, inputDepth);
 		mipLevels = textureDesc.MipLevels;
+		format = textureDesc.Format;
 
 		UINT rtvDescriptorSize = 0;
 		CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(renderTargetDescHeap->GetDescriptorHeap()->GetCPUDescriptorHandleForHeapStart());
@@ -57,20 +60,19 @@ namespace DiveBomber::BindObj
 
 	RenderTarget::RenderTarget(wrl::ComPtr<ID3D12Device2> device, UINT inputWidth, UINT inputHeight,
 		std::shared_ptr<DX::DescriptorHeap> inputDescHeap, DXGI_FORMAT inputFormat, UINT inputDepth, UINT inputMipLevels)
+		:
+		renderTargetDescHeap(inputDescHeap),
+		mipLevels(inputMipLevels),
+		format(inputFormat)
 	{
-		renderTargetDescHeap = inputDescHeap;
-		mipLevels = inputMipLevels;
-
 		CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(renderTargetDescHeap->GetDescriptorHeap()->GetCPUDescriptorHandleForHeapStart());
 		descriptorHandle = rtvHandle;
 
 		// Resize screen dependent resources.
 		// Create a render target buffer.
-		optimizedClearValue = {};
 		optimizedClearValue.Format = format;
 
 		// Update the depth-stencil view.
-		rsv = {};
 		rsv.Format = format;
 		rsv.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
 		rsv.Texture2D.MipSlice = mipLevels;

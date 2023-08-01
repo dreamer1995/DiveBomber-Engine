@@ -11,15 +11,16 @@ namespace DiveBomber::Component
 	namespace dx = DirectX;
 
 	Camera::Camera(Graphics& gfx, std::string inputName, CameraAttributes attributes, bool inputTethered) noexcept
-	{
-		name = std::move(inputName);
-		homePos = attributes.position;
-		homeRot = attributes.rotation;
-		projection = std::make_unique<Projection>(gfx, attributes.projectionAttributes);
+		:
+		name(std::move(inputName)),
+		homePos(attributes.position),
+		homeRot(attributes.rotation),
 		//indicator(gfx),
-		tethered = inputTethered;
+		tethered(inputTethered)
 		//vCbuf(gfx, 1u),
 		//pCbuf(gfx, 1u),
+	{
+		projection = std::make_unique<Projection>(gfx, attributes.projectionAttributes);
 
 		if (tethered)
 		{

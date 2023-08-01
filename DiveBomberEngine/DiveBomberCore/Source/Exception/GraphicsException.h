@@ -38,7 +38,7 @@ namespace DiveBomber::DEException
 	class GraphicsHrException : public Exception
 	{
 	public:
-		GraphicsHrException(int line, const char* file, HRESULT hr, std::vector<std::string> infoMsgs = {}) noexcept;
+		GraphicsHrException(int line, const char* file, HRESULT inputHr, std::vector<std::string> infoMsgs = {}) noexcept;
 		[[nodiscard]] const wchar_t* whatW() const noexcept override;
 		[[nodiscard]] const wchar_t* GetType() const noexcept override;
 		[[nodiscard]] HRESULT GetErrorCode() const noexcept;

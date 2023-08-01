@@ -23,9 +23,9 @@ namespace DiveBomber::DEWindow
 	Window::WindowClass Window::WindowClass::wndClass;
 
 	Window::WindowClass::WindowClass() noexcept
+		:
+		hInst(HINSTANCE(GetModuleHandle(nullptr)))
 	{
-		hInst = HINSTANCE(GetModuleHandle(nullptr));
-
 		WNDCLASSEX wClass = { 0 };
 		wClass.cbSize = sizeof(wClass);
 		wClass.style = CS_HREDRAW | CS_VREDRAW;
@@ -66,6 +66,10 @@ namespace DiveBomber::DEWindow
 	}
 
 	Window::Window(const wchar_t* name)
+		:
+		screenWidth(GetSystemMetrics(SM_CXSCREEN)),
+		screenHeight(GetSystemMetrics(SM_CYSCREEN)),
+		title(name)
 	{
 		// First check if a window with the given name already exists.
 		//WindowNameMap::iterator windowIter = gs_WindowByName.find(windowName);
@@ -79,11 +83,6 @@ namespace DiveBomber::DEWindow
 		// to achieve 100% scaling while still allowing non-client window content to 
 		// be rendered in a DPI sensitive fashion.
 		SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
-
-		screenWidth = ::GetSystemMetrics(SM_CXSCREEN);
-		screenHeight = ::GetSystemMetrics(SM_CYSCREEN);
-
-		title = name;
 
 		// calculate window size based on desired client region size
 		RECT wRct;

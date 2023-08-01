@@ -29,6 +29,7 @@ namespace DiveBomber::Component
 
 	private:
 		[[nodiscard]] std::shared_ptr<DescriptorAllocatorPage> CreateAllocatorPage();
+
 	private:
 		wrl::ComPtr<ID3D12Device2> device;
 		D3D12_DESCRIPTOR_HEAP_TYPE type;

@@ -29,7 +29,7 @@ namespace DiveBomber::DEGraphics
 	class Graphics final
 	{
 	public:
-		Graphics(HWND inputHWnd, UINT includeWidth, UINT includeHeight);
+		Graphics(HWND inputHWnd, UINT inputWidth, UINT inputHeight);
 		Graphics(const Graphics&) = delete;
 		Graphics& operator=(const Graphics&) = delete;
 		~Graphics();

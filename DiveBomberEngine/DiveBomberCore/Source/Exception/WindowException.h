@@ -11,7 +11,7 @@ namespace DiveBomber::DEException
 	class WindowHrException final : public Exception
 	{
 	public:
-		WindowHrException(int line, const char* file, HRESULT hr) noexcept;
+		WindowHrException(int line, const char* file, HRESULT inputHr) noexcept;
 		[[nodiscard]] const wchar_t* whatW() const noexcept override;
 		[[nodiscard]] const wchar_t* GetType() const noexcept override;
 		[[nodiscard]] HRESULT GetErrorCode() const noexcept;

@@ -10,8 +10,9 @@ namespace DiveBomber::BindObj
 	using namespace DEException;
 
 	RootSignature::RootSignature(Graphics& gfx, const std::string& inputTag)
+		:
+		tag(inputTag)
 	{
-		tag = inputTag;
 		HRESULT hr;
 		D3D12_FEATURE_DATA_ROOT_SIGNATURE featureData = {};
 		featureData.HighestVersion = D3D_ROOT_SIGNATURE_VERSION_1_1;

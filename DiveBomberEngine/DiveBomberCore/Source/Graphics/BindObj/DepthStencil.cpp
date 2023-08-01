@@ -20,20 +20,20 @@ namespace DiveBomber::BindObj
 
 	DepthStencil::DepthStencil(wrl::ComPtr<ID3D12Device2> device, UINT inputWidth, UINT inputHeight,
 		std::shared_ptr<DX::DescriptorHeap> inputDescHeap, UINT inputDepth)
+		:
+		depthStencilDescHeap(inputDescHeap),
+		optimizedClearValue(),
+		dsv()
 	{
-		depthStencilDescHeap = inputDescHeap;
-
 		CD3DX12_CPU_DESCRIPTOR_HANDLE dsvHandle(depthStencilDescHeap->GetDescriptorHeap()->GetCPUDescriptorHandleForHeapStart());
 		descriptorHandle = dsvHandle;
 
 		// Resize screen dependent resources.
 		// Create a depth buffer.
-		optimizedClearValue = {};
 		optimizedClearValue.Format = DXGI_FORMAT_D32_FLOAT;
 		optimizedClearValue.DepthStencil = { 1.0f, 0 };
 
 		// Update the depth-stencil view.
-		dsv = {};
 		dsv.Format = DXGI_FORMAT_D32_FLOAT;
 		dsv.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
 		dsv.Texture2D.MipSlice = 0u;

@@ -8,8 +8,10 @@ namespace DiveBomber::DX
     using namespace DEException;
 
     Viewport::Viewport()
+        :
+        viewport(CD3DX12_VIEWPORT(0.0f, 0.0f,
+            static_cast<float>(MainWindowWidth), static_cast<float>(MainWindowHeight)))
     {
-        viewport = CD3DX12_VIEWPORT(0.0f, 0.0f, static_cast<float>(MainWindowWidth), static_cast<float>(MainWindowHeight));
     }
 
     D3D12_VIEWPORT Viewport::GetViewport() const noexcept

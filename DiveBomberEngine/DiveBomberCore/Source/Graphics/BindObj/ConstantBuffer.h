@@ -11,11 +11,11 @@ namespace DiveBomber::BindObj
 	{
 	public:
 		ConstantBuffer(DEGraphics::Graphics& gfx, const std::string& inputTag, const C& constantData, UINT inputSlot)
+			:
+			tag(inputTag),
+			slot(inputSlot),
+			bufferSize(UINT(sizeof(constantData)))
 		{
-			tag = inputTag;
-			slot = inputSlot;
-			bufferSize = UINT(sizeof(constantData));
-
 			if (bufferSize > 0)
 			{
 				InitializeConstantBufferSize(gfx);
@@ -30,10 +30,10 @@ namespace DiveBomber::BindObj
 		}
 
 		ConstantBuffer(DEGraphics::Graphics& gfx, const std::string& inputTag, UINT inputSlot)
+			:
+			tag(inputTag),
+			slot(inputSlot)
 		{
-			tag = inputTag;
-			slot = inputSlot;
-
 			InitializeConstantBufferSize(gfx);
 		}
 

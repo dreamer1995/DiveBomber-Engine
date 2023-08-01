@@ -33,16 +33,8 @@ namespace DiveBomber::Component
 		[[nodiscard]] std::shared_ptr<DescriptorAllocatorPage> GetDescriptorAllocatorPage() const noexcept;
 
 	private:
-		struct Page
-		{
-		public:
-			Page(wrl::ComPtr<ID3D12Device2> device, size_t inputPageSize);
-			~Page();
-		private:
-		};
-
-	private:
 		void FreeDescriptorAllocation();
+
 	private:
 		D3D12_CPU_DESCRIPTOR_HANDLE descriptor;
 		uint32_t numHandles;

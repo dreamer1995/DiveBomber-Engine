@@ -10,9 +10,10 @@ namespace DiveBomber::BindObj
 	using namespace DEException;
 
 	Topology::Topology(Graphics& gfx, D3D_PRIMITIVE_TOPOLOGY inputType, D3D12_PRIMITIVE_TOPOLOGY_TYPE inputShaderType)
+		:
+		type(inputType),
+		shaderType(inputShaderType)
 	{
-		type = inputType;
-		shaderType = inputShaderType;
 	}
 
 	void Topology::Bind(Graphics& gfx) noxnd

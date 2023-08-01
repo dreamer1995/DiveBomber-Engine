@@ -8,9 +8,10 @@ namespace DiveBomber::DX
     using namespace DEException;
 
     CommandQueue::CommandQueue(wrl::ComPtr<ID3D12Device2> inputDevice, D3D12_COMMAND_LIST_TYPE intputType)
+        :
+        type(intputType),
+        device(inputDevice)
     {
-        type = intputType;
-        device = inputDevice;
         D3D12_COMMAND_QUEUE_DESC desc = {};
         desc.Type = type;
         desc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;

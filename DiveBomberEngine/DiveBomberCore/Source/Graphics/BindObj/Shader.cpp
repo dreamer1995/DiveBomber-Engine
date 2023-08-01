@@ -13,10 +13,10 @@ namespace DiveBomber::BindObj
 	using namespace DEException;
 	Shader::Shader(Graphics& inputGfx, const std::wstring& inputPath, ShaderType inputType)
 		:
-		gfx(inputGfx)
+		gfx(inputGfx),
+		path(inputPath),
+		type(inputType)
 	{
-		path = inputPath;
-		type = inputType;
 		RecompileShader();
 	}
 

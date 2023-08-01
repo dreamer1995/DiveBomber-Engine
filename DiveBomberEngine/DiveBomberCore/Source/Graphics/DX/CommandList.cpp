@@ -10,8 +10,9 @@ namespace DiveBomber::DX
 	using namespace DEException;
 	using namespace Component;
 	CommandList::CommandList(wrl::ComPtr<ID3D12Device2> device, D3D12_COMMAND_LIST_TYPE inputType)
+		:
+		type(inputType)
 	{
-		type = inputType;
 		HRESULT hr;
 		GFX_THROW_INFO(device->CreateCommandAllocator(type, IID_PPV_ARGS(&commandAllocator)));
 		GFX_THROW_INFO(device->CreateCommandList(0, type, commandAllocator.Get(), nullptr, IID_PPV_ARGS(&commandList)));

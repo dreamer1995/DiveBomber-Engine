@@ -8,9 +8,10 @@
 namespace DiveBomber::DEException
 {
 	Exception::Exception(int inputLine, const char* inputFile) noexcept
+		:
+		line(inputLine),
+		file(Utility::ToWide(inputFile))
 	{
-		line = inputLine;
-		file = Utility::ToWide(inputFile);
 	}
 
 	const wchar_t* Exception::whatW() const noexcept

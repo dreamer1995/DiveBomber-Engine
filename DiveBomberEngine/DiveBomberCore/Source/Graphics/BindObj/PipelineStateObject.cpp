@@ -18,9 +18,9 @@ namespace DiveBomber::BindObj
 		std::shared_ptr<Topology> topology,
 		std::shared_ptr<Shader> vertexShader, std::shared_ptr<Shader> pixelShader,
 		DXGI_FORMAT dsvFormat, D3D12_RT_FORMAT_ARRAY rtvFormats)
+		:
+		tag(inputTag)
 	{
-		tag = inputTag;
-
 		HRESULT hr;
 
 		std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayout = vertexBuffer->GetLayout().GetD3DLayout();

@@ -6,10 +6,10 @@ namespace DiveBomber::DEException
 {
 	using namespace Utility;
 	// Graphics exception stuff
-	GraphicsHrException::GraphicsHrException(int line, const char* file, HRESULT hr, std::vector<std::string> infoMsgs) noexcept
+	GraphicsHrException::GraphicsHrException(int line, const char* file, HRESULT inputHr, std::vector<std::string> infoMsgs) noexcept
 		:
 		Exception(line, file),
-		hr(hr)
+		hr(inputHr)
 	{
 		// join all info messages with newlines into single string
 		for (const auto& m : infoMsgs)
