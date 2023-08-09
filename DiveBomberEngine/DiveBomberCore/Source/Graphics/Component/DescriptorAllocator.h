@@ -24,7 +24,7 @@ namespace DiveBomber::Component
 		DescriptorAllocator(wrl::ComPtr<ID3D12Device2> inputDevice, D3D12_DESCRIPTOR_HEAP_TYPE inputType, uint32_t inputNumDescriptorsPerHeap = 256);
 		~DescriptorAllocator();
 
-		[[nodiscard]] DescriptorAllocation Allocate(const uint32_t numDescriptors = 1);
+		[[nodiscard]] std::shared_ptr<DescriptorAllocation> Allocate(const uint32_t numDescriptors = 1);
 		void ReleaseStaleDescriptors(const uint64_t frameNumber);
 
 	private:

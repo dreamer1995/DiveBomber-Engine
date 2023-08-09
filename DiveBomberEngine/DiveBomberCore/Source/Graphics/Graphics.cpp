@@ -7,10 +7,11 @@
 #include "DX\DXDevice.h"
 #include "DX\CommandQueue.h"
 #include "DX\SwapChain.h"
-#include "DX\DescriptorHeap.h"
 #include "DX\Viewport.h"
 #include "DX\ScissorRects.h"
 #include "DX\CommandLIst.h"
+#include "Component\DescriptorAllocator.h"
+#include "Component\DescriptorAllocation.h"
 
 #include <iostream>
 
@@ -19,6 +20,7 @@ namespace DiveBomber::DEGraphics
 	using namespace DX;
 	using namespace DEException;
 	using namespace BindObj;
+	using namespace Component;
 
 	Graphics::Graphics(HWND inputHWnd, UINT inputWidth, UINT inputHeight)
 		:
@@ -39,17 +41,21 @@ namespace DiveBomber::DEGraphics
 		fenceEvent = ::CreateEvent(nullptr, FALSE, FALSE, nullptr);
 		assert(fenceEvent && "Failed to create fence event.");
 
+		cbvSrvUavDescriptorHeap = std::make_shared<DescriptorAllocator>(dxDevice->GetDecive(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 10'000u);
+		rtvDescriptorHeap = std::make_shared<DescriptorAllocator>(dxDevice->GetDecive(), D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 50u);
+		dsvDescriptorHeap = std::make_shared<DescriptorAllocator>(dxDevice->GetDecive(), D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 50u);;
+		samplerDescriptorHeap = std::make_shared<DescriptorAllocator>(dxDevice->GetDecive(), D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER, 50u);;
+
 		directCommandQueue = std::make_unique<CommandQueue>(dxDevice->GetDecive(), D3D12_COMMAND_LIST_TYPE_DIRECT);
 		computeCommandQueue = std::make_unique<CommandQueue>(dxDevice->GetDecive(), D3D12_COMMAND_LIST_TYPE_COMPUTE);
 		copyCommandQueue = std::make_unique<CommandQueue>(dxDevice->GetDecive(), D3D12_COMMAND_LIST_TYPE_COPY);
 		swapChain = std::make_unique<SwapChain>(hWnd, directCommandQueue->GetCommandQueue());
-		swapChain->UpdateBackBuffer(dxDevice->GetDecive());
+		swapChain->UpdateBackBuffer(dxDevice->GetDecive(), rtvDescriptorHeap);
 		viewport = std::make_unique<Viewport>();
 		scissorRects = std::make_unique<ScissorRects>();
 
-		std::shared_ptr<DescriptorHeap> dsHeap = std::make_shared<DescriptorHeap>(dxDevice->GetDecive(),
-			D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1u);
-		mainDS = std::make_shared<DepthStencil>(dxDevice->GetDecive(), width, height, std::move(dsHeap), 0u);
+		std::shared_ptr<DescriptorAllocation> dsvHandle = dsvDescriptorHeap->Allocate(1u);
+		mainDS = std::make_shared<DepthStencil>(dxDevice->GetDecive(), width, height, std::move(dsvHandle), 0u);
 	}
 
 	Graphics::~Graphics()
@@ -72,7 +78,7 @@ namespace DiveBomber::DEGraphics
 
 			commandList->ResourceBarrier(1, &barrier);
 
-			CD3DX12_CPU_DESCRIPTOR_HANDLE rtv = swapChain->GetBackBufferDescriptorHandle(currentBackBufferIndex);
+			D3D12_CPU_DESCRIPTOR_HANDLE rtv = swapChain->GetBackBufferDescriptorHandle(currentBackBufferIndex);
 
 			FLOAT clearColor[] = ClearMainRTColor;
 			commandList->ClearRenderTargetView(rtv, clearColor, 0, nullptr);
@@ -132,7 +138,7 @@ namespace DiveBomber::DEGraphics
 			frameFenceValues[i] = frameFenceValues[swapChain->GetSwapChain()->GetCurrentBackBufferIndex()];
 		}
 
-		swapChain->ResetSizeBackBuffer(GetDecive(), width, height);
+		swapChain->ResetSizeBackBuffer(GetDecive(), width, height, rtvDescriptorHeap);
 
 		mainDS->Resize(GetDecive(), width, height);
 
@@ -182,14 +188,14 @@ namespace DiveBomber::DEGraphics
 		return dxDevice->GetDecive();
 	}
 
-	CD3DX12_CPU_DESCRIPTOR_HANDLE Graphics::GetRenderTargetDescriptorHandle() const noexcept
+	std::shared_ptr<RenderTarget> Graphics::GetCurrentBackBuffer() const noexcept
 	{
-		return swapChain->GetBackBufferDescriptorHandle();
+		return swapChain->GetCurrentBackBuffer();
 	}
 
-	CD3DX12_CPU_DESCRIPTOR_HANDLE Graphics::GetDepthStencilDescriptorHandle() const noexcept
+	std::shared_ptr<DepthStencil> Graphics::GetMainDS() const noexcept
 	{
-		return mainDS->GetDescriptorHandle();
+		return mainDS;
 	}
 
 	wrl::ComPtr<ID3D12GraphicsCommandList2> Graphics::GetCommandList(const D3D12_COMMAND_LIST_TYPE type) noexcept
@@ -230,7 +236,7 @@ namespace DiveBomber::DEGraphics
 		}
 	}
 
-	void Graphics::SetCamera(const std::shared_ptr<Component::Camera> camera) noexcept
+	void Graphics::SetCamera(const std::shared_ptr<Camera> camera) noexcept
 	{
 		renderCamera = camera;
 	}

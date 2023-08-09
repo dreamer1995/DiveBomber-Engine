@@ -25,11 +25,11 @@ namespace DiveBomber::Component
 	{
 	}
 
-	DescriptorAllocation DescriptorAllocator::Allocate(const uint32_t numDescriptors)
+	std::shared_ptr<DescriptorAllocation> DescriptorAllocator::Allocate(const uint32_t numDescriptors)
 	{
 		std::lock_guard<std::mutex> lock(allocationMutex);
 
-		DescriptorAllocation descriptorAllocation;
+		std::shared_ptr<DescriptorAllocation> descriptorAllocation;
 
 		for (auto iter = availableHeaps.begin(); iter != availableHeaps.end(); iter++)
 		{
@@ -42,13 +42,13 @@ namespace DiveBomber::Component
 				iter = availableHeaps.erase(iter);
 			}
 
-			if (!descriptorAllocation.IsInvalid())
+			if (!descriptorAllocation->IsInvalid())
 			{
 				break;
 			}
 		}
 
-		if (descriptorAllocation.IsInvalid())
+		if (!descriptorAllocation || descriptorAllocation->IsInvalid())
 		{
 			numDescriptorsPerHeap = std::max(numDescriptorsPerHeap, numDescriptors);
 			auto newPage = CreateAllocatorPage();

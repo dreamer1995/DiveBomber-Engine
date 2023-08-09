@@ -23,6 +23,7 @@ namespace DiveBomber::DX
 	void CommandList::Reset()
 	{
 		HRESULT hr;
+		GFX_THROW_INFO(commandAllocator->Reset());
 		GFX_THROW_INFO(commandList->Reset(commandAllocator.Get(), nullptr));
 	}
 

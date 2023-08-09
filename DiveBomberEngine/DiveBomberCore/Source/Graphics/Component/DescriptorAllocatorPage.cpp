@@ -49,19 +49,19 @@ namespace DiveBomber::Component
 		return numAvailableHandles;
 	}
 
-	DescriptorAllocation DescriptorAllocatorPage::Allocate(const uint32_t numDescriptors)
+	std::shared_ptr<DescriptorAllocation> DescriptorAllocatorPage::Allocate(const uint32_t numDescriptors)
 	{
 		std::lock_guard<std::mutex> lock(allocationMutex);
 
 		if (numDescriptors > numAvailableHandles)
 		{
-			return DescriptorAllocation();
+			return std::make_shared<DescriptorAllocation>();
 		}
 
 		auto smallestBlockIterator = availableListBySize.lower_bound(numDescriptors);
 		if (smallestBlockIterator == availableListBySize.end())
 		{
-			return DescriptorAllocation();
+			return std::make_shared<DescriptorAllocation>();
 		}
 
 		auto blockSize = smallestBlockIterator->first;
@@ -81,7 +81,7 @@ namespace DiveBomber::Component
 
 		numAvailableHandles -= numDescriptors;
 
-		return DescriptorAllocation(
+		return std::make_shared<DescriptorAllocation>(
 			CD3DX12_CPU_DESCRIPTOR_HANDLE(baseDescriptorHandle, offset, descriptorHandleIncrementSize),
 			numDescriptors, descriptorHandleIncrementSize, shared_from_this()
 		);

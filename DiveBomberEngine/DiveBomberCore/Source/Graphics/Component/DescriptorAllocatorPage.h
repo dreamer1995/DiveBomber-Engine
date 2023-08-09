@@ -25,7 +25,7 @@ namespace DiveBomber::Component
 		[[nodiscard]] D3D12_DESCRIPTOR_HEAP_TYPE GetHeapType() const noexcept;
 		[[nodiscard]] bool AvailableSpace(const uint32_t numDescriptors) const;
 		[[nodiscard]] uint32_t NumFreeHandles() const noexcept;
-		[[nodiscard]] DescriptorAllocation Allocate(const uint32_t numDescriptors);
+		[[nodiscard]] std::shared_ptr<DescriptorAllocation> Allocate(const uint32_t numDescriptors);
 		void FreeDescriptorAllocation(DescriptorAllocation&& descriptorAllocation, const uint64_t frameNumber);
 		void ReleaseStaleDescriptors(const uint64_t frameNumber);
 

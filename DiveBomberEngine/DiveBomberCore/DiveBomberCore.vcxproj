@@ -86,6 +86,7 @@
     <ClCompile Include="Source\Graphics\Component\DescriptorAllocation.cpp" />
     <ClCompile Include="Source\Graphics\Component\DescriptorAllocator.cpp" />
     <ClCompile Include="Source\Graphics\Component\DescriptorAllocatorPage.cpp" />
+    <ClCompile Include="Source\Graphics\Component\DynamicDescriptorHeap.cpp" />
     <ClCompile Include="Source\Graphics\Component\Projection.cpp" />
     <ClCompile Include="Source\Graphics\Component\UploadBuffer.cpp" />
     <ClCompile Include="Source\Graphics\DX\ScissorRects.cpp" />
@@ -100,7 +101,6 @@
     <ClCompile Include="Source\Utility\Color.h" />
     <ClCompile Include="Source\Utility\Common.cpp" />
     <ClCompile Include="Source\Console\Console.cpp" />
-    <ClCompile Include="Source\Graphics\DX\DescriptorHeap.cpp" />
     <ClCompile Include="Source\DiveBomberCore.cpp" />
     <ClCompile Include="Source\Graphics\DX\DXDevice.cpp" />
     <ClCompile Include="Source\Exception\DxgiInfoManager.cpp" />
@@ -132,6 +132,7 @@
     <ClInclude Include="Source\Graphics\Component\DescriptorAllocation.h" />
     <ClInclude Include="Source\Graphics\Component\DescriptorAllocator.h" />
     <ClInclude Include="Source\Graphics\Component\DescriptorAllocatorPage.h" />
+    <ClInclude Include="Source\Graphics\Component\DynamicDescriptorHeap.h" />
     <ClInclude Include="Source\Graphics\Component\UploadBuffer.h" />
     <ClInclude Include="Source\Graphics\GraphicsHeader.h" />
     <ClInclude Include="Source\Graphics\Component\Camera.h" />
@@ -154,7 +155,6 @@
     <ClInclude Include="Source\Graphics\DX\CommandQueue.h" />
     <ClInclude Include="Source\Console\Console.h" />
     <ClInclude Include="Source\Graphics\DX\d3dx12.h" />
-    <ClInclude Include="Source\Graphics\DX\DescriptorHeap.h" />
     <ClInclude Include="Source\DiveBomberCore.h" />
     <ClInclude Include="Source\Graphics\BindObj\RootSignature.h" />
     <ClInclude Include="Source\Utility\Common.h" />
@@ -193,15 +193,15 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\PixelShader.hlsl">
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">6.6</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">6.6</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="Shader\VertexShader.hlsl">
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">6.6</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">6.6</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
     </FxCompile>
   </ItemGroup>

@@ -3,7 +3,7 @@
 #include "DepthStencil.h"
 #include "..\Graphics.h"
 #include "..\..\Exception\GraphicsException.h"
-#include "..\DX\DescriptorHeap.h"
+#include "..\Component\DescriptorAllocation.h"
 
 namespace DiveBomber::BindObj
 {
@@ -11,17 +11,18 @@ namespace DiveBomber::BindObj
 	using namespace DEException;
 
 	RenderTarget::RenderTarget(DEGraphics::Graphics& gfx, wrl::ComPtr<ID3D12Resource> inputBuffer,
-		std::shared_ptr<DX::DescriptorHeap> inputDescHeap, UINT inputDepth)
+		std::shared_ptr<Component::DescriptorAllocation> inputDescriptorAllocation, UINT inputDepth)
 		:
-		RenderTarget{ gfx.GetDecive(), inputBuffer, inputDescHeap, inputDepth }
+		RenderTarget{ gfx.GetDecive(), inputBuffer, inputDescriptorAllocation, inputDepth }
 	{
 	}
 
 	RenderTarget::RenderTarget(wrl::ComPtr<ID3D12Device2> device, wrl::ComPtr<ID3D12Resource> inputBuffer,
-		std::shared_ptr<DX::DescriptorHeap> inputDescHeap, UINT inputDepth)
+		std::shared_ptr<Component::DescriptorAllocation> inputDescriptorAllocation, UINT inputDepth)
 		:
 		renderTargetBuffer(inputBuffer),
-		renderTargetDescHeap(inputDescHeap),
+		descriptorAllocation(inputDescriptorAllocation),
+		cpuHandle(inputDescriptorAllocation->GetDescriptorHandle(inputDepth)),
 		depth(std::max(0u, inputDepth)),
 		optimizedClearValue(),
 		rsv()
@@ -33,16 +34,7 @@ namespace DiveBomber::BindObj
 		mipLevels = textureDesc.MipLevels;
 		format = textureDesc.Format;
 
-		UINT rtvDescriptorSize = 0;
-		CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(renderTargetDescHeap->GetDescriptorHeap()->GetCPUDescriptorHandleForHeapStart());
-		descriptorHandle = rtvHandle;
-		if (depth > 0)
-		{
-			rtvDescriptorSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV) * depth;
-			descriptorHandle.Offset(rtvDescriptorSize);
-		}
-
-		device->CreateRenderTargetView(renderTargetBuffer.Get(), nullptr, descriptorHandle);
+		device->CreateRenderTargetView(renderTargetBuffer.Get(), nullptr, cpuHandle);
 	}
 
 	void RenderTarget::Bind(DEGraphics::Graphics& gfx) noxnd
@@ -51,23 +43,21 @@ namespace DiveBomber::BindObj
 	}
 
 	RenderTarget::RenderTarget(Graphics& gfx, UINT inputWidth, UINT inputHeight,
-		std::shared_ptr<DX::DescriptorHeap> inputDescHeap, DXGI_FORMAT inputFormat, UINT inputDepth, UINT inputMipLevels)
+		std::shared_ptr<Component::DescriptorAllocation> inputDescriptorAllocation, DXGI_FORMAT inputFormat, UINT inputDepth, UINT inputMipLevels)
 		:
-		RenderTarget{ gfx.GetDecive(), inputWidth, inputHeight, inputDescHeap, inputFormat, inputDepth, inputMipLevels }
+		RenderTarget{ gfx.GetDecive(), inputWidth, inputHeight, inputDescriptorAllocation, inputFormat, inputDepth, inputMipLevels }
 	{
 
 	}
 
 	RenderTarget::RenderTarget(wrl::ComPtr<ID3D12Device2> device, UINT inputWidth, UINT inputHeight,
-		std::shared_ptr<DX::DescriptorHeap> inputDescHeap, DXGI_FORMAT inputFormat, UINT inputDepth, UINT inputMipLevels)
+		std::shared_ptr<Component::DescriptorAllocation> inputDescriptorAllocation, DXGI_FORMAT inputFormat, UINT inputDepth, UINT inputMipLevels)
 		:
-		renderTargetDescHeap(inputDescHeap),
+		descriptorAllocation(inputDescriptorAllocation),
+		cpuHandle(inputDescriptorAllocation->GetDescriptorHandle(inputDepth)),
 		mipLevels(inputMipLevels),
 		format(inputFormat)
 	{
-		CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(renderTargetDescHeap->GetDescriptorHeap()->GetCPUDescriptorHandleForHeapStart());
-		descriptorHandle = rtvHandle;
-
 		// Resize screen dependent resources.
 		// Create a render target buffer.
 		optimizedClearValue.Format = format;
@@ -82,15 +72,15 @@ namespace DiveBomber::BindObj
 
 	void RenderTarget::BindTarget(DEGraphics::Graphics& gfx) noxnd
 	{
-		gfx.GetCommandList()->OMSetRenderTargets(1, &descriptorHandle, FALSE, nullptr);
+		gfx.GetCommandList()->OMSetRenderTargets(1, &cpuHandle, FALSE, nullptr);
 	}
 
 	void RenderTarget::BindTarget(DEGraphics::Graphics& gfx, std::shared_ptr<BindableTarget> depthStencil) noxnd
 	{
 		assert(dynamic_cast<DepthStencil*>(depthStencil.get()) != nullptr);
 
-		CD3DX12_CPU_DESCRIPTOR_HANDLE depthDescHeapHandle = static_cast<DepthStencil*>(depthStencil.get())->GetDescriptorHandle();
-		gfx.GetCommandList()->OMSetRenderTargets(1, &descriptorHandle, FALSE, &depthDescHeapHandle);
+		D3D12_CPU_DESCRIPTOR_HANDLE depthDescHeapHandle = static_cast<DepthStencil*>(depthStencil.get())->GetDescriptorHandle();
+		gfx.GetCommandList()->OMSetRenderTargets(1, &cpuHandle, FALSE, &depthDescHeapHandle);
 	}
 
 	wrl::ComPtr<ID3D12Resource> RenderTarget::GetRenderTargetBuffer() const noexcept
@@ -98,9 +88,9 @@ namespace DiveBomber::BindObj
 		return renderTargetBuffer;
 	}
 
-	CD3DX12_CPU_DESCRIPTOR_HANDLE RenderTarget::GetDescriptorHandle() const noexcept
+	D3D12_CPU_DESCRIPTOR_HANDLE RenderTarget::GetDescriptorHandle() const noexcept
 	{
-		return descriptorHandle;
+		return cpuHandle;
 	}
 
 	void RenderTarget::Resize(Graphics& gfx, const UINT inputWidth, const UINT inputHeight, const UINT inputDepth)
@@ -112,13 +102,6 @@ namespace DiveBomber::BindObj
 		width = std::max(1u, inputWidth);
 		height = std::max(1u, inputHeight);
 		depth = std::max(1u, inputDepth);
-
-		UINT rtvDescriptorSize = 0;
-		if (depth > 0)
-		{
-			rtvDescriptorSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV) * depth;
-			descriptorHandle.Offset(rtvDescriptorSize);
-		}
 
 		HRESULT hr;
 
@@ -136,6 +119,6 @@ namespace DiveBomber::BindObj
 		));
 
 		device->CreateRenderTargetView(renderTargetBuffer.Get(), &rsv,
-			descriptorHandle);
+			cpuHandle);
 	}
 }

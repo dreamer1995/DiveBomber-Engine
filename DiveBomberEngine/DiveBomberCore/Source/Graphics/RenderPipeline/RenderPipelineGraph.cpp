@@ -84,9 +84,7 @@ namespace DiveBomber::RenderPipeline
 		transformCBuffer->InitializeParentReference(modelMatrix);
 		transformCBuffer->Bind(gfx);
 
-		CD3DX12_CPU_DESCRIPTOR_HANDLE rsv = gfx.GetRenderTargetDescriptorHandle();
-		CD3DX12_CPU_DESCRIPTOR_HANDLE dsv = gfx.GetDepthStencilDescriptorHandle();
-		gfx.GetCommandList()->OMSetRenderTargets(1, &rsv, FALSE, &dsv);
+		gfx.GetCurrentBackBuffer()->BindTarget(gfx, gfx.GetMainDS());
 
 		gfx.GetCommandList()->DrawIndexedInstanced(indexBuffer->GetCount(), 1, 0, 0, 0);
 	}

@@ -34,14 +34,6 @@ namespace DiveBomber::DX
 		wrl::ComPtr<ID3D12Fence> fence;
 		std::atomic_uint64_t fenceValue = 0;
 
-		struct CommandAllocatorInfo
-		{
-			uint64_t fenceValue;
-			wrl::ComPtr<ID3D12CommandAllocator> commandAllocator;
-		};
-		std::queue<CommandAllocatorInfo> commandAllocatorQueue;
-		std::queue<wrl::ComPtr<ID3D12GraphicsCommandList2>> commandListQueue;
-
 		using CommandListInfo = std::tuple<uint64_t, std::shared_ptr<CommandList>>;
 		ThirdParty::ThreadSafeQueue<CommandListInfo> inFlightCommandLists;
 		ThirdParty::ThreadSafeQueue<std::shared_ptr<CommandList>> availableCommandLists;
