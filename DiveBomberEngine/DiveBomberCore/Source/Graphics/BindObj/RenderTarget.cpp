@@ -22,7 +22,7 @@ namespace DiveBomber::BindObj
 		:
 		renderTargetBuffer(inputBuffer),
 		descriptorAllocation(inputDescriptorAllocation),
-		cpuHandle(inputDescriptorAllocation->GetDescriptorHandle(inputDepth)),
+		cpuHandle(inputDescriptorAllocation->GetCPUDescriptorHandle(inputDepth)),
 		depth(std::max(0u, inputDepth)),
 		optimizedClearValue(),
 		rsv()
@@ -54,7 +54,7 @@ namespace DiveBomber::BindObj
 		std::shared_ptr<Component::DescriptorAllocation> inputDescriptorAllocation, DXGI_FORMAT inputFormat, UINT inputDepth, UINT inputMipLevels)
 		:
 		descriptorAllocation(inputDescriptorAllocation),
-		cpuHandle(inputDescriptorAllocation->GetDescriptorHandle(inputDepth)),
+		cpuHandle(inputDescriptorAllocation->GetCPUDescriptorHandle(inputDepth)),
 		mipLevels(inputMipLevels),
 		format(inputFormat)
 	{

@@ -7,17 +7,21 @@ namespace DiveBomber::Component
 {
 	DescriptorAllocation::DescriptorAllocation()
 		:
-		descriptor(D3D12_CPU_DESCRIPTOR_HANDLE(0)),
+		CPUAddress(D3D12_CPU_DESCRIPTOR_HANDLE(0)),
+		GPUAddress(D3D12_GPU_DESCRIPTOR_HANDLE(0)),
 		numHandles(0),
 		descriptorSize(0),
 		page(nullptr)
 	{
 	}
 
-	DescriptorAllocation::DescriptorAllocation(D3D12_CPU_DESCRIPTOR_HANDLE inputDescriptor, uint32_t inputNumHandles,
-		uint32_t inputDescriptorSize, std::shared_ptr<DescriptorAllocatorPage> inputPage)
+	DescriptorAllocation::DescriptorAllocation(D3D12_CPU_DESCRIPTOR_HANDLE inputCPUAddress,
+		D3D12_GPU_DESCRIPTOR_HANDLE inputGPUAddress,
+		uint32_t inputNumHandles, uint32_t inputDescriptorSize,
+		std::shared_ptr<DescriptorAllocatorPage> inputPage)
 		:
-		descriptor(inputDescriptor),
+		CPUAddress(inputCPUAddress),
+		GPUAddress(inputGPUAddress),
 		numHandles(inputNumHandles),
 		descriptorSize(inputDescriptorSize),
 		page(inputPage)
@@ -31,12 +35,14 @@ namespace DiveBomber::Component
 
 	DescriptorAllocation::DescriptorAllocation(DescriptorAllocation&& allocation) noexcept
 		:
-		descriptor(allocation.descriptor),
+		CPUAddress(allocation.CPUAddress),
+		GPUAddress(allocation.GPUAddress),
 		numHandles(allocation.numHandles),
 		descriptorSize(allocation.descriptorSize),
 		page(std::move(allocation.page))
 	{
-		allocation.descriptor = D3D12_CPU_DESCRIPTOR_HANDLE(0);
+		allocation.CPUAddress = D3D12_CPU_DESCRIPTOR_HANDLE(0);
+		allocation.GPUAddress = D3D12_GPU_DESCRIPTOR_HANDLE(0);
 		allocation.numHandles = 0;
 		allocation.descriptorSize = 0;
 	}
@@ -45,12 +51,14 @@ namespace DiveBomber::Component
 	{
 		FreeDescriptorAllocation();
 
-		descriptor = other.descriptor;
+		CPUAddress = other.CPUAddress;
+		GPUAddress = other.GPUAddress;
 		numHandles = other.numHandles;
 		descriptorSize = other.descriptorSize;
 		page = std::move(other.page);
 
-		other.descriptor = D3D12_CPU_DESCRIPTOR_HANDLE(0);
+		other.CPUAddress = D3D12_CPU_DESCRIPTOR_HANDLE(0);
+		other.GPUAddress = D3D12_GPU_DESCRIPTOR_HANDLE(0);
 		other.numHandles = 0;
 		other.descriptorSize = 0;
 
@@ -63,7 +71,8 @@ namespace DiveBomber::Component
 		{
 			//page->Free(std::move(*this), Utility::g_FrameCounter);
 
-			descriptor.ptr = 0;
+			CPUAddress.ptr = 0;
+			GPUAddress.ptr = 0;
 			numHandles = 0;
 			descriptorSize = 0;
 			page.reset();
@@ -72,13 +81,19 @@ namespace DiveBomber::Component
 
 	bool DescriptorAllocation::IsInvalid() const noexcept
 	{
-		return descriptor.ptr == 0;
+		return CPUAddress.ptr == 0;
 	}
 
-	D3D12_CPU_DESCRIPTOR_HANDLE DescriptorAllocation::GetDescriptorHandle(uint32_t offset) const noexcept
+	D3D12_CPU_DESCRIPTOR_HANDLE DescriptorAllocation::GetCPUDescriptorHandle(uint32_t offset) const noexcept
 	{
 		assert(offset < numHandles);
-		return { descriptor.ptr + (descriptorSize * offset) };
+		return { CPUAddress.ptr + (descriptorSize * offset) };
+	}
+
+	D3D12_CPU_DESCRIPTOR_HANDLE DescriptorAllocation::GetGPUDescriptorHandle(uint32_t offset) const noexcept
+	{
+		assert(offset < numHandles);
+		return { GPUAddress.ptr + (descriptorSize * offset) };
 	}
 
 	uint32_t DescriptorAllocation::GetNumHandles() const noexcept

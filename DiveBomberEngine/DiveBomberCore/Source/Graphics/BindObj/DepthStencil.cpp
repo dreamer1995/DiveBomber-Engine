@@ -22,7 +22,7 @@ namespace DiveBomber::BindObj
 		std::shared_ptr<Component::DescriptorAllocation> inputDescriptorAllocation, UINT inputDepth)
 		:
 		descriptorAllocation(inputDescriptorAllocation),
-		cpuHandle(inputDescriptorAllocation->GetDescriptorHandle(inputDepth)),
+		cpuHandle(inputDescriptorAllocation->GetCPUDescriptorHandle(inputDepth)),
 		optimizedClearValue(),
 		dsv()
 	{

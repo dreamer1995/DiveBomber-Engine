@@ -61,7 +61,9 @@ namespace DiveBomber::Component
 
 		wrl::ComPtr<ID3D12DescriptorHeap> descriptorHeap;
 		D3D12_DESCRIPTOR_HEAP_TYPE type;
-		CD3DX12_CPU_DESCRIPTOR_HANDLE baseDescriptorHandle;
+		const bool isShaderInvisible;
+		D3D12_CPU_DESCRIPTOR_HANDLE baseCPUDescriptorHandle;
+		D3D12_GPU_DESCRIPTOR_HANDLE baseGPUDescriptorHandle;
 		uint32_t descriptorHandleIncrementSize;
 		uint32_t numDescriptorsInHeap;
 		uint32_t numAvailableHandles;

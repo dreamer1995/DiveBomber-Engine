@@ -17,16 +17,24 @@ namespace DiveBomber::Component
 	DescriptorAllocatorPage::DescriptorAllocatorPage(wrl::ComPtr<ID3D12Device2> device, D3D12_DESCRIPTOR_HEAP_TYPE inputType, uint32_t inputNumDescriptors)
 		:
 		type(inputType),
-		numDescriptorsInHeap(inputNumDescriptors)
+		numDescriptorsInHeap(inputNumDescriptors),
+		isShaderInvisible((type == D3D12_DESCRIPTOR_HEAP_TYPE_DSV ||
+			type == D3D12_DESCRIPTOR_HEAP_TYPE_RTV))
 	{
+		const D3D12_DESCRIPTOR_HEAP_FLAGS descriptorHeapFlags = isShaderInvisible ?
+			D3D12_DESCRIPTOR_HEAP_FLAG_NONE : D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+
 		D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
 		heapDesc.Type = type;
 		heapDesc.NumDescriptors = numDescriptorsInHeap;
+		heapDesc.Flags = descriptorHeapFlags;
 
 		HRESULT hr;
 		GFX_THROW_INFO(device->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&descriptorHeap)));
 
-		baseDescriptorHandle = descriptorHeap->GetCPUDescriptorHandleForHeapStart();
+		baseCPUDescriptorHandle = descriptorHeap->GetCPUDescriptorHandleForHeapStart();
+		baseGPUDescriptorHandle = isShaderInvisible ?
+			CD3DX12_GPU_DESCRIPTOR_HANDLE{} : descriptorHeap->GetGPUDescriptorHandleForHeapStart();
 		descriptorHandleIncrementSize = device->GetDescriptorHandleIncrementSize(type);
 		numAvailableHandles = numDescriptorsInHeap;
 
@@ -82,14 +90,16 @@ namespace DiveBomber::Component
 		numAvailableHandles -= numDescriptors;
 
 		return std::make_shared<DescriptorAllocation>(
-			CD3DX12_CPU_DESCRIPTOR_HANDLE(baseDescriptorHandle, offset, descriptorHandleIncrementSize),
+			CD3DX12_CPU_DESCRIPTOR_HANDLE(baseCPUDescriptorHandle, offset, descriptorHandleIncrementSize),
+			isShaderInvisible ?
+			CD3DX12_GPU_DESCRIPTOR_HANDLE{} : CD3DX12_GPU_DESCRIPTOR_HANDLE(baseGPUDescriptorHandle, offset, descriptorHandleIncrementSize),
 			numDescriptors, descriptorHandleIncrementSize, shared_from_this()
 		);
 	}
 
 	void DescriptorAllocatorPage::FreeDescriptorAllocation(DescriptorAllocation&& descriptorAllocation, const uint64_t frameNumber)
 	{
-		auto offset = ComputeOffset(descriptorAllocation.GetDescriptorHandle());
+		auto offset = ComputeOffset(descriptorAllocation.GetCPUDescriptorHandle());
 
 		std::lock_guard<std::mutex> lock(allocationMutex);
 
@@ -115,7 +125,7 @@ namespace DiveBomber::Component
 
 	uint32_t DescriptorAllocatorPage::ComputeOffset(const D3D12_CPU_DESCRIPTOR_HANDLE handle)
 	{
-		return static_cast<uint32_t>(handle.ptr - baseDescriptorHandle.ptr) / descriptorHandleIncrementSize;
+		return static_cast<uint32_t>(handle.ptr - baseCPUDescriptorHandle.ptr) / descriptorHandleIncrementSize;
 	}
 
 	void DescriptorAllocatorPage::AddNewBlock(const uint32_t offset, const uint32_t numDescriptors)
