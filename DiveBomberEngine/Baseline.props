@@ -21,6 +21,9 @@
       <EnablePREfast>true</EnablePREfast>
     </ClCompile>
     <Link />
+    <FxCompile>
+      <ShaderModel>6.6</ShaderModel>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup />
 </Project>

@@ -126,7 +126,7 @@ namespace DiveBomber::DX
     {
         if (!IsFenceComplete(inputFenceValue))
         {
-            HANDLE fenceEvent = ::CreateEvent(nullptr, FALSE, FALSE, nullptr);
+            HANDLE fenceEvent = ::CreateEventEx(nullptr, nullptr, 0, EVENT_ALL_ACCESS);
             assert(fenceEvent && "Failed to create fence event.");
 
             fence->SetEventOnCompletion(inputFenceValue, fenceEvent);
