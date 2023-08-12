@@ -45,6 +45,10 @@ namespace DiveBomber::RenderPipeline
 			gfx.GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)->Allocate(1u);
 		texture = std::make_shared<Texture>(gfx, L"Asset\\Texture\\earth.jpg", std::move(descriptorAllocation));
 
+		descriptorAllocation =
+			gfx.GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)->Allocate(1u);
+		texture2 = std::make_shared<Texture>(gfx, L"Asset\\Texture\\rustediron2_basecolor.png", std::move(descriptorAllocation));
+
 		auto fenceValue = gfx.ExecuteCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
 		commandQueue->WaitForFenceValue(fenceValue);
 

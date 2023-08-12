@@ -52,5 +52,6 @@ namespace DiveBomber::RenderPipeline
 		std::shared_ptr<BindObj::ConstantTransformBuffer> transformCBuffer;
 
 		std::shared_ptr<BindObj::Texture> texture;
+		std::shared_ptr<BindObj::Texture> texture2;
 	};
 }

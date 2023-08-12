@@ -333,7 +333,9 @@ namespace DiveBomber::DEGraphics
 		};
 
 		std::vector<ID3D12DescriptorHeap*> descriptorHeaps{};
+	#if BindlessRendering
 		descriptorHeaps.reserve(shaderVisibleDescriptorHeaps.size());
+	#endif
 		for (const auto& heaps : shaderVisibleDescriptorHeaps)
 		{
 			auto descriptorHeapsClip = heaps->GetAllDescriptorHeaps();

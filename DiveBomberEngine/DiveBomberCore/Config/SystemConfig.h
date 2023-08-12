@@ -14,6 +14,9 @@ namespace DiveBomber::Config
 
 #define EnableTAA true
 
+// Memory Settings
+#define BindlessRendering true
+
 // Miscellaneous Settings
 #define ThrowLanguage LANG_ENGLISH
 #define EnableConsole true
