@@ -15,7 +15,7 @@ namespace DiveBomber::BindObj
 	Shader::Shader(Graphics& inputGfx, const std::wstring& inputPath, ShaderType inputType)
 		:
 		gfx(inputGfx),
-		path(inputPath),
+		path(WOutputDirectory + inputPath),
 		type(inputType)
 	{
 		RecompileShader();
