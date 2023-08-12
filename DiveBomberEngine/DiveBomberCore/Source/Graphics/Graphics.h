@@ -8,7 +8,6 @@ namespace DiveBomber::DX
 	class DXDevice;
 	class CommandQueue;
 	class SwapChain;
-	class DescriptorHeap;
 	class Viewport;
 	class ScissorRects;
 	class CommandList;
@@ -68,6 +67,8 @@ namespace DiveBomber::DEGraphics
 		uint64_t ExecuteCommandList(const D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT);
 		uint64_t ExecuteCommandList(std::shared_ptr<DX::CommandList> commandList, const D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT);
 		uint64_t ExecuteCommandLists(std::vector<std::shared_ptr<DX::CommandList>> commandLists, const D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT);
+		[[nodiscard]] std::shared_ptr<Component::DescriptorAllocator> GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV) const noexcept;
+		void BindShaderDescriptorHeaps();
 
 	private:
 		UINT width = 0;

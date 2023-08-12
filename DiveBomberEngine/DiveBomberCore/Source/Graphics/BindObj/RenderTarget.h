@@ -8,11 +8,6 @@ namespace DiveBomber::DEGraphics
 	class Graphics;
 }
 
-namespace DiveBomber::DX
-{
-	class DescriptorHeap;
-}
-
 namespace DiveBomber::Component
 {
 	class DescriptorAllocation;

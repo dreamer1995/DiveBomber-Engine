@@ -61,6 +61,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>..\DirectXTex\Bin\Desktop_2022\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -76,12 +77,14 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>..\DirectXTex\Bin\Desktop_2022\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source\Graphics\BindObj\ConstantTransformBuffer.cpp" />
     <ClCompile Include="Source\Graphics\BindObj\DepthStencil.cpp" />
     <ClCompile Include="Source\Graphics\BindObj\PipelineStateObject.cpp" />
+    <ClCompile Include="Source\Graphics\BindObj\Texture.cpp" />
     <ClCompile Include="Source\Graphics\Component\Camera.cpp" />
     <ClCompile Include="Source\Graphics\Component\DescriptorAllocation.cpp" />
     <ClCompile Include="Source\Graphics\Component\DescriptorAllocator.cpp" />
@@ -129,6 +132,7 @@
     <ClInclude Include="Source\Graphics\BindObj\ConstantTransformBuffer.h" />
     <ClInclude Include="Source\Graphics\BindObj\DepthStencil.h" />
     <ClInclude Include="Source\Graphics\BindObj\PipelineStateObject.h" />
+    <ClInclude Include="Source\Graphics\BindObj\Texture.h" />
     <ClInclude Include="Source\Graphics\Component\DescriptorAllocation.h" />
     <ClInclude Include="Source\Graphics\Component\DescriptorAllocator.h" />
     <ClInclude Include="Source\Graphics\Component\DescriptorAllocatorPage.h" />
@@ -192,13 +196,13 @@
     <Image Include="Resource\DiveBomberIcon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shader\PixelShader.hlsl">
+    <FxCompile Include="Shader\PShader.hlsl">
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">6.6</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">6.6</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
     </FxCompile>
-    <FxCompile Include="Shader\VertexShader.hlsl">
+    <FxCompile Include="Shader\VShader.hlsl">
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">6.6</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">6.6</ShaderModel>

@@ -14,6 +14,7 @@
 #include "Component\DescriptorAllocation.h"
 
 #include <iostream>
+#include <array>
 
 namespace DiveBomber::DEGraphics
 {
@@ -43,8 +44,8 @@ namespace DiveBomber::DEGraphics
 
 		cbvSrvUavDescriptorHeap = std::make_shared<DescriptorAllocator>(dxDevice->GetDecive(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 10'000u);
 		rtvDescriptorHeap = std::make_shared<DescriptorAllocator>(dxDevice->GetDecive(), D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 50u);
-		dsvDescriptorHeap = std::make_shared<DescriptorAllocator>(dxDevice->GetDecive(), D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 50u);;
-		samplerDescriptorHeap = std::make_shared<DescriptorAllocator>(dxDevice->GetDecive(), D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER, 50u);;
+		dsvDescriptorHeap = std::make_shared<DescriptorAllocator>(dxDevice->GetDecive(), D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 50u);
+		samplerDescriptorHeap = std::make_shared<DescriptorAllocator>(dxDevice->GetDecive(), D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER, 1024u);
 
 		directCommandQueue = std::make_unique<CommandQueue>(dxDevice->GetDecive(), D3D12_COMMAND_LIST_TYPE_DIRECT);
 		computeCommandQueue = std::make_unique<CommandQueue>(dxDevice->GetDecive(), D3D12_COMMAND_LIST_TYPE_COMPUTE);
@@ -304,5 +305,44 @@ namespace DiveBomber::DEGraphics
 			assert(false && "Invalid command queue type.");
 			return -1;
 		}
+	}
+
+	std::shared_ptr<Component::DescriptorAllocator> Graphics::GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE type) const noexcept
+	{
+		switch (type)
+		{
+		case D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV:
+			return cbvSrvUavDescriptorHeap;
+		case D3D12_DESCRIPTOR_HEAP_TYPE_RTV:
+			return rtvDescriptorHeap;
+		case D3D12_DESCRIPTOR_HEAP_TYPE_DSV:
+			return dsvDescriptorHeap;
+		case D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER:
+			return samplerDescriptorHeap;
+		default:
+			assert(false && "Invalid descriptor heap type.");
+			return 0;
+		}
+	}
+
+	void Graphics::BindShaderDescriptorHeaps()
+	{
+		const std::array<const std::shared_ptr<DescriptorAllocator>, 2u> shaderVisibleDescriptorHeaps = {
+			cbvSrvUavDescriptorHeap,
+			samplerDescriptorHeap,
+		};
+
+		std::vector<ID3D12DescriptorHeap*> descriptorHeaps{};
+		descriptorHeaps.reserve(shaderVisibleDescriptorHeaps.size());
+		for (const auto& heaps : shaderVisibleDescriptorHeaps)
+		{
+			auto descriptorHeapsClip = heaps->GetAllDescriptorHeaps();
+			for (const auto& heap : descriptorHeapsClip)
+			{
+				descriptorHeaps.emplace_back(heap.Get());
+			}
+		};
+
+		GetCommandList()->SetDescriptorHeaps(static_cast<UINT>(descriptorHeaps.size()), descriptorHeaps.data());
 	}
 }

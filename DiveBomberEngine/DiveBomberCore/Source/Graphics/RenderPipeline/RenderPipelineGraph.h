@@ -23,6 +23,7 @@ namespace DiveBomber::BindObj
 	class Shader;
 	class ConstantTransformBuffer;
 	class IndexedTriangleList;
+	class Texture;
 }
 
 namespace DiveBomber::RenderPipeline
@@ -49,5 +50,7 @@ namespace DiveBomber::RenderPipeline
 		std::shared_ptr<Component::Camera> mainCamera;
 
 		std::shared_ptr<BindObj::ConstantTransformBuffer> transformCBuffer;
+
+		std::shared_ptr<BindObj::Texture> texture;
 	};
 }

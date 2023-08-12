@@ -26,6 +26,7 @@ namespace DiveBomber::Component
 
 		[[nodiscard]] std::shared_ptr<DescriptorAllocation> Allocate(const uint32_t numDescriptors = 1);
 		void ReleaseStaleDescriptors(const uint64_t frameNumber);
+		[[nodiscard]] std::vector<wrl::ComPtr<ID3D12DescriptorHeap>> GetAllDescriptorHeaps() noexcept;
 
 	private:
 		[[nodiscard]] std::shared_ptr<DescriptorAllocatorPage> CreateAllocatorPage();

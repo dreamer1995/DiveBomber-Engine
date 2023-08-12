@@ -42,6 +42,7 @@
     <ClCompile Include="Source\Graphics\Component\DescriptorAllocator.cpp" />
     <ClCompile Include="Source\Graphics\Component\DescriptorAllocatorPage.cpp" />
     <ClCompile Include="Source\Graphics\Component\DynamicDescriptorHeap.cpp" />
+    <ClCompile Include="Source\Graphics\BindObj\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Utility\Common.h" />
@@ -103,6 +104,7 @@
     <ClInclude Include="Source\Graphics\Component\DescriptorAllocator.h" />
     <ClInclude Include="Source\Graphics\Component\DescriptorAllocatorPage.h" />
     <ClInclude Include="Source\Graphics\Component\DynamicDescriptorHeap.h" />
+    <ClInclude Include="Source\Graphics\BindObj\Texture.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource\Resource.rc" />
@@ -114,7 +116,7 @@
     <Image Include="Resource\DiveBomberIcon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shader\VertexShader.hlsl" />
-    <FxCompile Include="Shader\PixelShader.hlsl" />
+    <FxCompile Include="Shader\VShader.hlsl" />
+    <FxCompile Include="Shader\PShader.hlsl" />
   </ItemGroup>
 </Project>

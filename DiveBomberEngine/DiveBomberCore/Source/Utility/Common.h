@@ -9,6 +9,19 @@ namespace DiveBomber
 #else
 	#define noxnd noexcept(true)
 #endif
+
+#define ProjectDirectory "..\\..\\DiveBomberCore\\"
+#define WProjectDirectory L"..\\..\\DiveBomberCore\\"
+
+#ifdef _DEBUG
+	#define OutputDirectory "..\\..\\x64\\Debug\\"
+	#define WOutputDirectory L"..\\..\\x64\\Debug\\"
+#endif // _DEBUG
+
+#ifdef NDEBUG
+	#define OutputDirectory "..\\..\\x64\\Release\\"
+	#define WOutputDirectory L"..\\..\\x64\\Release\\"
+#endif // NDEBUG
 }
 
 namespace DiveBomber::Utility

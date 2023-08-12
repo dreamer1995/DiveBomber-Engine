@@ -11,6 +11,7 @@ namespace DiveBomber::BindObj
 {
 	using namespace DEGraphics;
 	using namespace DEException;
+
 	Shader::Shader(Graphics& inputGfx, const std::wstring& inputPath, ShaderType inputType)
 		:
 		gfx(inputGfx),
@@ -29,6 +30,7 @@ namespace DiveBomber::BindObj
 	{
 		//todo
 		HRESULT hr;
+
 		GFX_THROW_INFO(D3DReadFileToBlob(/*"ShaderBins\\" + */path.c_str(), &bytecodeBlob));
 	}
 

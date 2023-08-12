@@ -76,6 +76,16 @@ namespace DiveBomber::Component
 		}
 	}
 
+	std::vector<wrl::ComPtr<ID3D12DescriptorHeap>> DescriptorAllocator::GetAllDescriptorHeaps() noexcept
+	{
+		std::vector<wrl::ComPtr<ID3D12DescriptorHeap>> descriptorHeaps{};
+		for (const std::shared_ptr<DescriptorAllocatorPage>& heap : heapPool)
+		{
+			descriptorHeaps.emplace_back(heap->GetDescriptorHeap());
+		}
+		return descriptorHeaps;
+	}
+
 	std::shared_ptr<DescriptorAllocatorPage> DescriptorAllocator::CreateAllocatorPage()
 	{
 		auto newPage = std::make_shared<DescriptorAllocatorPage>(device, type, numDescriptorsPerHeap);
@@ -85,4 +95,6 @@ namespace DiveBomber::Component
 
 		return newPage;
 	}
+
+	
 }

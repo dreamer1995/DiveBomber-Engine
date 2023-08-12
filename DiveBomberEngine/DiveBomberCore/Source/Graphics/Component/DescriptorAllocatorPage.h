@@ -28,6 +28,7 @@ namespace DiveBomber::Component
 		[[nodiscard]] std::shared_ptr<DescriptorAllocation> Allocate(const uint32_t numDescriptors);
 		void FreeDescriptorAllocation(DescriptorAllocation&& descriptorAllocation, const uint64_t frameNumber);
 		void ReleaseStaleDescriptors(const uint64_t frameNumber);
+		[[nodiscard]] wrl::ComPtr<ID3D12DescriptorHeap>GetDescriptorHeap() const noexcept;
 
 	private:
 		[[nodiscard]] uint32_t ComputeOffset(const D3D12_CPU_DESCRIPTOR_HANDLE handle);

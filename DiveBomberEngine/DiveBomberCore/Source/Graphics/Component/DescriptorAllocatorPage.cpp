@@ -123,6 +123,11 @@ namespace DiveBomber::Component
 		}
 	}
 
+	wrl::ComPtr<ID3D12DescriptorHeap> DescriptorAllocatorPage::GetDescriptorHeap() const noexcept
+	{
+		return descriptorHeap;
+	}
+
 	uint32_t DescriptorAllocatorPage::ComputeOffset(const D3D12_CPU_DESCRIPTOR_HANDLE handle)
 	{
 		return static_cast<uint32_t>(handle.ptr - baseCPUDescriptorHandle.ptr) / descriptorHandleIncrementSize;

@@ -6,6 +6,9 @@
 #include "..\Component\Camera.h"
 #include "..\DX\CommandQueue.h"
 #include "..\..\Utility\GlobalParameters.h"
+#include "..\BindObj\Texture.h"
+#include "..\Component\DescriptorAllocator.h"
+#include "..\Component\DescriptorAllocation.h"
 
 #include <iostream>
 
@@ -38,11 +41,15 @@ namespace DiveBomber::RenderPipeline
 		vertexBuffer = std::make_shared<VertexBuffer>(gfx, geometryTag, mesh->vertices);
 		indexBuffer = std::make_shared<IndexBuffer>(gfx, geometryTag, mesh->indices);
 
+		std::shared_ptr<DescriptorAllocation> descriptorAllocation =
+			gfx.GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)->Allocate(1u);
+		texture = std::make_shared<Texture>(gfx, L"Asset\\Texture\\earth.jpg", std::move(descriptorAllocation));
+
 		auto fenceValue = gfx.ExecuteCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
 		commandQueue->WaitForFenceValue(fenceValue);
 
-		vertexShader = std::make_shared<Shader>(gfx, L"VertexShader.cso", Shader::ShaderType::VertexShader);
-		pixelShader = std::make_shared<Shader>(gfx, L"PixelShader.cso", Shader::ShaderType::PixelShader);
+		vertexShader = std::make_shared<Shader>(gfx, L"VShader.cso", Shader::ShaderType::VertexShader);
+		pixelShader = std::make_shared<Shader>(gfx, L"PShader.cso", Shader::ShaderType::PixelShader);
 
 		topology = std::make_shared<Topology>(gfx, D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
 
@@ -67,6 +74,8 @@ namespace DiveBomber::RenderPipeline
 
 	void RenderPipelineGraph::Bind(DEGraphics::Graphics& gfx) noxnd
 	{
+		gfx.BindShaderDescriptorHeaps();
+
 		rootSignature->Bind(gfx);
 		pipelineStateObject->Bind(gfx);
 
