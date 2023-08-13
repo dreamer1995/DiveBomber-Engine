@@ -43,6 +43,7 @@
     <ClCompile Include="Source\Graphics\Component\DescriptorAllocatorPage.cpp" />
     <ClCompile Include="Source\Graphics\Component\DynamicDescriptorHeap.cpp" />
     <ClCompile Include="Source\Graphics\BindObj\Texture.cpp" />
+    <ClCompile Include="Source\Graphics\Component\ResourceStateTracker.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Utility\Common.h" />
@@ -105,6 +106,7 @@
     <ClInclude Include="Source\Graphics\Component\DescriptorAllocatorPage.h" />
     <ClInclude Include="Source\Graphics\Component\DynamicDescriptorHeap.h" />
     <ClInclude Include="Source\Graphics\BindObj\Texture.h" />
+    <ClInclude Include="Source\Graphics\Component\ResourceStateTracker.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource\Resource.rc" />

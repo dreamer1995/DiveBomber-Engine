@@ -91,6 +91,7 @@
     <ClCompile Include="Source\Graphics\Component\DescriptorAllocatorPage.cpp" />
     <ClCompile Include="Source\Graphics\Component\DynamicDescriptorHeap.cpp" />
     <ClCompile Include="Source\Graphics\Component\Projection.cpp" />
+    <ClCompile Include="Source\Graphics\Component\ResourceStateTracker.cpp" />
     <ClCompile Include="Source\Graphics\Component\UploadBuffer.cpp" />
     <ClCompile Include="Source\Graphics\DX\ScissorRects.cpp" />
     <ClCompile Include="Source\Graphics\DX\Viewport.cpp" />
@@ -137,6 +138,7 @@
     <ClInclude Include="Source\Graphics\Component\DescriptorAllocator.h" />
     <ClInclude Include="Source\Graphics\Component\DescriptorAllocatorPage.h" />
     <ClInclude Include="Source\Graphics\Component\DynamicDescriptorHeap.h" />
+    <ClInclude Include="Source\Graphics\Component\ResourceStateTracker.h" />
     <ClInclude Include="Source\Graphics\Component\UploadBuffer.h" />
     <ClInclude Include="Source\Graphics\GraphicsHeader.h" />
     <ClInclude Include="Source\Graphics\Component\Camera.h" />

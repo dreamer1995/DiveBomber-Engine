@@ -34,8 +34,7 @@ namespace DiveBomber::DX
 		wrl::ComPtr<ID3D12Fence> fence;
 		std::atomic_uint64_t fenceValue = 0;
 
-		using CommandListInfo = std::tuple<uint64_t, std::shared_ptr<CommandList>>;
-		ThirdParty::ThreadSafeQueue<CommandListInfo> inFlightCommandLists;
+		ThirdParty::ThreadSafeQueue<std::tuple<uint64_t, std::shared_ptr<CommandList>>> inFlightCommandLists;
 		ThirdParty::ThreadSafeQueue<std::shared_ptr<CommandList>> availableCommandLists;
 
 		std::atomic_bool processCommandListsGarbageCollection = true;

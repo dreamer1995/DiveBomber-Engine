@@ -147,7 +147,7 @@ namespace DiveBomber::DX
 
         while (processCommandListsGarbageCollection)
         {
-            CommandListInfo commandListInfo;
+            std::tuple<uint64_t, std::shared_ptr<CommandList>> commandListInfo;
 
             lock.lock();
             while (inFlightCommandLists.TryPop(commandListInfo))
