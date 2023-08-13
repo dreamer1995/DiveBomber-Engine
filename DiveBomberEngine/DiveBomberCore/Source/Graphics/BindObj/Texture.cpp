@@ -19,8 +19,14 @@ namespace DiveBomber::BindObj
 
 	Texture::Texture(Graphics& gfx, const std::wstring& inputPath, std::shared_ptr<Component::DescriptorAllocation> inputDescriptorAllocation)
 		:
+		Texture(gfx, inputPath, inputDescriptorAllocation, TextureDescription{})
+	{
+	}
+	Texture::Texture(Graphics& gfx, const std::wstring& inputPath, std::shared_ptr<Component::DescriptorAllocation> inputDescriptorAllocation, TextureDescription inputTextureDesc)
+		:
 		path(WProjectDirectory + inputPath),
-		descriptorAllocation(inputDescriptorAllocation)
+		descriptorAllocation(inputDescriptorAllocation),
+		textureDesc(inputTextureDesc)
 	{
 		fs::path filePath(path);
 
@@ -32,7 +38,7 @@ namespace DiveBomber::BindObj
 		}
 
 		dx::TexMetadata metadata;
-		dx::ScratchImage scratchImage;
+		dx::ScratchImage scratchRawImage;
 
 		HRESULT hr;
 
@@ -42,21 +48,21 @@ namespace DiveBomber::BindObj
 				path.c_str(),
 				dx::DDS_FLAGS_NONE,
 				&metadata,
-				scratchImage));
+				scratchRawImage));
 		}
 		else if (filePath.extension() == ".hdr")
 		{
 			GFX_THROW_INFO(LoadFromHDRFile(
 				path.c_str(),
 				&metadata,
-				scratchImage));
+				scratchRawImage));
 		}
 		else if (filePath.extension() == ".tga")
 		{
 			GFX_THROW_INFO(LoadFromTGAFile(
 				path.c_str(),
 				&metadata,
-				scratchImage));
+				scratchRawImage));
 		}
 		else
 		{
@@ -64,19 +70,27 @@ namespace DiveBomber::BindObj
 				path.c_str(),
 				dx::WIC_FLAGS_NONE,
 				&metadata,
-				scratchImage));
+				scratchRawImage));
 		}
 
-		dx::ScratchImage mipChain;
-		GFX_THROW_INFO(dx::GenerateMipMaps(*scratchImage.GetImages(), dx::TEX_FILTER_BOX, 0, mipChain));
+		dx::ScratchImage scratchImage;
 
-		const auto& chainBase = *mipChain.GetImages();
+		if (textureDesc.generateMip)
+		{
+			GFX_THROW_INFO(dx::GenerateMipMaps(*scratchRawImage.GetImages(), dx::TEX_FILTER_LINEAR, 0, scratchImage));
+		}
+		else
+		{
+			scratchImage = std::move(scratchRawImage);
+		}
+
+		const auto& chainBase = *scratchImage.GetImages();
 		const D3D12_RESOURCE_DESC texDesc{
 			.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D,
 			.Width = (UINT)chainBase.width,
 			.Height = (UINT)chainBase.height,
 			.DepthOrArraySize = 1,
-			.MipLevels = (UINT16)mipChain.GetImageCount(),
+			.MipLevels = (UINT16)scratchImage.GetImageCount(),
 			.Format = chainBase.format,
 			.SampleDesc = {.Count = 1 },
 			.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN,
@@ -95,9 +109,9 @@ namespace DiveBomber::BindObj
 
 		std::vector<D3D12_SUBRESOURCE_DATA> subresourceData;
 
-		for (int i = 0; i < mipChain.GetImageCount(); i++)
+		for (int i = 0; i < scratchImage.GetImageCount(); i++)
 		{
-			const auto img = mipChain.GetImage(i, 0, 0);
+			const auto img = scratchImage.GetImage(i, 0, 0);
 
 			auto subresourceClip = D3D12_SUBRESOURCE_DATA{
 				.pData = img->pixels,
@@ -151,13 +165,19 @@ namespace DiveBomber::BindObj
 	{
 	}
 
-	std::shared_ptr<Texture> Texture::Resolve(Graphics& gfx, const std::wstring& path,
+	std::shared_ptr<Texture> Texture::Resolve(DEGraphics::Graphics& gfx, const std::wstring& path,
 		std::shared_ptr<Component::DescriptorAllocation> descriptorAllocation)
 	{
 		return Codex::Resolve<Texture>(gfx, path, descriptorAllocation);
 	}
 
-	std::string Texture::GenerateUID(const std::wstring& path, std::shared_ptr<Component::DescriptorAllocation> descriptorAllocation)
+	std::shared_ptr<Texture> Texture::Resolve(Graphics& gfx, const std::wstring& path,
+		std::shared_ptr<Component::DescriptorAllocation> descriptorAllocation, TextureDescription textureDesc)
+	{
+		return Codex::Resolve<Texture>(gfx, path, descriptorAllocation, textureDesc);
+	}
+
+	std::string Texture::GenerateUID_(const std::wstring& path)
 	{
 		using namespace std::string_literals;
 		return typeid(Texture).name() + "#"s + Utility::ToNarrow(path);
