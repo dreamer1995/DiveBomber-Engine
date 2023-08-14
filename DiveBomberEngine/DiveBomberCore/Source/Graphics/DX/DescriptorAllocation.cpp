@@ -3,7 +3,7 @@
 #include "DescriptorAllocatorPage.h"
 #include "..\..\Utility\GlobalParameters.h"
 
-namespace DiveBomber::Component
+namespace DiveBomber::DX
 {
 	DescriptorAllocation::DescriptorAllocation()
 		:

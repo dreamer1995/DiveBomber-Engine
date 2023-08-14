@@ -8,17 +8,16 @@ namespace DiveBomber::DEGraphics
 	class Graphics;
 }
 
-namespace DiveBomber::Component
-{
-	class UploadBuffer;
-}
-
 namespace DiveBomber::DX
 {
+	class UploadBuffer;
+	class ResourceStateTracker;
+
 	class CommandList final
 	{
 	public:
 		CommandList(wrl::ComPtr<ID3D12Device2> device, D3D12_COMMAND_LIST_TYPE inputType);
+		~CommandList();
 		void Reset();
 		[[nodiscard]] wrl::ComPtr<ID3D12GraphicsCommandList2> GetGraphicsCommandList() const;
 		void Close();
@@ -27,7 +26,8 @@ namespace DiveBomber::DX
 		D3D12_COMMAND_LIST_TYPE type;
 		wrl::ComPtr<ID3D12CommandAllocator> commandAllocator;
 		wrl::ComPtr<ID3D12GraphicsCommandList2> commandList;
-		std::shared_ptr<Component::UploadBuffer> uploadBuffer;
+		std::unique_ptr<UploadBuffer> uploadBuffer;
+		std::unique_ptr<ResourceStateTracker> resourceStateTracker;
 	};
 }
 

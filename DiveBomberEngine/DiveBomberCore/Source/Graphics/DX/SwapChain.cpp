@@ -2,15 +2,14 @@
 
 #include "..\BindObj\RenderTarget.h"
 #include "..\..\Exception\GraphicsException.h"
-#include "..\Component\DescriptorAllocator.h"
-#include "..\Component\DescriptorAllocation.h"
+#include "..\DX\DescriptorAllocator.h"
+#include "..\DX\DescriptorAllocation.h"
 
 namespace DiveBomber::DX
 {
     using namespace DEException;
     using namespace DX;
     using namespace BindObj;
-    using namespace Component;
 
     SwapChain::SwapChain(const HWND hWnd, const wrl::ComPtr<ID3D12CommandQueue> commandQueue)
     {

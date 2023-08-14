@@ -24,7 +24,7 @@ namespace DiveBomber::DEGraphics
 	class Graphics;
 }
 
-namespace DiveBomber::Component
+namespace DiveBomber::DX
 {
 	class UploadBuffer final
 	{

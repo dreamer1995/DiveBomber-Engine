@@ -3,15 +3,16 @@
 #include "RenderTarget.h"
 #include "..\Graphics.h"
 #include "..\..\Exception\GraphicsException.h"
-#include "..\Component\DescriptorAllocation.h"
+#include "..\DX\DescriptorAllocation.h"
 
 namespace DiveBomber::BindObj
 {
 	using namespace DEGraphics;
 	using namespace DEException;
+	using namespace DX;
 
 	DepthStencil::DepthStencil(Graphics& gfx, UINT inputWidth, UINT inputHeight,
-		std::shared_ptr<Component::DescriptorAllocation> inputDescriptorAllocation, UINT inputDepth)
+		std::shared_ptr<DescriptorAllocation> inputDescriptorAllocation, UINT inputDepth)
 		:
 		DepthStencil{ gfx.GetDecive(), inputWidth, inputHeight, inputDescriptorAllocation, inputDepth }
 	{
@@ -19,7 +20,7 @@ namespace DiveBomber::BindObj
 	}
 
 	DepthStencil::DepthStencil(wrl::ComPtr<ID3D12Device2> device, UINT inputWidth, UINT inputHeight,
-		std::shared_ptr<Component::DescriptorAllocation> inputDescriptorAllocation, UINT inputDepth)
+		std::shared_ptr<DescriptorAllocation> inputDescriptorAllocation, UINT inputDepth)
 		:
 		descriptorAllocation(inputDescriptorAllocation),
 		cpuHandle(inputDescriptorAllocation->GetCPUDescriptorHandle(inputDepth)),

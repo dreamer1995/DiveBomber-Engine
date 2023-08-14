@@ -11,12 +11,12 @@ namespace DiveBomber::DX
 	class Viewport;
 	class ScissorRects;
 	class CommandList;
+	class DescriptorAllocator;
 }
 
 namespace DiveBomber::Component
 {
 	class Camera;
-	class DescriptorAllocator;
 }
 
 namespace DiveBomber::BindObj
@@ -67,7 +67,7 @@ namespace DiveBomber::DEGraphics
 		uint64_t ExecuteCommandList(const D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT);
 		uint64_t ExecuteCommandList(std::shared_ptr<DX::CommandList> commandList, const D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT);
 		uint64_t ExecuteCommandLists(std::vector<std::shared_ptr<DX::CommandList>> commandLists, const D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT);
-		[[nodiscard]] std::shared_ptr<Component::DescriptorAllocator> GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV) const noexcept;
+		[[nodiscard]] std::shared_ptr<DX::DescriptorAllocator> GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV) const noexcept;
 		void BindShaderDescriptorHeaps();
 
 	private:
@@ -93,10 +93,10 @@ namespace DiveBomber::DEGraphics
 		std::shared_ptr<DX::CommandList> directCommandList;
 		std::shared_ptr<DX::CommandList> computeCommandList;
 
-		std::shared_ptr<Component::DescriptorAllocator> cbvSrvUavDescriptorHeap;
-		std::shared_ptr<Component::DescriptorAllocator> rtvDescriptorHeap;
-		std::shared_ptr<Component::DescriptorAllocator> dsvDescriptorHeap;
-		std::shared_ptr<Component::DescriptorAllocator> samplerDescriptorHeap;
+		std::shared_ptr<DX::DescriptorAllocator> cbvSrvUavDescriptorHeap;
+		std::shared_ptr<DX::DescriptorAllocator> rtvDescriptorHeap;
+		std::shared_ptr<DX::DescriptorAllocator> dsvDescriptorHeap;
+		std::shared_ptr<DX::DescriptorAllocator> samplerDescriptorHeap;
 
 		std::shared_ptr<Component::Camera> renderCamera;
 

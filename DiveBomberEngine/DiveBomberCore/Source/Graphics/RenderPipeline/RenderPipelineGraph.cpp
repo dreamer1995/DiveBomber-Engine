@@ -7,8 +7,8 @@
 #include "..\DX\CommandQueue.h"
 #include "..\..\Utility\GlobalParameters.h"
 #include "..\BindObj\Texture.h"
-#include "..\Component\DescriptorAllocator.h"
-#include "..\Component\DescriptorAllocation.h"
+#include "..\DX\DescriptorAllocator.h"
+#include "..\DX\DescriptorAllocation.h"
 
 #include <iostream>
 

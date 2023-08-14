@@ -3,7 +3,7 @@
 #include "BindableCodex.h"
 #include "..\Graphics.h"
 #include "..\..\Exception\GraphicsException.h"
-#include "..\Component\DescriptorAllocation.h"
+#include "..\DX\DescriptorAllocation.h"
 
 #include <DirectXTex\DirectXTex.h>
 #pragma comment(lib,"DirectXTex.lib")
@@ -14,15 +14,16 @@ namespace DiveBomber::BindObj
 {
 	using namespace DEGraphics;
 	using namespace DEException;
+	using namespace DX;
 	namespace fs = std::filesystem;
 	namespace dx = DirectX;
 
-	Texture::Texture(Graphics& gfx, const std::wstring& inputPath, std::shared_ptr<Component::DescriptorAllocation> inputDescriptorAllocation)
+	Texture::Texture(Graphics& gfx, const std::wstring& inputPath, std::shared_ptr<DescriptorAllocation> inputDescriptorAllocation)
 		:
 		Texture(gfx, inputPath, inputDescriptorAllocation, TextureDescription{})
 	{
 	}
-	Texture::Texture(Graphics& gfx, const std::wstring& inputPath, std::shared_ptr<Component::DescriptorAllocation> inputDescriptorAllocation, TextureDescription inputTextureDesc)
+	Texture::Texture(Graphics& gfx, const std::wstring& inputPath, std::shared_ptr<DescriptorAllocation> inputDescriptorAllocation, TextureDescription inputTextureDesc)
 		:
 		path(WProjectDirectory + inputPath),
 		descriptorAllocation(inputDescriptorAllocation),
@@ -166,13 +167,13 @@ namespace DiveBomber::BindObj
 	}
 
 	std::shared_ptr<Texture> Texture::Resolve(DEGraphics::Graphics& gfx, const std::wstring& path,
-		std::shared_ptr<Component::DescriptorAllocation> descriptorAllocation)
+		std::shared_ptr<DescriptorAllocation> descriptorAllocation)
 	{
 		return Codex::Resolve<Texture>(gfx, path, descriptorAllocation);
 	}
 
 	std::shared_ptr<Texture> Texture::Resolve(Graphics& gfx, const std::wstring& path,
-		std::shared_ptr<Component::DescriptorAllocation> descriptorAllocation, TextureDescription textureDesc)
+		std::shared_ptr<DescriptorAllocation> descriptorAllocation, TextureDescription textureDesc)
 	{
 		return Codex::Resolve<Texture>(gfx, path, descriptorAllocation, textureDesc);
 	}

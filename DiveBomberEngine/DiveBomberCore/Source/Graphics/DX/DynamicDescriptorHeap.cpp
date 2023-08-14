@@ -3,7 +3,7 @@
 #include "..\Graphics.h"
 #include "..\..\Exception\GraphicsException.h"
 
-namespace DiveBomber::Component
+namespace DiveBomber::DX
 {
 	using namespace DEGraphics;
 	using namespace DEException;

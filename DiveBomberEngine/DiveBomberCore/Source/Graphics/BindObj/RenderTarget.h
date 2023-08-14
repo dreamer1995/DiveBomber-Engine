@@ -8,7 +8,7 @@ namespace DiveBomber::DEGraphics
 	class Graphics;
 }
 
-namespace DiveBomber::Component
+namespace DiveBomber::DX
 {
 	class DescriptorAllocation;
 }
@@ -31,14 +31,14 @@ namespace DiveBomber::BindObj
 		//};
 	public:
 		RenderTarget(DEGraphics::Graphics& gfx, wrl::ComPtr<ID3D12Resource> inputBuffer,
-			std::shared_ptr<Component::DescriptorAllocation> inputDescriptorAllocation, UINT inputDepth = 0);
+			std::shared_ptr<DX::DescriptorAllocation> inputDescriptorAllocation, UINT inputDepth = 0);
 		RenderTarget(wrl::ComPtr<ID3D12Device2> device, wrl::ComPtr<ID3D12Resource> inputBuffer,
-			std::shared_ptr<Component::DescriptorAllocation> inputDescriptorAllocation, UINT inputDepth = 0);
+			std::shared_ptr<DX::DescriptorAllocation> inputDescriptorAllocation, UINT inputDepth = 0);
 		RenderTarget(DEGraphics::Graphics& gfx, UINT inputWidth, UINT inputHeight,
-			std::shared_ptr<Component::DescriptorAllocation> inputDescriptorAllocation, DXGI_FORMAT inputFormat = DXGI_FORMAT_B8G8R8A8_UNORM,
+			std::shared_ptr<DX::DescriptorAllocation> inputDescriptorAllocation, DXGI_FORMAT inputFormat = DXGI_FORMAT_B8G8R8A8_UNORM,
 			UINT inputMipLevels = 0, UINT inputDepth = 0);
 		RenderTarget(wrl::ComPtr<ID3D12Device2> device, UINT inputWidth, UINT inputHeight,
-			std::shared_ptr<Component::DescriptorAllocation> inputDescriptorAllocation, DXGI_FORMAT inputFormat = DXGI_FORMAT_B8G8R8A8_UNORM,
+			std::shared_ptr<DX::DescriptorAllocation> inputDescriptorAllocation, DXGI_FORMAT inputFormat = DXGI_FORMAT_B8G8R8A8_UNORM,
 			UINT inputMipLevels = 0, UINT inputDepth = 0);
 		//RenderTarget(DEGraphics::Graphics& gfx, UINT inputWidth, UINT inputHeight, D3D12_DESCRIPTOR_HEAP_TYPE inputType,
 		//	DXGI_FORMAT inputFormat = DXGI_FORMAT_B8G8R8A8_UNORM, UINT inputDepth = 0);
@@ -59,7 +59,7 @@ namespace DiveBomber::BindObj
 		UINT mipLevels;
 		wrl::ComPtr<ID3D12Resource> renderTargetBuffer;
 
-		std::shared_ptr<Component::DescriptorAllocation> descriptorAllocation;
+		std::shared_ptr<DX::DescriptorAllocation> descriptorAllocation;
 		D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle;
 		D3D12_CLEAR_VALUE optimizedClearValue;
 		D3D12_RENDER_TARGET_VIEW_DESC rsv;

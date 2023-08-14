@@ -6,7 +6,7 @@
 
 #include <format>
 
-namespace DiveBomber::Component
+namespace DiveBomber::DX
 {
 	using namespace DEGraphics;
 

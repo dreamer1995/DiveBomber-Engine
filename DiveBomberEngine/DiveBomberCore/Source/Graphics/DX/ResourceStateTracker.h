@@ -15,10 +15,6 @@ namespace DiveBomber::DEGraphics
 namespace DiveBomber::DX
 {
 	class CommandList;
-}
-
-namespace DiveBomber::Component
-{
 	class DescriptorAllocation;
 	class DescriptorAllocatorPage;
 
@@ -32,8 +28,8 @@ namespace DiveBomber::Component
 		void AddTransitionBarrier(const wrl::ComPtr<ID3D12Resource> resource, D3D12_RESOURCE_STATES stateAfter, UINT subResource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
 		void UAVBarrier(const wrl::ComPtr<ID3D12Resource> resource = nullptr);
 		void AliasBarrier(const wrl::ComPtr<ID3D12Resource> resourceBefore = nullptr, const wrl::ComPtr<ID3D12Resource> resourceAfter = nullptr);
-		[[nodiscard]] uint32_t ExecutePendingResourceBarriers(DX::CommandList& commandList);
-		void ExecuteResourceBarriers(DX::CommandList& commandList);
+		[[nodiscard]] uint32_t ExecutePendingResourceBarriers(CommandList& commandList);
+		void ExecuteResourceBarriers(CommandList& commandList);
 		void CommitFinalResourceStates();
 		void Reset();
 
@@ -58,9 +54,9 @@ namespace DiveBomber::Component
 	private:
 		std::vector<D3D12_RESOURCE_BARRIER> resourceBarriers;
 		std::vector<D3D12_RESOURCE_BARRIER> pendingResourceBarriers;
-		static std::unordered_map<wrl::ComPtr<ID3D12Resource>, ResourceState> finalResourceState;
+		std::unordered_map<ID3D12Resource*, ResourceState> finalResourceState;
 
-		static std::unordered_map<wrl::ComPtr<ID3D12Resource>, ResourceState> globalResourceState;
+		static std::unordered_map<ID3D12Resource*, ResourceState> globalResourceState;
 
 		static std::mutex globalResourceStateMutex;
 		static bool isLocked;

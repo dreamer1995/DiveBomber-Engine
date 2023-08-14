@@ -7,7 +7,7 @@ namespace DiveBomber::DEGraphics
 	class Graphics;
 }
 
-namespace DiveBomber::Component
+namespace DiveBomber::DX
 {
 	class DescriptorAllocation;
 }
@@ -23,13 +23,13 @@ namespace DiveBomber::BindObj
 			bool generateMip = true;
 		};
 	public:
-		Texture(DEGraphics::Graphics& gfx, const std::wstring& inputPath, std::shared_ptr<Component::DescriptorAllocation> inputDescriptorAllocation);
-		Texture(DEGraphics::Graphics& gfx, const std::wstring& inputPath, std::shared_ptr<Component::DescriptorAllocation> inputDescriptorAllocation, TextureDescription inputTextureDesc);
+		Texture(DEGraphics::Graphics& gfx, const std::wstring& inputPath, std::shared_ptr<DX::DescriptorAllocation> inputDescriptorAllocation);
+		Texture(DEGraphics::Graphics& gfx, const std::wstring& inputPath, std::shared_ptr<DX::DescriptorAllocation> inputDescriptorAllocation, TextureDescription inputTextureDesc);
 		void Bind(DEGraphics::Graphics& gfx) noxnd override;
 		[[nodiscard]] static std::shared_ptr<Texture> Resolve(DEGraphics::Graphics& gfx, const std::wstring& path,
-			std::shared_ptr<Component::DescriptorAllocation> descriptorAllocation);
+			std::shared_ptr<DX::DescriptorAllocation> descriptorAllocation);
 		[[nodiscard]] static std::shared_ptr<Texture> Resolve(DEGraphics::Graphics& gfx, const std::wstring& path,
-			std::shared_ptr<Component::DescriptorAllocation> descriptorAllocation, TextureDescription textureDesc);
+			std::shared_ptr<DX::DescriptorAllocation> descriptorAllocation, TextureDescription textureDesc);
 		template<typename...Ignore>
 		[[nodiscard]] static std::string GenerateUID(const std::wstring& path, Ignore&&...ignore)
 		{
@@ -39,7 +39,7 @@ namespace DiveBomber::BindObj
 	private:
 		[[nodiscard]] static std::string GenerateUID_(const std::wstring& path);
 		std::wstring path;
-		std::shared_ptr<Component::DescriptorAllocation> descriptorAllocation;
+		std::shared_ptr<DX::DescriptorAllocation> descriptorAllocation;
 		wrl::ComPtr<ID3D12Resource> textureBuffer;
 		wrl::ComPtr<ID3D12Resource> textureUploadBuffer;
 		TextureDescription textureDesc;

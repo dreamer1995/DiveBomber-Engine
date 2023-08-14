@@ -3,22 +3,23 @@
 #include "DepthStencil.h"
 #include "..\Graphics.h"
 #include "..\..\Exception\GraphicsException.h"
-#include "..\Component\DescriptorAllocation.h"
+#include "..\DX\DescriptorAllocation.h"
 
 namespace DiveBomber::BindObj
 {
 	using namespace DEGraphics;
 	using namespace DEException;
+	using namespace DX;
 
 	RenderTarget::RenderTarget(DEGraphics::Graphics& gfx, wrl::ComPtr<ID3D12Resource> inputBuffer,
-		std::shared_ptr<Component::DescriptorAllocation> inputDescriptorAllocation, UINT inputDepth)
+		std::shared_ptr<DescriptorAllocation> inputDescriptorAllocation, UINT inputDepth)
 		:
 		RenderTarget{ gfx.GetDecive(), inputBuffer, inputDescriptorAllocation, inputDepth }
 	{
 	}
 
 	RenderTarget::RenderTarget(wrl::ComPtr<ID3D12Device2> device, wrl::ComPtr<ID3D12Resource> inputBuffer,
-		std::shared_ptr<Component::DescriptorAllocation> inputDescriptorAllocation, UINT inputDepth)
+		std::shared_ptr<DescriptorAllocation> inputDescriptorAllocation, UINT inputDepth)
 		:
 		renderTargetBuffer(inputBuffer),
 		descriptorAllocation(inputDescriptorAllocation),
@@ -43,7 +44,7 @@ namespace DiveBomber::BindObj
 	}
 
 	RenderTarget::RenderTarget(Graphics& gfx, UINT inputWidth, UINT inputHeight,
-		std::shared_ptr<Component::DescriptorAllocation> inputDescriptorAllocation, DXGI_FORMAT inputFormat, UINT inputDepth, UINT inputMipLevels)
+		std::shared_ptr<DescriptorAllocation> inputDescriptorAllocation, DXGI_FORMAT inputFormat, UINT inputDepth, UINT inputMipLevels)
 		:
 		RenderTarget{ gfx.GetDecive(), inputWidth, inputHeight, inputDescriptorAllocation, inputFormat, inputDepth, inputMipLevels }
 	{
@@ -51,7 +52,7 @@ namespace DiveBomber::BindObj
 	}
 
 	RenderTarget::RenderTarget(wrl::ComPtr<ID3D12Device2> device, UINT inputWidth, UINT inputHeight,
-		std::shared_ptr<Component::DescriptorAllocation> inputDescriptorAllocation, DXGI_FORMAT inputFormat, UINT inputDepth, UINT inputMipLevels)
+		std::shared_ptr<DescriptorAllocation> inputDescriptorAllocation, DXGI_FORMAT inputFormat, UINT inputDepth, UINT inputMipLevels)
 		:
 		descriptorAllocation(inputDescriptorAllocation),
 		cpuHandle(inputDescriptorAllocation->GetCPUDescriptorHandle(inputDepth)),

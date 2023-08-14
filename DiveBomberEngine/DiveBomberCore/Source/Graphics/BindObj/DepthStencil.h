@@ -8,7 +8,7 @@ namespace DiveBomber::DEGraphics
 	class Graphics;
 }
 
-namespace DiveBomber::Component
+namespace DiveBomber::DX
 {
 	class DescriptorAllocation;
 }
@@ -20,9 +20,9 @@ namespace DiveBomber::BindObj
 	{
 	public:
 		DepthStencil(DEGraphics::Graphics& gfx, UINT inputWidth, UINT inputHeight,
-			std::shared_ptr<Component::DescriptorAllocation> inputDescriptorAllocation, UINT inputDepth = 0);
+			std::shared_ptr<DX::DescriptorAllocation> inputDescriptorAllocation, UINT inputDepth = 0);
 		DepthStencil(wrl::ComPtr<ID3D12Device2> device, UINT inputWidth, UINT inputHeight,
-			std::shared_ptr<Component::DescriptorAllocation> inputDescriptorAllocation, UINT inputDepth = 0);
+			std::shared_ptr<DX::DescriptorAllocation> inputDescriptorAllocation, UINT inputDepth = 0);
 
 		void Bind(DEGraphics::Graphics& gfx) noxnd override;
 		void BindTarget(DEGraphics::Graphics& gfx) noxnd override;
@@ -39,7 +39,7 @@ namespace DiveBomber::BindObj
 		UINT depth;
 		wrl::ComPtr<ID3D12Resource> depthStencilBuffer;
 
-		std::shared_ptr<Component::DescriptorAllocation> descriptorAllocation;
+		std::shared_ptr<DX::DescriptorAllocation> descriptorAllocation;
 		D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle;
 		D3D12_CLEAR_VALUE optimizedClearValue;
 		D3D12_DEPTH_STENCIL_VIEW_DESC dsv;

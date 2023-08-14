@@ -4,7 +4,7 @@
 #include "..\..\Exception\GraphicsException.h"
 #include "DescriptorAllocation.h"
 
-namespace DiveBomber::Component
+namespace DiveBomber::DX
 {
 	using namespace DEGraphics;
 	using namespace DEException;

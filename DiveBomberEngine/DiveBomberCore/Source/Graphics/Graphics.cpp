@@ -10,8 +10,8 @@
 #include "DX\Viewport.h"
 #include "DX\ScissorRects.h"
 #include "DX\CommandLIst.h"
-#include "Component\DescriptorAllocator.h"
-#include "Component\DescriptorAllocation.h"
+#include "DX\DescriptorAllocator.h"
+#include "DX\DescriptorAllocation.h"
 
 #include <iostream>
 #include <array>
@@ -307,7 +307,7 @@ namespace DiveBomber::DEGraphics
 		}
 	}
 
-	std::shared_ptr<Component::DescriptorAllocator> Graphics::GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE type) const noexcept
+	std::shared_ptr<DescriptorAllocator> Graphics::GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE type) const noexcept
 	{
 		switch (type)
 		{

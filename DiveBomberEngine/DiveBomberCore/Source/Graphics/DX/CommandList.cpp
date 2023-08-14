@@ -2,13 +2,13 @@
 
 #include "..\..\Exception\GraphicsException.h"
 #include "..\Graphics.h"
-#include "..\Component\UploadBuffer.h"
+#include "..\DX\UploadBuffer.h"
+#include "..\DX\ResourceStateTracker.h"
 
 namespace DiveBomber::DX
 {
 	//using namespace DEGraphics;
 	using namespace DEException;
-	using namespace Component;
 	CommandList::CommandList(wrl::ComPtr<ID3D12Device2> device, D3D12_COMMAND_LIST_TYPE inputType)
 		:
 		type(inputType)
@@ -17,9 +17,14 @@ namespace DiveBomber::DX
 		GFX_THROW_INFO(device->CreateCommandAllocator(type, IID_PPV_ARGS(&commandAllocator)));
 		GFX_THROW_INFO(device->CreateCommandList(0, type, commandAllocator.Get(), nullptr, IID_PPV_ARGS(&commandList)));
 		
-		uploadBuffer = std::make_shared<UploadBuffer>(device);
+		uploadBuffer = std::make_unique<UploadBuffer>(device);
+		resourceStateTracker = std::make_unique<ResourceStateTracker>();
 	}
-	
+
+	CommandList::~CommandList()
+	{
+	}
+
 	void CommandList::Reset()
 	{
 		HRESULT hr;

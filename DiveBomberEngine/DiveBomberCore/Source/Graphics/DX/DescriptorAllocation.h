@@ -4,7 +4,7 @@
 
 #include <memory>
 
-namespace DiveBomber::Component
+namespace DiveBomber::DX
 {
 	class DescriptorAllocatorPage;
 
