@@ -74,7 +74,6 @@ namespace DiveBomber::DEGraphics
 		// Clear the render target.
 		{
 			directCommandList->AddTransitionBarrier(backBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET, true);
-			directCommandList->TrackResource(backBuffer);
 
 			D3D12_CPU_DESCRIPTOR_HANDLE rtv = swapChain->GetBackBufferDescriptorHandle(currentBackBufferIndex);
 
@@ -99,7 +98,6 @@ namespace DiveBomber::DEGraphics
 		// Present
 		{
 			directCommandList->AddTransitionBarrier(backBuffer, D3D12_RESOURCE_STATE_PRESENT, true);
-			directCommandList->TrackResource(backBuffer);
 
 			frameFenceValues[currentBackBufferIndex] = ExecuteCommandList();
 

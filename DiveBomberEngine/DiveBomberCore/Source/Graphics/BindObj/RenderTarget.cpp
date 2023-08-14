@@ -37,7 +37,7 @@ namespace DiveBomber::BindObj
 		format = textureDesc.Format;
 
 		device->CreateRenderTargetView(renderTargetBuffer.Get(), nullptr, cpuHandle);
-		ResourceStateTracker::AddGlobalResourceState(renderTargetBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET);
+		ResourceStateTracker::AddGlobalResourceState(renderTargetBuffer, D3D12_RESOURCE_STATE_COMMON);
 	}
 
 	RenderTarget::RenderTarget(Graphics& gfx, UINT inputWidth, UINT inputHeight,

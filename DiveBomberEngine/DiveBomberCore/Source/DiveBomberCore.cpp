@@ -329,7 +329,7 @@ namespace DiveBomber
 		if (elapsedSeconds > 1.0f)
 		{
 			g_FramePerSnd = float(elapsedFrames / elapsedSeconds);
-			//std::wcout << g_FramePerSnd << std::endl;
+			std::wcout << g_FramePerSnd << std::endl;
 			elapsedSeconds = 0.0;
 			elapsedFrames = 0;
 		}

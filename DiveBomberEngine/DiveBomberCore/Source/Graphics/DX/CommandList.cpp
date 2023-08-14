@@ -52,7 +52,7 @@ namespace DiveBomber::DX
 		return type;
 	}
 
-	void CommandList::AddTransitionBarrier(const wrl::ComPtr<ID3D12Resource> resource, D3D12_RESOURCE_STATES stateAfter, UINT subresource, bool flushBarriers)
+	void CommandList::AddTransitionBarrier(const wrl::ComPtr<ID3D12Resource> resource, D3D12_RESOURCE_STATES stateAfter, bool flushBarriers, UINT subresource)
 	{
 		if (resource)
 		{

@@ -2,6 +2,8 @@
 
 #include "..\DX\CommandList.h"
 
+//#pragma warning(disable:26110)
+
 namespace DiveBomber::DX
 {
     std::mutex ResourceStateTracker::globalResourceStateMutex;
