@@ -22,6 +22,12 @@ namespace DiveBomber::DX
 		[[nodiscard]] wrl::ComPtr<ID3D12GraphicsCommandList2> GetGraphicsCommandList() const;
 		void Close();
 		[[nodiscard]] D3D12_COMMAND_LIST_TYPE GetCommandListType() const noexcept;
+
+		void AddTransitionBarrier(const wrl::ComPtr<ID3D12Resource> resource, D3D12_RESOURCE_STATES stateAfter, UINT subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, bool flushBarriers = false);
+		void UAVBarrier(const wrl::ComPtr<ID3D12Resource> resource, bool flushBarriers = false);
+		void AliasingBarrier(const wrl::ComPtr<ID3D12Resource> beforeResource, const wrl::ComPtr<ID3D12Resource> afterResource, bool flushBarriers = false);
+		void ExecuteResourceBarriers();
+		[[nodiscard]] bool Close(CommandList& pendingCommandList);
 	private:
 		D3D12_COMMAND_LIST_TYPE type;
 		wrl::ComPtr<ID3D12CommandAllocator> commandAllocator;

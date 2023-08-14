@@ -2,6 +2,7 @@
 
 #include "..\..\Exception\GraphicsException.h"
 #include "CommandList.h"
+#include "ResourceStateTracker.h"
 
 namespace DiveBomber::DX
 {
@@ -95,17 +96,28 @@ namespace DiveBomber::DX
 
     uint64_t CommandQueue::ExecuteCommandLists(const std::vector<std::shared_ptr<CommandList>>& commandLists)
     {
+        ResourceStateTracker::Lock();
+
         std::vector<ID3D12CommandList*> d3d12CommandLists;
-        d3d12CommandLists.reserve(commandLists.size());
+        d3d12CommandLists.reserve(commandLists.size() * 2);
 
         std::vector<std::shared_ptr<CommandList>> inFlightQueue;
-        inFlightQueue.reserve(commandLists.size());
+        inFlightQueue.reserve(commandLists.size() * 2);
 
         for (auto commandList : commandLists)
         {
-            commandList->Close();
+            //If there are pending resources need to be resolved, execute them first.
+            auto pendingCommandList = GetCommandList();
+            bool hasPendingBarriers = commandList->Close(*pendingCommandList);
+            pendingCommandList->Close();
+
+            if (hasPendingBarriers)
+            {
+                d3d12CommandLists.emplace_back(pendingCommandList->GetGraphicsCommandList().Get());
+            }
             d3d12CommandLists.emplace_back(commandList->GetGraphicsCommandList().Get());
 
+            inFlightQueue.emplace_back(pendingCommandList);
             inFlightQueue.emplace_back(commandList);
         }
 
@@ -113,6 +125,8 @@ namespace DiveBomber::DX
 
         commandQueue->ExecuteCommandLists(numCommandLists, d3d12CommandLists.data());
         Signal();
+
+        ResourceStateTracker::Unlock();
 
         for (auto commandList : inFlightQueue)
         {

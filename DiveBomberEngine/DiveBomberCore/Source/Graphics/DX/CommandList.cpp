@@ -39,6 +39,7 @@ namespace DiveBomber::DX
 
 	void CommandList::Close()
 	{
+		ExecuteResourceBarriers();
 		HRESULT hr;
 		GFX_THROW_INFO(commandList->Close());
 	}
@@ -46,5 +47,63 @@ namespace DiveBomber::DX
 	D3D12_COMMAND_LIST_TYPE CommandList::GetCommandListType() const noexcept
 	{
 		return type;
+	}
+
+	void CommandList::AddTransitionBarrier(const wrl::ComPtr<ID3D12Resource> resource, D3D12_RESOURCE_STATES stateAfter, UINT subresource, bool flushBarriers)
+	{
+		if (resource)
+		{
+			// The "before" state is not important. It will be resolved by the resource state tracker.
+			auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(resource.Get(), D3D12_RESOURCE_STATE_COMMON, stateAfter, subresource);
+			resourceStateTracker->ResourceBarrier(barrier);
+		}
+
+		if (flushBarriers)
+		{
+			ExecuteResourceBarriers();
+		}
+	}
+
+	void CommandList::UAVBarrier(const wrl::ComPtr<ID3D12Resource> resource, bool flushBarriers)
+	{
+		auto barrier = CD3DX12_RESOURCE_BARRIER::UAV(resource.Get());
+
+		resourceStateTracker->ResourceBarrier(barrier);
+
+		if (flushBarriers)
+		{
+			ExecuteResourceBarriers();
+		}
+	}
+
+	void CommandList::AliasingBarrier(const wrl::ComPtr<ID3D12Resource> beforeResource, const wrl::ComPtr<ID3D12Resource> afterResource, bool flushBarriers)
+	{
+		auto barrier = CD3DX12_RESOURCE_BARRIER::Aliasing(beforeResource.Get(), afterResource.Get());
+
+		resourceStateTracker->ResourceBarrier(barrier);
+
+		if (flushBarriers)
+		{
+			ExecuteResourceBarriers();
+		}
+	}
+
+	void CommandList::ExecuteResourceBarriers()
+	{
+		resourceStateTracker->ExecuteResourceBarriers(*this);
+	}
+
+	bool CommandList::Close(CommandList& pendingCommandList)
+	{
+		ExecuteResourceBarriers();
+
+		HRESULT hr;
+		GFX_THROW_INFO(commandList->Close());
+
+		uint32_t numPendingBarriers = resourceStateTracker->ExecutePendingResourceBarriers(pendingCommandList);
+
+		resourceStateTracker->CommitFinalResourceStates();
+
+		return numPendingBarriers > 0;
 	}
 }
