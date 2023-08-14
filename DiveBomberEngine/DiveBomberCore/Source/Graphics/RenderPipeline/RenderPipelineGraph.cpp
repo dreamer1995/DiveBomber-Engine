@@ -101,7 +101,7 @@ namespace DiveBomber::RenderPipeline
 
 		gfx.GetCurrentBackBuffer()->BindTarget(gfx, gfx.GetMainDS());
 
-		gfx.GetCommandList()->DrawIndexedInstanced(indexBuffer->GetCount(), 1, 0, 0, 0);
+		gfx.GetGraphicsCommandList()->DrawIndexedInstanced(indexBuffer->GetCount(), 1, 0, 0, 0);
 	}
 
 	std::shared_ptr<Component::Camera> RenderPipelineGraph::GetMainCamera() const noexcept

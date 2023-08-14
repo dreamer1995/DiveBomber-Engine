@@ -14,6 +14,8 @@ namespace DiveBomber::BindObj
 	public:
 		IndexBuffer(DEGraphics::Graphics& gfx, const std::vector<unsigned short>& indices);
 		IndexBuffer(DEGraphics::Graphics& gfx, std::string inputTag, const std::vector<unsigned short>& indices);
+		~IndexBuffer();
+
 		void Bind(DEGraphics::Graphics& gfx) noxnd override;
 		[[nodiscard]] UINT GetCount() const noexcept;
 		[[nodiscard]] static std::shared_ptr<IndexBuffer> Resolve(DEGraphics::Graphics& gfx, const std::string& tag,

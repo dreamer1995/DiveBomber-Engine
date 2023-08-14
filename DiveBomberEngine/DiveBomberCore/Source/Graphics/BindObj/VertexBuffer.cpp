@@ -3,16 +3,20 @@
 #include "BindableCodex.h"
 #include "..\Graphics.h"
 #include "..\..\Exception\GraphicsException.h"
+#include "..\DX\CommandList.h"
+#include "..\DX\ResourceStateTracker.h"
 
 namespace DiveBomber::BindObj
 {
 	using namespace DEGraphics;
 	using namespace DEException;
+	using namespace DX;
 
 	VertexBuffer::VertexBuffer(Graphics& gfx, const VertexProcess::VertexData& vbuf)
 		:
 		VertexBuffer(gfx, "?", vbuf)
-	{}
+	{
+	}
 	VertexBuffer::VertexBuffer(Graphics& gfx, const std::string& inputTag, const VertexProcess::VertexData& vbuf)
 		:
 		stride((UINT)vbuf.GetLayout().Size()),
@@ -36,6 +40,8 @@ namespace DiveBomber::BindObj
 			nullptr,
 			IID_PPV_ARGS(&vertexBuffer)));
 
+		ResourceStateTracker::AddGlobalResourceState(vertexBuffer, D3D12_RESOURCE_STATE_COMMON);
+
 		// Create an committed resource for the upload.
 		if (vbuf.GetData())
 		{
@@ -55,20 +61,22 @@ namespace DiveBomber::BindObj
 			subresourceData.RowPitch = bufferSize;
 			subresourceData.SlicePitch = subresourceData.RowPitch;
 
-			UpdateSubresources(gfx.GetCommandList(D3D12_COMMAND_LIST_TYPE_COPY).Get(),
+			UpdateSubresources(gfx.GetGraphicsCommandList(D3D12_COMMAND_LIST_TYPE_COPY).Get(),
 				vertexBuffer.Get(), vertexUploadBuffer.Get(),
 				0, 0, 1, &subresourceData);
 		}
 
-		const CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
-			vertexBuffer.Get(),
-			D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
-		gfx.GetCommandList()->ResourceBarrier(1, &barrier);
+		gfx.GetCommandList()->AddTransitionBarrier(vertexBuffer, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
 
 		// Create the vertex buffer view.
 		vertexBufferView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
 		vertexBufferView.SizeInBytes = (UINT)bufferSize;
 		vertexBufferView.StrideInBytes = stride;
+	}
+
+	VertexBuffer::~VertexBuffer()
+	{
+		ResourceStateTracker::RemoveGlobalResourceState(vertexBuffer);
 	}
 
 	const VertexProcess::VertexLayout& VertexBuffer::GetLayout() const noexcept
@@ -78,7 +86,7 @@ namespace DiveBomber::BindObj
 
 	void VertexBuffer::Bind(Graphics& gfx) noxnd
 	{
-		GFX_THROW_INFO_ONLY(gfx.GetCommandList()->IASetVertexBuffers(0u, 1u, &vertexBufferView));
+		GFX_THROW_INFO_ONLY(gfx.GetGraphicsCommandList()->IASetVertexBuffers(0u, 1u, &vertexBufferView));
 	}
 
 	std::shared_ptr<VertexBuffer> VertexBuffer::Resolve(Graphics& gfx, const std::string& tag,

@@ -4,6 +4,8 @@
 #include "..\Graphics.h"
 #include "..\..\Exception\GraphicsException.h"
 #include "..\DX\DescriptorAllocation.h"
+#include "..\DX\CommandList.h"
+#include "..\DX\ResourceStateTracker.h"
 
 #include <DirectXTex\DirectXTex.h>
 #pragma comment(lib,"DirectXTex.lib")
@@ -108,6 +110,8 @@ namespace DiveBomber::BindObj
 			IID_PPV_ARGS(&textureBuffer)
 		));
 
+		ResourceStateTracker::AddGlobalResourceState(textureBuffer, D3D12_RESOURCE_STATE_COMMON);
+
 		std::vector<D3D12_SUBRESOURCE_DATA> subresourceData;
 
 		for (int i = 0; i < scratchImage.GetImageCount(); i++)
@@ -140,7 +144,7 @@ namespace DiveBomber::BindObj
 		}
 
 		UpdateSubresources(
-			gfx.GetCommandList(D3D12_COMMAND_LIST_TYPE_COPY).Get(),
+			gfx.GetGraphicsCommandList(D3D12_COMMAND_LIST_TYPE_COPY).Get(),
 			textureBuffer.Get(),
 			textureUploadBuffer.Get(),
 			0, 0,
@@ -148,10 +152,7 @@ namespace DiveBomber::BindObj
 			subresourceData.data()
 		);
 
-		const auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(
-			textureBuffer.Get(),
-			D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
-		gfx.GetCommandList()->ResourceBarrier(1, &barrier);
+		gfx.GetCommandList()->AddTransitionBarrier(textureBuffer, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, true);
 
 		const D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{
 				.Format = textureBuffer->GetDesc().Format,
@@ -160,6 +161,11 @@ namespace DiveBomber::BindObj
 				.Texture2D{.MipLevels = textureBuffer->GetDesc().MipLevels },
 		};
 		gfx.GetDecive()->CreateShaderResourceView(textureBuffer.Get(), &srvDesc, descriptorAllocation->GetCPUDescriptorHandle());
+	}
+
+	Texture::~Texture()
+	{
+		ResourceStateTracker::RemoveGlobalResourceState(textureBuffer);
 	}
 
 	void Texture::Bind(Graphics& gfx) noxnd

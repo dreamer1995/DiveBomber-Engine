@@ -18,7 +18,7 @@ namespace DiveBomber::BindObj
 
 	void Topology::Bind(Graphics& gfx) noxnd
 	{
-		GFX_THROW_INFO_ONLY(gfx.GetCommandList()->IASetPrimitiveTopology(type));
+		GFX_THROW_INFO_ONLY(gfx.GetGraphicsCommandList()->IASetPrimitiveTopology(type));
 	}
 
 	D3D12_PRIMITIVE_TOPOLOGY Topology::GetTopology() noexcept

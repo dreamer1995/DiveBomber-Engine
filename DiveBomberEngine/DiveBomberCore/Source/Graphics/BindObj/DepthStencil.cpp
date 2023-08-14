@@ -48,7 +48,7 @@ namespace DiveBomber::BindObj
 
 	void DepthStencil::BindTarget(Graphics& gfx) noxnd
 	{
-		gfx.GetCommandList()->OMSetRenderTargets(0, nullptr, FALSE, &cpuHandle);
+		gfx.GetGraphicsCommandList()->OMSetRenderTargets(0, nullptr, FALSE, &cpuHandle);
 	}
 
 	void DepthStencil::BindTarget(DEGraphics::Graphics& gfx, std::shared_ptr<BindableTarget> renderTarget) noxnd
@@ -56,7 +56,7 @@ namespace DiveBomber::BindObj
 		assert(dynamic_cast<RenderTarget*>(renderTarget.get()) != nullptr);
 
 		D3D12_CPU_DESCRIPTOR_HANDLE RTDescHeapHandle = static_cast<RenderTarget*>(renderTarget.get())->GetDescriptorHandle();
-		gfx.GetCommandList()->OMSetRenderTargets(1, &RTDescHeapHandle, FALSE, &cpuHandle);
+		gfx.GetGraphicsCommandList()->OMSetRenderTargets(1, &RTDescHeapHandle, FALSE, &cpuHandle);
 	}
 
 	wrl::ComPtr<ID3D12Resource> DepthStencil::GetDepthStencilBuffer() const noexcept
@@ -71,7 +71,7 @@ namespace DiveBomber::BindObj
 
 	void DepthStencil::ClearDepth(Graphics& gfx, FLOAT clearDepth) const noexcept
 	{
-		ClearDepth(gfx.GetCommandList(), clearDepth);
+		ClearDepth(gfx.GetGraphicsCommandList(), clearDepth);
 	}
 
 	void DepthStencil::ClearDepth(wrl::ComPtr<ID3D12GraphicsCommandList2> commandList, FLOAT clearDepth) const noexcept

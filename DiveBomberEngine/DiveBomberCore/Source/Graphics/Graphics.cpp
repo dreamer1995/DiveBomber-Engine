@@ -69,11 +69,11 @@ namespace DiveBomber::DEGraphics
 		auto currentBackBufferIndex = swapChain->GetSwapChain()->GetCurrentBackBufferIndex();
 		auto backBuffer = swapChain->GetBackBuffer(currentBackBufferIndex);
 
-		wrl::ComPtr<ID3D12GraphicsCommandList2> commandList = GetCommandList();
+		wrl::ComPtr<ID3D12GraphicsCommandList2> commandList = GetGraphicsCommandList();
 
 		// Clear the render target.
 		{
-			directCommandList->AddTransitionBarrier(backBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET, true);
+			GetCommandList()->AddTransitionBarrier(backBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET, true);
 
 			D3D12_CPU_DESCRIPTOR_HANDLE rtv = swapChain->GetBackBufferDescriptorHandle(currentBackBufferIndex);
 
@@ -93,11 +93,11 @@ namespace DiveBomber::DEGraphics
 		auto backBuffer = swapChain->GetBackBuffer(currentBackBufferIndex);
 
 		auto commandQueue = GetCommandQueue();
-		wrl::ComPtr<ID3D12GraphicsCommandList2> commandList = GetCommandList();
+		wrl::ComPtr<ID3D12GraphicsCommandList2> commandList = GetGraphicsCommandList();
 
 		// Present
 		{
-			directCommandList->AddTransitionBarrier(backBuffer, D3D12_RESOURCE_STATE_PRESENT, true);
+			GetCommandList()->AddTransitionBarrier(backBuffer, D3D12_RESOURCE_STATE_PRESENT, true);
 
 			frameFenceValues[currentBackBufferIndex] = ExecuteCommandList();
 
@@ -192,42 +192,46 @@ namespace DiveBomber::DEGraphics
 		return mainDS;
 	}
 
-	wrl::ComPtr<ID3D12GraphicsCommandList2> Graphics::GetCommandList(const D3D12_COMMAND_LIST_TYPE type) noexcept
+	 std::shared_ptr<CommandList> Graphics::GetCommandList(const D3D12_COMMAND_LIST_TYPE type) noexcept
 	{
 		switch (type)
 		{
 		case D3D12_COMMAND_LIST_TYPE_DIRECT:
 			if (directCommandList)
-				return directCommandList->GetGraphicsCommandList();
+				return directCommandList;
 			else
 			{
 				directCommandList = GetCommandQueue(D3D12_COMMAND_LIST_TYPE_DIRECT)->GetCommandList();
-				return directCommandList->GetGraphicsCommandList();
+				return directCommandList;
 			}
 			break;
 		case D3D12_COMMAND_LIST_TYPE_COMPUTE:
 			if (computeCommandList)
-				return computeCommandList->GetGraphicsCommandList();
+				return computeCommandList;
 			else
 			{
 				computeCommandList = GetCommandQueue(D3D12_COMMAND_LIST_TYPE_COMPUTE)->GetCommandList();
-				return computeCommandList->GetGraphicsCommandList();
+				return computeCommandList;
 			}
 			break;
 		case D3D12_COMMAND_LIST_TYPE_COPY:
 			if (copyCommandList)
-				return copyCommandList->GetGraphicsCommandList();
+				return copyCommandList;
 			else
 			{
 				copyCommandList = GetCommandQueue(D3D12_COMMAND_LIST_TYPE_COPY)->GetCommandList();
-
-				return copyCommandList->GetGraphicsCommandList();
+				return copyCommandList;
 			}
 			break;
 		default:
 			assert(false && "Invalid command queue type.");
 			return nullptr;
 		}
+	}
+
+	wrl::ComPtr<ID3D12GraphicsCommandList2> Graphics::GetGraphicsCommandList(const D3D12_COMMAND_LIST_TYPE type) noexcept
+	{
+		return GetCommandList(type)->GetGraphicsCommandList();
 	}
 
 	void Graphics::SetCamera(const std::shared_ptr<Camera> camera) noexcept
@@ -338,6 +342,6 @@ namespace DiveBomber::DEGraphics
 			}
 		};
 
-		GetCommandList()->SetDescriptorHeaps(static_cast<UINT>(descriptorHeaps.size()), descriptorHeaps.data());
+		GetGraphicsCommandList()->SetDescriptorHeaps(static_cast<UINT>(descriptorHeaps.size()), descriptorHeaps.data());
 	}
 }

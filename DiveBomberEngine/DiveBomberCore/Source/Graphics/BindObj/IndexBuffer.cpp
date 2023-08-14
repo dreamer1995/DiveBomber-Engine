@@ -3,11 +3,14 @@
 #include "BindableCodex.h"
 #include "..\Graphics.h"
 #include "..\..\Exception\GraphicsException.h"
+#include "..\DX\CommandList.h"
+#include "..\DX\ResourceStateTracker.h"
 
 namespace DiveBomber::BindObj
 {
 	using namespace DEGraphics;
 	using namespace DEException;
+	using namespace DX;
 
 	IndexBuffer::IndexBuffer(Graphics& gfx, const std::vector<unsigned short>& indices)
 		:
@@ -34,6 +37,8 @@ namespace DiveBomber::BindObj
 			nullptr,
 			IID_PPV_ARGS(&indexBuffer)));
 
+		ResourceStateTracker::AddGlobalResourceState(indexBuffer, D3D12_RESOURCE_STATE_COMMON);
+
 		// Create an committed resource for the upload.
 		if (indices.data())
 		{
@@ -53,15 +58,13 @@ namespace DiveBomber::BindObj
 			subresourceData.RowPitch = bufferSize;
 			subresourceData.SlicePitch = subresourceData.RowPitch;
 
-			UpdateSubresources(gfx.GetCommandList(D3D12_COMMAND_LIST_TYPE_COPY).Get(),
+			UpdateSubresources(gfx.GetGraphicsCommandList(D3D12_COMMAND_LIST_TYPE_COPY).Get(),
 				indexBuffer.Get(), indexUploadBuffer.Get(),
 				0, 0, 1, &subresourceData);
 		}
 
-		const CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
-			indexBuffer.Get(),
-			D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER);
-		gfx.GetCommandList()->ResourceBarrier(1, &barrier);
+		
+		gfx.GetCommandList()->AddTransitionBarrier(indexBuffer, D3D12_RESOURCE_STATE_INDEX_BUFFER, true);
 
 		// Create index buffer view.
 		indexBufferView.BufferLocation = indexBuffer->GetGPUVirtualAddress();
@@ -69,9 +72,14 @@ namespace DiveBomber::BindObj
 		indexBufferView.SizeInBytes = (UINT)bufferSize;
 	}
 
+	IndexBuffer::~IndexBuffer()
+	{
+		ResourceStateTracker::RemoveGlobalResourceState(indexBuffer);
+	}
+
 	void IndexBuffer::Bind(Graphics& gfx) noxnd
 	{
-		GFX_THROW_INFO_ONLY(gfx.GetCommandList()->IASetIndexBuffer(&indexBufferView));
+		GFX_THROW_INFO_ONLY(gfx.GetGraphicsCommandList()->IASetIndexBuffer(&indexBufferView));
 	}
 
 	UINT IndexBuffer::GetCount() const noexcept

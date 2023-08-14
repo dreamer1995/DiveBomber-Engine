@@ -47,7 +47,7 @@ namespace DiveBomber::BindObj
 
 	void PipelineStateObject::Bind(Graphics& gfx) noxnd
 	{
-		GFX_THROW_INFO_ONLY(gfx.GetCommandList()->SetPipelineState(pipelineState.Get()));
+		GFX_THROW_INFO_ONLY(gfx.GetGraphicsCommandList()->SetPipelineState(pipelineState.Get()));
 	}
 
 	std::shared_ptr<PipelineStateObject> PipelineStateObject::Resolve(Graphics& gfx, const std::string& tag,

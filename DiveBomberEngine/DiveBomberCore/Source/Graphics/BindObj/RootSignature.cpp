@@ -59,7 +59,7 @@ namespace DiveBomber::BindObj
 
 	void RootSignature::Bind(Graphics& gfx) noxnd
 	{
-		GFX_THROW_INFO_ONLY(gfx.GetCommandList()->SetGraphicsRootSignature(rootSignature.Get()));
+		GFX_THROW_INFO_ONLY(gfx.GetGraphicsCommandList()->SetGraphicsRootSignature(rootSignature.Get()));
 	}
 
 	std::shared_ptr<RootSignature> RootSignature::Resolve(Graphics& gfx, const std::string& tag)

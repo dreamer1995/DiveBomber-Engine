@@ -3,6 +3,8 @@
 #include "BindableCodex.h"
 #include "..\Graphics.h"
 #include "..\..\Exception\GraphicsExceptionEX.h"
+#include "..\DX\CommandList.h"
+#include "..\DX\ResourceStateTracker.h"
 
 namespace DiveBomber::BindObj
 {
@@ -37,6 +39,11 @@ namespace DiveBomber::BindObj
 			InitializeConstantBufferSize(gfx);
 		}
 
+		~ConstantBuffer()
+		{
+			DX::ResourceStateTracker::RemoveGlobalResourceState(constantBuffer);
+		}
+
 		void InitializeConstantBufferSize(DEGraphics::Graphics& gfx)
 		{
 			HRESULT hr;
@@ -53,6 +60,8 @@ namespace DiveBomber::BindObj
 				D3D12_RESOURCE_STATE_COMMON,
 				nullptr,
 				IID_PPV_ARGS(&constantBuffer)));
+
+			DX::ResourceStateTracker::AddGlobalResourceState(constantBuffer, D3D12_RESOURCE_STATE_COMMON);
 
 			{
 				const CD3DX12_HEAP_PROPERTIES heapProp{ D3D12_HEAP_TYPE_UPLOAD };
@@ -86,19 +95,14 @@ namespace DiveBomber::BindObj
 				subresourceData.RowPitch = bufferSize;
 				subresourceData.SlicePitch = subresourceData.RowPitch;
 
-				CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
-					constantBuffer.Get(),
-					D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, D3D12_RESOURCE_STATE_COPY_DEST);
-				gfx.GetCommandList()->ResourceBarrier(1, &barrier);
+				std::shared_ptr<DX::CommandList> commandList = gfx.GetCommandList();
+				commandList->AddTransitionBarrier(constantBuffer, D3D12_RESOURCE_STATE_COPY_DEST, true);
 
-				UpdateSubresources(gfx.GetCommandList().Get(),
+				UpdateSubresources(commandList->GetGraphicsCommandList().Get(),
 					constantBuffer.Get(), constantUploadBuffer.Get(),
 					0, 0, 1, &subresourceData);
 
-				barrier = CD3DX12_RESOURCE_BARRIER::Transition(
-					constantBuffer.Get(),
-					D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
-				gfx.GetCommandList()->ResourceBarrier(1, &barrier);
+				commandList->AddTransitionBarrier(constantBuffer, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, true);
 			}
 			else
 			{
@@ -109,7 +113,7 @@ namespace DiveBomber::BindObj
 
 		void Bind(DEGraphics::Graphics& gfx) noxnd override
 		{
-			gfx.GetCommandList()->SetGraphicsRootConstantBufferView(slot, constantBuffer->GetGPUVirtualAddress());
+			gfx.GetGraphicsCommandList()->SetGraphicsRootConstantBufferView(slot, constantBuffer->GetGPUVirtualAddress());
 		}
 
 		[[nodiscard]] wrl::ComPtr<ID3D12Resource> GetConstantBuffer() noexcept

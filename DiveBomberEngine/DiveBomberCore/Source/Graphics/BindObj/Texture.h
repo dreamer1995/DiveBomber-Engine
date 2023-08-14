@@ -25,6 +25,8 @@ namespace DiveBomber::BindObj
 	public:
 		Texture(DEGraphics::Graphics& gfx, const std::wstring& inputPath, std::shared_ptr<DX::DescriptorAllocation> inputDescriptorAllocation);
 		Texture(DEGraphics::Graphics& gfx, const std::wstring& inputPath, std::shared_ptr<DX::DescriptorAllocation> inputDescriptorAllocation, TextureDescription inputTextureDesc);
+		~Texture();
+		
 		void Bind(DEGraphics::Graphics& gfx) noxnd override;
 		[[nodiscard]] static std::shared_ptr<Texture> Resolve(DEGraphics::Graphics& gfx, const std::wstring& path,
 			std::shared_ptr<DX::DescriptorAllocation> descriptorAllocation);
