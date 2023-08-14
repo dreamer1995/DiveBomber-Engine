@@ -35,8 +35,8 @@ namespace DiveBomber::DX
 
 		static void Lock();
 		static void Unlock();
-		static void AddGlobalResourceState(wrl::ComPtr<ID3D12Resource> resource, D3D12_RESOURCE_STATES state);
-		static void RemoveGlobalResourceState(wrl::ComPtr<ID3D12Resource> resource);
+		static void AddGlobalResourceState(const wrl::ComPtr<ID3D12Resource> resource, const D3D12_RESOURCE_STATES state);
+		static void RemoveGlobalResourceState(const wrl::ComPtr<ID3D12Resource> resource);
 
 	private:
         struct ResourceState

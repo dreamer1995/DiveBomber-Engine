@@ -28,12 +28,16 @@ namespace DiveBomber::DX
 		void AliasingBarrier(const wrl::ComPtr<ID3D12Resource> beforeResource, const wrl::ComPtr<ID3D12Resource> afterResource, bool flushBarriers = false);
 		void ExecuteResourceBarriers();
 		[[nodiscard]] bool Close(CommandList& pendingCommandList);
+
+		void TrackResource(wrl::ComPtr<ID3D12Object> object) noexcept;
+		void ReleaseTrackedObjects() noexcept;
 	private:
 		D3D12_COMMAND_LIST_TYPE type;
 		wrl::ComPtr<ID3D12CommandAllocator> commandAllocator;
 		wrl::ComPtr<ID3D12GraphicsCommandList2> commandList;
 		std::unique_ptr<UploadBuffer> uploadBuffer;
 		std::unique_ptr<ResourceStateTracker> resourceStateTracker;
+		std::vector<wrl::ComPtr<ID3D12Object>> trackedObjects;
 	};
 }
 

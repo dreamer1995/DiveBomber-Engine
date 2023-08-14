@@ -185,7 +185,7 @@ namespace DiveBomber::DX
         }
     }
 
-    void ResourceStateTracker::AddGlobalResourceState(wrl::ComPtr<ID3D12Resource> resource, D3D12_RESOURCE_STATES state)
+    void ResourceStateTracker::AddGlobalResourceState(const wrl::ComPtr<ID3D12Resource> resource, const D3D12_RESOURCE_STATES state)
     {
 
         if (resource != nullptr)
@@ -195,7 +195,7 @@ namespace DiveBomber::DX
         }
     }
 
-    void ResourceStateTracker::RemoveGlobalResourceState(wrl::ComPtr<ID3D12Resource> resource)
+    void ResourceStateTracker::RemoveGlobalResourceState(const wrl::ComPtr<ID3D12Resource> resource)
     {
         if (resource != nullptr)
         {

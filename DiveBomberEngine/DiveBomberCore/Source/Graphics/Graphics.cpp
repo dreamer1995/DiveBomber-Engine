@@ -73,11 +73,8 @@ namespace DiveBomber::DEGraphics
 
 		// Clear the render target.
 		{
-			CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
-				backBuffer.Get(),
-				D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
-
-			commandList->ResourceBarrier(1, &barrier);
+			directCommandList->AddTransitionBarrier(backBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET, true);
+			directCommandList->TrackResource(backBuffer);
 
 			D3D12_CPU_DESCRIPTOR_HANDLE rtv = swapChain->GetBackBufferDescriptorHandle(currentBackBufferIndex);
 
@@ -101,10 +98,8 @@ namespace DiveBomber::DEGraphics
 
 		// Present
 		{
-			CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
-				backBuffer.Get(),
-				D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
-			commandList->ResourceBarrier(1, &barrier);
+			directCommandList->AddTransitionBarrier(backBuffer, D3D12_RESOURCE_STATE_PRESENT, true);
+			directCommandList->TrackResource(backBuffer);
 
 			frameFenceValues[currentBackBufferIndex] = ExecuteCommandList();
 

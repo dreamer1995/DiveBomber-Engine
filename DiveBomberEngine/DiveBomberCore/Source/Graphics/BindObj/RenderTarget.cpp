@@ -4,6 +4,7 @@
 #include "..\Graphics.h"
 #include "..\..\Exception\GraphicsException.h"
 #include "..\DX\DescriptorAllocation.h"
+#include "..\DX\ResourceStateTracker.h"
 
 namespace DiveBomber::BindObj
 {
@@ -36,11 +37,7 @@ namespace DiveBomber::BindObj
 		format = textureDesc.Format;
 
 		device->CreateRenderTargetView(renderTargetBuffer.Get(), nullptr, cpuHandle);
-	}
-
-	void RenderTarget::Bind(DEGraphics::Graphics& gfx) noxnd
-	{
-
+		ResourceStateTracker::AddGlobalResourceState(renderTargetBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET);
 	}
 
 	RenderTarget::RenderTarget(Graphics& gfx, UINT inputWidth, UINT inputHeight,
@@ -48,7 +45,6 @@ namespace DiveBomber::BindObj
 		:
 		RenderTarget{ gfx.GetDecive(), inputWidth, inputHeight, inputDescriptorAllocation, inputFormat, inputDepth, inputMipLevels }
 	{
-
 	}
 
 	RenderTarget::RenderTarget(wrl::ComPtr<ID3D12Device2> device, UINT inputWidth, UINT inputHeight,
@@ -69,6 +65,16 @@ namespace DiveBomber::BindObj
 		rsv.Texture2D.MipSlice = mipLevels;
 
 		Resize(device, inputWidth, inputHeight, inputDepth);
+	}
+
+	RenderTarget::~RenderTarget()
+	{
+		ResourceStateTracker::RemoveGlobalResourceState(renderTargetBuffer);
+	}
+
+	void RenderTarget::Bind(DEGraphics::Graphics& gfx) noxnd
+	{
+
 	}
 
 	void RenderTarget::BindTarget(DEGraphics::Graphics& gfx) noxnd
@@ -110,6 +116,11 @@ namespace DiveBomber::BindObj
 		auto resDes = CD3DX12_RESOURCE_DESC::Tex2D(format, width, height,
 			1, 0, 1, 0, D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL);
 
+		if (renderTargetBuffer)
+		{
+			ResourceStateTracker::RemoveGlobalResourceState(renderTargetBuffer);
+		}
+
 		GFX_THROW_INFO(device->CreateCommittedResource(
 			&heapProp,
 			D3D12_HEAP_FLAG_NONE,
@@ -121,5 +132,6 @@ namespace DiveBomber::BindObj
 
 		device->CreateRenderTargetView(renderTargetBuffer.Get(), &rsv,
 			cpuHandle);
+		ResourceStateTracker::AddGlobalResourceState(renderTargetBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET);
 	}
 }

@@ -43,6 +43,8 @@ namespace DiveBomber::BindObj
 		//RenderTarget(DEGraphics::Graphics& gfx, UINT inputWidth, UINT inputHeight, D3D12_DESCRIPTOR_HEAP_TYPE inputType,
 		//	DXGI_FORMAT inputFormat = DXGI_FORMAT_B8G8R8A8_UNORM, UINT inputDepth = 0);
 
+		~RenderTarget();
+
 		void Bind(DEGraphics::Graphics& gfx) noxnd override;
 		void BindTarget(DEGraphics::Graphics& gfx) noxnd override;
 		void BindTarget(DEGraphics::Graphics& gfx, std::shared_ptr<BindableTarget> depthStencil) noxnd override;

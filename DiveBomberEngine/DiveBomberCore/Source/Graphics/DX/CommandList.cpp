@@ -30,6 +30,9 @@ namespace DiveBomber::DX
 		HRESULT hr;
 		GFX_THROW_INFO(commandAllocator->Reset());
 		GFX_THROW_INFO(commandList->Reset(commandAllocator.Get(), nullptr));
+
+		resourceStateTracker->Reset();
+		ReleaseTrackedObjects();
 	}
 
 	wrl::ComPtr<ID3D12GraphicsCommandList2> CommandList::GetGraphicsCommandList() const
@@ -105,5 +108,15 @@ namespace DiveBomber::DX
 		resourceStateTracker->CommitFinalResourceStates();
 
 		return numPendingBarriers > 0;
+	}
+
+	void CommandList::TrackResource(wrl::ComPtr<ID3D12Object> object) noexcept
+	{
+		trackedObjects.emplace_back(object);
+	}
+
+	void CommandList::ReleaseTrackedObjects() noexcept
+	{
+		trackedObjects.clear();
 	}
 }
