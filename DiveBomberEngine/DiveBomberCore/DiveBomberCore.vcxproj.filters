@@ -113,6 +113,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Resource.aps" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resource\DiveBomberIcon.ico" />
