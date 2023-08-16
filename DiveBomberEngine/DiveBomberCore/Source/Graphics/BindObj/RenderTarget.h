@@ -32,12 +32,12 @@ namespace DiveBomber::BindObj
 	public:
 		RenderTarget(DEGraphics::Graphics& gfx, wrl::ComPtr<ID3D12Resource> inputBuffer,
 			std::shared_ptr<DX::DescriptorAllocation> inputDescriptorAllocation, UINT inputDepth = 0);
-		RenderTarget(wrl::ComPtr<ID3D12Device2> device, wrl::ComPtr<ID3D12Resource> inputBuffer,
+		RenderTarget(wrl::ComPtr<ID3D12Device10> device, wrl::ComPtr<ID3D12Resource> inputBuffer,
 			std::shared_ptr<DX::DescriptorAllocation> inputDescriptorAllocation, UINT inputDepth = 0);
 		RenderTarget(DEGraphics::Graphics& gfx, UINT inputWidth, UINT inputHeight,
 			std::shared_ptr<DX::DescriptorAllocation> inputDescriptorAllocation, DXGI_FORMAT inputFormat = DXGI_FORMAT_B8G8R8A8_UNORM,
 			UINT inputMipLevels = 0, UINT inputDepth = 0);
-		RenderTarget(wrl::ComPtr<ID3D12Device2> device, UINT inputWidth, UINT inputHeight,
+		RenderTarget(wrl::ComPtr<ID3D12Device10> device, UINT inputWidth, UINT inputHeight,
 			std::shared_ptr<DX::DescriptorAllocation> inputDescriptorAllocation, DXGI_FORMAT inputFormat = DXGI_FORMAT_B8G8R8A8_UNORM,
 			UINT inputMipLevels = 0, UINT inputDepth = 0);
 		//RenderTarget(DEGraphics::Graphics& gfx, UINT inputWidth, UINT inputHeight, D3D12_DESCRIPTOR_HEAP_TYPE inputType,
@@ -51,7 +51,7 @@ namespace DiveBomber::BindObj
 		[[nodiscard]] wrl::ComPtr<ID3D12Resource> GetRenderTargetBuffer() const noexcept;
 		[[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetDescriptorHandle() const noexcept;
 		void Resize(DEGraphics::Graphics& gfx, const UINT inputWidth, const UINT inputHeight, const UINT inputDepth = 0);
-		void Resize(wrl::ComPtr<ID3D12Device2> device, const UINT inputWidth, const UINT inputHeight, const UINT inputDepth = 0);
+		void Resize(wrl::ComPtr<ID3D12Device10> device, const UINT inputWidth, const UINT inputHeight, const UINT inputDepth = 0);
 
 	private:
 		UINT width;

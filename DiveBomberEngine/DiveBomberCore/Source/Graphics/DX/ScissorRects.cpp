@@ -1,7 +1,6 @@
 #include "ScissorRects.h"
 
 #include "..\..\Exception\GraphicsException.h"
-#include "d3dx12.h"
 
 namespace DiveBomber::DX
 {
@@ -18,7 +17,7 @@ namespace DiveBomber::DX
         return scissorRects;
     }
 
-    void ScissorRects::Bind(wrl::ComPtr<ID3D12GraphicsCommandList2> commandList) noxnd
+    void ScissorRects::Bind(wrl::ComPtr<ID3D12GraphicsCommandList7> commandList) noxnd
     {
         commandList->RSSetScissorRects(1, &scissorRects);
     }

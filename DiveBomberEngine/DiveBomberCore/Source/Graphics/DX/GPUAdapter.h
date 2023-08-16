@@ -1,8 +1,6 @@
 #pragma once
 #include "..\GraphicsHeader.h"
 
-#include <dxgi1_6.h>
-
 namespace DiveBomber::DX
 {
 	class GPUAdapter final

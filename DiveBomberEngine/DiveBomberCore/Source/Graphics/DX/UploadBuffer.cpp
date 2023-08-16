@@ -14,7 +14,7 @@ namespace DiveBomber::DX
 	{
 	}
 
-	UploadBuffer::UploadBuffer(wrl::ComPtr<ID3D12Device2> inputDevice, size_t inputPageSize)
+	UploadBuffer::UploadBuffer(wrl::ComPtr<ID3D12Device10> inputDevice, size_t inputPageSize)
 		:
 		pageSize(inputPageSize),
 		device(inputDevice)
@@ -74,7 +74,7 @@ namespace DiveBomber::DX
 		return page;
 	}
 
-	UploadBuffer::Page::Page(wrl::ComPtr<ID3D12Device2> device, size_t inputPageSize)
+	UploadBuffer::Page::Page(wrl::ComPtr<ID3D12Device10> device, size_t inputPageSize)
 		:
 		pageSize(inputPageSize)
 	{

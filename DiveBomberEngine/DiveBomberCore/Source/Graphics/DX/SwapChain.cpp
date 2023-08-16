@@ -83,7 +83,7 @@ namespace DiveBomber::DX
         return swapChain;
     }
 
-    void SwapChain::UpdateBackBuffer(const wrl::ComPtr<ID3D12Device2> device,
+    void SwapChain::UpdateBackBuffer(const wrl::ComPtr<ID3D12Device10> device,
         std::shared_ptr<DescriptorAllocator> descriptorAllocator)
     {
         if(!rtvDescHeaps)
@@ -121,7 +121,7 @@ namespace DiveBomber::DX
         }
     }
 
-    void SwapChain::ResetSizeBackBuffer(const wrl::ComPtr<ID3D12Device2> device,
+    void SwapChain::ResetSizeBackBuffer(const wrl::ComPtr<ID3D12Device10> device,
         const uint32_t inputWidth, const uint32_t inputHeight,
         std::shared_ptr<DescriptorAllocator> descriptorAllocator)
     {

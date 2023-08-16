@@ -23,7 +23,7 @@ namespace DiveBomber::DX
 		};
 	public:
 		DynamicDescriptorHeap(DEGraphics::Graphics& gfx, D3D12_DESCRIPTOR_HEAP_TYPE inputHeapType, uint32_t inputNumDescriptorsPerHeap = 1024);
-		DynamicDescriptorHeap(wrl::ComPtr<ID3D12Device2> inputDevice, D3D12_DESCRIPTOR_HEAP_TYPE inputHeapType, uint32_t inputNumDescriptorsPerHeap = 1024);
+		DynamicDescriptorHeap(wrl::ComPtr<ID3D12Device10> inputDevice, D3D12_DESCRIPTOR_HEAP_TYPE inputHeapType, uint32_t inputNumDescriptorsPerHeap = 1024);
 		~DynamicDescriptorHeap();
 
 		void BuildDescriptorTableCache();
@@ -44,7 +44,7 @@ namespace DiveBomber::DX
 		[[nodiscard]] uint32_t ComputeStaleDescriptorCount() const;
 
 	private:
-		wrl::ComPtr<ID3D12Device2> device;
+		wrl::ComPtr<ID3D12Device10> device;
 
 		static const uint32_t maxDescriptorTables = 32;
 

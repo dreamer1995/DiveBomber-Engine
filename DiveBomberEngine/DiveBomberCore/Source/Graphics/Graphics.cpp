@@ -69,7 +69,7 @@ namespace DiveBomber::DEGraphics
 		auto currentBackBufferIndex = swapChain->GetSwapChain()->GetCurrentBackBufferIndex();
 		auto backBuffer = swapChain->GetBackBuffer(currentBackBufferIndex);
 
-		wrl::ComPtr<ID3D12GraphicsCommandList2> commandList = GetGraphicsCommandList();
+		wrl::ComPtr<ID3D12GraphicsCommandList7> commandList = GetGraphicsCommandList();
 
 		// Clear the render target.
 		{
@@ -93,7 +93,7 @@ namespace DiveBomber::DEGraphics
 		auto backBuffer = swapChain->GetBackBuffer(currentBackBufferIndex);
 
 		auto commandQueue = GetCommandQueue();
-		wrl::ComPtr<ID3D12GraphicsCommandList2> commandList = GetGraphicsCommandList();
+		wrl::ComPtr<ID3D12GraphicsCommandList7> commandList = GetGraphicsCommandList();
 
 		// Present
 		{
@@ -177,7 +177,7 @@ namespace DiveBomber::DEGraphics
 		copyCommandQueue->Flush();
 	}
 
-	wrl::ComPtr<ID3D12Device2> Graphics::GetDecive() const noexcept
+	wrl::ComPtr<ID3D12Device10> Graphics::GetDecive() const noexcept
 	{
 		return dxDevice->GetDecive();
 	}
@@ -229,7 +229,7 @@ namespace DiveBomber::DEGraphics
 		}
 	}
 
-	wrl::ComPtr<ID3D12GraphicsCommandList2> Graphics::GetGraphicsCommandList(const D3D12_COMMAND_LIST_TYPE type) noexcept
+	wrl::ComPtr<ID3D12GraphicsCommandList7> Graphics::GetGraphicsCommandList(const D3D12_COMMAND_LIST_TYPE type) noexcept
 	{
 		return GetCommandList(type)->GetGraphicsCommandList();
 	}

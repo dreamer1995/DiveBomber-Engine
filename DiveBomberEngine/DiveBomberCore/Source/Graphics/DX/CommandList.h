@@ -16,10 +16,10 @@ namespace DiveBomber::DX
 	class CommandList final
 	{
 	public:
-		CommandList(wrl::ComPtr<ID3D12Device2> device, D3D12_COMMAND_LIST_TYPE inputType);
+		CommandList(wrl::ComPtr<ID3D12Device10> device, D3D12_COMMAND_LIST_TYPE inputType);
 		~CommandList();
 		void Reset();
-		[[nodiscard]] wrl::ComPtr<ID3D12GraphicsCommandList2> GetGraphicsCommandList() const;
+		[[nodiscard]] wrl::ComPtr<ID3D12GraphicsCommandList7> GetGraphicsCommandList() const;
 		void Close();
 		[[nodiscard]] D3D12_COMMAND_LIST_TYPE GetCommandListType() const noexcept;
 
@@ -34,7 +34,7 @@ namespace DiveBomber::DX
 	private:
 		D3D12_COMMAND_LIST_TYPE type;
 		wrl::ComPtr<ID3D12CommandAllocator> commandAllocator;
-		wrl::ComPtr<ID3D12GraphicsCommandList2> commandList;
+		wrl::ComPtr<ID3D12GraphicsCommandList7> commandList;
 		std::unique_ptr<UploadBuffer> uploadBuffer;
 		std::unique_ptr<ResourceStateTracker> resourceStateTracker;
 		std::vector<wrl::ComPtr<ID3D12Object>> trackedObjects;

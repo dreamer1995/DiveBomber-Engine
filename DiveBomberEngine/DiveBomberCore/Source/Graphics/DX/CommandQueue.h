@@ -14,7 +14,7 @@ namespace DiveBomber::DX
 	class CommandQueue final
 	{
 	public:
-		CommandQueue(wrl::ComPtr<ID3D12Device2> inputDevice, D3D12_COMMAND_LIST_TYPE intputType = D3D12_COMMAND_LIST_TYPE_DIRECT);
+		CommandQueue(wrl::ComPtr<ID3D12Device10> inputDevice, D3D12_COMMAND_LIST_TYPE intputType = D3D12_COMMAND_LIST_TYPE_DIRECT);
 		~CommandQueue();
 		[[nodiscard]] wrl::ComPtr<ID3D12CommandQueue> GetCommandQueue() const noexcept;
 
@@ -29,7 +29,7 @@ namespace DiveBomber::DX
 		void CommandListsGarbageCollection();
 	private:
 		D3D12_COMMAND_LIST_TYPE type;
-		wrl::ComPtr<ID3D12Device2> device;
+		wrl::ComPtr<ID3D12Device10> device;
 		wrl::ComPtr<ID3D12CommandQueue> commandQueue;
 		wrl::ComPtr<ID3D12Fence> fence;
 		std::atomic_uint64_t fenceValue = 0;

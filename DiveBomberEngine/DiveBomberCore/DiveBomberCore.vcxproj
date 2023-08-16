@@ -161,7 +161,6 @@
     <ClInclude Include="Source\Graphics\BindObj\IndexBuffer.h" />
     <ClInclude Include="Source\Graphics\DX\CommandQueue.h" />
     <ClInclude Include="Source\Console\Console.h" />
-    <ClInclude Include="Source\Graphics\DX\d3dx12.h" />
     <ClInclude Include="Source\DiveBomberCore.h" />
     <ClInclude Include="Source\Graphics\BindObj\RootSignature.h" />
     <ClInclude Include="Source\Utility\Common.h" />
@@ -175,7 +174,6 @@
     <ClInclude Include="Source\Utility\GlobalParameters.h" />
     <ClInclude Include="Source\Hardware\Keyboard.h" />
     <ClInclude Include="Source\Hardware\Mouse.h" />
-    <ClInclude Include="Resource\resource.h" />
     <ClInclude Include="Source\Graphics\DX\SwapChain.h" />
     <ClInclude Include="Config\SystemConfig.h" />
     <ClInclude Include="Source\Utility\Timer.h" />
@@ -190,14 +188,7 @@
     <ClInclude Include="ThirdParty\ThreadSafeQueue.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Resource\Resource.rc" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="packages.config" />
-    <None Include="Resource\Resource.aps" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="Resource\DiveBomberIcon.ico" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\PShader.hlsl">
@@ -208,6 +199,9 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource\Resource.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

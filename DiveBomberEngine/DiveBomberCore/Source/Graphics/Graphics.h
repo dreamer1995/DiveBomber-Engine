@@ -60,9 +60,9 @@ namespace DiveBomber::DEGraphics
 		void ReSizeMainRT(const uint32_t inputWidth, const uint32_t inputHeight);
 		[[nodiscard]] std::shared_ptr<DX::CommandQueue> GetCommandQueue(D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT) const noexcept;
 		void Flush() const noexcept;
-		[[nodiscard]] wrl::ComPtr<ID3D12Device2> GetDecive() const noexcept;
+		[[nodiscard]] wrl::ComPtr<ID3D12Device10> GetDecive() const noexcept;
 		[[nodiscard]] std::shared_ptr<DX::CommandList> GetCommandList(const D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT) noexcept;
-		[[nodiscard]] wrl::ComPtr<ID3D12GraphicsCommandList2> GetGraphicsCommandList(const D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT) noexcept;
+		[[nodiscard]] wrl::ComPtr<ID3D12GraphicsCommandList7> GetGraphicsCommandList(const D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT) noexcept;
 		[[nodiscard]] std::shared_ptr<BindObj::RenderTarget> GetCurrentBackBuffer() const noexcept;
 		[[nodiscard]] std::shared_ptr<BindObj::DepthStencil> GetMainDS() const noexcept;
 		uint64_t ExecuteCommandList(const D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT);

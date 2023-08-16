@@ -47,14 +47,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Utility\Common.h" />
-    <ClInclude Include="Source\Graphics\DX\d3dx12.h" />
     <ClInclude Include="Source\Utility\Timer.h" />
     <ClInclude Include="Source\Graphics\DEWrl.h" />
     <ClInclude Include="Source\Window\Window.h" />
     <ClInclude Include="Source\Exception\WindowException.h" />
     <ClInclude Include="Source\Window\DEWindows.h" />
     <ClInclude Include="ThirdParty\WindowsMessageMap.h" />
-    <ClInclude Include="Resource\resource.h" />
     <ClInclude Include="Source\Hardware\Mouse.h" />
     <ClInclude Include="Source\Hardware\Keyboard.h" />
     <ClInclude Include="Source\Utility\GlobalParameters.h" />
@@ -109,17 +107,13 @@
     <ClInclude Include="Source\Graphics\DX\ResourceStateTracker.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Resource\Resource.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resource\Resource.aps" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="Resource\DiveBomberIcon.ico" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\VShader.hlsl" />
     <FxCompile Include="Shader\PShader.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource\Resource.rc" />
   </ItemGroup>
 </Project>

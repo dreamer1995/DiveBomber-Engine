@@ -9,7 +9,7 @@ namespace DiveBomber::DX
 {
 	//using namespace DEGraphics;
 	using namespace DEException;
-	CommandList::CommandList(wrl::ComPtr<ID3D12Device2> device, D3D12_COMMAND_LIST_TYPE inputType)
+	CommandList::CommandList(wrl::ComPtr<ID3D12Device10> device, D3D12_COMMAND_LIST_TYPE inputType)
 		:
 		type(inputType)
 	{
@@ -35,7 +35,7 @@ namespace DiveBomber::DX
 		ReleaseTrackedObjects();
 	}
 
-	wrl::ComPtr<ID3D12GraphicsCommandList2> CommandList::GetGraphicsCommandList() const
+	wrl::ComPtr<ID3D12GraphicsCommandList7> CommandList::GetGraphicsCommandList() const
 	{
 		return commandList;
 	}

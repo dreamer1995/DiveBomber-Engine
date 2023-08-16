@@ -19,7 +19,7 @@ namespace DiveBomber::BindObj
 	{
 	}
 
-	RenderTarget::RenderTarget(wrl::ComPtr<ID3D12Device2> device, wrl::ComPtr<ID3D12Resource> inputBuffer,
+	RenderTarget::RenderTarget(wrl::ComPtr<ID3D12Device10> device, wrl::ComPtr<ID3D12Resource> inputBuffer,
 		std::shared_ptr<DescriptorAllocation> inputDescriptorAllocation, UINT inputDepth)
 		:
 		renderTargetBuffer(inputBuffer),
@@ -47,7 +47,7 @@ namespace DiveBomber::BindObj
 	{
 	}
 
-	RenderTarget::RenderTarget(wrl::ComPtr<ID3D12Device2> device, UINT inputWidth, UINT inputHeight,
+	RenderTarget::RenderTarget(wrl::ComPtr<ID3D12Device10> device, UINT inputWidth, UINT inputHeight,
 		std::shared_ptr<DescriptorAllocation> inputDescriptorAllocation, DXGI_FORMAT inputFormat, UINT inputDepth, UINT inputMipLevels)
 		:
 		descriptorAllocation(inputDescriptorAllocation),
@@ -104,7 +104,7 @@ namespace DiveBomber::BindObj
 	{
 		Resize(gfx.GetDecive(), inputWidth, inputHeight, inputDepth);
 	}
-	void RenderTarget::Resize(wrl::ComPtr<ID3D12Device2> device, const UINT inputWidth, const UINT inputHeight, const UINT inputDepth)
+	void RenderTarget::Resize(wrl::ComPtr<ID3D12Device10> device, const UINT inputWidth, const UINT inputHeight, const UINT inputDepth)
 	{
 		width = std::max(1u, inputWidth);
 		height = std::max(1u, inputHeight);

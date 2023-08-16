@@ -31,7 +31,7 @@ namespace DiveBomber::BindObj
 		std::string tag;
 		UINT stride;
 		wrl::ComPtr<ID3D12Resource> vertexBuffer;
-		wrl::ComPtr<ID3D12Resource> vertexUploadBuffer;
+		wrl::ComPtr<ID3D12Resource2> vertexUploadBuffer;
 		VertexProcess::VertexLayout layout;
 		D3D12_VERTEX_BUFFER_VIEW vertexBufferView;
 	};

@@ -11,7 +11,7 @@ namespace DiveBomber::DX
     DXDevice::DXDevice(const wrl::ComPtr<IDXGIAdapter4> adapter)
     {
         HRESULT hr;
-        GFX_THROW_INFO(D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&dxDevice)));
+        GFX_THROW_INFO(D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_12_2, IID_PPV_ARGS(&dxDevice)));
 
         // Enable debug messages in debug mode.
 #if defined(_DEBUG)
@@ -51,7 +51,7 @@ namespace DiveBomber::DX
 #endif
     }
 
-    wrl::ComPtr<ID3D12Device2> DXDevice::GetDecive() const noexcept
+    wrl::ComPtr<ID3D12Device10> DXDevice::GetDecive() const noexcept
     {
         return dxDevice;
     }

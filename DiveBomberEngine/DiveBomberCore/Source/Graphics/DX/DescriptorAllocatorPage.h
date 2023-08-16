@@ -20,7 +20,7 @@ namespace DiveBomber::DX
 	{
 	public:
 		DescriptorAllocatorPage(DEGraphics::Graphics& gfx, D3D12_DESCRIPTOR_HEAP_TYPE inputType, uint32_t inputNumDescriptors);
-		DescriptorAllocatorPage(wrl::ComPtr<ID3D12Device2> device, D3D12_DESCRIPTOR_HEAP_TYPE inputType, uint32_t inputNumDescriptors);
+		DescriptorAllocatorPage(wrl::ComPtr<ID3D12Device10> device, D3D12_DESCRIPTOR_HEAP_TYPE inputType, uint32_t inputNumDescriptors);
 
 		[[nodiscard]] D3D12_DESCRIPTOR_HEAP_TYPE GetHeapType() const noexcept;
 		[[nodiscard]] bool AvailableSpace(const uint32_t numDescriptors) const;

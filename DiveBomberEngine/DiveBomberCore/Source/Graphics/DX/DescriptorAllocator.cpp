@@ -15,7 +15,7 @@ namespace DiveBomber::DX
 		DescriptorAllocator(gfx.GetDecive(), inputType, inputNumDescriptorsPerHeap)
 	{
 	}
-	DescriptorAllocator::DescriptorAllocator(wrl::ComPtr<ID3D12Device2> inputDevice, D3D12_DESCRIPTOR_HEAP_TYPE inputType, uint32_t inputNumDescriptorsPerHeap)
+	DescriptorAllocator::DescriptorAllocator(wrl::ComPtr<ID3D12Device10> inputDevice, D3D12_DESCRIPTOR_HEAP_TYPE inputType, uint32_t inputNumDescriptorsPerHeap)
 		:
 		device(inputDevice),
 		type(inputType),

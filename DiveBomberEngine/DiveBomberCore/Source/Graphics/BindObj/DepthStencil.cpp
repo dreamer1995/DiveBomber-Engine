@@ -19,7 +19,7 @@ namespace DiveBomber::BindObj
 		
 	}
 
-	DepthStencil::DepthStencil(wrl::ComPtr<ID3D12Device2> device, UINT inputWidth, UINT inputHeight,
+	DepthStencil::DepthStencil(wrl::ComPtr<ID3D12Device10> device, UINT inputWidth, UINT inputHeight,
 		std::shared_ptr<DescriptorAllocation> inputDescriptorAllocation, UINT inputDepth)
 		:
 		descriptorAllocation(inputDescriptorAllocation),
@@ -74,7 +74,7 @@ namespace DiveBomber::BindObj
 		ClearDepth(gfx.GetGraphicsCommandList(), clearDepth);
 	}
 
-	void DepthStencil::ClearDepth(wrl::ComPtr<ID3D12GraphicsCommandList2> commandList, FLOAT clearDepth) const noexcept
+	void DepthStencil::ClearDepth(wrl::ComPtr<ID3D12GraphicsCommandList7> commandList, FLOAT clearDepth) const noexcept
 	{
 		commandList->ClearDepthStencilView(GetDescriptorHandle(), D3D12_CLEAR_FLAG_DEPTH, clearDepth, 0, 0, nullptr);
 	}
@@ -84,7 +84,7 @@ namespace DiveBomber::BindObj
 		Resize(gfx.GetDecive(), inputWidth, inputHeight, inputDepth);
 	}
 
-	void DepthStencil::Resize(wrl::ComPtr<ID3D12Device2> device, const UINT inputWidth, const UINT inputHeight, const UINT inputDepth)
+	void DepthStencil::Resize(wrl::ComPtr<ID3D12Device10> device, const UINT inputWidth, const UINT inputHeight, const UINT inputDepth)
 	{
 		width = std::max(1u, inputWidth);
 		height = std::max(1u, inputHeight);
