@@ -39,7 +39,7 @@ namespace DiveBomber::DX
                             D3D12_RESOURCE_BARRIER newBarrier = barrier;
                             newBarrier.Transition.Subresource = subresourceState.first;
                             newBarrier.Transition.StateBefore = subresourceState.second;
-                            resourceBarriers.push_back(newBarrier);
+                            resourceBarriers.emplace_back(newBarrier);
                         }
                     }
                 }
@@ -50,13 +50,13 @@ namespace DiveBomber::DX
                     {
                         D3D12_RESOURCE_BARRIER newBarrier = barrier;
                         newBarrier.Transition.StateBefore = finalState;
-                        resourceBarriers.push_back(newBarrier);
+                        resourceBarriers.emplace_back(newBarrier);
                     }
                 }
             }
             else
             {
-                pendingResourceBarriers.push_back(barrier);
+                pendingResourceBarriers.emplace_back(barrier);
             }
 
             finalResourceState[transitionBarrier.pResource].SetSubresourceState(transitionBarrier.Subresource, transitionBarrier.StateAfter);
@@ -110,7 +110,7 @@ namespace DiveBomber::DX
                                 D3D12_RESOURCE_BARRIER newBarrier = pendingBarrier;
                                 newBarrier.Transition.Subresource = subresourceState.first;
                                 newBarrier.Transition.StateBefore = subresourceState.second;
-                                resolvedResourceBarriers.push_back(newBarrier);
+                                resolvedResourceBarriers.emplace_back(newBarrier);
                             }
                         }
                     }
@@ -120,7 +120,7 @@ namespace DiveBomber::DX
                         if (pendingTransition.StateAfter != globalState)
                         {
                             pendingBarrier.Transition.StateBefore = globalState;
-                            resolvedResourceBarriers.push_back(pendingBarrier);
+                            resolvedResourceBarriers.emplace_back(pendingBarrier);
                         }
                     }
                 }
