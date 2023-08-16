@@ -105,6 +105,7 @@
     <ClInclude Include="Source\Graphics\DX\DynamicDescriptorHeap.h" />
     <ClInclude Include="Source\Graphics\BindObj\Texture.h" />
     <ClInclude Include="Source\Graphics\DX\ResourceStateTracker.h" />
+    <ClInclude Include="Source\Graphics\DEDirextX.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

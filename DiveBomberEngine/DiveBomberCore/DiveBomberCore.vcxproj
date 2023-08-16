@@ -135,6 +135,7 @@
     <ClInclude Include="Source\Graphics\BindObj\DepthStencil.h" />
     <ClInclude Include="Source\Graphics\BindObj\PipelineStateObject.h" />
     <ClInclude Include="Source\Graphics\BindObj\Texture.h" />
+    <ClInclude Include="Source\Graphics\DEDirextX.h" />
     <ClInclude Include="Source\Graphics\DX\DescriptorAllocation.h" />
     <ClInclude Include="Source\Graphics\DX\DescriptorAllocator.h" />
     <ClInclude Include="Source\Graphics\DX\DescriptorAllocatorPage.h" />

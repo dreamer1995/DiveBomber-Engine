@@ -5,9 +5,8 @@
 #include "..\Utility\Common.h"
 #include "..\Utility\DEMath.h"
 #include "DEWrl.h"
+#include "DEDirextX.h"
 
-#include <d3d12.h>
-#include <d3dx12.h>
 #include <dxgi1_6.h>
 #include <DirectXMath.h>
 
