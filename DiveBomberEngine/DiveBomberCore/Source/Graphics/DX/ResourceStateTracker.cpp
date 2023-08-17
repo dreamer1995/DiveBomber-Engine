@@ -2,8 +2,6 @@
 
 #include "..\DX\CommandList.h"
 
-//#pragma warning(disable:26110)
-
 namespace DiveBomber::DX
 {
     std::mutex ResourceStateTracker::globalResourceStateMutex;
@@ -182,7 +180,9 @@ namespace DiveBomber::DX
     {
         if (isLocked)
         {
+            //#pragma warning(disable:26110)
             globalResourceStateMutex.unlock();
+            //#pragma warning(default:26110)
             isLocked = false;
         }
     }
