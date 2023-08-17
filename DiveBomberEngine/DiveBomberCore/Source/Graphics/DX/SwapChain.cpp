@@ -2,8 +2,8 @@
 
 #include "..\BindObj\RenderTarget.h"
 #include "..\..\Exception\GraphicsException.h"
-#include "..\DX\DescriptorAllocator.h"
-#include "..\DX\DescriptorAllocation.h"
+#include "DescriptorAllocator.h"
+#include "DescriptorAllocation.h"
 
 namespace DiveBomber::DX
 {

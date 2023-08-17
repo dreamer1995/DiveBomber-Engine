@@ -2,8 +2,8 @@
 
 #include "..\..\Exception\GraphicsException.h"
 #include "..\Graphics.h"
-#include "..\DX\UploadBuffer.h"
-#include "..\DX\ResourceStateTracker.h"
+#include "UploadBuffer.h"
+#include "ResourceStateTracker.h"
 
 namespace DiveBomber::DX
 {
@@ -118,5 +118,10 @@ namespace DiveBomber::DX
 	void CommandList::ReleaseTrackedObjects() noexcept
 	{
 		trackedObjects.clear();
+	}
+
+	std::shared_ptr<UploadBufferAllocation> CommandList::AllocateDynamicUploadBuffer(const size_t size, const size_t alignment)
+	{
+		return uploadBuffer->Allocate(size, alignment);
 	}
 }

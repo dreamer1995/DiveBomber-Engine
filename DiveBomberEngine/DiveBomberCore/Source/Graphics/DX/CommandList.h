@@ -11,6 +11,7 @@ namespace DiveBomber::DEGraphics
 namespace DiveBomber::DX
 {
 	class UploadBuffer;
+	struct UploadBufferAllocation;
 	class ResourceStateTracker;
 
 	class CommandList final
@@ -31,6 +32,7 @@ namespace DiveBomber::DX
 
 		void TrackResource(wrl::ComPtr<ID3D12Object> object) noexcept;
 		void ReleaseTrackedObjects() noexcept;
+		std::shared_ptr<UploadBufferAllocation> AllocateDynamicUploadBuffer(const size_t size, const size_t alignment);
 	private:
 		D3D12_COMMAND_LIST_TYPE type;
 		wrl::ComPtr<ID3D12CommandAllocator> commandAllocator;

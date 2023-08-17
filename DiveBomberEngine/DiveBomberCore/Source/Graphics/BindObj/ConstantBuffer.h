@@ -5,6 +5,7 @@
 #include "..\..\Exception\GraphicsExceptionEX.h"
 #include "..\DX\CommandList.h"
 #include "..\DX\ResourceStateTracker.h"
+#include "..\DX\UploadBuffer.h"
 
 namespace DiveBomber::BindObj
 {
@@ -62,19 +63,6 @@ namespace DiveBomber::BindObj
 				IID_PPV_ARGS(&constantBuffer)));
 
 			DX::ResourceStateTracker::AddGlobalResourceState(constantBuffer, D3D12_RESOURCE_STATE_COMMON);
-
-			{
-				const CD3DX12_HEAP_PROPERTIES heapProp{ D3D12_HEAP_TYPE_UPLOAD };
-				const CD3DX12_RESOURCE_DESC resDes = CD3DX12_RESOURCE_DESC::Buffer(initBufferSize);
-
-				GFX_THROW_INFO_NAMESPACE(gfx.GetDecive()->CreateCommittedResource(
-					&heapProp,
-					D3D12_HEAP_FLAG_NONE,
-					&resDes,
-					D3D12_RESOURCE_STATE_GENERIC_READ,
-					nullptr,
-					IID_PPV_ARGS(&constantUploadBuffer)));
-			}
 		}
 
 		void Update(DEGraphics::Graphics& gfx, const C& constantData)
@@ -90,6 +78,9 @@ namespace DiveBomber::BindObj
 					InitializeConstantBufferSize(gfx);
 				}
 
+				std::shared_ptr<DX::UploadBufferAllocation> uploadBufferAllocation =
+					gfx.GetCommandList()->AllocateDynamicUploadBuffer(bufferSize, D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT);
+
 				D3D12_SUBRESOURCE_DATA subresourceData = {};
 				subresourceData.pData = &constantData;
 				subresourceData.RowPitch = bufferSize;
@@ -99,8 +90,8 @@ namespace DiveBomber::BindObj
 				commandList->AddTransitionBarrier(constantBuffer, D3D12_RESOURCE_STATE_COPY_DEST, true);
 
 				UpdateSubresources(commandList->GetGraphicsCommandList().Get(),
-					constantBuffer.Get(), constantUploadBuffer.Get(),
-					0, 0, 1, &subresourceData);
+					constantBuffer.Get(), uploadBufferAllocation->resourceBuffer.Get(),
+					uploadBufferAllocation->offset, 0, 1, &subresourceData);
 
 				commandList->AddTransitionBarrier(constantBuffer, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, true);
 			}
@@ -145,7 +136,6 @@ namespace DiveBomber::BindObj
 
 	private:
 		wrl::ComPtr<ID3D12Resource> constantBuffer;
-		wrl::ComPtr<ID3D12Resource> constantUploadBuffer;
 		std::string tag;
 		UINT slot;
 		size_t bufferSize = 0u;

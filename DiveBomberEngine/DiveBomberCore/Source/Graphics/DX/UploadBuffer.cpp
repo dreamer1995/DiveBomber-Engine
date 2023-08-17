@@ -30,7 +30,7 @@ namespace DiveBomber::DX
 		return pageSize;
 	}
 
-	UploadBuffer::AllocationInfo UploadBuffer::Allocate(const size_t size, const size_t alignment)
+	std::shared_ptr<UploadBufferAllocation> UploadBuffer::Allocate(const size_t size, const size_t alignment)
 	{
 		if (size > pageSize)
 		{
@@ -110,7 +110,7 @@ namespace DiveBomber::DX
 		return alignedSize + alignedOffset <= pageSize;
 	}
 
-	UploadBuffer::AllocationInfo UploadBuffer::Page::Allocate(const size_t size, const size_t alignment)
+	std::shared_ptr<UploadBufferAllocation> UploadBuffer::Page::Allocate(const size_t size, const size_t alignment)
 	{
 		if (!AvailableSpace(size, alignment))
 		{
@@ -121,13 +121,16 @@ namespace DiveBomber::DX
 		size_t alignedSize = Utility::AlignUp(size, alignment);
 		offset = Utility::AlignUp(offset, alignment);
 
-		AllocationInfo allocationInfo;
-		allocationInfo.CPUAddress = static_cast<uint8_t*>(CPUAddress) + offset;
-		allocationInfo.GPUAddress = GPUAddress + offset;
+		std::shared_ptr<UploadBufferAllocation> uploadBufferAllocation = std::make_shared<UploadBufferAllocation>();
+		uploadBufferAllocation->CPUAddress = static_cast<uint8_t*>(CPUAddress) + offset;
+		uploadBufferAllocation->GPUAddress = GPUAddress + offset;
+		uploadBufferAllocation->resourceBuffer = resourceBuffer;
+		uploadBufferAllocation->offset = offset;
+
 
 		offset += alignedSize;
 
-		return allocationInfo;
+		return uploadBufferAllocation;
 	}
 	void UploadBuffer::Page::Reset() noexcept
 	{

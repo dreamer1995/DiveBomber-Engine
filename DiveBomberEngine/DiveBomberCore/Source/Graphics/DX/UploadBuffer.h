@@ -26,21 +26,23 @@ namespace DiveBomber::DEGraphics
 
 namespace DiveBomber::DX
 {
+	struct UploadBufferAllocation
+	{
+		void* CPUAddress = 0;
+		D3D12_GPU_VIRTUAL_ADDRESS GPUAddress = 0;
+		wrl::ComPtr<ID3D12Resource> resourceBuffer;
+		size_t offset = 0;
+	};
+
 	class UploadBuffer final
 	{
 	public:
-		struct AllocationInfo
-		{
-			void* CPUAddress;
-			D3D12_GPU_VIRTUAL_ADDRESS GPUAddress;
-		};
-	public:
-		UploadBuffer(DEGraphics::Graphics& gfx, size_t inputPageSize = _2MB);
-		UploadBuffer(wrl::ComPtr<ID3D12Device10> inputDevice, size_t inputPageSize = _2MB);
+		UploadBuffer(DEGraphics::Graphics& gfx, size_t inputPageSize = _32MB);
+		UploadBuffer(wrl::ComPtr<ID3D12Device10> inputDevice, size_t inputPageSize = _32MB);
 		~UploadBuffer();
 
 		[[nodiscard]] size_t GetPageSize() const noexcept;
-		[[nodiscard]] AllocationInfo Allocate(const size_t size, const size_t alignment);
+		[[nodiscard]] std::shared_ptr<UploadBufferAllocation> Allocate(const size_t size, const size_t alignment);
 		void Reset() noexcept;
 
 	private:
@@ -51,7 +53,7 @@ namespace DiveBomber::DX
 			~Page();
 
 			[[nodiscard]] bool AvailableSpace(const size_t size, const size_t alignment) const noexcept;
-			[[nodiscard]] AllocationInfo Allocate(const size_t size, const size_t alignment);
+			[[nodiscard]] std::shared_ptr<UploadBufferAllocation> Allocate(const size_t size, const size_t alignment);
 			void Reset() noexcept;
 		private:
 			wrl::ComPtr<ID3D12Resource> resourceBuffer;

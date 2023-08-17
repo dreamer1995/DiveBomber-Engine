@@ -1,6 +1,6 @@
 #include "ResourceStateTracker.h"
 
-#include "..\DX\CommandList.h"
+#include "CommandList.h"
 
 namespace DiveBomber::DX
 {

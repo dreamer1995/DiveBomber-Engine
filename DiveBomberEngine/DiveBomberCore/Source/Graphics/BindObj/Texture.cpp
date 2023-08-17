@@ -6,6 +6,7 @@
 #include "..\DX\DescriptorAllocation.h"
 #include "..\DX\CommandList.h"
 #include "..\DX\ResourceStateTracker.h"
+#include "..\DX\UploadBuffer.h"
 
 #include <DirectXTex\DirectXTex.h>
 #pragma comment(lib,"DirectXTex.lib")
@@ -128,29 +129,24 @@ namespace DiveBomber::BindObj
 		}
 
 		{
-			const CD3DX12_HEAP_PROPERTIES heapProps{ D3D12_HEAP_TYPE_UPLOAD };
 			const auto uploadBufferSize = GetRequiredIntermediateSize(
 				textureBuffer.Get(), 0, (UINT)subresourceData.size()
 			);
-			const auto resourceDesc = CD3DX12_RESOURCE_DESC::Buffer(uploadBufferSize);
-			GFX_THROW_INFO(gfx.GetDecive()->CreateCommittedResource(
-				&heapProps,
-				D3D12_HEAP_FLAG_NONE,
-				&resourceDesc,
-				D3D12_RESOURCE_STATE_GENERIC_READ,
-				nullptr,
-				IID_PPV_ARGS(&textureUploadBuffer)
-			));
+
+			std::shared_ptr<UploadBufferAllocation> uploadBufferAllocation =
+				gfx.GetCommandList()->AllocateDynamicUploadBuffer(uploadBufferSize, D3D12_TEXTURE_DATA_PITCH_ALIGNMENT);
+
+			UpdateSubresources(
+				gfx.GetGraphicsCommandList(D3D12_COMMAND_LIST_TYPE_COPY).Get(),
+				textureBuffer.Get(),
+				uploadBufferAllocation->resourceBuffer.Get(),
+				uploadBufferAllocation->offset, 0,
+				(UINT)subresourceData.size(),
+				subresourceData.data()
+			);
 		}
 
-		UpdateSubresources(
-			gfx.GetGraphicsCommandList(D3D12_COMMAND_LIST_TYPE_COPY).Get(),
-			textureBuffer.Get(),
-			textureUploadBuffer.Get(),
-			0, 0,
-			(UINT)subresourceData.size(),
-			subresourceData.data()
-		);
+		
 
 		gfx.GetCommandList()->AddTransitionBarrier(textureBuffer, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, true);
 
