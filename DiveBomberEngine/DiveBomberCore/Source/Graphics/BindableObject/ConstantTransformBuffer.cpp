@@ -1,11 +1,13 @@
 #include "ConstantTransformBuffer.h"
 
 #include "ConstantBuffer.h"
+#include "..\DrawableObject\Drawable.h"
 
 namespace DiveBomber::BindableObject
 {
 	using namespace DEGraphics;
 	using namespace DEException;
+	using namespace DrawableObject;
 
 	ConstantTransformBuffer::ConstantTransformBuffer(Graphics& gfx)
 	{
@@ -23,16 +25,25 @@ namespace DiveBomber::BindableObject
 		return transforms;
 	}
 
+	void ConstantTransformBuffer::InitializeParentReference(const Drawable& inputParent) noexcept
+	{
+		parent = &inputParent;
+	}
+
 	ConstantTransformBuffer::Transforms ConstantTransformBuffer::CalculateTransformMatrices(const Graphics& gfx) noxnd
 	{
+		const auto modelMatrix = parent->GetTransformXM();
+		const auto cameraMatrix = gfx.GetCameraMatrix();
+		const auto projectionMatrix = gfx.GetProjetionMatrix();
+
 		const auto matrix_M2W = DirectX::XMMatrixTranspose(modelMatrix);
 		const auto matrix_W2M = DirectX::XMMatrixInverse(nullptr, matrix_M2W);
-		const auto matrix_V = DirectX::XMMatrixTranspose(gfx.GetCameraMatrix());
+		const auto matrix_V = DirectX::XMMatrixTranspose(cameraMatrix);
 		const auto matrix_MV = matrix_V * matrix_M2W;
-		const auto matrix_P = DirectX::XMMatrixTranspose(gfx.GetProjetionMatrix());
+		const auto matrix_P = DirectX::XMMatrixTranspose(projectionMatrix);
 		const auto matrix_VP = matrix_P * matrix_V;
 		const auto matrix_MVP = matrix_P * matrix_MV;
-		const auto matrix_T_MV = modelMatrix * gfx.GetCameraMatrix();
+		const auto matrix_T_MV = DirectX::XMMatrixTranspose(matrix_MV);
 		const auto matrix_IT_MV = DirectX::XMMatrixInverse(nullptr, matrix_T_MV);
 		const auto matrix_I_V = DirectX::XMMatrixInverse(nullptr, matrix_V);
 		const auto matrix_I_P = DirectX::XMMatrixInverse(nullptr, matrix_P);
@@ -52,10 +63,5 @@ namespace DiveBomber::BindableObject
 				matrix_I_VP,
 				matrix_I_MVP
 		};
-	}
-
-	void ConstantTransformBuffer::InitializeParentReference(DirectX::XMMATRIX inputModelMatrix) noexcept
-	{
-		modelMatrix = inputModelMatrix;
 	}
 }

@@ -9,12 +9,6 @@ namespace DiveBomber
 #else
 	#define noxnd noexcept(true)
 #endif
-
-#define EngineDirectory "..\\..\\DiveBomberCore\\"
-#define EngineDirectoryW L"..\\..\\DiveBomberCore\\"
-
-#define ProjectDirectory "..\\..\\..\\SampleProject\\"
-#define ProjectDirectoryW L"..\\..\\..\\SampleProject\\"
 }
 
 namespace DiveBomber::Utility

@@ -6,6 +6,7 @@
 #include "..\DX\DescriptorAllocation.h"
 #include "..\DX\CommandList.h"
 #include "..\DX\ResourceStateTracker.h"
+#include "..\..\Utility\GlobalParameters.h"
 
 #include <DirectXTex\DirectXTex.h>
 #pragma comment(lib,"DirectXTex.lib")

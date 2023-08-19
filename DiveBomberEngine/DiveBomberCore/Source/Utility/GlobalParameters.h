@@ -1,6 +1,15 @@
 #pragma once
 #include <cstdint>
 
+namespace DiveBomber
+{
+#define EngineDirectory "..\\..\\DiveBomberCore\\"
+#define EngineDirectoryW L"..\\..\\DiveBomberCore\\"
+
+#define ProjectDirectory "..\\..\\..\\SampleProject\\"
+#define ProjectDirectoryW L"..\\..\\..\\SampleProject\\"
+}
+
 namespace DiveBomber::Utility
 {
 	extern uint64_t g_FrameCounter;

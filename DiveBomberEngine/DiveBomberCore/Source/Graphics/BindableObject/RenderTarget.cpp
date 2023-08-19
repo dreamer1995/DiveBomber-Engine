@@ -84,9 +84,7 @@ namespace DiveBomber::BindableObject
 
 	void RenderTarget::BindTarget(DEGraphics::Graphics& gfx, std::shared_ptr<BindableTarget> depthStencil) noxnd
 	{
-		assert(dynamic_cast<DepthStencil*>(depthStencil.get()) != nullptr);
-
-		D3D12_CPU_DESCRIPTOR_HANDLE depthDescHeapHandle = static_cast<DepthStencil*>(depthStencil.get())->GetDescriptorHandle();
+		D3D12_CPU_DESCRIPTOR_HANDLE depthDescHeapHandle = std::dynamic_pointer_cast<DepthStencil>(depthStencil)->GetDescriptorHandle();
 		gfx.GetGraphicsCommandList()->OMSetRenderTargets(1, &cpuHandle, FALSE, &depthDescHeapHandle);
 	}
 

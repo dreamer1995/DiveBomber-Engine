@@ -88,6 +88,7 @@
     <ClCompile Include="Source\Graphics\BindableObject\Texture.cpp" />
     <ClCompile Include="Source\Graphics\Component\Camera.cpp" />
     <ClCompile Include="Source\Graphics\DrawableObject\Drawable.cpp" />
+    <ClCompile Include="Source\Graphics\DrawableObject\SimpleSphere.cpp" />
     <ClCompile Include="Source\Graphics\DX\DescriptorAllocation.cpp" />
     <ClCompile Include="Source\Graphics\DX\DescriptorAllocator.cpp" />
     <ClCompile Include="Source\Graphics\DX\DescriptorAllocatorPage.cpp" />
@@ -104,7 +105,7 @@
     <ClCompile Include="Source\Graphics\BindableObject\IndexBuffer.cpp" />
     <ClCompile Include="Source\Graphics\DX\CommandQueue.cpp" />
     <ClCompile Include="Source\Graphics\BindableObject\RootSignature.cpp" />
-    <ClCompile Include="Source\Graphics\Scene\Scene.cpp" />
+    <ClCompile Include="Source\Scene\Scene.cpp" />
     <ClCompile Include="Source\Utility\Color.h" />
     <ClCompile Include="Source\Utility\Common.cpp" />
     <ClCompile Include="Source\Console\Console.cpp" />
@@ -139,6 +140,7 @@
     <ClInclude Include="Source\Graphics\BindableObject\Texture.h" />
     <ClInclude Include="Source\Graphics\DEDirextX.h" />
     <ClInclude Include="Source\Graphics\DrawableObject\Drawable.h" />
+    <ClInclude Include="Source\Graphics\DrawableObject\SimpleSphere.h" />
     <ClInclude Include="Source\Graphics\DX\DescriptorAllocation.h" />
     <ClInclude Include="Source\Graphics\DX\DescriptorAllocator.h" />
     <ClInclude Include="Source\Graphics\DX\DescriptorAllocatorPage.h" />
@@ -167,7 +169,7 @@
     <ClInclude Include="Source\Console\Console.h" />
     <ClInclude Include="Source\DiveBomberCore.h" />
     <ClInclude Include="Source\Graphics\BindableObject\RootSignature.h" />
-    <ClInclude Include="Source\Graphics\Scene\Scene.h" />
+    <ClInclude Include="Source\Scene\Scene.h" />
     <ClInclude Include="Source\Utility\Common.h" />
     <ClInclude Include="Source\Graphics\DX\DXDevice.h" />
     <ClInclude Include="Source\Exception\DxgiInfoManager.h" />

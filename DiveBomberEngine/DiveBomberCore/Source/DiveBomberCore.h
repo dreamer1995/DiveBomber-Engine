@@ -20,9 +20,9 @@ namespace DiveBomber
 		class Timer;
 	}
 
-	namespace RenderPipeline
+	namespace DEScene
 	{
-		class RenderPipelineGraph;
+		class Scene;
 	}
 
 	class DiveBomberCore final
@@ -48,6 +48,6 @@ namespace DiveBomber
 
 		std::unique_ptr<Utility::Timer> coreTimer;
 
-		std::unique_ptr<RenderPipeline::RenderPipelineGraph> mainRenderPipeline;
+		std::unique_ptr<DEScene::Scene> currentScene;
 	};
 }

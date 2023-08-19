@@ -3,6 +3,7 @@
 #include "BindableCodex.h"
 #include "..\Graphics.h"
 #include "..\..\Exception\GraphicsException.h"
+#include "..\..\Utility\GlobalParameters.h"
 
 #include <d3dcompiler.h>
 #pragma comment(lib,"D3DCompiler.lib")

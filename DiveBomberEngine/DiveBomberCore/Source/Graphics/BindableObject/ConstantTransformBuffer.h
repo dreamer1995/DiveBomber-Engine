@@ -8,12 +8,17 @@ namespace DiveBomber::DEGraphics
 	class Graphics;
 }
 
+namespace DiveBomber::DrawableObject
+{
+	class Drawable;
+}
+
 namespace DiveBomber::BindableObject
 {
 	template<typename C>
 	class ConstantBuffer;
 
-	class ConstantTransformBuffer final : Bindable
+	class ConstantTransformBuffer final : public Bindable
 	{
 	public:
 		struct Transforms
@@ -37,7 +42,7 @@ namespace DiveBomber::BindableObject
 		void Bind(DEGraphics::Graphics& gfx) noxnd override;
 		[[nodiscard]] Transforms GetTransformMatrices() const noexcept;
 		[[nodiscard]] Transforms CalculateTransformMatrices(const DEGraphics::Graphics& gfx) noxnd;
-		void InitializeParentReference(DirectX::XMMATRIX inputModelMatrix) noexcept;
+		void InitializeParentReference(const DrawableObject::Drawable& inputParent) noexcept;
 
 
 		//Maybe Transform info should be unique, or some of the matrices should be unique.
@@ -47,6 +52,6 @@ namespace DiveBomber::BindableObject
 	private:
 		Transforms transforms;
 		std::unique_ptr<ConstantBuffer<Transforms>> transformCBuffer;
-		DirectX::XMMATRIX modelMatrix;
+		const DrawableObject::Drawable* parent = nullptr;
 	};
 }

@@ -44,8 +44,9 @@
     <ClCompile Include="Source\Graphics\DX\DynamicDescriptorHeap.cpp" />
     <ClCompile Include="Source\Graphics\BindableObject\Texture.cpp" />
     <ClCompile Include="Source\Graphics\DX\ResourceStateTracker.cpp" />
-    <ClCompile Include="Source\Graphics\Scene\Scene.cpp" />
+    <ClCompile Include="Source\Scene\Scene.cpp" />
     <ClCompile Include="Source\Graphics\DrawableObject\Drawable.cpp" />
+    <ClCompile Include="Source\Graphics\DrawableObject\SimpleSphere.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Utility\Common.h" />
@@ -108,8 +109,9 @@
     <ClInclude Include="Source\Graphics\BindableObject\Texture.h" />
     <ClInclude Include="Source\Graphics\DX\ResourceStateTracker.h" />
     <ClInclude Include="Source\Graphics\DEDirextX.h" />
-    <ClInclude Include="Source\Graphics\Scene\Scene.h" />
+    <ClInclude Include="Source\Scene\Scene.h" />
     <ClInclude Include="Source\Graphics\DrawableObject\Drawable.h" />
+    <ClInclude Include="Source\Graphics\DrawableObject\SimpleSphere.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

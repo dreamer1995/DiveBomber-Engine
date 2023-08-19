@@ -1,9 +1,12 @@
 #pragma once
+#include "..\..\Utility\Common.h"
+
+#include <DirectXMath.h>
 #include <string>
 #include <vector>
 #include <memory>
 
-namespace DiveBomber::DEGraphic
+namespace DiveBomber::DEGraphics
 {
 	class Graphics;
 }
@@ -18,12 +21,17 @@ namespace DiveBomber::DrawableObject
 	class Drawable
 	{
 	public:
-		Drawable(DEGraphic::Graphics& gfx, const std::wstring inputName);
-		~Drawable();
+		Drawable() = default;
+		Drawable(DEGraphics::Graphics& gfx, const std::wstring inputName);
+		virtual ~Drawable();
 
-		virtual void Submit() = 0;
-	private:
-		const std::wstring name;
+		[[nodiscard]] virtual DirectX::XMMATRIX GetTransformXM() const noexcept = 0;
+
+		void Submit() const noexcept;
+		virtual void Bind(DEGraphics::Graphics& gfx) const noxnd;
+		void AddBindable(std::shared_ptr<BindableObject::Bindable> bindableObject) noexcept;
+	protected:
+		std::wstring name;
 		std::vector<std::shared_ptr<BindableObject::Bindable>> bindableObjects;
 	};
 }

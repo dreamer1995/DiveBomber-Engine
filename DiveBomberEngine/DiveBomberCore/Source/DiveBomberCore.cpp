@@ -4,11 +4,13 @@
 #include "Graphics\Graphics.h"
 #include "Console\Console.h"
 #include "Utility\Timer.h"
-#include "Graphics\RenderPipeline\RenderPipelineGraph.h"
 #include "Hardware\Keyboard.h"
 #include "Hardware\Mouse.h"
 #include "Graphics\Component\Camera.h"
 #include "Utility\GlobalParameters.h"
+#include "Scene\Scene.h"
+
+#include "Graphics\DrawableObject\SimpleSphere.h"
 
 #include <iostream>
 
@@ -69,10 +71,10 @@ namespace DiveBomber
 
 	void DiveBomberCore::Start()
 	{
-		using namespace DiveBomber::RenderPipeline;
+		using namespace DEScene;
+		currentScene = std::make_unique<Scene>();
 
-		mainRenderPipeline = std::make_unique<RenderPipelineGraph>();
-		mainRenderPipeline->LoadContent(wnd->Gfx());
+		currentScene->LoadSceneFromFile(wnd->Gfx(), L"Test Scene");
 	}
 
 	void DiveBomberCore::Update()
@@ -86,6 +88,7 @@ namespace DiveBomber
 		RefreshRenderReport();
 
 		ProcessInput();
+		GameLogic();
 		RenderLogic();
 	}
 
@@ -146,7 +149,7 @@ namespace DiveBomber
 			}
 		}
 
-		std::shared_ptr<Component::Camera> mainCamera = mainRenderPipeline->GetMainCamera();
+		std::shared_ptr<Component::Camera> mainCamera = currentScene->GetMainCamera();
 		float deltaTime = (float)g_RawDeltaTime;
 
 		static float cameraSpeed = 1.0f;
@@ -288,6 +291,27 @@ namespace DiveBomber
 		}
 	}
 
+	void DiveBomberCore::GameLogic()
+	{
+		// Update the model matrix.
+		float angle = (float)Utility::g_GameTime;
+
+		using namespace DrawableObject;
+		auto drawable = currentScene->GetSceneObject();
+		auto sphere = std::dynamic_pointer_cast<SimpleSphere>(drawable);
+		if (sphere)
+			sphere->SetRotation({ 0, angle ,0 });
+	}
+
+	void DiveBomberCore::RenderLogic()
+	{
+		wnd->Gfx().BeginFrame();
+
+		currentScene->Render(wnd->Gfx());
+
+		wnd->Gfx().EndFrame();
+	}
+
 	void DiveBomberCore::ExecuteConsoleCommand()
 	{
 		if (!EnableConsole)
@@ -308,15 +332,6 @@ namespace DiveBomber
 			threadTasks.emplace(std::thread{ &Console::GetInput, console.get(), std::ref(command) });
 		}
 	};
-
-	void DiveBomberCore::RenderLogic()
-	{
-		wnd->Gfx().BeginFrame();
-
-		mainRenderPipeline->Bind(wnd->Gfx());
-
-		wnd->Gfx().EndFrame();
-	}
 
 	void DiveBomberCore::RefreshRenderReport()
 	{
