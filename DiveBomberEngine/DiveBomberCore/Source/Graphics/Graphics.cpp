@@ -259,11 +259,11 @@ namespace DiveBomber::DEGraphics
 		switch (type)
 		{
 		case D3D12_COMMAND_LIST_TYPE_DIRECT:
-			return directCommandQueue->ExecuteCommandList(std::move(directCommandList));
+			return directCommandList ? directCommandQueue->ExecuteCommandList(std::move(directCommandList)) : 0;
 		case D3D12_COMMAND_LIST_TYPE_COMPUTE:
-			return computeCommandQueue->ExecuteCommandList(std::move(computeCommandList));
+			return computeCommandList ? computeCommandQueue->ExecuteCommandList(std::move(computeCommandList)) : 0;
 		case D3D12_COMMAND_LIST_TYPE_COPY:
-			return copyCommandQueue->ExecuteCommandList(std::move(copyCommandList));
+			return copyCommandList ? copyCommandQueue->ExecuteCommandList(std::move(copyCommandList)) : 0;
 		default:
 			assert(false && "Invalid command queue type.");
 			return -1;
