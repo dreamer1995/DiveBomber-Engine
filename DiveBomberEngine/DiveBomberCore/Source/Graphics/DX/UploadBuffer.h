@@ -37,8 +37,8 @@ namespace DiveBomber::DX
 	class UploadBuffer final
 	{
 	public:
-		UploadBuffer(DEGraphics::Graphics& gfx, size_t inputPageSize = _32MB);
-		UploadBuffer(wrl::ComPtr<ID3D12Device10> inputDevice, size_t inputPageSize = _32MB);
+		UploadBuffer(DEGraphics::Graphics& gfx, size_t inputPageSize = _2MB);
+		UploadBuffer(wrl::ComPtr<ID3D12Device10> inputDevice, size_t inputPageSize = _2MB);
 		~UploadBuffer();
 
 		[[nodiscard]] size_t GetPageSize() const noexcept;

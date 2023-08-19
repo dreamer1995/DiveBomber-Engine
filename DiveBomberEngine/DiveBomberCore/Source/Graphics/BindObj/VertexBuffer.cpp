@@ -5,7 +5,6 @@
 #include "..\..\Exception\GraphicsException.h"
 #include "..\DX\CommandList.h"
 #include "..\DX\ResourceStateTracker.h"
-#include "..\DX\UploadBuffer.h"
 
 namespace DiveBomber::BindObj
 {
@@ -45,17 +44,31 @@ namespace DiveBomber::BindObj
 		// Create an committed resource for the upload.
 		if (vbuf.GetData())
 		{
-			std::shared_ptr<UploadBufferAllocation> uploadBufferAllocation =
-				gfx.GetCommandList()->AllocateDynamicUploadBuffer(bufferSize, stride);
+			wrl::ComPtr<ID3D12Resource2> vertexUploadBuffer;
+
+			const CD3DX12_HEAP_PROPERTIES heapProp{ D3D12_HEAP_TYPE_UPLOAD };
+			const CD3DX12_RESOURCE_DESC resDes = CD3DX12_RESOURCE_DESC::Buffer(bufferSize);
+
+			GFX_THROW_INFO(gfx.GetDecive()->CreateCommittedResource(
+				&heapProp,
+				D3D12_HEAP_FLAG_NONE,
+				&resDes,
+				D3D12_RESOURCE_STATE_GENERIC_READ,
+				nullptr,
+				IID_PPV_ARGS(&vertexUploadBuffer)));
 
 			D3D12_SUBRESOURCE_DATA subresourceData = {};
 			subresourceData.pData = vbuf.GetData();
 			subresourceData.RowPitch = bufferSize;
 			subresourceData.SlicePitch = subresourceData.RowPitch;
 
-			UpdateSubresources(gfx.GetGraphicsCommandList(D3D12_COMMAND_LIST_TYPE_COPY).Get(),
-				vertexBuffer.Get(), uploadBufferAllocation->resourceBuffer.Get(),
-				uploadBufferAllocation->offset, 0, 1, &subresourceData);
+			std::shared_ptr<CommandList> copyCommandList = gfx.GetCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
+
+			UpdateSubresources(copyCommandList->GetGraphicsCommandList().Get(),
+				vertexBuffer.Get(), vertexUploadBuffer.Get(),
+				0, 0, 1, &subresourceData);
+
+			copyCommandList->TrackResource(vertexUploadBuffer);
 		}
 
 		gfx.GetCommandList()->AddTransitionBarrier(vertexBuffer, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);

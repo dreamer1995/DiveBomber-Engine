@@ -192,7 +192,7 @@ namespace DiveBomber::DEGraphics
 		return mainDS;
 	}
 
-	 std::shared_ptr<CommandList> Graphics::GetCommandList(const D3D12_COMMAND_LIST_TYPE type) noexcept
+	std::shared_ptr<CommandList> Graphics::GetCommandList(const D3D12_COMMAND_LIST_TYPE type) noexcept
 	{
 		switch (type)
 		{

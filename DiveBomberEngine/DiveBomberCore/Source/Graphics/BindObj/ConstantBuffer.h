@@ -78,15 +78,16 @@ namespace DiveBomber::BindObj
 					InitializeConstantBufferSize(gfx);
 				}
 
+				std::shared_ptr<DX::CommandList> commandList = gfx.GetCommandList();
+
 				std::shared_ptr<DX::UploadBufferAllocation> uploadBufferAllocation =
-					gfx.GetCommandList()->AllocateDynamicUploadBuffer(bufferSize, D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT);
+					commandList->AllocateDynamicUploadBuffer(bufferSize, D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT);
 
 				D3D12_SUBRESOURCE_DATA subresourceData = {};
 				subresourceData.pData = &constantData;
 				subresourceData.RowPitch = bufferSize;
 				subresourceData.SlicePitch = subresourceData.RowPitch;
 
-				std::shared_ptr<DX::CommandList> commandList = gfx.GetCommandList();
 				commandList->AddTransitionBarrier(constantBuffer, D3D12_RESOURCE_STATE_COPY_DEST, true);
 
 				UpdateSubresources(commandList->GetGraphicsCommandList().Get(),
