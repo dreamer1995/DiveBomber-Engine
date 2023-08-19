@@ -33,6 +33,7 @@ namespace DiveBomber::DX
 
 		resourceStateTracker->Reset();
 		ReleaseTrackedObjects();
+		uploadBuffer->Reset();
 	}
 
 	wrl::ComPtr<ID3D12GraphicsCommandList7> CommandList::GetGraphicsCommandList() const
