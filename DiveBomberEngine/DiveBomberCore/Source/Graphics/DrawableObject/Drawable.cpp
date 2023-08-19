@@ -1,8 +1,12 @@
 #include "Drawable.h"
 
+#include "..\Graphics.h"
+
 namespace DiveBomber::DrawableObject
 {
-	Drawable::Drawable()
+	using namespace DEGraphic;
+
+	Drawable::Drawable(Graphics& gfx, const std::wstring inputName)
 	{
 	}
 
