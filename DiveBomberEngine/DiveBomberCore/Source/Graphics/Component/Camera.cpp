@@ -1,7 +1,7 @@
 #include "Camera.h"
 
 #include "..\Graphics.h"
-#include "..\BindObj\ConstantBuffer.h"
+#include "..\BindableObject\ConstantBuffer.h"
 //#include "imgui/imgui.h"
 
 namespace DiveBomber::Component

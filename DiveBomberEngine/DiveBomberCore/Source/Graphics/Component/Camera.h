@@ -10,7 +10,7 @@ namespace DiveBomber::DEGraphics
 	class Graphics;
 }
 
-namespace DiveBomber::BindObj
+namespace DiveBomber::BindableObject
 {
 	template<typename C>
 	class ConstantBuffer;

@@ -1,6 +1,6 @@
 #include "SwapChain.h"
 
-#include "..\BindObj\RenderTarget.h"
+#include "..\BindableObject\RenderTarget.h"
 #include "..\..\Exception\GraphicsException.h"
 #include "DescriptorAllocator.h"
 #include "DescriptorAllocation.h"
@@ -9,7 +9,7 @@ namespace DiveBomber::DX
 {
     using namespace DEException;
     using namespace DX;
-    using namespace BindObj;
+    using namespace BindableObject;
 
     SwapChain::SwapChain(const HWND hWnd, const wrl::ComPtr<ID3D12CommandQueue> commandQueue)
     {

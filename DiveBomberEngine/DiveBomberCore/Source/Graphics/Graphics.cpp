@@ -1,7 +1,7 @@
 #include "Graphics.h"
 
 #include "Component\Camera.h"
-#include "BindObj\DepthStencil.h"
+#include "BindableObject\DepthStencil.h"
 #include "..\Exception\GraphicsException.h"
 #include "DX\GPUAdapter.h"
 #include "DX\DXDevice.h"
@@ -20,7 +20,7 @@ namespace DiveBomber::DEGraphics
 {
 	using namespace DX;
 	using namespace DEException;
-	using namespace BindObj;
+	using namespace BindableObject;
 	using namespace Component;
 
 	Graphics::Graphics(HWND inputHWnd, UINT inputWidth, UINT inputHeight)

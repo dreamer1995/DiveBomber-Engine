@@ -19,7 +19,7 @@ namespace DiveBomber::Component
 	class Camera;
 }
 
-namespace DiveBomber::BindObj
+namespace DiveBomber::BindableObject
 {
 	class RenderTarget;
 	class DepthStencil;
@@ -63,8 +63,8 @@ namespace DiveBomber::DEGraphics
 		[[nodiscard]] wrl::ComPtr<ID3D12Device10> GetDecive() const noexcept;
 		[[nodiscard]] std::shared_ptr<DX::CommandList> GetCommandList(const D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT) noexcept;
 		[[nodiscard]] wrl::ComPtr<ID3D12GraphicsCommandList7> GetGraphicsCommandList(const D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT) noexcept;
-		[[nodiscard]] std::shared_ptr<BindObj::RenderTarget> GetCurrentBackBuffer() const noexcept;
-		[[nodiscard]] std::shared_ptr<BindObj::DepthStencil> GetMainDS() const noexcept;
+		[[nodiscard]] std::shared_ptr<BindableObject::RenderTarget> GetCurrentBackBuffer() const noexcept;
+		[[nodiscard]] std::shared_ptr<BindableObject::DepthStencil> GetMainDS() const noexcept;
 		uint64_t ExecuteCommandList(const D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT);
 		uint64_t ExecuteCommandList(std::shared_ptr<DX::CommandList> commandList, const D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT);
 		uint64_t ExecuteCommandLists(std::vector<std::shared_ptr<DX::CommandList>> commandLists, const D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT);
@@ -101,7 +101,7 @@ namespace DiveBomber::DEGraphics
 
 		std::shared_ptr<Component::Camera> renderCamera;
 
-		std::shared_ptr<BindObj::DepthStencil> mainDS;
+		std::shared_ptr<BindableObject::DepthStencil> mainDS;
 
 	public:
 		bool isWireFrame = false;

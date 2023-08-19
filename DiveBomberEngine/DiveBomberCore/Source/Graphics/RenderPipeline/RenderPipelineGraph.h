@@ -13,7 +13,7 @@ namespace DiveBomber::Component
 	class Camera;
 }
 
-namespace DiveBomber::BindObj
+namespace DiveBomber::BindableObject
 {
 	class RootSignature;
 	class PipelineStateObject;
@@ -36,22 +36,22 @@ namespace DiveBomber::RenderPipeline
 		void Bind(DEGraphics::Graphics& gfx) noxnd;
 		std::shared_ptr<Component::Camera> GetMainCamera() const noexcept;
 	private:
-		std::shared_ptr<BindObj::RootSignature> rootSignature;
-		std::shared_ptr<BindObj::PipelineStateObject> pipelineStateObject;
+		std::shared_ptr<BindableObject::RootSignature> rootSignature;
+		std::shared_ptr<BindableObject::PipelineStateObject> pipelineStateObject;
 
-		std::shared_ptr<BindObj::Shader> vertexShader;
-		std::shared_ptr<BindObj::Shader> pixelShader;
+		std::shared_ptr<BindableObject::Shader> vertexShader;
+		std::shared_ptr<BindableObject::Shader> pixelShader;
 
-		std::shared_ptr<BindObj::IndexedTriangleList> mesh;
-		std::shared_ptr<BindObj::VertexBuffer> vertexBuffer;
-		std::shared_ptr<BindObj::IndexBuffer> indexBuffer;
-		std::shared_ptr<BindObj::Topology> topology;
+		std::shared_ptr<BindableObject::IndexedTriangleList> mesh;
+		std::shared_ptr<BindableObject::VertexBuffer> vertexBuffer;
+		std::shared_ptr<BindableObject::IndexBuffer> indexBuffer;
+		std::shared_ptr<BindableObject::Topology> topology;
 
 		std::shared_ptr<Component::Camera> mainCamera;
 
-		std::shared_ptr<BindObj::ConstantTransformBuffer> transformCBuffer;
+		std::shared_ptr<BindableObject::ConstantTransformBuffer> transformCBuffer;
 
-		std::shared_ptr<BindObj::Texture> texture;
-		std::shared_ptr<BindObj::Texture> texture2;
+		std::shared_ptr<BindableObject::Texture> texture;
+		std::shared_ptr<BindableObject::Texture> texture2;
 	};
 }

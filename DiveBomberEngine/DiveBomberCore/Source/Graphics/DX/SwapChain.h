@@ -1,7 +1,7 @@
 #pragma once
 #include "..\GraphicsHeader.h"
 
-namespace DiveBomber::BindObj
+namespace DiveBomber::BindableObject
 {
 	class RenderTarget;
 }
@@ -22,7 +22,7 @@ namespace DiveBomber::DX
 		[[nodiscard]] wrl::ComPtr<IDXGISwapChain4> GetSwapChain() noexcept;
 		void UpdateBackBuffer(const wrl::ComPtr<ID3D12Device10> device,
 			std::shared_ptr<DX::DescriptorAllocator> descriptorAllocator);
-		[[nodiscard]] std::shared_ptr<BindObj::RenderTarget> GetCurrentBackBuffer() noexcept;
+		[[nodiscard]] std::shared_ptr<BindableObject::RenderTarget> GetCurrentBackBuffer() noexcept;
 		[[nodiscard]] wrl::ComPtr<ID3D12Resource> GetBackBuffer(const int i) noexcept;
 		void ResetBackBuffer() noexcept;
 		void ResetSizeBackBuffer(const wrl::ComPtr<ID3D12Device10> device,
@@ -33,7 +33,7 @@ namespace DiveBomber::DX
 	private:
 		wrl::ComPtr<IDXGISwapChain4> swapChain;
 		//wrl::ComPtr<ID3D12Resource> backBuffers[SwapChainBufferCount];
-		std::shared_ptr<BindObj::RenderTarget> backBuffers[SwapChainBufferCount];
+		std::shared_ptr<BindableObject::RenderTarget> backBuffers[SwapChainBufferCount];
 		std::shared_ptr<DX::DescriptorAllocation> rtvDescHeaps;
 	};
 }

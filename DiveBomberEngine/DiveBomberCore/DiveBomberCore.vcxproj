@@ -82,11 +82,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Graphics\BindObj\ConstantTransformBuffer.cpp" />
-    <ClCompile Include="Source\Graphics\BindObj\DepthStencil.cpp" />
-    <ClCompile Include="Source\Graphics\BindObj\PipelineStateObject.cpp" />
-    <ClCompile Include="Source\Graphics\BindObj\Texture.cpp" />
+    <ClCompile Include="Source\Graphics\BindableObject\ConstantTransformBuffer.cpp" />
+    <ClCompile Include="Source\Graphics\BindableObject\DepthStencil.cpp" />
+    <ClCompile Include="Source\Graphics\BindableObject\PipelineStateObject.cpp" />
+    <ClCompile Include="Source\Graphics\BindableObject\Texture.cpp" />
     <ClCompile Include="Source\Graphics\Component\Camera.cpp" />
+    <ClCompile Include="Source\Graphics\DrawableObject\Drawable.cpp" />
     <ClCompile Include="Source\Graphics\DX\DescriptorAllocation.cpp" />
     <ClCompile Include="Source\Graphics\DX\DescriptorAllocator.cpp" />
     <ClCompile Include="Source\Graphics\DX\DescriptorAllocatorPage.cpp" />
@@ -97,12 +98,13 @@
     <ClCompile Include="Source\Graphics\DX\ScissorRects.cpp" />
     <ClCompile Include="Source\Graphics\DX\Viewport.cpp" />
     <ClCompile Include="Source\Graphics\RenderPipeline\RenderPipelineGraph.cpp" />
-    <ClCompile Include="Source\Graphics\BindObj\RenderTarget.cpp" />
-    <ClCompile Include="Source\Graphics\BindObj\Topology.cpp" />
+    <ClCompile Include="Source\Graphics\BindableObject\RenderTarget.cpp" />
+    <ClCompile Include="Source\Graphics\BindableObject\Topology.cpp" />
     <ClCompile Include="Source\Graphics\DX\CommandList.cpp" />
-    <ClCompile Include="Source\Graphics\BindObj\IndexBuffer.cpp" />
+    <ClCompile Include="Source\Graphics\BindableObject\IndexBuffer.cpp" />
     <ClCompile Include="Source\Graphics\DX\CommandQueue.cpp" />
-    <ClCompile Include="Source\Graphics\BindObj\RootSignature.cpp" />
+    <ClCompile Include="Source\Graphics\BindableObject\RootSignature.cpp" />
+    <ClCompile Include="Source\Graphics\Scene\Scene.cpp" />
     <ClCompile Include="Source\Utility\Color.h" />
     <ClCompile Include="Source\Utility\Common.cpp" />
     <ClCompile Include="Source\Console\Console.cpp" />
@@ -122,20 +124,21 @@
     <ClCompile Include="Source\Exception\WindowException.cpp" />
     <ClCompile Include="ThirdParty\WindowsMessageMap.cpp" />
     <ClCompile Include="Source\WinMain.cpp" />
-    <ClCompile Include="Source\Graphics\BindObj\Vertex.cpp" />
-    <ClCompile Include="Source\Graphics\BindObj\VertexBuffer.cpp" />
-    <ClCompile Include="Source\Graphics\BindObj\Shader.cpp" />
+    <ClCompile Include="Source\Graphics\BindableObject\Vertex.cpp" />
+    <ClCompile Include="Source\Graphics\BindableObject\VertexBuffer.cpp" />
+    <ClCompile Include="Source\Graphics\BindableObject\Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Exception\GraphicsExceptionEX.h" />
-    <ClInclude Include="Source\Graphics\BindObj\BindableTarget.h" />
-    <ClInclude Include="Source\Graphics\BindObj\BindObjCommon.h" />
-    <ClInclude Include="Source\Graphics\BindObj\ConstantBuffer.h" />
-    <ClInclude Include="Source\Graphics\BindObj\ConstantTransformBuffer.h" />
-    <ClInclude Include="Source\Graphics\BindObj\DepthStencil.h" />
-    <ClInclude Include="Source\Graphics\BindObj\PipelineStateObject.h" />
-    <ClInclude Include="Source\Graphics\BindObj\Texture.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\BindableTarget.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\BindableObjectCommon.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\ConstantBuffer.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\ConstantTransformBuffer.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\DepthStencil.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\PipelineStateObject.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\Texture.h" />
     <ClInclude Include="Source\Graphics\DEDirextX.h" />
+    <ClInclude Include="Source\Graphics\DrawableObject\Drawable.h" />
     <ClInclude Include="Source\Graphics\DX\DescriptorAllocation.h" />
     <ClInclude Include="Source\Graphics\DX\DescriptorAllocator.h" />
     <ClInclude Include="Source\Graphics\DX\DescriptorAllocatorPage.h" />
@@ -149,21 +152,22 @@
     <ClInclude Include="Source\Graphics\DX\Viewport.h" />
     <ClInclude Include="Source\Graphics\GraphicsSource.h" />
     <ClInclude Include="Source\Graphics\RenderPipeline\RenderPipelineGraph.h" />
-    <ClInclude Include="Source\Graphics\BindObj\RenderTarget.h" />
-    <ClInclude Include="Source\Graphics\BindObj\Topology.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\RenderTarget.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\Topology.h" />
     <ClInclude Include="Source\Graphics\DX\CommandList.h" />
-    <ClInclude Include="Source\Graphics\BindObj\BindableCodex.h" />
-    <ClInclude Include="Source\Graphics\BindObj\Geometry\Cube.h" />
-    <ClInclude Include="Source\Graphics\BindObj\Geometry\IndexedTriangleList.h" />
-    <ClInclude Include="Source\Graphics\BindObj\Geometry\MiscShape.h" />
-    <ClInclude Include="Source\Graphics\BindObj\Geometry\Plane.h" />
-    <ClInclude Include="Source\Graphics\BindObj\Geometry\Sphere.h" />
-    <ClInclude Include="Source\Graphics\BindObj\Bindable.h" />
-    <ClInclude Include="Source\Graphics\BindObj\IndexBuffer.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\BindableCodex.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\Geometry\Cube.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\Geometry\IndexedTriangleList.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\Geometry\MiscShape.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\Geometry\Plane.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\Geometry\Sphere.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\Bindable.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\IndexBuffer.h" />
     <ClInclude Include="Source\Graphics\DX\CommandQueue.h" />
     <ClInclude Include="Source\Console\Console.h" />
     <ClInclude Include="Source\DiveBomberCore.h" />
-    <ClInclude Include="Source\Graphics\BindObj\RootSignature.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\RootSignature.h" />
+    <ClInclude Include="Source\Graphics\Scene\Scene.h" />
     <ClInclude Include="Source\Utility\Common.h" />
     <ClInclude Include="Source\Graphics\DX\DXDevice.h" />
     <ClInclude Include="Source\Exception\DxgiInfoManager.h" />
@@ -183,9 +187,9 @@
     <ClInclude Include="Source\Window\DEWindows.h" />
     <ClInclude Include="ThirdParty\WindowsMessageMap.h" />
     <ClInclude Include="Source\Graphics\DEWrl.h" />
-    <ClInclude Include="Source\Graphics\BindObj\Vertex.h" />
-    <ClInclude Include="Source\Graphics\BindObj\VertexBuffer.h" />
-    <ClInclude Include="Source\Graphics\BindObj\Shader.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\Vertex.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\VertexBuffer.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\Shader.h" />
     <ClInclude Include="ThirdParty\ThreadSafeQueue.h" />
   </ItemGroup>
   <ItemGroup>

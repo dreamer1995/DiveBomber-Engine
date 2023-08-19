@@ -1,12 +1,12 @@
 #include "RenderPipelineGraph.h"
 
 #include "..\Graphics.h"
-#include "..\BindObj\BindObjCommon.h"
-#include "..\BindObj\Geometry\Sphere.h"
+#include "..\BindableObject\BindableObjectCommon.h"
+#include "..\BindableObject\Geometry\Sphere.h"
 #include "..\Component\Camera.h"
 #include "..\DX\CommandQueue.h"
 #include "..\..\Utility\GlobalParameters.h"
-#include "..\BindObj\Texture.h"
+#include "..\BindableObject\Texture.h"
 #include "..\DX\DescriptorAllocator.h"
 #include "..\DX\DescriptorAllocation.h"
 
@@ -15,8 +15,8 @@
 namespace DiveBomber::RenderPipeline
 {
 	using namespace DEGraphics;
-	using namespace DiveBomber::BindObj;
-	using namespace DiveBomber::BindObj::VertexProcess;
+	using namespace DiveBomber::BindableObject;
+	using namespace DiveBomber::BindableObject::VertexProcess;
 	using namespace DX;
 	using namespace Component;
 
@@ -32,7 +32,7 @@ namespace DiveBomber::RenderPipeline
 		vl.Append(VertexLayout::Tangent);
 		vl.Append(VertexLayout::Binormal);
 		vl.Append(VertexLayout::Texture2D);
-		mesh = std::make_shared<BindObj::IndexedTriangleList>(Sphere::MakeNormalUVed(vl, true));
+		mesh = std::make_shared<BindableObject::IndexedTriangleList>(Sphere::MakeNormalUVed(vl, true));
 		mesh->Transform(dx::XMMatrixScaling(1, 1, 1));
 		const auto geometryTag = "$sphere." + std::to_string(1);
 
@@ -44,10 +44,7 @@ namespace DiveBomber::RenderPipeline
 		std::shared_ptr<DescriptorAllocation> descriptorAllocation =
 			gfx.GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)->Allocate(1u);
 
-		Texture::TextureDescription textureDescription;
-		textureDescription.generateMip = false;
-
-		texture = std::make_shared<Texture>(gfx, L"earth.dds", std::move(descriptorAllocation), std::move(textureDescription));
+		texture = std::make_shared<Texture>(gfx, L"earth.dds", std::move(descriptorAllocation));
 
 		descriptorAllocation =
 			gfx.GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)->Allocate(1u);
