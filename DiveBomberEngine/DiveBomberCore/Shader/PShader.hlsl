@@ -14,5 +14,5 @@ float4 main(PSIn In) : SV_Target
 	float4 rustColor = rustMap.Sample(samp, In.uv);
 	
 	float4 color = lerp(baseColor, rustColor, rustColor.g);
-	return color;
+	return baseColor;
 }

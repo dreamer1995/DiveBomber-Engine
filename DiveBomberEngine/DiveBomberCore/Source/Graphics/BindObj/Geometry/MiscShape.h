@@ -1,5 +1,5 @@
 #pragma once
-#include "..\..\BindObj\Vertex.h"
+#include "..\Vertex.h"
 #include "IndexedTriangleList.h"
 
 namespace DiveBomber::BindObj

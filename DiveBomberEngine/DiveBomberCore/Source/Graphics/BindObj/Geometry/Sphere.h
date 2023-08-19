@@ -1,7 +1,7 @@
 #pragma once
-#include "..\..\BindObj\Vertex.h"
+#include "..\Vertex.h"
 #include "IndexedTriangleList.h"
-#include "..\.\..\..\Utility\DEMath.h"
+#include "..\..\..\Utility\DEMath.h"
 
 #include <optional>
 

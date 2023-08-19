@@ -153,11 +153,11 @@
     <ClInclude Include="Source\Graphics\BindObj\Topology.h" />
     <ClInclude Include="Source\Graphics\DX\CommandList.h" />
     <ClInclude Include="Source\Graphics\BindObj\BindableCodex.h" />
-    <ClInclude Include="Source\Graphics\Gizmo\Geometry\Cube.h" />
-    <ClInclude Include="Source\Graphics\Gizmo\Geometry\IndexedTriangleList.h" />
-    <ClInclude Include="Source\Graphics\Gizmo\Geometry\MiscShape.h" />
-    <ClInclude Include="Source\Graphics\Gizmo\Geometry\Plane.h" />
-    <ClInclude Include="Source\Graphics\Gizmo\Geometry\Sphere.h" />
+    <ClInclude Include="Source\Graphics\BindObj\Geometry\Cube.h" />
+    <ClInclude Include="Source\Graphics\BindObj\Geometry\IndexedTriangleList.h" />
+    <ClInclude Include="Source\Graphics\BindObj\Geometry\MiscShape.h" />
+    <ClInclude Include="Source\Graphics\BindObj\Geometry\Plane.h" />
+    <ClInclude Include="Source\Graphics\BindObj\Geometry\Sphere.h" />
     <ClInclude Include="Source\Graphics\BindObj\Bindable.h" />
     <ClInclude Include="Source\Graphics\BindObj\IndexBuffer.h" />
     <ClInclude Include="Source\Graphics\DX\CommandQueue.h" />
@@ -195,10 +195,14 @@
     <FxCompile Include="Shader\PShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)..\..\SampleProject\Asset\Shader\Built\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)..\..\SampleProject\Asset\Shader\Built\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="Shader\VShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)..\..\SampleProject\Asset\Shader\Built\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)..\..\SampleProject\Asset\Shader\Built\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

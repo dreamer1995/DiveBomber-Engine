@@ -23,24 +23,24 @@ namespace DiveBomber::BindObj
 			bool generateMip = true;
 		};
 	public:
-		Texture(DEGraphics::Graphics& gfx, const std::wstring& inputPath, std::shared_ptr<DX::DescriptorAllocation> inputDescriptorAllocation);
-		Texture(DEGraphics::Graphics& gfx, const std::wstring& inputPath, std::shared_ptr<DX::DescriptorAllocation> inputDescriptorAllocation, TextureDescription inputTextureDesc);
+		Texture(DEGraphics::Graphics& gfx, const std::wstring& inputName, std::shared_ptr<DX::DescriptorAllocation> inputDescriptorAllocation);
+		Texture(DEGraphics::Graphics& gfx, const std::wstring& inputName, std::shared_ptr<DX::DescriptorAllocation> inputDescriptorAllocation, TextureDescription inputTextureDesc);
 		~Texture();
 		
 		void Bind(DEGraphics::Graphics& gfx) noxnd override;
-		[[nodiscard]] static std::shared_ptr<Texture> Resolve(DEGraphics::Graphics& gfx, const std::wstring& path,
+		[[nodiscard]] static std::shared_ptr<Texture> Resolve(DEGraphics::Graphics& gfx, const std::wstring& name,
 			std::shared_ptr<DX::DescriptorAllocation> descriptorAllocation);
-		[[nodiscard]] static std::shared_ptr<Texture> Resolve(DEGraphics::Graphics& gfx, const std::wstring& path,
+		[[nodiscard]] static std::shared_ptr<Texture> Resolve(DEGraphics::Graphics& gfx, const std::wstring& name,
 			std::shared_ptr<DX::DescriptorAllocation> descriptorAllocation, TextureDescription textureDesc);
 		template<typename...Ignore>
-		[[nodiscard]] static std::string GenerateUID(const std::wstring& path, Ignore&&...ignore)
+		[[nodiscard]] static std::string GenerateUID(const std::wstring& name, Ignore&&...ignore)
 		{
-			return GenerateUID_(path);
+			return GenerateUID_(name);
 		}
 		[[nodiscard]] std::string GetUID() const noexcept override;
 	private:
-		[[nodiscard]] static std::string GenerateUID_(const std::wstring& path);
-		std::wstring path;
+		[[nodiscard]] static std::string GenerateUID_(const std::wstring& name);
+		std::wstring name;
 		std::shared_ptr<DX::DescriptorAllocation> descriptorAllocation;
 		wrl::ComPtr<ID3D12Resource> textureBuffer;
 		TextureDescription textureDesc;

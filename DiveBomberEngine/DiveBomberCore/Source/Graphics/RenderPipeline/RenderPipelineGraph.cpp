@@ -2,7 +2,7 @@
 
 #include "..\Graphics.h"
 #include "..\BindObj\BindObjCommon.h"
-#include "..\Gizmo\Geometry\Sphere.h"
+#include "..\BindObj\Geometry\Sphere.h"
 #include "..\Component\Camera.h"
 #include "..\DX\CommandQueue.h"
 #include "..\..\Utility\GlobalParameters.h"
@@ -43,19 +43,23 @@ namespace DiveBomber::RenderPipeline
 
 		std::shared_ptr<DescriptorAllocation> descriptorAllocation =
 			gfx.GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)->Allocate(1u);
-		texture = std::make_shared<Texture>(gfx, L"Asset\\Texture\\earth.jpg", std::move(descriptorAllocation));
+
+		Texture::TextureDescription textureDescription;
+		textureDescription.generateMip = false;
+
+		texture = std::make_shared<Texture>(gfx, L"earth.dds", std::move(descriptorAllocation), std::move(textureDescription));
 
 		descriptorAllocation =
 			gfx.GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)->Allocate(1u);
 		Texture::TextureDescription textureDesc;
 		textureDesc.generateMip = true;
-		texture2 = std::make_shared<Texture>(gfx, L"Asset\\Texture\\rustediron2_basecolor.png", std::move(descriptorAllocation), std::move(textureDesc));
+		texture2 = std::make_shared<Texture>(gfx, L"rustediron2_basecolor.png", std::move(descriptorAllocation), std::move(textureDesc));
 
 		auto fenceValue = gfx.ExecuteCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
 		commandQueue->WaitForFenceValue(fenceValue);
 
-		vertexShader = std::make_shared<Shader>(gfx, L"VShader.cso", Shader::ShaderType::VertexShader);
-		pixelShader = std::make_shared<Shader>(gfx, L"PShader.cso", Shader::ShaderType::PixelShader);
+		vertexShader = std::make_shared<Shader>(gfx, L"VShader", Shader::ShaderType::VertexShader);
+		pixelShader = std::make_shared<Shader>(gfx, L"PShader", Shader::ShaderType::PixelShader);
 
 		topology = std::make_shared<Topology>(gfx, D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
 

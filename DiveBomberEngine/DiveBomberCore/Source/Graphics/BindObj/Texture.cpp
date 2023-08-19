@@ -20,20 +20,18 @@ namespace DiveBomber::BindObj
 	namespace fs = std::filesystem;
 	namespace dx = DirectX;
 
-	Texture::Texture(Graphics& gfx, const std::wstring& inputPath, std::shared_ptr<DescriptorAllocation> inputDescriptorAllocation)
+	Texture::Texture(Graphics& gfx, const std::wstring& inputName, std::shared_ptr<DescriptorAllocation> inputDescriptorAllocation)
 		:
-		Texture(gfx, inputPath, inputDescriptorAllocation, TextureDescription{})
+		Texture(gfx, inputName, inputDescriptorAllocation, TextureDescription{})
 	{
 	}
-	Texture::Texture(Graphics& gfx, const std::wstring& inputPath, std::shared_ptr<DescriptorAllocation> inputDescriptorAllocation, TextureDescription inputTextureDesc)
+	Texture::Texture(Graphics& gfx, const std::wstring& inputName, std::shared_ptr<DescriptorAllocation> inputDescriptorAllocation, TextureDescription inputTextureDesc)
 		:
-		path(WProjectDirectory + inputPath),
+		name(inputName),
 		descriptorAllocation(inputDescriptorAllocation),
 		textureDesc(inputTextureDesc)
 	{
-		fs::path filePath(path);
-
-		auto a = fs::absolute(path);
+		fs::path filePath(ProjectDirectoryW L"Asset\\Texture\\" + name);
 
 		if (!fs::exists(filePath))
 		{
@@ -48,7 +46,7 @@ namespace DiveBomber::BindObj
 		if (filePath.extension() == ".dds")
 		{
 			GFX_THROW_INFO(LoadFromDDSFile(
-				path.c_str(),
+				filePath.c_str(),
 				dx::DDS_FLAGS_NONE,
 				&metadata,
 				scratchRawImage));
@@ -56,21 +54,21 @@ namespace DiveBomber::BindObj
 		else if (filePath.extension() == ".hdr")
 		{
 			GFX_THROW_INFO(LoadFromHDRFile(
-				path.c_str(),
+				filePath.c_str(),
 				&metadata,
 				scratchRawImage));
 		}
 		else if (filePath.extension() == ".tga")
 		{
 			GFX_THROW_INFO(LoadFromTGAFile(
-				path.c_str(),
+				filePath.c_str(),
 				&metadata,
 				scratchRawImage));
 		}
 		else
 		{
 			GFX_THROW_INFO(LoadFromWICFile(
-				path.c_str(),
+				filePath.c_str(),
 				dx::WIC_FLAGS_NONE,
 				&metadata,
 				scratchRawImage));
@@ -78,7 +76,11 @@ namespace DiveBomber::BindObj
 
 		dx::ScratchImage scratchImage;
 
-		if (textureDesc.generateMip)
+		DXGI_FORMAT format = scratchRawImage.GetImages()->format;
+		bool generrateMipNotSupport = dx::IsCompressed(format) || dx::IsTypeless(format) ||
+			dx::IsPlanar(format) || dx::IsPalettized(format);
+
+		if (textureDesc.generateMip && !generrateMipNotSupport)
 		{
 			GFX_THROW_INFO(dx::GenerateMipMaps(*scratchRawImage.GetImages(), dx::TEX_FILTER_LINEAR, 0, scratchImage));
 		}
@@ -93,7 +95,7 @@ namespace DiveBomber::BindObj
 			.Width = (UINT)chainBase.width,
 			.Height = (UINT)chainBase.height,
 			.DepthOrArraySize = 1,
-			.MipLevels = (UINT16)scratchImage.GetImageCount(),
+			.MipLevels = textureDesc.generateMip ? (UINT16)scratchImage.GetImageCount() : 1u,
 			.Format = chainBase.format,
 			.SampleDesc = {.Count = 1 },
 			.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN,
@@ -114,7 +116,7 @@ namespace DiveBomber::BindObj
 
 		std::vector<D3D12_SUBRESOURCE_DATA> subresourceData;
 
-		for (int i = 0; i < scratchImage.GetImageCount(); i++)
+		for (int i = 0; i < texDesc.MipLevels; i++)
 		{
 			const auto img = scratchImage.GetImage(i, 0, 0);
 
@@ -163,10 +165,10 @@ namespace DiveBomber::BindObj
 		gfx.GetCommandList()->AddTransitionBarrier(textureBuffer, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, true);
 
 		const D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{
-				.Format = textureBuffer->GetDesc().Format,
+				.Format = texDesc.Format,
 				.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D,
 				.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING,
-				.Texture2D{.MipLevels = textureBuffer->GetDesc().MipLevels },
+				.Texture2D{.MipLevels = texDesc.MipLevels },
 		};
 		gfx.GetDecive()->CreateShaderResourceView(textureBuffer.Get(), &srvDesc, descriptorAllocation->GetCPUDescriptorHandle());
 	}
@@ -180,26 +182,26 @@ namespace DiveBomber::BindObj
 	{
 	}
 
-	std::shared_ptr<Texture> Texture::Resolve(DEGraphics::Graphics& gfx, const std::wstring& path,
+	std::shared_ptr<Texture> Texture::Resolve(DEGraphics::Graphics& gfx, const std::wstring& name,
 		std::shared_ptr<DescriptorAllocation> descriptorAllocation)
 	{
-		return Codex::Resolve<Texture>(gfx, path, descriptorAllocation);
+		return Codex::Resolve<Texture>(gfx, name, descriptorAllocation);
 	}
 
-	std::shared_ptr<Texture> Texture::Resolve(Graphics& gfx, const std::wstring& path,
+	std::shared_ptr<Texture> Texture::Resolve(Graphics& gfx, const std::wstring& name,
 		std::shared_ptr<DescriptorAllocation> descriptorAllocation, TextureDescription textureDesc)
 	{
-		return Codex::Resolve<Texture>(gfx, path, descriptorAllocation, textureDesc);
+		return Codex::Resolve<Texture>(gfx, name, descriptorAllocation, textureDesc);
 	}
 
-	std::string Texture::GenerateUID_(const std::wstring& path)
+	std::string Texture::GenerateUID_(const std::wstring& name)
 	{
 		using namespace std::string_literals;
-		return typeid(Texture).name() + "#"s + Utility::ToNarrow(path);
+		return typeid(Texture).name() + "#"s + Utility::ToNarrow(ProjectDirectoryW L"Asset\\Texture\\" + name);
 	}
 
 	std::string Texture::GetUID() const noexcept
 	{
-		return GenerateUID(path, descriptorAllocation);
+		return GenerateUID(name, descriptorAllocation);
 	}
 }
