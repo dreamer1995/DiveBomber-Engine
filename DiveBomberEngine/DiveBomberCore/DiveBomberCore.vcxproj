@@ -157,7 +157,6 @@
     <ClInclude Include="Source\Graphics\BindableObject\RenderTarget.h" />
     <ClInclude Include="Source\Graphics\BindableObject\Topology.h" />
     <ClInclude Include="Source\Graphics\DX\CommandList.h" />
-    <ClInclude Include="Source\Graphics\BindableObject\BindableCodex.h" />
     <ClInclude Include="Source\Graphics\BindableObject\Geometry\Cube.h" />
     <ClInclude Include="Source\Graphics\BindableObject\Geometry\IndexedTriangleList.h" />
     <ClInclude Include="Source\Graphics\BindableObject\Geometry\MiscShape.h" />

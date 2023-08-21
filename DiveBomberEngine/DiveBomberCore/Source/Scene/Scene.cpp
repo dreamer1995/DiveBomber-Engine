@@ -27,7 +27,6 @@ namespace DiveBomber::DEScene
 		mainRenderPipeline = std::make_unique<RenderPipelineGraph>();
 
 		std::shared_ptr<CommandQueue> commandQueue = gfx.GetCommandQueue(D3D12_COMMAND_LIST_TYPE_COPY);
-		//drawableObjects.emplace_back((0.0f, std::make_shared<SimpleSphere>(gfx)));
 		drawableObjects.emplace_back(std::make_shared<SimpleSphere>(gfx));
 		auto another = std::make_shared<SimpleSphere>(gfx);
 		another->SetPos({ 2.0f,0,0 });

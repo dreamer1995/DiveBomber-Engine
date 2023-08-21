@@ -1,6 +1,6 @@
 #include "Shader.h"
 
-#include "BindableCodex.h"
+#include "..\..\DiveBomberCore.h"
 #include "..\Graphics.h"
 #include "..\..\Exception\GraphicsException.h"
 #include "..\..\Utility\GlobalParameters.h"
@@ -44,7 +44,7 @@ namespace DiveBomber::BindableObject
 
 	std::shared_ptr<Shader> Shader::Resolve(Graphics& gfx, const std::wstring& name, ShaderType type)
 	{
-		return Codex::Resolve<Shader>(gfx, name, type);
+		return gfx.GetParent().Resolve<Shader>(gfx, name, type);
 	}
 
 	std::string Shader::GenerateUID(const std::wstring& name, ShaderType type)

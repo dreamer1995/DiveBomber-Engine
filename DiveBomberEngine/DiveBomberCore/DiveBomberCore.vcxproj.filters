@@ -73,7 +73,6 @@
     <ClInclude Include="Source\Graphics\BindableObject\Vertex.h" />
     <ClInclude Include="Source\Graphics\BindableObject\Bindable.h" />
     <ClInclude Include="Source\Graphics\BindableObject\VertexBuffer.h" />
-    <ClInclude Include="Source\Graphics\BindableObject\BindableCodex.h" />
     <ClInclude Include="Source\Graphics\BindableObject\Geometry\Cube.h" />
     <ClInclude Include="Source\Graphics\BindableObject\Geometry\IndexedTriangleList.h" />
     <ClInclude Include="Source\Graphics\BindableObject\Geometry\MiscShape.h" />

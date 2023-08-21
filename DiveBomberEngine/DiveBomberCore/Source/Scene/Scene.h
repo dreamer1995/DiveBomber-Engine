@@ -40,7 +40,6 @@ namespace DiveBomber::DEScene
 	private:
 		const std::wstring name;
 		std::unique_ptr<RenderPipeline::RenderPipelineGraph> mainRenderPipeline;
-		//std::multimap<float, std::shared_ptr<DrawableObject::Drawable>> drawableObjects;
 		std::vector<std::shared_ptr<DrawableObject::Drawable>> drawableObjects;
 		std::shared_ptr<Component::Camera> mainCamera;
 	};

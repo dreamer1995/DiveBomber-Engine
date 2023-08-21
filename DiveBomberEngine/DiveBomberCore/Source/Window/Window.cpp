@@ -5,6 +5,7 @@
 #include "..\Hardware\Keyboard.h"
 #include "..\Hardware\Mouse.h"
 #include "..\Graphics\Graphics.h"
+#include "..\DiveBomberCore.h"
 
 #include <shellapi.h> // For CommandLineToArgvW
 #include <optional>
@@ -65,7 +66,7 @@ namespace DiveBomber::DEWindow
 		return wndClass.hInst;
 	}
 
-	Window::Window(const wchar_t* name)
+	Window::Window(const wchar_t* name, DiveBomberCore& parent)
 		:
 		screenWidth(GetSystemMetrics(SM_CXSCREEN)),
 		screenHeight(GetSystemMetrics(SM_CYSCREEN)),
@@ -131,7 +132,7 @@ namespace DiveBomber::DEWindow
 		}
 
 		// create graphics object
-		pGfx = std::make_unique<Graphics>(hWnd, windowWidth, windowHeight);
+		pGfx = std::make_unique<Graphics>(hWnd, windowWidth, windowHeight, parent);
 
 		kbd = std::make_unique<Keyboard>();
 		mouse = std::make_unique<Mouse>();

@@ -29,6 +29,11 @@ namespace DiveBomber::Hardware
 	class Mouse;
 }
 
+namespace DiveBomber
+{
+	class DiveBomberCore;
+}
+
 namespace DiveBomber::DEWindow
 {
 	class Window final
@@ -49,7 +54,7 @@ namespace DiveBomber::DEWindow
 			HINSTANCE hInst;
 		};
 	public:
-		Window(const wchar_t* name);
+		Window(const wchar_t* name, DiveBomberCore& parent);
 		~Window();
 		Window(const Window&) = delete;
 		Window& operator = (const Window&) = delete;

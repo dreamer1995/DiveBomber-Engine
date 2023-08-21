@@ -1,6 +1,6 @@
 #include "IndexBuffer.h"
 
-#include "BindableCodex.h"
+#include "..\..\DiveBomberCore.h"
 #include "..\Graphics.h"
 #include "..\..\Exception\GraphicsException.h"
 #include "..\DX\CommandList.h"
@@ -94,7 +94,7 @@ namespace DiveBomber::BindableObject
 		const std::vector<unsigned short>& indices)
 	{
 		assert(tag != "?");
-		return Codex::Resolve<IndexBuffer>(gfx, tag, indices);
+		return gfx.GetParent().Resolve<IndexBuffer>(gfx, tag, indices);
 	}
 	std::string IndexBuffer::GenerateUID_(const std::string& tag)
 	{

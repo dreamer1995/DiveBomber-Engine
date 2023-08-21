@@ -1,6 +1,6 @@
 #include "VertexBuffer.h"
 
-#include "BindableCodex.h"
+#include "..\..\DiveBomberCore.h"
 #include "..\Graphics.h"
 #include "..\..\Exception\GraphicsException.h"
 #include "..\DX\CommandList.h"
@@ -98,7 +98,7 @@ namespace DiveBomber::BindableObject
 		const VertexProcess::VertexData& vbuf)
 	{
 		assert(tag != "?");
-		return Codex::Resolve<VertexBuffer>(gfx, tag, vbuf);
+		return gfx.GetParent().Resolve<VertexBuffer>(gfx, tag, vbuf);
 	}
 
 	std::string VertexBuffer::GenerateUID_(const std::string& tag)

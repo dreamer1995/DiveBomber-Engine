@@ -1,6 +1,6 @@
 #include "Topology.h"
 
-#include "BindableCodex.h"
+#include "..\..\DiveBomberCore.h"
 #include "..\Graphics.h"
 #include "..\..\Exception\GraphicsException.h"
 
@@ -33,7 +33,7 @@ namespace DiveBomber::BindableObject
 
 	std::shared_ptr<Topology> Topology::Resolve(Graphics& gfx, const D3D_PRIMITIVE_TOPOLOGY type, const D3D12_PRIMITIVE_TOPOLOGY_TYPE shaderType)
 	{
-		return Codex::Resolve<Topology>(gfx, type, shaderType);
+		return gfx.GetParent().Resolve<Topology>(gfx, type, shaderType);
 	}
 
 	std::string Topology::GenerateUID(const D3D_PRIMITIVE_TOPOLOGY type, const D3D12_PRIMITIVE_TOPOLOGY_TYPE shaderType)

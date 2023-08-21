@@ -1,6 +1,6 @@
 #include "PipelineStateObject.h"
 
-#include "BindableCodex.h"
+#include "..\..\DiveBomberCore.h"
 #include "..\Graphics.h"
 #include "..\..\Exception\GraphicsException.h"
 #include "RootSignature.h"
@@ -56,7 +56,7 @@ namespace DiveBomber::BindableObject
 		const std::shared_ptr<Shader> vertexShader, const std::shared_ptr<Shader> pixelShader,
 		const DXGI_FORMAT dsvFormat, const D3D12_RT_FORMAT_ARRAY rtvFormats)
 	{
-		return Codex::Resolve<PipelineStateObject>(gfx, tag,
+		return gfx.GetParent().Resolve<PipelineStateObject>(gfx, tag,
 			rootSignature, vertexBuffer, topology, vertexShader, pixelShader, dsvFormat, rtvFormats);
 	}
 

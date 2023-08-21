@@ -33,7 +33,7 @@ namespace DiveBomber
 				});
 		}
 			
-		wnd = std::make_unique<Window>(L"DiveBomber Engine");
+		wnd = std::make_unique<Window>(L"DiveBomber Engine", *this);
 	}
 
 	DiveBomberCore::~DiveBomberCore()

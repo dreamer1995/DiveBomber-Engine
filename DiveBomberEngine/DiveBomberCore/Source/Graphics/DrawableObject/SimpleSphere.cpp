@@ -33,18 +33,18 @@ namespace DiveBomber::DrawableObject
 
 		const std::string geometryTag = Utility::ToNarrow(name);
 
-		std::shared_ptr<VertexBuffer> vertexBuffer = std::make_shared<VertexBuffer>(gfx, geometryTag, mesh.vertices);
+		std::shared_ptr<VertexBuffer> vertexBuffer = VertexBuffer::Resolve(gfx, geometryTag, mesh.vertices);
 		AddBindable(vertexBuffer);
-		indexBuffer = std::make_shared<IndexBuffer>(gfx, geometryTag, mesh.indices);
+		indexBuffer = IndexBuffer::Resolve(gfx, geometryTag, mesh.indices);
 		AddBindable(indexBuffer);
 
 		std::shared_ptr<DescriptorAllocation> descriptorAllocation =
 			gfx.GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)->Allocate(1u);
-		AddBindable(std::make_shared<Texture>(gfx, L"earth.dds", std::move(descriptorAllocation)));
+		AddBindable(Texture::Resolve(gfx, L"earth.dds", std::move(descriptorAllocation)));
 
 		descriptorAllocation =
 			gfx.GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)->Allocate(1u);
-		AddBindable(std::make_shared<Texture>(gfx, L"rustediron2_basecolor.png", std::move(descriptorAllocation)));
+		AddBindable(Texture::Resolve(gfx, L"rustediron2_basecolor.png", std::move(descriptorAllocation)));
 
 		std::shared_ptr<Shader> vertexShader = Shader::Resolve(gfx, L"VShader", Shader::ShaderType::VertexShader);
 		AddBindable(vertexShader);
@@ -54,7 +54,7 @@ namespace DiveBomber::DrawableObject
 		std::shared_ptr<Topology> topology = Topology::Resolve(gfx, D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
 		AddBindable(topology);
 
-		std::shared_ptr<RootSignature> rootSignature = std::make_shared<RootSignature>(gfx, "StandardSRVFullStage");
+		std::shared_ptr<RootSignature> rootSignature = RootSignature::Resolve(gfx, "StandardSRVFullStage");
 		AddBindable(rootSignature);
 
 		D3D12_RT_FORMAT_ARRAY rtvFormats = {};
@@ -63,7 +63,7 @@ namespace DiveBomber::DrawableObject
 
 		auto dsvFormat = DXGI_FORMAT_D32_FLOAT;
 
-		AddBindable(std::make_shared<PipelineStateObject>(gfx, geometryTag + "PSO",
+		AddBindable(PipelineStateObject::Resolve(gfx, geometryTag + "PSO",
 			rootSignature, vertexBuffer, topology, vertexShader, pixelShader, dsvFormat, rtvFormats));
 
 		std::shared_ptr<ConstantTransformBuffer> transformBuffer = std::make_shared<ConstantTransformBuffer>(gfx);

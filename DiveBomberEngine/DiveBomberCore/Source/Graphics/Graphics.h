@@ -23,14 +23,21 @@ namespace DiveBomber::BindableObject
 {
 	class RenderTarget;
 	class DepthStencil;
+	class Bindable;
+}
+
+namespace DiveBomber
+{
+	class DiveBomberCore;
 }
 
 namespace DiveBomber::DEGraphics
 {
+
 	class Graphics final
 	{
 	public:
-		Graphics(HWND inputHWnd, UINT inputWidth, UINT inputHeight);
+		Graphics(HWND inputHWnd, UINT inputWidth, UINT inputHeight, DiveBomberCore& inputParent);
 		Graphics(const Graphics&) = delete;
 		Graphics& operator=(const Graphics&) = delete;
 		~Graphics();
@@ -70,7 +77,7 @@ namespace DiveBomber::DEGraphics
 		uint64_t ExecuteCommandLists(std::vector<std::shared_ptr<DX::CommandList>> commandLists, const D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT);
 		[[nodiscard]] std::shared_ptr<DX::DescriptorAllocator> GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV) const noexcept;
 		void BindShaderDescriptorHeaps();
-
+		[[nodiscard]] DiveBomberCore& GetParent() const noexcept;
 	private:
 		UINT width = 0;
 		UINT height = 0;
@@ -110,5 +117,7 @@ namespace DiveBomber::DEGraphics
 		bool isHDR = true;
 		//bool isVolumetricRendering;
 		bool isSkyRendering = true;
+
+		DiveBomberCore& parent;
 	};
 }

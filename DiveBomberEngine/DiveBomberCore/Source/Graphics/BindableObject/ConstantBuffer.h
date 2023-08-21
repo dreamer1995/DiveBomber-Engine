@@ -1,6 +1,6 @@
 #pragma once
 #include "Bindable.h"
-#include "BindableCodex.h"
+#include "..\..\DiveBomberCore.h"
 #include "..\Graphics.h"
 #include "..\..\Exception\GraphicsExceptionEX.h"
 #include "..\DX\CommandList.h"
@@ -116,7 +116,7 @@ namespace DiveBomber::BindableObject
 		[[nodiscard]] static std::shared_ptr<ConstantBuffer> Resolve(DEGraphics::Graphics& gfx, const std::string& tag,
 			const C& constantData, const UINT slot)
 		{
-			return Codex::Resolve<ConstantBuffer>(gfx, tag, constantData, slot);
+			return gfx.GetParent().Resolve<ConstantBuffer>(gfx, tag, constantData, slot);
 		}
 
 		[[nodiscard]] static std::string GenerateUID(const std::string& tag, const C&, const UINT slot)

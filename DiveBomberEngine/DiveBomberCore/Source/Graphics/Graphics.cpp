@@ -12,6 +12,7 @@
 #include "DX\CommandLIst.h"
 #include "DX\DescriptorAllocator.h"
 #include "DX\DescriptorAllocation.h"
+#include "..\DiveBomberCore.h"
 
 #include <iostream>
 #include <array>
@@ -23,11 +24,12 @@ namespace DiveBomber::DEGraphics
 	using namespace BindableObject;
 	using namespace Component;
 
-	Graphics::Graphics(HWND inputHWnd, UINT inputWidth, UINT inputHeight)
+	Graphics::Graphics(HWND inputHWnd, UINT inputWidth, UINT inputHeight, DiveBomberCore& inputParent)
 		:
 		hWnd(inputHWnd),
 		width(inputWidth),
-		height(inputHeight)
+		height(inputHeight),
+		parent(inputParent)
 	{
 		// Check for DirectX Math library support.
 		if (!DirectX::XMVerifyCPUSupport())
@@ -343,5 +345,10 @@ namespace DiveBomber::DEGraphics
 		};
 
 		GetGraphicsCommandList()->SetDescriptorHeaps(static_cast<UINT>(descriptorHeaps.size()), descriptorHeaps.data());
+	}
+
+	DiveBomberCore& Graphics::GetParent() const noexcept
+	{
+		return parent;
 	}
 }

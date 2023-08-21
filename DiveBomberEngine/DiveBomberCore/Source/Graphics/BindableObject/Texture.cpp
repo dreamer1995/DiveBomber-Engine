@@ -1,6 +1,6 @@
 #include "Texture.h"
 
-#include "BindableCodex.h"
+#include "..\..\DiveBomberCore.h"
 #include "..\Graphics.h"
 #include "..\..\Exception\GraphicsException.h"
 #include "..\DX\DescriptorAllocation.h"
@@ -186,13 +186,13 @@ namespace DiveBomber::BindableObject
 	std::shared_ptr<Texture> Texture::Resolve(DEGraphics::Graphics& gfx, const std::wstring& name,
 		std::shared_ptr<DescriptorAllocation> descriptorAllocation)
 	{
-		return Codex::Resolve<Texture>(gfx, name, descriptorAllocation);
+		return gfx.GetParent().Resolve<Texture>(gfx, name, descriptorAllocation);
 	}
 
 	std::shared_ptr<Texture> Texture::Resolve(Graphics& gfx, const std::wstring& name,
 		std::shared_ptr<DescriptorAllocation> descriptorAllocation, TextureDescription textureDesc)
 	{
-		return Codex::Resolve<Texture>(gfx, name, descriptorAllocation, textureDesc);
+		return gfx.GetParent().Resolve<Texture>(gfx, name, descriptorAllocation, textureDesc);
 	}
 
 	std::string Texture::GenerateUID_(const std::wstring& name)

@@ -1,6 +1,6 @@
 #include "RootSignature.h"
 
-#include "BindableCodex.h"
+#include "..\..\DiveBomberCore.h"
 #include "..\Graphics.h"
 #include "..\..\Exception\GraphicsException.h"
 
@@ -64,7 +64,7 @@ namespace DiveBomber::BindableObject
 
 	std::shared_ptr<RootSignature> RootSignature::Resolve(Graphics& gfx, const std::string& tag)
 	{
-		return Codex::Resolve<RootSignature>(gfx, tag);
+		return gfx.GetParent().Resolve<RootSignature>(gfx, tag);
 	}
 
 	std::string RootSignature::GenerateUID_(const std::string& tag)
