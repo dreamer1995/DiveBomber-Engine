@@ -23,15 +23,16 @@ namespace DiveBomber::BindableObject
 			bool generateMip = true;
 		};
 	public:
-		Texture(DEGraphics::Graphics& gfx, const std::wstring& inputName, std::shared_ptr<DX::DescriptorAllocation> inputDescriptorAllocation);
-		Texture(DEGraphics::Graphics& gfx, const std::wstring& inputName, std::shared_ptr<DX::DescriptorAllocation> inputDescriptorAllocation, TextureDescription inputTextureDesc);
+		Texture(DEGraphics::Graphics& gfx, const std::wstring& inputName);
+		Texture(DEGraphics::Graphics& gfx, const std::wstring& inputName, TextureDescription inputTextureDesc);
 		~Texture();
+
+		[[nodiscard]] UINT GetSRVDescriptorHeapOffset() const noexcept;
 		
 		void Bind(DEGraphics::Graphics& gfx) noxnd override;
+		[[nodiscard]] static std::shared_ptr<Texture> Resolve(DEGraphics::Graphics& gfx, const std::wstring& name);
 		[[nodiscard]] static std::shared_ptr<Texture> Resolve(DEGraphics::Graphics& gfx, const std::wstring& name,
-			std::shared_ptr<DX::DescriptorAllocation> descriptorAllocation);
-		[[nodiscard]] static std::shared_ptr<Texture> Resolve(DEGraphics::Graphics& gfx, const std::wstring& name,
-			std::shared_ptr<DX::DescriptorAllocation> descriptorAllocation, TextureDescription textureDesc);
+			TextureDescription textureDesc);
 		template<typename...Ignore>
 		[[nodiscard]] static std::string GenerateUID(const std::wstring& name, Ignore&&...ignore)
 		{

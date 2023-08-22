@@ -1,6 +1,7 @@
 #pragma once
 #include "..\GraphicsHeader.h"
 
+#include <map>
 namespace DiveBomber::DEGraphics
 {
 	class Graphics;
@@ -8,9 +9,7 @@ namespace DiveBomber::DEGraphics
 
 namespace DiveBomber::BindableObject
 {
-	class VertexBuffer;
-	class IndexBuffer;
-	class Topology;
+	class Texture;
 }
 
 namespace DiveBomber::Component
@@ -18,9 +17,11 @@ namespace DiveBomber::Component
 	class Material final
 	{
 	public:
-		Material(DEGraphics::Graphics & gfx);
+		Material();
+		void AddTexture(const std::shared_ptr<BindableObject::Texture> texture, UINT slot) noexcept;
 
 		void Bind(DEGraphics::Graphics& gfx) noxnd;
 	private:
+		std::map<UINT, std::shared_ptr<BindableObject::Texture>> bindableTextureMap;
 	};
 }

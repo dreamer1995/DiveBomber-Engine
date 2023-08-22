@@ -14,7 +14,7 @@ namespace DiveBomber::DX
 		DescriptorAllocation();
 		DescriptorAllocation(D3D12_CPU_DESCRIPTOR_HANDLE inputCPUAddress,
 			D3D12_GPU_DESCRIPTOR_HANDLE inputGPUAddress,
-			uint32_t inputNumHandles, uint32_t inputDescriptorSize,
+			uint32_t inputBaseOffset, uint32_t inputNumHandles, uint32_t inputDescriptorSize,
 			std::shared_ptr<DescriptorAllocatorPage> inputPage);
 		~DescriptorAllocation();
 
@@ -35,12 +35,15 @@ namespace DiveBomber::DX
 
 		[[nodiscard]] std::shared_ptr<DescriptorAllocatorPage> GetDescriptorAllocatorPage() const noexcept;
 
+		[[nodiscard]] UINT GetBaseOffset() const noexcept;
+
 	private:
 		void FreeDescriptorAllocation();
 
 	private:
 		D3D12_CPU_DESCRIPTOR_HANDLE CPUAddress;
 		D3D12_GPU_DESCRIPTOR_HANDLE GPUAddress;
+		uint32_t baseOffset;
 		uint32_t numHandles;
 		uint32_t descriptorSize;
 

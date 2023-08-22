@@ -3,6 +3,7 @@
 #include "..\..\DiveBomberCore.h"
 #include "..\Graphics.h"
 #include "..\..\Exception\GraphicsException.h"
+#include "..\DX\DescriptorAllocator.h"
 #include "..\DX\DescriptorAllocation.h"
 #include "..\DX\CommandList.h"
 #include "..\DX\ResourceStateTracker.h"
@@ -21,15 +22,14 @@ namespace DiveBomber::BindableObject
 	namespace fs = std::filesystem;
 	namespace dx = DirectX;
 
-	Texture::Texture(Graphics& gfx, const std::wstring& inputName, std::shared_ptr<DescriptorAllocation> inputDescriptorAllocation)
+	Texture::Texture(Graphics& gfx, const std::wstring& inputName)
 		:
-		Texture(gfx, inputName, inputDescriptorAllocation, TextureDescription{})
+		Texture(gfx, inputName, TextureDescription{})
 	{
 	}
-	Texture::Texture(Graphics& gfx, const std::wstring& inputName, std::shared_ptr<DescriptorAllocation> inputDescriptorAllocation, TextureDescription inputTextureDesc)
+	Texture::Texture(Graphics& gfx, const std::wstring& inputName, TextureDescription inputTextureDesc)
 		:
 		name(inputName),
-		descriptorAllocation(inputDescriptorAllocation),
 		textureDesc(inputTextureDesc)
 	{
 		fs::path filePath(ProjectDirectoryW L"Asset\\Texture\\" + name);
@@ -161,8 +161,6 @@ namespace DiveBomber::BindableObject
 			copyCommandList->TrackResource(textureUploadBuffer);
 		}
 
-		
-
 		gfx.GetCommandList()->AddTransitionBarrier(textureBuffer, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, true);
 
 		const D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{
@@ -171,6 +169,8 @@ namespace DiveBomber::BindableObject
 				.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING,
 				.Texture2D{.MipLevels = texDesc.MipLevels },
 		};
+
+		descriptorAllocation = gfx.GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)->Allocate(1u);
 		gfx.GetDecive()->CreateShaderResourceView(textureBuffer.Get(), &srvDesc, descriptorAllocation->GetCPUDescriptorHandle());
 	}
 
@@ -179,20 +179,23 @@ namespace DiveBomber::BindableObject
 		ResourceStateTracker::RemoveGlobalResourceState(textureBuffer);
 	}
 
+	UINT Texture::GetSRVDescriptorHeapOffset() const noexcept
+	{
+		return descriptorAllocation->GetBaseOffset();
+	}
+
 	void Texture::Bind(Graphics& gfx) noxnd
 	{
 	}
 
-	std::shared_ptr<Texture> Texture::Resolve(DEGraphics::Graphics& gfx, const std::wstring& name,
-		std::shared_ptr<DescriptorAllocation> descriptorAllocation)
+	std::shared_ptr<Texture> Texture::Resolve(DEGraphics::Graphics& gfx, const std::wstring& name)
 	{
-		return gfx.GetParent().Resolve<Texture>(gfx, name, descriptorAllocation);
+		return gfx.GetParent().Resolve<Texture>(gfx, name);
 	}
 
-	std::shared_ptr<Texture> Texture::Resolve(Graphics& gfx, const std::wstring& name,
-		std::shared_ptr<DescriptorAllocation> descriptorAllocation, TextureDescription textureDesc)
+	std::shared_ptr<Texture> Texture::Resolve(Graphics& gfx, const std::wstring& name, TextureDescription textureDesc)
 	{
-		return gfx.GetParent().Resolve<Texture>(gfx, name, descriptorAllocation, textureDesc);
+		return gfx.GetParent().Resolve<Texture>(gfx, name, textureDesc);
 	}
 
 	std::string Texture::GenerateUID_(const std::wstring& name)

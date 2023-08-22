@@ -15,6 +15,7 @@ namespace DiveBomber::BindableObject
 namespace DiveBomber::Component
 {
 	class Mesh;
+	class Material;
 }
 
 namespace DiveBomber::DrawableObject
@@ -36,5 +37,6 @@ namespace DiveBomber::DrawableObject
 		float yaw{ 0.0f };
 		float roll{ 0.0f };
 		std::shared_ptr<Component::Mesh> mesh;
+		std::shared_ptr<Component::Material> material;
 	};
 }

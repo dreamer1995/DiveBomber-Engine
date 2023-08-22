@@ -4,6 +4,7 @@
 #include "..\BindableObject\BindableObjectCommon.h"
 #include "..\BindableObject\Geometry\Sphere.h"
 #include "..\Component\Mesh.h"
+#include "..\Component\Material.h"
 #include "..\DX\CommandQueue.h"
 #include "..\DX\DescriptorAllocator.h"
 #include "..\DX\DescriptorAllocation.h"
@@ -40,13 +41,9 @@ namespace DiveBomber::DrawableObject
 		
 		mesh = std::make_shared<Mesh>(gfx, vertexBuffer, indexBuffer);
 
-		std::shared_ptr<DescriptorAllocation> descriptorAllocation =
-			gfx.GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)->Allocate(1u);
-		AddBindable(Texture::Resolve(gfx, L"earth.dds", std::move(descriptorAllocation)));
-
-		descriptorAllocation =
-			gfx.GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)->Allocate(1u);
-		AddBindable(Texture::Resolve(gfx, L"rustediron2_basecolor.png", std::move(descriptorAllocation)));
+		material = std::make_shared<Material>();
+		material->AddTexture(Texture::Resolve(gfx, L"earth.dds"), 0u);
+		material->AddTexture(Texture::Resolve(gfx, L"rustediron2_basecolor.png"), 1u);
 
 		std::shared_ptr<Shader> vertexShader = Shader::Resolve(gfx, L"VShader", Shader::ShaderType::VertexShader);
 		AddBindable(vertexShader);
@@ -95,6 +92,7 @@ namespace DiveBomber::DrawableObject
 	void SimpleSphere::Bind(DEGraphics::Graphics& gfx) const noxnd
 	{
 		mesh->Bind(gfx);
+		material->Bind(gfx);
 		Drawable::Bind(gfx);
 
 		gfx.GetGraphicsCommandList()->DrawIndexedInstanced(mesh->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);

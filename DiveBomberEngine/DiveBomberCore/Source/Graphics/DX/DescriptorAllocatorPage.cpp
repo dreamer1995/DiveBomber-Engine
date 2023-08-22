@@ -93,7 +93,7 @@ namespace DiveBomber::DX
 			CD3DX12_CPU_DESCRIPTOR_HANDLE(baseCPUDescriptorHandle, offset, descriptorHandleIncrementSize),
 			isShaderInvisible ?
 			CD3DX12_GPU_DESCRIPTOR_HANDLE{} : CD3DX12_GPU_DESCRIPTOR_HANDLE(baseGPUDescriptorHandle, offset, descriptorHandleIncrementSize),
-			numDescriptors, descriptorHandleIncrementSize, shared_from_this()
+			offset, numDescriptors, descriptorHandleIncrementSize, shared_from_this()
 		);
 	}
 
