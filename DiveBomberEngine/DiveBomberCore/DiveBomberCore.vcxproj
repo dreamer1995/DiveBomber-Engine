@@ -87,6 +87,9 @@
     <ClCompile Include="Source\Graphics\BindableObject\PipelineStateObject.cpp" />
     <ClCompile Include="Source\Graphics\BindableObject\Texture.cpp" />
     <ClCompile Include="Source\Graphics\Component\Camera.cpp" />
+    <ClCompile Include="Source\Graphics\Component\Material.cpp" />
+    <ClCompile Include="Source\Graphics\Component\Mesh.cpp" />
+    <ClCompile Include="Source\Graphics\DrawableObject\Model.cpp" />
     <ClCompile Include="Source\Graphics\DrawableObject\Drawable.cpp" />
     <ClCompile Include="Source\Graphics\DrawableObject\SimpleSphere.cpp" />
     <ClCompile Include="Source\Graphics\DX\DescriptorAllocation.cpp" />
@@ -138,6 +141,9 @@
     <ClInclude Include="Source\Graphics\BindableObject\DepthStencil.h" />
     <ClInclude Include="Source\Graphics\BindableObject\PipelineStateObject.h" />
     <ClInclude Include="Source\Graphics\BindableObject\Texture.h" />
+    <ClInclude Include="Source\Graphics\Component\Material.h" />
+    <ClInclude Include="Source\Graphics\Component\Mesh.h" />
+    <ClInclude Include="Source\Graphics\DrawableObject\Model.h" />
     <ClInclude Include="Source\Graphics\DEDirextX.h" />
     <ClInclude Include="Source\Graphics\DrawableObject\Drawable.h" />
     <ClInclude Include="Source\Graphics\DrawableObject\SimpleSphere.h" />

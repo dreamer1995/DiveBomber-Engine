@@ -47,6 +47,9 @@
     <ClCompile Include="Source\Scene\Scene.cpp" />
     <ClCompile Include="Source\Graphics\DrawableObject\Drawable.cpp" />
     <ClCompile Include="Source\Graphics\DrawableObject\SimpleSphere.cpp" />
+    <ClCompile Include="Source\Graphics\Component\Mesh.cpp" />
+    <ClCompile Include="Source\Graphics\DrawableObject\Model.cpp" />
+    <ClCompile Include="Source\Graphics\Component\Material.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Utility\Common.h" />
@@ -111,6 +114,9 @@
     <ClInclude Include="Source\Scene\Scene.h" />
     <ClInclude Include="Source\Graphics\DrawableObject\Drawable.h" />
     <ClInclude Include="Source\Graphics\DrawableObject\SimpleSphere.h" />
+    <ClInclude Include="Source\Graphics\Component\Mesh.h" />
+    <ClInclude Include="Source\Graphics\DrawableObject\Model.h" />
+    <ClInclude Include="Source\Graphics\Component\Material.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

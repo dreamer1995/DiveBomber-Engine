@@ -3,9 +3,8 @@
 #include "..\Graphics.h"
 #include "..\BindableObject\BindableObjectCommon.h"
 #include "..\BindableObject\Geometry\Sphere.h"
-#include "..\Component\Camera.h"
+#include "..\Component\Mesh.h"
 #include "..\DX\CommandQueue.h"
-#include "..\BindableObject\Texture.h"
 #include "..\DX\DescriptorAllocator.h"
 #include "..\DX\DescriptorAllocation.h"
 
@@ -15,6 +14,7 @@ namespace DiveBomber::DrawableObject
 	using namespace DiveBomber::BindableObject;
 	using namespace DiveBomber::BindableObject::VertexProcess;
 	using namespace DX;
+	using namespace Component;
 	namespace dx = DirectX;
 
 	SimpleSphere::SimpleSphere(Graphics& gfx, const std::wstring inputName)
@@ -28,15 +28,17 @@ namespace DiveBomber::DrawableObject
 		vl.Append(VertexLayout::Binormal);
 		vl.Append(VertexLayout::Texture2D);
 
-		IndexedTriangleList mesh = Sphere::MakeNormalUVed(vl, true);
-		mesh.Transform(dx::XMMatrixScaling(1, 1, 1));
+		IndexedTriangleList sphere = Sphere::MakeNormalUVed(vl, true);
+		sphere.Transform(dx::XMMatrixScaling(1, 1, 1));
 
 		const std::string geometryTag = Utility::ToNarrow(name);
 
-		std::shared_ptr<VertexBuffer> vertexBuffer = VertexBuffer::Resolve(gfx, geometryTag, mesh.vertices);
-		AddBindable(vertexBuffer);
-		indexBuffer = IndexBuffer::Resolve(gfx, geometryTag, mesh.indices);
-		AddBindable(indexBuffer);
+		std::shared_ptr<VertexBuffer> vertexBuffer = VertexBuffer::Resolve(gfx, geometryTag, sphere.vertices);
+		std::shared_ptr<IndexBuffer> indexBuffer = IndexBuffer::Resolve(gfx, geometryTag, sphere.indices);
+
+		std::shared_ptr<Topology> topology = Topology::Resolve(gfx, D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+		
+		mesh = std::make_shared<Mesh>(gfx, vertexBuffer, indexBuffer);
 
 		std::shared_ptr<DescriptorAllocation> descriptorAllocation =
 			gfx.GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)->Allocate(1u);
@@ -51,9 +53,6 @@ namespace DiveBomber::DrawableObject
 		std::shared_ptr<Shader> pixelShader = Shader::Resolve(gfx, L"PShader", Shader::ShaderType::PixelShader);
 		AddBindable(pixelShader);
 
-		std::shared_ptr<Topology> topology = Topology::Resolve(gfx, D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
-		AddBindable(topology);
-
 		std::shared_ptr<RootSignature> rootSignature = RootSignature::Resolve(gfx, "StandardSRVFullStage");
 		AddBindable(rootSignature);
 
@@ -64,7 +63,7 @@ namespace DiveBomber::DrawableObject
 		auto dsvFormat = DXGI_FORMAT_D32_FLOAT;
 
 		AddBindable(PipelineStateObject::Resolve(gfx, geometryTag + "PSO",
-			rootSignature, vertexBuffer, topology, vertexShader, pixelShader, dsvFormat, rtvFormats));
+			rootSignature, mesh->GetVertexBuffer(), mesh->GetTopology(), vertexShader, pixelShader, dsvFormat, rtvFormats));
 
 		std::shared_ptr<ConstantTransformBuffer> transformBuffer = std::make_shared<ConstantTransformBuffer>(gfx);
 		transformBuffer->InitializeParentReference(*this);
@@ -95,8 +94,9 @@ namespace DiveBomber::DrawableObject
 
 	void SimpleSphere::Bind(DEGraphics::Graphics& gfx) const noxnd
 	{
+		mesh->Bind(gfx);
 		Drawable::Bind(gfx);
 
-		gfx.GetGraphicsCommandList()->DrawIndexedInstanced(indexBuffer->GetCount(), 1, 0, 0, 0);
+		gfx.GetGraphicsCommandList()->DrawIndexedInstanced(mesh->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
 	}
 }

@@ -12,6 +12,11 @@ namespace DiveBomber::BindableObject
 	class IndexBuffer;
 }
 
+namespace DiveBomber::Component
+{
+	class Mesh;
+}
+
 namespace DiveBomber::DrawableObject
 {
 	class SimpleSphere final : public Drawable
@@ -30,6 +35,6 @@ namespace DiveBomber::DrawableObject
 		float pitch{ 0.0f };
 		float yaw{ 0.0f };
 		float roll{ 0.0f };
-		std::shared_ptr<BindableObject::IndexBuffer> indexBuffer;
+		std::shared_ptr<Component::Mesh> mesh;
 	};
 }
