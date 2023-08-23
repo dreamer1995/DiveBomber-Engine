@@ -96,7 +96,7 @@ namespace DiveBomber::DX
 		return { CPUAddress.ptr + ((size_t)descriptorSize * offset) };
 	}
 
-	D3D12_CPU_DESCRIPTOR_HANDLE DescriptorAllocation::GetGPUDescriptorHandle(uint32_t offset) const noexcept
+	D3D12_GPU_DESCRIPTOR_HANDLE DescriptorAllocation::GetGPUDescriptorHandle(uint32_t offset) const noexcept
 	{
 		assert(offset < numHandles);
 		return { GPUAddress.ptr + ((size_t)descriptorSize * offset) };

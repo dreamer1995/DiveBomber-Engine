@@ -137,6 +137,7 @@
     <ClInclude Include="Source\Graphics\BindableObject\BindableTarget.h" />
     <ClInclude Include="Source\Graphics\BindableObject\BindableObjectCommon.h" />
     <ClInclude Include="Source\Graphics\BindableObject\ConstantBuffer.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\ConstantBufferInHeap.h" />
     <ClInclude Include="Source\Graphics\BindableObject\ConstantTransformBuffer.h" />
     <ClInclude Include="Source\Graphics\BindableObject\DepthStencil.h" />
     <ClInclude Include="Source\Graphics\BindableObject\PipelineStateObject.h" />

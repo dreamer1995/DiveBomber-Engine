@@ -29,7 +29,7 @@ namespace DiveBomber::DX
 		[[nodiscard]] bool IsInvalid() const noexcept;
 
 		[[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(uint32_t offset = 0) const noexcept;
-		[[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(uint32_t offset = 0) const noexcept;
+		[[nodiscard]] D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(uint32_t offset = 0) const noexcept;
 
 		[[nodiscard]] uint32_t GetNumHandles() const noexcept;
 

@@ -117,6 +117,7 @@
     <ClInclude Include="Source\Graphics\Component\Mesh.h" />
     <ClInclude Include="Source\Graphics\DrawableObject\Model.h" />
     <ClInclude Include="Source\Graphics\Component\Material.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\ConstantBufferInHeap.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

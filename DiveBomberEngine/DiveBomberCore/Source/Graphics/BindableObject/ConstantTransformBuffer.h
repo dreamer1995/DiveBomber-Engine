@@ -16,7 +16,7 @@ namespace DiveBomber::DrawableObject
 namespace DiveBomber::BindableObject
 {
 	template<typename C>
-	class ConstantBuffer;
+	class ConstantBufferInHeap;
 
 	class ConstantTransformBuffer final : public Bindable
 	{
@@ -43,6 +43,7 @@ namespace DiveBomber::BindableObject
 		[[nodiscard]] Transforms GetTransformMatrices() const noexcept;
 		[[nodiscard]] Transforms CalculateTransformMatrices(const DEGraphics::Graphics& gfx) noxnd;
 		void InitializeParentReference(const DrawableObject::Drawable& inputParent) noexcept;
+		std::shared_ptr<ConstantBufferInHeap<Transforms>> GetTransformBuffer() const noexcept;
 
 
 		//Maybe Transform info should be unique, or some of the matrices should be unique.
@@ -51,7 +52,7 @@ namespace DiveBomber::BindableObject
 		//[[nodiscard]] std::string GetUID() const noexcept override;
 	private:
 		Transforms transforms;
-		std::unique_ptr<ConstantBuffer<Transforms>> transformCBuffer;
+		std::shared_ptr<ConstantBufferInHeap<Transforms>> transformCBuffer;
 		const DrawableObject::Drawable* parent = nullptr;
 	};
 }

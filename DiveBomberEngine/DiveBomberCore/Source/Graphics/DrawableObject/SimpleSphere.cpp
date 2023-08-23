@@ -41,9 +41,14 @@ namespace DiveBomber::DrawableObject
 		
 		mesh = std::make_shared<Mesh>(gfx, vertexBuffer, indexBuffer);
 
-		material = std::make_shared<Material>();
+		material = std::make_shared<Material>(gfx);
 		material->AddTexture(Texture::Resolve(gfx, L"earth.dds"), 0u);
 		material->AddTexture(Texture::Resolve(gfx, L"rustediron2_basecolor.png"), 1u);
+
+		std::shared_ptr<ConstantTransformBuffer> transformBuffer = std::make_shared<ConstantTransformBuffer>(gfx);
+		transformBuffer->InitializeParentReference(*this);
+		AddBindable(transformBuffer);
+		material->AddConstant(transformBuffer->GetTransformBuffer(), 0u);
 
 		std::shared_ptr<Shader> vertexShader = Shader::Resolve(gfx, L"VShader", Shader::ShaderType::VertexShader);
 		AddBindable(vertexShader);
@@ -61,10 +66,6 @@ namespace DiveBomber::DrawableObject
 
 		AddBindable(PipelineStateObject::Resolve(gfx, geometryTag + "PSO",
 			rootSignature, mesh->GetVertexBuffer(), mesh->GetTopology(), vertexShader, pixelShader, dsvFormat, rtvFormats));
-
-		std::shared_ptr<ConstantTransformBuffer> transformBuffer = std::make_shared<ConstantTransformBuffer>(gfx);
-		transformBuffer->InitializeParentReference(*this);
-		AddBindable(transformBuffer);
 	}
 
 	SimpleSphere::~SimpleSphere()
@@ -92,8 +93,8 @@ namespace DiveBomber::DrawableObject
 	void SimpleSphere::Bind(DEGraphics::Graphics& gfx) const noxnd
 	{
 		mesh->Bind(gfx);
-		material->Bind(gfx);
 		Drawable::Bind(gfx);
+		material->Bind(gfx);
 
 		gfx.GetGraphicsCommandList()->DrawIndexedInstanced(mesh->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
 	}

@@ -10,7 +10,7 @@
 namespace DiveBomber::BindableObject
 {
 	template<typename C>
-	class ConstantBuffer final: public Bindable
+	class ConstantBuffer: public Bindable
 	{
 	public:
 		ConstantBuffer(DEGraphics::Graphics& gfx, const std::string& inputTag, const C& constantData, UINT inputSlot)
@@ -29,7 +29,6 @@ namespace DiveBomber::BindableObject
 				std::string outPutString = "Constant in " + tag + " has no data!";
 				throw std::exception(outPutString.c_str());
 			}
-
 		}
 
 		ConstantBuffer(DEGraphics::Graphics& gfx, const std::string& inputTag, UINT inputSlot)
@@ -65,7 +64,7 @@ namespace DiveBomber::BindableObject
 			DX::ResourceStateTracker::AddGlobalResourceState(constantBuffer, D3D12_RESOURCE_STATE_COMMON);
 		}
 
-		void Update(DEGraphics::Graphics& gfx, const C& constantData)
+		virtual void Update(DEGraphics::Graphics& gfx, const C& constantData)
 		{
 			size_t newBufferSize = UINT(sizeof(constantData));
 
@@ -119,26 +118,27 @@ namespace DiveBomber::BindableObject
 			return gfx.GetParent().Resolve<ConstantBuffer>(gfx, tag, constantData, slot);
 		}
 
-		[[nodiscard]] static std::string GenerateUID(const std::string& tag, const C&, const UINT slot)
+		template<typename...Ignore>
+		[[nodiscard]] static std::string GenerateUID(const std::string& tag, Ignore&&...ignore)
 		{
-			return GenerateUID(tag, slot);
+			return GenerateUID_(tag);
 		}
 
-		[[nodiscard]] static std::string GenerateUID(const std::string& tag, const UINT slot)
+		[[nodiscard]] static std::string GenerateUID_(const std::string& tag)
 		{
 			using namespace std::string_literals;
-			return typeid(ConstantBuffer).name() + "#"s + tag + "#"s + std::to_string(slot);
+			return typeid(ConstantBuffer).name() + "#"s + tag;
 		}
 
 		[[nodiscard]] std::string GetUID() const noexcept override
 		{
-			return GenerateUID(tag, slot);
+			return GenerateUID(tag);
 		}
-
-	private:
+	protected:
 		wrl::ComPtr<ID3D12Resource> constantBuffer;
 		std::string tag;
-		UINT slot;
 		size_t bufferSize = 0u;
+	private:
+		UINT slot;
 	};
 }

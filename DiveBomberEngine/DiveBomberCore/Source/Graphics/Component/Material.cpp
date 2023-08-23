@@ -9,21 +9,19 @@ namespace DiveBomber::Component
     using namespace DEGraphics;
     using namespace BindableObject;
 
-    Material::Material()
+    Material::Material(Graphics& gfx)
     {
+        indexConstantBuffer = std::make_shared<ConstantBuffer<IndexConstant>>(gfx, "TestSphereIndexConstant", indexConstant, 0u);
     }
 
     void Material::AddTexture(const std::shared_ptr<Texture> texture, UINT slot) noexcept
     {
-        assert(bindableTextureMap.find(slot) == bindableTextureMap.end());
-        bindableTextureMap.emplace(slot, texture);
+        indexConstant.texureIndex[slot] = texture->GetSRVDescriptorHeapOffset();
     }
 
     void Material::Bind(Graphics& gfx) noxnd
     {
-        for (auto& bindableTexture : bindableTextureMap)
-        {
-            //bindableTexture.second->GetSRVDescriptorHeapOffset();
-        }
+        indexConstantBuffer->Update(gfx, indexConstant);
+        indexConstantBuffer->Bind(gfx);
     }
 }

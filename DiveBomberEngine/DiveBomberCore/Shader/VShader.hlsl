@@ -15,7 +15,13 @@ struct ModelViewProjection
 	matrix matrix_I_MVP;
 };
 
-ConstantBuffer<ModelViewProjection> ModelViewProjectionCB : register(b0);
+struct IndexConstant
+{
+	uint transformIndex[1];
+	uint texureIndex[2];
+};
+
+ConstantBuffer<IndexConstant> IndexConstantCB : register(b0);
 
 struct VSIn
 {
@@ -36,6 +42,8 @@ VSOut main(VSIn In)
 {
     VSOut Out;
 
+	ConstantBuffer<ModelViewProjection> ModelViewProjectionCB = ResourceDescriptorHeap[NonUniformResourceIndex(IndexConstantCB.transformIndex[0])];
+	
     Out.hPos = mul(float4(In.pos, 1.0f), ModelViewProjectionCB.matrix_MVP);
     Out.uv = In.uv;
 

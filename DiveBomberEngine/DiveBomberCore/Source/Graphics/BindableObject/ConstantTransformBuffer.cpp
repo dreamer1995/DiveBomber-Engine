@@ -1,6 +1,6 @@
 #include "ConstantTransformBuffer.h"
 
-#include "ConstantBuffer.h"
+#include "ConstantBufferInHeap.h"
 #include "..\DrawableObject\Drawable.h"
 
 namespace DiveBomber::BindableObject
@@ -11,13 +11,13 @@ namespace DiveBomber::BindableObject
 
 	ConstantTransformBuffer::ConstantTransformBuffer(Graphics& gfx)
 	{
-		transformCBuffer = std::make_unique<ConstantBuffer<Transforms>>(gfx, "Transform Metrices", 0u);
+		transformCBuffer = std::make_shared<ConstantBufferInHeap<Transforms>>(gfx, "Transform Metrices", transforms);
 	}
 
 	void ConstantTransformBuffer::Bind(Graphics& gfx) noxnd
 	{
 		transformCBuffer->Update(gfx, CalculateTransformMatrices(gfx));
-		transformCBuffer->Bind(gfx);
+		//transformCBuffer->Bind(gfx);
 	}
 
 	ConstantTransformBuffer::Transforms ConstantTransformBuffer::GetTransformMatrices() const noexcept
@@ -28,6 +28,11 @@ namespace DiveBomber::BindableObject
 	void ConstantTransformBuffer::InitializeParentReference(const Drawable& inputParent) noexcept
 	{
 		parent = &inputParent;
+	}
+
+	std::shared_ptr<ConstantBufferInHeap<ConstantTransformBuffer::Transforms>> ConstantTransformBuffer::GetTransformBuffer() const noexcept
+	{
+		return transformCBuffer;
 	}
 
 	ConstantTransformBuffer::Transforms ConstantTransformBuffer::CalculateTransformMatrices(const Graphics& gfx) noxnd
