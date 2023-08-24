@@ -36,11 +36,11 @@ namespace DiveBomber::DEScene
 		void LoadSceneFromFile(DEGraphics::Graphics& gfx, const std::wstring name) noexcept;
 		void Render(DEGraphics::Graphics& gfx) noxnd;
 		std::shared_ptr<Component::Camera> GetMainCamera() const noexcept;
-		std::shared_ptr<DrawableObject::Drawable> GetSceneObject() const noexcept;
+		std::shared_ptr<DrawableObject::Drawable> FindSceneObjectByName(std::wstring name) const noexcept;
 	private:
 		const std::wstring name;
 		std::unique_ptr<RenderPipeline::RenderPipelineGraph> mainRenderPipeline;
-		std::vector<std::shared_ptr<DrawableObject::Drawable>> drawableObjects;
+		std::multimap <std::wstring, std::shared_ptr<DrawableObject::Drawable>> drawableObjects;
 		std::shared_ptr<Component::Camera> mainCamera;
 	};
 }

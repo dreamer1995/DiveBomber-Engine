@@ -49,8 +49,9 @@ namespace DiveBomber::BindableObject
 			HRESULT hr;
 
 			size_t initBufferSize = bufferSize != 0 ? bufferSize : 1u;
+			initBufferSize = Utility::AlignUp(initBufferSize, D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT);
 			const CD3DX12_HEAP_PROPERTIES heapProp{ D3D12_HEAP_TYPE_DEFAULT };
-			const CD3DX12_RESOURCE_DESC resDes = CD3DX12_RESOURCE_DESC::Buffer(Utility::AlignUp(initBufferSize, D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT), D3D12_RESOURCE_FLAG_NONE);
+			const CD3DX12_RESOURCE_DESC resDes = CD3DX12_RESOURCE_DESC::Buffer(initBufferSize, D3D12_RESOURCE_FLAG_NONE);
 
 			// Create a committed resource for the GPU resource in a default heap.
 			GFX_THROW_INFO_NAMESPACE(gfx.GetDecive()->CreateCommittedResource(

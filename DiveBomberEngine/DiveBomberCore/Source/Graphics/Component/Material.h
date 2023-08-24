@@ -3,7 +3,6 @@
 
 #include "..\BindableObject\ConstantBufferInHeap.h"
 
-#include <map>
 namespace DiveBomber::DEGraphics
 {
 	class Graphics;
@@ -23,7 +22,6 @@ namespace DiveBomber::Component
 		{
 			UINT transformIndex[1] = { 0 };
 			UINT texureIndex[2] = { 0 };
-			UINT padding[253] = { 0 };
 		};
 	public:
 		Material(DEGraphics::Graphics& gfx);
@@ -32,6 +30,7 @@ namespace DiveBomber::Component
 		template<typename C>
 		void AddConstant(const std::shared_ptr<BindableObject::ConstantBufferInHeap<C>> constant, UINT slot) noexcept
 		{
+			assert(slot < sizeof(indexConstant.transformIndex));
 			indexConstant.transformIndex[slot] = constant->GetCBVDescriptorHeapOffset();
 		}
 

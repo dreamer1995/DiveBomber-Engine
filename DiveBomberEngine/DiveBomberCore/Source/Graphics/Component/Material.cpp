@@ -16,6 +16,7 @@ namespace DiveBomber::Component
 
     void Material::AddTexture(const std::shared_ptr<Texture> texture, UINT slot) noexcept
     {
+        assert(slot < sizeof(indexConstant.texureIndex));
         indexConstant.texureIndex[slot] = texture->GetSRVDescriptorHeapOffset();
     }
 

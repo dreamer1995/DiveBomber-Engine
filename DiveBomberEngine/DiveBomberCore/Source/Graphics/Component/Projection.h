@@ -21,7 +21,7 @@ namespace DiveBomber::Component
 		struct ProjectionAttributes
 		{
 			float aspectRatio = (float)MainWindowWidth / MainWindowHeight;
-			float nearPlane = 0.5f;
+			float nearPlane = 0.01f;
 			float farPlane = 400.0f;
 			bool isPerspective = true;
 			float FOV = 60.0f / 180.0f * Utility::PI;

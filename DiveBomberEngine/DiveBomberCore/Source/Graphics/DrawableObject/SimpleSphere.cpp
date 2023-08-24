@@ -41,6 +41,12 @@ namespace DiveBomber::DrawableObject
 		
 		mesh = std::make_shared<Mesh>(gfx, vertexBuffer, indexBuffer);
 
+		struct IndexConstant
+		{
+			UINT transformIndex[1] = { 0 };
+			UINT texureIndex[2] = { 0 };
+		}indexConstant;
+
 		material = std::make_shared<Material>(gfx);
 		material->AddTexture(Texture::Resolve(gfx, L"earth.dds"), 0u);
 		material->AddTexture(Texture::Resolve(gfx, L"rustediron2_basecolor.png"), 1u);

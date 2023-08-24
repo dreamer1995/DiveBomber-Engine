@@ -27,10 +27,10 @@ namespace DiveBomber::DEScene
 		mainRenderPipeline = std::make_unique<RenderPipelineGraph>();
 
 		std::shared_ptr<CommandQueue> commandQueue = gfx.GetCommandQueue(D3D12_COMMAND_LIST_TYPE_COPY);
-		drawableObjects.emplace_back(std::make_shared<SimpleSphere>(gfx));
-		auto another = std::make_shared<SimpleSphere>(gfx);
+		drawableObjects.emplace(L"Sphere01", std::make_shared<SimpleSphere>(gfx, L"Sphere01"));
+		auto another = std::make_shared<SimpleSphere>(gfx, L"Sphere02");
 		another->SetPos({ 2.0f,0,0 });
-		drawableObjects.emplace_back(another);
+		drawableObjects.emplace(L"Sphere02", another);
 		uint64_t fenceValue = gfx.ExecuteCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
 		commandQueue->WaitForFenceValue(fenceValue);
 
@@ -45,8 +45,7 @@ namespace DiveBomber::DEScene
 		mainRenderPipeline->Bind(gfx);
 		for (auto& drawableObject : drawableObjects)
 		{
-			//drawableObject.second->Bind(gfx);
-			drawableObject->Bind(gfx);
+			drawableObject.second->Bind(gfx);
 		}
 	}
 
@@ -55,13 +54,16 @@ namespace DiveBomber::DEScene
 		return mainCamera;
 	}
 
-	std::shared_ptr<Drawable> Scene::GetSceneObject() const noexcept
+	std::shared_ptr<Drawable> Scene::FindSceneObjectByName(std::wstring name) const noexcept
 	{
-		if (drawableObjects.size() > 0)
+		auto returnObject = drawableObjects.find(name);
+		if (returnObject != drawableObjects.end())
 		{
-			return drawableObjects[0];
+			return returnObject->second;
 		}
-
-		return nullptr;
+		else
+		{
+			return nullptr;
+		}
 	}
 }

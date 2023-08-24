@@ -297,10 +297,18 @@ namespace DiveBomber
 		float angle = (float)Utility::g_GameTime;
 
 		using namespace DrawableObject;
-		auto drawable = currentScene->GetSceneObject();
-		auto sphere = std::dynamic_pointer_cast<SimpleSphere>(drawable);
-		if (sphere)
-			sphere->SetRotation({ 0, angle ,0 });
+		{
+			auto drawable = currentScene->FindSceneObjectByName(L"Sphere01");
+			auto sphere = std::dynamic_pointer_cast<SimpleSphere>(drawable);
+			if (sphere)
+				sphere->SetRotation({ 0, angle ,0 });
+		}
+		{
+			auto drawable = currentScene->FindSceneObjectByName(L"Sphere02");
+			auto sphere = std::dynamic_pointer_cast<SimpleSphere>(drawable);
+			if (sphere)
+				sphere->SetRotation({ 0, -angle ,0 });
+		}
 	}
 
 	void DiveBomberCore::RenderLogic()
