@@ -23,6 +23,7 @@ namespace DiveBomber::Component
 		{
 			UINT transformIndex[1] = { 0 };
 			UINT texureIndex[2] = { 0 };
+			UINT padding[253] = { 0 };
 		};
 	public:
 		Material(DEGraphics::Graphics& gfx);

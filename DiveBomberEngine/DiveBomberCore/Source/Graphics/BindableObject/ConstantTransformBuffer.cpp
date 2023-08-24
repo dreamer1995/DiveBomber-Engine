@@ -11,13 +11,12 @@ namespace DiveBomber::BindableObject
 
 	ConstantTransformBuffer::ConstantTransformBuffer(Graphics& gfx)
 	{
-		transformCBuffer = std::make_shared<ConstantBufferInHeap<Transforms>>(gfx, "Transform Metrices", transforms);
+		transformCBuffer = std::make_shared<ConstantBufferInHeap<Transforms>>(gfx, "Transform Metrices");
 	}
 
 	void ConstantTransformBuffer::Bind(Graphics& gfx) noxnd
 	{
 		transformCBuffer->Update(gfx, CalculateTransformMatrices(gfx));
-		//transformCBuffer->Bind(gfx);
 	}
 
 	ConstantTransformBuffer::Transforms ConstantTransformBuffer::GetTransformMatrices() const noexcept

@@ -10,13 +10,19 @@ namespace DiveBomber::BindableObject
 	class ConstantBufferInHeap final : public ConstantBuffer<C>
 	{
 	public:
+		ConstantBufferInHeap(DEGraphics::Graphics& gfx, const std::string& inputTag)
+			:
+			ConstantBuffer<C>(gfx, inputTag, 99u)
+		{
+			descriptorAllocation = gfx.GetDescriptorAllocator()->Allocate(1u);
+		}
+
 		ConstantBufferInHeap(DEGraphics::Graphics& gfx, const std::string& inputTag, const C& constantData)
 			:
 			ConstantBuffer<C>(gfx, inputTag, constantData, 99u)
 		{
 			descriptorAllocation = gfx.GetDescriptorAllocator()->Allocate(1u);
-
-			UpdateCBV(gfx, sizeof(constantData));
+			UpdateCBV(gfx);
 		}
 
 		void Bind(DEGraphics::Graphics& gfx) noxnd override
@@ -26,15 +32,14 @@ namespace DiveBomber::BindableObject
 		virtual void Update(DEGraphics::Graphics& gfx, const C& constantData) override
 		{
 			ConstantBuffer<C>::Update(gfx, constantData);
-			UpdateCBV(gfx, sizeof(constantData));
+			UpdateCBV(gfx);
 		}
 
-		void UpdateCBV(DEGraphics::Graphics& gfx, UINT size)
+		void UpdateCBV(DEGraphics::Graphics& gfx)
 		{
 			D3D12_CONSTANT_BUFFER_VIEW_DESC constantBufferViewDesc;
 			constantBufferViewDesc.BufferLocation = ConstantBuffer<C>::constantBuffer->GetGPUVirtualAddress();
-			//constantBufferViewDesc.SizeInBytes = Utility::AlignUp(size, 256u);
-			constantBufferViewDesc.SizeInBytes = 256u;
+			constantBufferViewDesc.SizeInBytes = Utility::AlignUp((UINT)ConstantBuffer<C>::bufferSize, D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT);
 
 			gfx.GetDecive()->CreateConstantBufferView(&constantBufferViewDesc, descriptorAllocation->GetCPUDescriptorHandle());
 		}
