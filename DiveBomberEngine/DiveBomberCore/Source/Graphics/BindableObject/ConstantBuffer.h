@@ -13,16 +13,17 @@ namespace DiveBomber::BindableObject
 	class ConstantBuffer: public Bindable
 	{
 	public:
-		ConstantBuffer(DEGraphics::Graphics& gfx, const std::string& inputTag, const C& constantData, UINT inputSlot)
+		ConstantBuffer(DEGraphics::Graphics& gfx, const std::string& inputTag,
+			const C* constantData, size_t inputDateSize, UINT inputSlot)
 			:
 			tag(inputTag),
 			slot(inputSlot),
-			bufferSize(UINT(sizeof(constantData)))
+			bufferSize(inputDateSize)
 		{
 			if (bufferSize > 0)
 			{
 				InitializeConstantBufferSize(gfx);
-				Update(gfx, constantData);
+				Update(gfx, constantData, bufferSize);
 			}
 			else
 			{
@@ -65,16 +66,14 @@ namespace DiveBomber::BindableObject
 			DX::ResourceStateTracker::AddGlobalResourceState(constantBuffer, D3D12_RESOURCE_STATE_COMMON);
 		}
 
-		virtual void Update(DEGraphics::Graphics& gfx, const C& constantData)
+		virtual void Update(DEGraphics::Graphics& gfx, const C* constantData, size_t dateSize)
 		{
-			size_t newBufferSize = UINT(sizeof(constantData));
-
 			// Create an committed resource for the upload.
-			if (newBufferSize > 0)
+			if (dateSize > 0)
 			{
-				if (bufferSize != newBufferSize)
+				if (bufferSize != dateSize)
 				{
-					bufferSize = newBufferSize;
+					bufferSize = dateSize;
 					InitializeConstantBufferSize(gfx);
 				}
 
@@ -84,7 +83,7 @@ namespace DiveBomber::BindableObject
 					commandList->AllocateDynamicUploadBuffer(bufferSize, D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT);
 
 				D3D12_SUBRESOURCE_DATA subresourceData = {};
-				subresourceData.pData = &constantData;
+				subresourceData.pData = constantData;
 				subresourceData.RowPitch = bufferSize;
 				subresourceData.SlicePitch = subresourceData.RowPitch;
 
@@ -114,9 +113,9 @@ namespace DiveBomber::BindableObject
 		}
 
 		[[nodiscard]] static std::shared_ptr<ConstantBuffer> Resolve(DEGraphics::Graphics& gfx, const std::string& tag,
-			const C& constantData, const UINT slot)
+			const C* constantData, size_t dateSize, const UINT slot)
 		{
-			return gfx.GetParent().Resolve<ConstantBuffer>(gfx, tag, constantData, slot);
+			return gfx.GetParent().Resolve<ConstantBuffer>(gfx, tag, constantData, dateSize, slot);
 		}
 
 		template<typename...Ignore>

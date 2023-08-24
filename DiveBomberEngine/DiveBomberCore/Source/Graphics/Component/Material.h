@@ -3,6 +3,8 @@
 
 #include "..\BindableObject\ConstantBufferInHeap.h"
 
+#include <vector>
+
 namespace DiveBomber::DEGraphics
 {
 	class Graphics;
@@ -18,25 +20,28 @@ namespace DiveBomber::Component
 	class Material final
 	{
 	public:
-		struct IndexConstant
-		{
-			UINT transformIndex[1] = { 0 };
-			UINT texureIndex[2] = { 0 };
-		};
-	public:
 		Material(DEGraphics::Graphics& gfx);
 		void AddTexture(const std::shared_ptr<BindableObject::Texture> texture, UINT slot) noexcept;
 
 		template<typename C>
 		void AddConstant(const std::shared_ptr<BindableObject::ConstantBufferInHeap<C>> constant, UINT slot) noexcept
 		{
-			assert(slot < sizeof(indexConstant.transformIndex));
-			indexConstant.transformIndex[slot] = constant->GetCBVDescriptorHeapOffset();
+			if (slot >= numConstantIndices)
+			{
+				UINT needInsert = slot - numConstantIndices + 1;
+				std::vector<UINT>::iterator it = shaderResourceIndices.begin();
+				shaderResourceIndices.insert(it + numConstantIndices, needInsert, 0u);
+				numConstantIndices = slot + 1;
+			}
+			shaderResourceIndices[slot] = constant->GetCBVDescriptorHeapOffset();
+
 		}
 
 		void Bind(DEGraphics::Graphics& gfx) noxnd;
 	private:
-		std::shared_ptr<BindableObject::ConstantBuffer<IndexConstant>> indexConstantBuffer;
-		IndexConstant indexConstant;
+		std::shared_ptr<BindableObject::ConstantBuffer<UINT>> indexConstantBuffer;
+		UINT numConstantIndices = 0;
+		UINT numTextureIndices = 0;
+		std::vector<UINT> shaderResourceIndices;
 	};
 }
