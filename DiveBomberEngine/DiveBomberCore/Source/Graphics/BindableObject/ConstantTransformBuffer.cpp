@@ -16,8 +16,7 @@ namespace DiveBomber::BindableObject
 
 	void ConstantTransformBuffer::Bind(Graphics& gfx) noxnd
 	{
-		Transforms bindedTransform = CalculateTransformMatrices(gfx);
-		transformCBuffer->Update(gfx, &bindedTransform, sizeof(bindedTransform));
+		transformCBuffer->Update(gfx, CalculateTransformMatrices(gfx));
 	}
 
 	ConstantTransformBuffer::Transforms ConstantTransformBuffer::GetTransformMatrices() const noexcept

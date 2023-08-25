@@ -78,12 +78,12 @@ namespace DiveBomber::DrawableObject
 	{
 	}
 
-	void SimpleSphere::SetPos(DirectX::XMFLOAT3 inputPosition) noexcept
+	void SimpleSphere::SetPos(dx::XMFLOAT3 inputPosition) noexcept
 	{
 		position = inputPosition;
 	}
 
-	void SimpleSphere::SetRotation(DirectX::XMFLOAT3 inputRotation) noexcept
+	void SimpleSphere::SetRotation(dx::XMFLOAT3 inputRotation) noexcept
 	{
 		pitch = inputRotation.x;
 		yaw = inputRotation.y;
@@ -96,7 +96,7 @@ namespace DiveBomber::DrawableObject
 			dx::XMMatrixTranslation(position.x, position.y, position.z);
 	}
 
-	void SimpleSphere::Bind(DEGraphics::Graphics& gfx) const noxnd
+	void SimpleSphere::Bind(Graphics& gfx) const noxnd
 	{
 		mesh->Bind(gfx);
 		Drawable::Bind(gfx);

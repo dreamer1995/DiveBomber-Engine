@@ -17,6 +17,14 @@ namespace DiveBomber::BindableObject
 			descriptorAllocation = gfx.GetDescriptorAllocator()->Allocate(1u);
 		}
 
+		ConstantBufferInHeap(DEGraphics::Graphics& gfx, const std::string& inputTag, const C& constantData)
+			:
+			ConstantBuffer<C>(gfx, inputTag, &constantData, sizeof(constantData), 99u)
+		{
+			descriptorAllocation = gfx.GetDescriptorAllocator()->Allocate(1u);
+			UpdateCBV(gfx);
+		}
+
 		ConstantBufferInHeap(DEGraphics::Graphics& gfx, const std::string& inputTag, const C* constantData, size_t inputDataSize)
 			:
 			ConstantBuffer<C>(gfx, inputTag, constantData, inputDataSize, 99u)
@@ -27,6 +35,11 @@ namespace DiveBomber::BindableObject
 
 		void Bind(DEGraphics::Graphics& gfx) noxnd override
 		{
+		}
+
+		virtual void Update(DEGraphics::Graphics& gfx, const C& constantData) override
+		{
+			Update(gfx, &constantData, sizeof(constantData));
 		}
 
 		virtual void Update(DEGraphics::Graphics& gfx, const C* constantData, size_t dataSize) override

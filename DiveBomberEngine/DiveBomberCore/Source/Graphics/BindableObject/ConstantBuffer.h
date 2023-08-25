@@ -14,6 +14,13 @@ namespace DiveBomber::BindableObject
 	{
 	public:
 		ConstantBuffer(DEGraphics::Graphics& gfx, const std::string& inputTag,
+			const C& constantData, UINT inputSlot)
+			:
+			ConstantBuffer(gfx, inputTag, &constantData, sizeof(constantData), inputSlot)
+		{
+		}
+
+		ConstantBuffer(DEGraphics::Graphics& gfx, const std::string& inputTag,
 			const C* constantData, size_t inputDateSize, UINT inputSlot)
 			:
 			tag(inputTag),
@@ -64,6 +71,11 @@ namespace DiveBomber::BindableObject
 				IID_PPV_ARGS(&constantBuffer)));
 
 			DX::ResourceStateTracker::AddGlobalResourceState(constantBuffer, D3D12_RESOURCE_STATE_COMMON);
+		}
+
+		virtual void Update(DEGraphics::Graphics& gfx, const C& constantData)
+		{
+			Update(gfx, &constantData, sizeof(constantData));
 		}
 
 		virtual void Update(DEGraphics::Graphics& gfx, const C* constantData, size_t dateSize)
