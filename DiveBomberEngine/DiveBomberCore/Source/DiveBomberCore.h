@@ -1,10 +1,10 @@
 #pragma once
 #include "Utility/Common.h"
+#include "Graphics\BindableObject\GlobalBindableManager.h"
 
 #include <thread>
 #include <queue>
 #include <string>
-#include <unordered_map>
 
 namespace DiveBomber
 {
@@ -35,7 +35,7 @@ namespace DiveBomber
 
 	namespace BindableObject
 	{
-		class Bindable;
+		class GlobalBindableManager;
 	}
 
 	class DiveBomberCore final
@@ -46,21 +46,11 @@ namespace DiveBomber
 		[[nodiscard]] int GameLoop();
 		void ExecuteConsoleCommand();
 		void RefreshRenderReport();
+
 		template<class T, typename...Params>
-		std::shared_ptr<T> Resolve(DEGraphics::Graphics& gfx, Params&&...p) noxnd
+		std::shared_ptr<T> ResolveBindable(DEGraphics::Graphics& gfx, Params&&...p) noxnd
 		{
-			const auto key = T::GenerateUID(std::forward<Params>(p)...);
-			const auto i = binds.find(key);
-			if (i == binds.end())
-			{
-				auto bind = std::make_shared<T>(gfx, std::forward<Params>(p)...);
-				binds[key] = bind;
-				return bind;
-			}
-			else
-			{
-				return std::static_pointer_cast<T>(i->second);
-			}
+			return globalBindableManager->Resolve<T>(gfx, std::forward<Params>(p)...);
 		}
 
 	private:
@@ -79,6 +69,6 @@ namespace DiveBomber
 
 		std::unique_ptr<DEScene::Scene> currentScene;
 
-		std::unordered_map<std::string, std::shared_ptr<BindableObject::Bindable>> binds;
+		std::unique_ptr<BindableObject::GlobalBindableManager> globalBindableManager;
 	};
 }

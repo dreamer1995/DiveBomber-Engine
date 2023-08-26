@@ -190,12 +190,12 @@ namespace DiveBomber::BindableObject
 
 	std::shared_ptr<Texture> Texture::Resolve(DEGraphics::Graphics& gfx, const std::wstring& name)
 	{
-		return gfx.GetParent().Resolve<Texture>(gfx, name);
+		return gfx.GetParent().ResolveBindable<Texture>(gfx, name);
 	}
 
 	std::shared_ptr<Texture> Texture::Resolve(Graphics& gfx, const std::wstring& name, TextureDescription textureDesc)
 	{
-		return gfx.GetParent().Resolve<Texture>(gfx, name, textureDesc);
+		return gfx.GetParent().ResolveBindable<Texture>(gfx, name, textureDesc);
 	}
 
 	std::string Texture::GenerateUID_(const std::wstring& name)

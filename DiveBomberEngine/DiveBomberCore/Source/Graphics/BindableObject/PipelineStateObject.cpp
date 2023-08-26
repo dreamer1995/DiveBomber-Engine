@@ -56,7 +56,7 @@ namespace DiveBomber::BindableObject
 		const std::shared_ptr<Shader> vertexShader, const std::shared_ptr<Shader> pixelShader,
 		const DXGI_FORMAT dsvFormat, const D3D12_RT_FORMAT_ARRAY rtvFormats)
 	{
-		return gfx.GetParent().Resolve<PipelineStateObject>(gfx, tag,
+		return gfx.GetParent().ResolveBindable<PipelineStateObject>(gfx, tag,
 			rootSignature, vertexBuffer, topology, vertexShader, pixelShader, dsvFormat, rtvFormats);
 	}
 

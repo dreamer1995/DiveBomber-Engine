@@ -120,6 +120,7 @@
     <ClInclude Include="Source\Graphics\Component\Material.h" />
     <ClInclude Include="Source\Graphics\BindableObject\ConstantBufferInHeap.h" />
     <ClInclude Include="Source\Graphics\DX\ShaderManager.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\GlobalBindableManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

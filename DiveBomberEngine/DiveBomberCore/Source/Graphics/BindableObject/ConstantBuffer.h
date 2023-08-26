@@ -127,7 +127,7 @@ namespace DiveBomber::BindableObject
 		[[nodiscard]] static std::shared_ptr<ConstantBuffer> Resolve(DEGraphics::Graphics& gfx, const std::string& tag,
 			const C* constantData, size_t dateSize, const UINT slot)
 		{
-			return gfx.GetParent().Resolve<ConstantBuffer>(gfx, tag, constantData, dateSize, slot);
+			return gfx.GetParent().ResolveBindable<ConstantBuffer>(gfx, tag, constantData, dateSize, slot);
 		}
 
 		template<typename...Ignore>

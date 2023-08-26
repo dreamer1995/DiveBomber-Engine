@@ -44,7 +44,7 @@ namespace DiveBomber::BindableObject
 
 	std::shared_ptr<Shader> Shader::Resolve(Graphics& gfx, const std::wstring& name, ShaderType type)
 	{
-		return gfx.GetParent().Resolve<Shader>(gfx, name, type);
+		return gfx.GetParent().ResolveBindable<Shader>(gfx, name, type);
 	}
 
 	std::string Shader::GenerateUID(const std::wstring& name, ShaderType type)

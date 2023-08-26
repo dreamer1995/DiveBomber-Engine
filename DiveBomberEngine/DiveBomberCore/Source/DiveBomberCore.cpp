@@ -20,6 +20,7 @@ namespace DiveBomber
 	using namespace DEConsole;
 	using namespace Utility;
 	using namespace Hardware;
+	using namespace BindableObject;
 
 	DiveBomberCore::DiveBomberCore()
 	{
@@ -34,6 +35,8 @@ namespace DiveBomber
 		}
 			
 		wnd = std::make_unique<Window>(L"DiveBomber Engine", *this);
+
+		globalBindableManager = std::make_unique<GlobalBindableManager>();
 	}
 
 	DiveBomberCore::~DiveBomberCore()

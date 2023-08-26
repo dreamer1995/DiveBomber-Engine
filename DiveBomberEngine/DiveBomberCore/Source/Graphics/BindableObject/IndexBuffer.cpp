@@ -94,7 +94,7 @@ namespace DiveBomber::BindableObject
 		const std::vector<unsigned short>& indices)
 	{
 		assert(tag != "?");
-		return gfx.GetParent().Resolve<IndexBuffer>(gfx, tag, indices);
+		return gfx.GetParent().ResolveBindable<IndexBuffer>(gfx, tag, indices);
 	}
 	std::string IndexBuffer::GenerateUID_(const std::string& tag)
 	{
