@@ -56,9 +56,9 @@ namespace DiveBomber::DrawableObject
 		AddBindable(transformBuffer);
 		material->AddConstant(transformBuffer->GetTransformBuffer(), 0u);
 
-		std::shared_ptr<Shader> vertexShader = Shader::Resolve(gfx, L"VShader", Shader::ShaderType::VertexShader);
+		std::shared_ptr<Shader> vertexShader = Shader::Resolve(gfx, L"VShader", ShaderType::VertexShader);
 		AddBindable(vertexShader);
-		std::shared_ptr<Shader> pixelShader = Shader::Resolve(gfx, L"PShader", Shader::ShaderType::PixelShader);
+		std::shared_ptr<Shader> pixelShader = Shader::Resolve(gfx, L"PShader", ShaderType::PixelShader);
 		AddBindable(pixelShader);
 
 		std::shared_ptr<RootSignature> rootSignature = RootSignature::Resolve(gfx, "StandardSRVFullStage");

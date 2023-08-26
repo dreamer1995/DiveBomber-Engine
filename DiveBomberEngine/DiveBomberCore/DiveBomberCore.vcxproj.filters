@@ -50,6 +50,7 @@
     <ClCompile Include="Source\Graphics\Component\Mesh.cpp" />
     <ClCompile Include="Source\Graphics\DrawableObject\Model.cpp" />
     <ClCompile Include="Source\Graphics\Component\Material.cpp" />
+    <ClCompile Include="Source\Graphics\DX\ShaderManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Utility\Common.h" />
@@ -118,6 +119,7 @@
     <ClInclude Include="Source\Graphics\DrawableObject\Model.h" />
     <ClInclude Include="Source\Graphics\Component\Material.h" />
     <ClInclude Include="Source\Graphics\BindableObject\ConstantBufferInHeap.h" />
+    <ClInclude Include="Source\Graphics\DX\ShaderManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

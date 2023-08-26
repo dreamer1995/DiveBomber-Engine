@@ -9,18 +9,18 @@ namespace DiveBomber::DEGraphics
 
 namespace DiveBomber::BindableObject
 {
+	enum class ShaderType
+	{
+		VertexShader,
+		HullShader,
+		DomainShader,
+		GeometryShader,
+		PixelShader,
+		ComputeShder,
+	};
+
 	class Shader final : public Bindable
 	{
-	public:
-		enum class ShaderType
-		{
-			VertexShader,
-			HullShader,
-			DomainShader,
-			GeometryShader,
-			PixelShader,
-			ComputeShder,
-		};
 	public:
 		Shader(DEGraphics::Graphics& inputGfx, const std::wstring& inputName, ShaderType inputType);
 		[[nodiscard]] wrl::ComPtr<ID3DBlob> GetBytecode() const noexcept;

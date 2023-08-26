@@ -6,7 +6,7 @@
 #include "..\..\Utility\GlobalParameters.h"
 
 #include <d3dcompiler.h>
-#pragma comment(lib,"D3DCompiler.lib")
+#pragma comment(lib,"d3dcompiler.lib")
 
 namespace DiveBomber::BindableObject
 {

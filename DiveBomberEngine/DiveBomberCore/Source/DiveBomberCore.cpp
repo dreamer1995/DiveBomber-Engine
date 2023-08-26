@@ -92,6 +92,15 @@ namespace DiveBomber
 		RenderLogic();
 	}
 
+	void DiveBomberCore::RenderLogic()
+	{
+		wnd->Gfx().BeginFrame();
+
+		currentScene->Render(wnd->Gfx());
+
+		wnd->Gfx().EndFrame();
+	}
+
 	void DiveBomberCore::ProcessInput()
 	{
 		ExecuteConsoleCommand();
@@ -108,23 +117,23 @@ namespace DiveBomber
 			case VK_F1:
 				//showDemoWindow = true;
 				break;
-			//case VK_F3:
-				//isWireframe = true;
-				//break;
-			//case VK_F4:
-				//wnd->Gfx().isWireFrame = !wnd->Gfx().isWireFrame;
-				//break;
-			//case VK_F5:
-				//if (uvPannel->showUV)
-				//{
-				//	uvPannel->showUV = false;
-				//}
-				//else
-				//{
-				//	uvPannel->showUV = true;
-				//}
-				//break;
-				
+				//case VK_F3:
+					//isWireframe = true;
+					//break;
+				//case VK_F4:
+					//wnd->Gfx().isWireFrame = !wnd->Gfx().isWireFrame;
+					//break;
+				//case VK_F5:
+					//if (uvPannel->showUV)
+					//{
+					//	uvPannel->showUV = false;
+					//}
+					//else
+					//{
+					//	uvPannel->showUV = true;
+					//}
+					//break;
+
 			case VK_F11:
 				if (wnd->kbd->KeyIsDown(VK_MENU))
 				{
@@ -143,9 +152,9 @@ namespace DiveBomber
 				}
 				break;
 
-			//case VK_RETURN:
-				//savingDepth = true;
-				//break;
+				//case VK_RETURN:
+					//savingDepth = true;
+					//break;
 			}
 		}
 
@@ -291,35 +300,6 @@ namespace DiveBomber
 		}
 	}
 
-	void DiveBomberCore::GameLogic()
-	{
-		// Update the model matrix.
-		float angle = (float)Utility::g_GameTime;
-
-		using namespace DrawableObject;
-		{
-			auto drawable = currentScene->FindSceneObjectByName(L"Sphere01");
-			auto sphere = std::dynamic_pointer_cast<SimpleSphere>(drawable);
-			if (sphere)
-				sphere->SetRotation({ 0, angle ,0 });
-		}
-		{
-			auto drawable = currentScene->FindSceneObjectByName(L"Sphere02");
-			auto sphere = std::dynamic_pointer_cast<SimpleSphere>(drawable);
-			if (sphere)
-				sphere->SetRotation({ 0, -angle ,0 });
-		}
-	}
-
-	void DiveBomberCore::RenderLogic()
-	{
-		wnd->Gfx().BeginFrame();
-
-		currentScene->Render(wnd->Gfx());
-
-		wnd->Gfx().EndFrame();
-	}
-
 	void DiveBomberCore::ExecuteConsoleCommand()
 	{
 		if (!EnableConsole)
@@ -359,5 +339,25 @@ namespace DiveBomber
 
 		//std::wcout << g_FramePerSnd << std::endl;
 		//std::wcout << g_GameTime << std::endl;
+	}
+
+	void DiveBomberCore::GameLogic()
+	{
+		// Update the model matrix.
+		float angle = (float)Utility::g_GameTime;
+
+		using namespace DrawableObject;
+		{
+			auto drawable = currentScene->FindSceneObjectByName(L"Sphere01");
+			auto sphere = std::dynamic_pointer_cast<SimpleSphere>(drawable);
+			if (sphere)
+				sphere->SetRotation({ 0, angle ,0 });
+		}
+		{
+			auto drawable = currentScene->FindSceneObjectByName(L"Sphere02");
+			auto sphere = std::dynamic_pointer_cast<SimpleSphere>(drawable);
+			if (sphere)
+				sphere->SetRotation({ 0, -angle ,0 });
+		}
 	}
 }

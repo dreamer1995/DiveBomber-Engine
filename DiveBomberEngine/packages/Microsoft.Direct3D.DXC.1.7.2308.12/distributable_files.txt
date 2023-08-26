@@ -1,0 +1,5 @@
+You may distribute the following files:
+
+dxcompiler.dll
+dxc.exe
+dxil.dll (if included in package)
