@@ -16,7 +16,7 @@ namespace DiveBomber::BindableObject
 		DomainShader,
 		GeometryShader,
 		PixelShader,
-		ComputeShder,
+		ComputeShader,
 	};
 
 	class Shader final : public Bindable
@@ -29,9 +29,14 @@ namespace DiveBomber::BindableObject
 		[[nodiscard]] static std::shared_ptr<Shader> Resolve(DEGraphics::Graphics& gfx, const std::wstring& name, ShaderType type);
 		[[nodiscard]] static std::string GenerateUID(const std::wstring& name, ShaderType type);
 		[[nodiscard]] std::string GetUID() const noexcept override;
+
+	private:
+		void LoadShaderBlob();
+
 	private:
 		DEGraphics::Graphics& gfx;
 		std::wstring name;
+		std::wstring directory;
 		wrl::ComPtr<ID3DBlob> bytecodeBlob;
 		ShaderType type;
 	};

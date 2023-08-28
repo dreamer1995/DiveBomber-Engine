@@ -126,10 +126,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shader\VShader.hlsl" />
-    <FxCompile Include="Shader\PShader.hlsl" />
-  </ItemGroup>
-  <ItemGroup>
     <ResourceCompile Include="Resource\Resource.rc" />
   </ItemGroup>
 </Project>

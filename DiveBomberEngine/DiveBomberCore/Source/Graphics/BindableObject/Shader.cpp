@@ -4,7 +4,9 @@
 #include "..\Graphics.h"
 #include "..\..\Exception\GraphicsException.h"
 #include "..\..\Utility\GlobalParameters.h"
+#include "..\DX\ShaderManager.h"
 
+#include <filesystem>
 #include <d3dcompiler.h>
 #pragma comment(lib,"d3dcompiler.lib")
 
@@ -12,6 +14,8 @@ namespace DiveBomber::BindableObject
 {
 	using namespace DEGraphics;
 	using namespace DEException;
+	using namespace DX;
+	namespace fs = std::filesystem;
 
 	Shader::Shader(Graphics& inputGfx, const std::wstring& inputName, ShaderType inputType)
 		:
@@ -19,7 +23,18 @@ namespace DiveBomber::BindableObject
 		name(inputName),
 		type(inputType)
 	{
-		RecompileShader();
+		fs::path filePath = EngineDirectoryW L"Shader\\" + name + L".hlsl";
+		if (fs::exists(filePath))
+		{
+			directory = EngineDirectoryW L"Shader\\";
+		}
+		filePath = ProjectDirectoryW L"Asset\\Shader\\" + name + L".hlsl";
+		if (fs::exists(filePath))
+		{
+			directory = ProjectDirectoryW L"Asset\\Shader\\";
+		}
+
+		LoadShaderBlob();
 	}
 
 	wrl::ComPtr<ID3DBlob> Shader::GetBytecode() const noexcept
@@ -29,17 +44,35 @@ namespace DiveBomber::BindableObject
 
 	void Shader::RecompileShader()
 	{
-		//todo
-		HRESULT hr;
+		wrl::ComPtr<ID3DBlob> compiledBlob = ShaderManager::Compile(directory, name, L"main", type);
+		bytecodeBlob = compiledBlob ? compiledBlob : bytecodeBlob;
+	}
 
+	void Shader::LoadShaderBlob()
+	{
 		const std::wstring builtShaderPath(ProjectDirectoryW L"Asset\\Shader\\Built\\" + name + L".cso");
-		GFX_THROW_INFO(D3DReadFileToBlob(builtShaderPath.c_str(), &bytecodeBlob));
+		fs::path filePath = builtShaderPath;
+
+		bool needRECompile = true;
+		if (fs::exists(filePath))
+		{
+			needRECompile = false;
+		}
+
+		if (needRECompile)
+		{
+			RecompileShader();
+		}
+		else
+		{
+			HRESULT hr;
+			GFX_THROW_INFO(D3DReadFileToBlob(builtShaderPath.c_str(), &bytecodeBlob));
+		}
 	}
 
 	void Shader::Bind(Graphics& gfx) noxnd
 	{
-		//HRESULT hr;
-		//GFX_THROW_INFO_ONLY(GetContext(gfx)->PSSetShader(pPixelShader.Get(), nullptr, 0u));
+		ShaderManager::AddPool(this);
 	}
 
 	std::shared_ptr<Shader> Shader::Resolve(Graphics& gfx, const std::wstring& name, ShaderType type)
