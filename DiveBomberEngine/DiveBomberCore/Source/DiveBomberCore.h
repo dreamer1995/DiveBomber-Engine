@@ -1,6 +1,5 @@
 #pragma once
 #include "Utility/Common.h"
-#include "Graphics\BindableObject\GlobalBindableManager.h"
 
 #include <thread>
 #include <queue>
@@ -38,6 +37,11 @@ namespace DiveBomber
 		class GlobalBindableManager;
 	}
 
+	namespace DX
+	{
+		class ShaderManager;
+	}
+
 	class DiveBomberCore final
 	{
 	public:
@@ -47,11 +51,8 @@ namespace DiveBomber
 		void ExecuteConsoleCommand();
 		void RefreshRenderReport();
 
-		template<class T, typename...Params>
-		std::shared_ptr<T> ResolveBindable(DEGraphics::Graphics& gfx, Params&&...p) noxnd
-		{
-			return globalBindableManager->Resolve<T>(gfx, std::forward<Params>(p)...);
-		}
+		[[nodiscard]] std::shared_ptr<BindableObject::GlobalBindableManager> GetGlobalBindableManager() noxnd;
+		[[nodiscard]] std::shared_ptr<DX::ShaderManager> GetShaderManager() noxnd;
 
 	private:
 		void Start();
@@ -69,6 +70,7 @@ namespace DiveBomber
 
 		std::unique_ptr<DEScene::Scene> currentScene;
 
-		std::unique_ptr<BindableObject::GlobalBindableManager> globalBindableManager;
+		std::shared_ptr<BindableObject::GlobalBindableManager> globalBindableManager;
+		std::shared_ptr<DX::ShaderManager> shaderManager;
 	};
 }

@@ -9,6 +9,8 @@
 #include "Graphics\Component\Camera.h"
 #include "Utility\GlobalParameters.h"
 #include "Scene\Scene.h"
+#include "Graphics\BindableObject\GlobalBindableManager.h"
+#include "Graphics\DX\ShaderManager.h"
 
 #include "Graphics\DrawableObject\SimpleSphere.h"
 
@@ -21,6 +23,9 @@ namespace DiveBomber
 	using namespace Utility;
 	using namespace Hardware;
 	using namespace BindableObject;
+	using namespace DEScene;
+	using namespace DrawableObject;
+	using namespace DX;
 
 	DiveBomberCore::DiveBomberCore()
 	{
@@ -36,7 +41,8 @@ namespace DiveBomber
 			
 		wnd = std::make_unique<Window>(L"DiveBomber Engine", *this);
 
-		globalBindableManager = std::make_unique<GlobalBindableManager>();
+		globalBindableManager = std::make_shared<GlobalBindableManager>();
+		shaderManager = std::make_shared<ShaderManager>();
 	}
 
 	DiveBomberCore::~DiveBomberCore()
@@ -74,7 +80,6 @@ namespace DiveBomber
 
 	void DiveBomberCore::Start()
 	{
-		using namespace DEScene;
 		currentScene = std::make_unique<Scene>();
 
 		currentScene->LoadSceneFromFile(wnd->Gfx(), L"Test Scene");
@@ -301,6 +306,20 @@ namespace DiveBomber
 				std::wcout << L"Light Rotated!" << std::endl;
 			}
 		}
+
+		// Listen to CTRL+S for shader live update in a very simple fashion (from http://www.lofibucket.com/articles/64k_intro.html)
+		static ULONGLONG lastLoadTime = GetTickCount64();
+		if (GetAsyncKeyState(VK_CONTROL) && GetAsyncKeyState('S'))
+		{
+			const ULONGLONG tickCount = GetTickCount64();
+			if (tickCount - lastLoadTime > 200)
+			{
+				// temp strategy 
+				Sleep(100);
+				shaderManager->ReCompileShader();
+			}
+			lastLoadTime = tickCount;
+		}
 	}
 
 	void DiveBomberCore::ExecuteConsoleCommand()
@@ -312,7 +331,14 @@ namespace DiveBomber
 			if (!command.empty())
 			{
 				std::wcout << L"[Execute]" << command << std::endl;
+				if (command == L"refresh shader")
+				{
+					// temp strategy 
+					Sleep(100);
+					shaderManager->ReCompileShader();
+				}
 			}
+
 			command.clear();
 
 			std::thread& task = threadTasks.front();
@@ -349,7 +375,6 @@ namespace DiveBomber
 		// Update the model matrix.
 		float angle = (float)Utility::g_GameTime;
 
-		using namespace DrawableObject;
 		{
 			auto drawable = currentScene->FindSceneObjectByName(L"Sphere01");
 			auto sphere = std::dynamic_pointer_cast<SimpleSphere>(drawable);
@@ -362,5 +387,15 @@ namespace DiveBomber
 			if (sphere)
 				sphere->SetRotation({ 0, -angle ,0 });
 		}
+	}
+
+	std::shared_ptr<GlobalBindableManager> DiveBomberCore::GetGlobalBindableManager() noxnd
+	{
+		return globalBindableManager;
+	}
+
+	std::shared_ptr<ShaderManager> DiveBomberCore::GetShaderManager() noxnd
+	{
+		return shaderManager;
 	}
 }

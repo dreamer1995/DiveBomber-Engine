@@ -24,7 +24,8 @@ namespace DiveBomber::Component
             numTextureIndices = slot + 1;
         }
 
-        shaderResourceIndices[numConstantIndices + slot] = texture->GetSRVDescriptorHeapOffset();
+        UINT index = (numConstantIndices + slot);
+        shaderResourceIndices[index] = texture->GetSRVDescriptorHeapOffset();
     }
 
     void Material::Bind(Graphics& gfx) noxnd

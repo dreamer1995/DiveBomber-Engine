@@ -2,6 +2,7 @@
 #include "Bindable.h"
 #include "..\..\DiveBomberCore.h"
 #include "..\Graphics.h"
+#include "GlobalBindableManager.h"
 #include "..\..\Exception\GraphicsExceptionEX.h"
 #include "..\DX\CommandList.h"
 #include "..\DX\ResourceStateTracker.h"
@@ -127,7 +128,7 @@ namespace DiveBomber::BindableObject
 		[[nodiscard]] static std::shared_ptr<ConstantBuffer> Resolve(DEGraphics::Graphics& gfx, const std::string& tag,
 			const C* constantData, size_t dateSize, const UINT slot)
 		{
-			return gfx.GetParent().ResolveBindable<ConstantBuffer>(gfx, tag, constantData, dateSize, slot);
+			return gfx.GetParent().GetGlobalBindableManager()->Resolve<ConstantBuffer>(gfx, tag, constantData, dateSize, slot);
 		}
 
 		template<typename...Ignore>

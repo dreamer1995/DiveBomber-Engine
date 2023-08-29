@@ -2,6 +2,7 @@
 
 #include "..\..\DiveBomberCore.h"
 #include "..\Graphics.h"
+#include "GlobalBindableManager.h"
 #include "..\..\Exception\GraphicsException.h"
 #include "..\DX\CommandList.h"
 #include "..\DX\ResourceStateTracker.h"
@@ -94,7 +95,7 @@ namespace DiveBomber::BindableObject
 		const std::vector<unsigned short>& indices)
 	{
 		assert(tag != "?");
-		return gfx.GetParent().ResolveBindable<IndexBuffer>(gfx, tag, indices);
+		return gfx.GetParent().GetGlobalBindableManager()->Resolve<IndexBuffer>(gfx, tag, indices);
 	}
 	std::string IndexBuffer::GenerateUID_(const std::string& tag)
 	{

@@ -8,6 +8,7 @@
 #include "..\DX\CommandQueue.h"
 #include "..\DX\DescriptorAllocator.h"
 #include "..\DX\DescriptorAllocation.h"
+#include "..\DX\ShaderManager.h"
 
 namespace DiveBomber::DrawableObject
 {
@@ -57,8 +58,10 @@ namespace DiveBomber::DrawableObject
 		material->AddConstant(transformBuffer->GetTransformBuffer(), 0u);
 
 		std::shared_ptr<Shader> vertexShader = Shader::Resolve(gfx, L"VShader", ShaderType::VertexShader);
+		gfx.GetParent().GetShaderManager()->AddToUsingPool(vertexShader);
 		AddBindable(vertexShader);
 		std::shared_ptr<Shader> pixelShader = Shader::Resolve(gfx, L"PShader", ShaderType::PixelShader);
+		gfx.GetParent().GetShaderManager()->AddToUsingPool(pixelShader);
 		AddBindable(pixelShader);
 
 		std::shared_ptr<RootSignature> rootSignature = RootSignature::Resolve(gfx, "StandardSRVFullStage");
@@ -70,8 +73,18 @@ namespace DiveBomber::DrawableObject
 
 		auto dsvFormat = DXGI_FORMAT_D32_FLOAT;
 
-		AddBindable(PipelineStateObject::Resolve(gfx, geometryTag + "PSO",
-			rootSignature, mesh->GetVertexBuffer(), mesh->GetTopology(), vertexShader, pixelShader, dsvFormat, rtvFormats));
+		PipelineStateObject::PipelineStateReference pipelineStateReference;
+		pipelineStateReference.rootSignature = rootSignature;
+		pipelineStateReference.vertexBuffer = vertexBuffer;
+		pipelineStateReference.topology = topology;
+		pipelineStateReference.vertexShader = vertexShader;
+		pipelineStateReference.pixelShader = pixelShader;
+		pipelineStateReference.rtvFormats = rtvFormats;
+		pipelineStateReference.dsvFormat = dsvFormat;
+
+		std::shared_ptr<PipelineStateObject> pipelineStateObject = PipelineStateObject::Resolve(gfx, geometryTag + "PSO", std::move(pipelineStateReference));
+		AddBindable(pipelineStateObject);
+		gfx.GetParent().GetShaderManager()->AddToUsingPool(pipelineStateObject);
 	}
 
 	SimpleSphere::~SimpleSphere()

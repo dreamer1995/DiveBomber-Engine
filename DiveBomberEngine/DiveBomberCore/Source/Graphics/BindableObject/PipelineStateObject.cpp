@@ -2,45 +2,35 @@
 
 #include "..\..\DiveBomberCore.h"
 #include "..\Graphics.h"
+#include "GlobalBindableManager.h"
 #include "..\..\Exception\GraphicsException.h"
 #include "RootSignature.h"
 #include "VertexBuffer.h"
 #include "Topology.h"
 #include "Shader.h"
+#include "..\DX\ShaderManager.h"
 
 namespace DiveBomber::BindableObject
 {
 	using namespace DEGraphics;
 	using namespace DEException;
+	using namespace DX;
 
-	PipelineStateObject::PipelineStateObject(Graphics& gfx, const std::string& inputTag,
-		std::shared_ptr<RootSignature> rootSignature, std::shared_ptr<VertexBuffer> vertexBuffer,
-		std::shared_ptr<Topology> topology,
-		std::shared_ptr<Shader> vertexShader, std::shared_ptr<Shader> pixelShader,
-		DXGI_FORMAT dsvFormat, D3D12_RT_FORMAT_ARRAY rtvFormats)
+	PipelineStateObject::PipelineStateObject(Graphics& gfx, const std::string& inputTag, PipelineStateReference inputPipelineStateReference)
 		:
-		tag(inputTag)
+		tag(inputTag),
+		pipelineStateReference(inputPipelineStateReference),
+		device(gfx.GetDecive())
 	{
-		HRESULT hr;
-
-		std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayout = vertexBuffer->GetLayout().GetD3DLayout();
-
-		pipelineStateStream.pRootSignature = rootSignature->GetRootSignature().Get();
-		pipelineStateStream.InputLayout = { &inputLayout[0], (UINT)inputLayout.size() };
-		pipelineStateStream.PrimitiveTopologyType = topology->GetShaderTopology();
-		pipelineStateStream.VS = CD3DX12_SHADER_BYTECODE(vertexShader->GetBytecode().Get());
-		pipelineStateStream.PS = CD3DX12_SHADER_BYTECODE(pixelShader->GetBytecode().Get());
-		pipelineStateStream.DSVFormat = dsvFormat;
-		pipelineStateStream.RTVFormats = rtvFormats;
-
-		D3D12_PIPELINE_STATE_STREAM_DESC pipelineStateStreamDesc = {
-			sizeof(PipelineStateStream), &pipelineStateStream
-		};
-
-		GFX_THROW_INFO(gfx.GetDecive()->CreatePipelineState(&pipelineStateStreamDesc, IID_PPV_ARGS(&pipelineState)));
+		UpdatePipelineState();
 	}
 
-	wrl::ComPtr<ID3D12PipelineState> PipelineStateObject::GetPipelineStateObject() noexcept
+	PipelineStateObject::PipelineStateReference PipelineStateObject::GetPipelineStateReference() const noexcept
+	{
+		return pipelineStateReference;
+	}
+
+	wrl::ComPtr<ID3D12PipelineState> PipelineStateObject::GetPipelineStateObject() const noexcept
 	{
 		return pipelineState;
 	}
@@ -50,14 +40,9 @@ namespace DiveBomber::BindableObject
 		GFX_THROW_INFO_ONLY(gfx.GetGraphicsCommandList()->SetPipelineState(pipelineState.Get()));
 	}
 
-	std::shared_ptr<PipelineStateObject> PipelineStateObject::Resolve(Graphics& gfx, const std::string& tag,
-		const std::shared_ptr<RootSignature> rootSignature, const std::shared_ptr<VertexBuffer> vertexBuffer,
-		const std::shared_ptr<Topology> topology,
-		const std::shared_ptr<Shader> vertexShader, const std::shared_ptr<Shader> pixelShader,
-		const DXGI_FORMAT dsvFormat, const D3D12_RT_FORMAT_ARRAY rtvFormats)
+	std::shared_ptr<PipelineStateObject> PipelineStateObject::Resolve(Graphics& gfx, const std::string& tag, PipelineStateReference pipelineStateReference)
 	{
-		return gfx.GetParent().ResolveBindable<PipelineStateObject>(gfx, tag,
-			rootSignature, vertexBuffer, topology, vertexShader, pixelShader, dsvFormat, rtvFormats);
+		return gfx.GetParent().GetGlobalBindableManager()->Resolve<PipelineStateObject>(gfx, tag, pipelineStateReference);
 	}
 
 	std::string PipelineStateObject::GenerateUID_(const std::string& tag)
@@ -69,5 +54,41 @@ namespace DiveBomber::BindableObject
 	std::string PipelineStateObject::GetUID() const noexcept
 	{
 		return GenerateUID(tag);
+	}
+
+	bool DiveBomber::BindableObject::PipelineStateObject::IsShaderDirty() noexcept
+	{
+		return 
+			pipelineStateReference.vertexShader->IsDirty() ||
+			pipelineStateReference.pixelShader->IsDirty();
+	}
+
+	void DiveBomber::BindableObject::PipelineStateObject::UpdatePipelineState(const PipelineStateReference inputPipelineStateReference)
+	{
+		pipelineStateReference = inputPipelineStateReference;
+		UpdatePipelineState();
+	}
+
+	void DiveBomber::BindableObject::PipelineStateObject::UpdatePipelineState()
+	{
+		HRESULT hr;
+
+		std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayout = pipelineStateReference.vertexBuffer->GetLayout().GetD3DLayout();
+
+		PipelineStateStream pipelineStateStream;
+
+		pipelineStateStream.pRootSignature = pipelineStateReference.rootSignature->GetRootSignature().Get();
+		pipelineStateStream.InputLayout = { &inputLayout[0], (UINT)inputLayout.size() };
+		pipelineStateStream.PrimitiveTopologyType = pipelineStateReference.topology->GetShaderTopology();
+		pipelineStateStream.VS = CD3DX12_SHADER_BYTECODE(pipelineStateReference.vertexShader->GetBytecode().Get());
+		pipelineStateStream.PS = CD3DX12_SHADER_BYTECODE(pipelineStateReference.pixelShader->GetBytecode().Get());
+		pipelineStateStream.DSVFormat = pipelineStateReference.dsvFormat;
+		pipelineStateStream.RTVFormats = pipelineStateReference.rtvFormats;
+
+		D3D12_PIPELINE_STATE_STREAM_DESC pipelineStateStreamDesc = {
+			sizeof(PipelineStateStream), &pipelineStateStream
+		};
+
+		GFX_THROW_INFO(device->CreatePipelineState(&pipelineStateStreamDesc, IID_PPV_ARGS(&pipelineState)));
 	}
 }

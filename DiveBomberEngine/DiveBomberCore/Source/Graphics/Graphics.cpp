@@ -12,7 +12,6 @@
 #include "DX\CommandLIst.h"
 #include "DX\DescriptorAllocator.h"
 #include "DX\DescriptorAllocation.h"
-#include "DX\ShaderManager.h"
 #include "..\DiveBomberCore.h"
 
 #include <iostream>
@@ -103,13 +102,6 @@ namespace DiveBomber::DEGraphics
 			GetCommandList()->AddTransitionBarrier(backBuffer, D3D12_RESOURCE_STATE_PRESENT, true);
 
 			frameFenceValues[currentBackBufferIndex] = ExecuteCommandList();
-
-			if (GetAsyncKeyState(VK_CONTROL) && GetAsyncKeyState('S'))
-			{
-				std::wcout << L"Recompile Shaders" << std::endl;
-				ShaderManager::ReCompileShader();
-			}
-			ShaderManager::ClearPool();
 
 			HRESULT hr;
 			bool enableVSync = VSync;

@@ -2,11 +2,14 @@
 
 #include "..\..\DiveBomberCore.h"
 #include "..\Graphics.h"
+#include "GlobalBindableManager.h"
+#include "GlobalBindableManager.h"
 #include "..\..\Exception\GraphicsException.h"
 #include "..\..\Utility\GlobalParameters.h"
 #include "..\DX\ShaderManager.h"
 
 #include <filesystem>
+#include <iostream>
 #include <d3dcompiler.h>
 #pragma comment(lib,"d3dcompiler.lib")
 
@@ -35,6 +38,8 @@ namespace DiveBomber::BindableObject
 		}
 
 		LoadShaderBlob();
+
+		isDirty = false;
 	}
 
 	wrl::ComPtr<ID3DBlob> Shader::GetBytecode() const noexcept
@@ -44,8 +49,13 @@ namespace DiveBomber::BindableObject
 
 	void Shader::RecompileShader()
 	{
-		wrl::ComPtr<ID3DBlob> compiledBlob = ShaderManager::Compile(directory, name, L"main", type);
-		bytecodeBlob = compiledBlob ? compiledBlob : bytecodeBlob;
+		wrl::ComPtr<ID3DBlob> compiledBlob = gfx.GetParent().GetShaderManager()->Compile(directory, name, L"main", type);
+		if (compiledBlob)
+		{
+			bytecodeBlob = compiledBlob;
+			isDirty = true;
+			std::wcout << L"Recompile Shader: " + name << std::endl;
+		}
 	}
 
 	void Shader::LoadShaderBlob()
@@ -72,12 +82,12 @@ namespace DiveBomber::BindableObject
 
 	void Shader::Bind(Graphics& gfx) noxnd
 	{
-		ShaderManager::AddPool(this);
+
 	}
 
 	std::shared_ptr<Shader> Shader::Resolve(Graphics& gfx, const std::wstring& name, ShaderType type)
 	{
-		return gfx.GetParent().ResolveBindable<Shader>(gfx, name, type);
+		return gfx.GetParent().GetGlobalBindableManager()->Resolve<Shader>(gfx, name, type);
 	}
 
 	std::string Shader::GenerateUID(const std::wstring& name, ShaderType type)
@@ -89,5 +99,15 @@ namespace DiveBomber::BindableObject
 	std::string Shader::GetUID() const noexcept
 	{
 		return GenerateUID(name, type);
+	}
+
+	bool Shader::IsDirty() const noexcept
+	{
+		return isDirty;
+	}
+
+	void Shader::SetDirty(bool inputIsDirty) noexcept
+	{
+		isDirty = inputIsDirty;
 	}
 }

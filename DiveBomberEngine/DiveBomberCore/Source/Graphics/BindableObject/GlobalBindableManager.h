@@ -26,7 +26,21 @@ namespace DiveBomber::BindableObject
 		{
 			const auto key = T::GenerateUID(std::forward<Params>(p)...);
 			const auto i = binds.find(key);
-			if (i == binds.end())
+
+			bool needConstruct = true;
+			if (i != binds.end())
+			{
+				if(i->second)
+				{
+					needConstruct = false;
+				}
+				else
+				{
+					binds.erase(i);
+				}
+			}
+
+			if (needConstruct)
 			{
 				std::lock_guard<std::mutex> lock(globalBindableManagerMutex);
 				auto bind = std::make_shared<T>(gfx, std::forward<Params>(p)...);

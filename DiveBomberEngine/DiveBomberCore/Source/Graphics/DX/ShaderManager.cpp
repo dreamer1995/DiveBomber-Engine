@@ -1,8 +1,9 @@
 #include "ShaderManager.h"
 
 #include "..\..\Exception\GraphicsException.h"
-#include "..\BindableObject\Shader.h"
 #include "..\..\Utility\GlobalParameters.h"
+#include "..\BindableObject\Shader.h"
+#include "..\BindableObject\PipelineStateObject.h"
 
 #include <iostream>
 #include <d3dcompiler.h>
@@ -24,19 +25,7 @@ namespace DiveBomber::DX
         }
     }
 
-    ShaderManager& ShaderManager::GetInstance() noexcept
-    {
-        static ShaderManager instance;
-        return instance;
-    }
-
     wrl::ComPtr<ID3DBlob> ShaderManager::Compile(const std::wstring shaderDirectory, const std::wstring shaderName,
-        const std::wstring_view entryPoint, BindableObject::ShaderType shaderType)
-    {
-        return GetInstance().Compile_(shaderDirectory, shaderName, entryPoint, shaderType);
-    }
-
-    wrl::ComPtr<ID3DBlob> ShaderManager::Compile_(const std::wstring shaderDirectory, const std::wstring shaderName,
         const std::wstring_view entryPoint, BindableObject::ShaderType shaderType)
     {
         // Setup compilation arguments.
@@ -106,7 +95,8 @@ namespace DiveBomber::DX
             IID_PPV_ARGS(&compiledShaderBuffer)));
 
         wrl::ComPtr<IDxcBlobUtf8> errors{};
-        GFX_THROW_INFO(compiledShaderBuffer->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(&errors), nullptr));
+        wrl::ComPtr<IDxcBlobUtf16> debugDataPath{};
+        GFX_THROW_INFO(compiledShaderBuffer->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(&errors), &debugDataPath));
 
         wrl::ComPtr<ID3DBlob> bytecodeBlob;
         if (errors && errors->GetStringLength() > 0)
@@ -116,44 +106,94 @@ namespace DiveBomber::DX
         }
         else
         {
-            compiledShaderBuffer->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(&bytecodeBlob), nullptr);
+            compiledShaderBuffer->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(&bytecodeBlob), &debugDataPath);
             D3DWriteBlobToFile(bytecodeBlob.Get(), builtShaderPath.c_str(), TRUE);
         }
 
         return bytecodeBlob;
     }
 
-    void ShaderManager::AddPool(BindableObject::Shader* shader) noexcept
-    {
-        GetInstance().AddPool_(shader);
-    }
-
-    void ShaderManager::ReCompileShader()
-    {
-        GetInstance().ReCompileShader_();
-    }
-
-    void ShaderManager::ClearPool() noexcept
-    {
-        GetInstance().ClearPool_();
-    }
-
-    void ShaderManager::AddPool_(BindableObject::Shader* shader) noexcept
+    void ShaderManager::AddToUsingPool(std::shared_ptr<BindableObject::Shader> shader) noexcept
     {
         std::lock_guard<std::mutex> lock(shaderManagerMutex);
         shaderPool.emplace(shader->GetUID(), shader);
     }
 
-    void ShaderManager::ReCompileShader_()
+    void ShaderManager::AddToUsingPool(std::shared_ptr<BindableObject::PipelineStateObject> PSO) noexcept
     {
-        for (auto& shader : shaderPool)
+        std::lock_guard<std::mutex> lock(shaderManagerMutex);
+        pipelineStateObjectPool.emplace(PSO->GetUID(), PSO);
+    }
+
+    void ShaderManager::ReCompileShader()
+    {
         {
-            shader.second->RecompileShader();
+            auto it = shaderPool.begin();
+            while (it != shaderPool.end())
+            {
+                if (it->second)
+                {
+                    it->second->RecompileShader();
+                    it++;
+                }
+                else
+                {
+                    shaderPool.erase(it);
+                }
+            }
+        }
+        
+        {
+            auto it = pipelineStateObjectPool.begin();
+            while (it != pipelineStateObjectPool.end())
+            {
+                if (it->second)
+                {
+                    if (it->second->IsShaderDirty())
+                    {
+                        it->second->UpdatePipelineState();
+                    }
+                    it++;
+                }
+                else
+                {
+                    pipelineStateObjectPool.erase(it);
+                }
+            }
+        }
+        
+        {
+            auto it = shaderPool.begin();
+            while (it != shaderPool.end())
+            {
+                if (it->second)
+                {
+                    it->second->SetDirty(false);
+                    it++;
+                }
+                else
+                {
+                    shaderPool.erase(it);
+                }
+            }
         }
     }
 
-    void ShaderManager::ClearPool_() noexcept
+    void ShaderManager::DeleteShaderInUsingPool(const std::string key) noexcept
     {
-        shaderPool.clear();
+        auto it = shaderPool.find(key);
+        if (it != shaderPool.end())
+        {
+            shaderPool.erase(it);
+        }
+    }
+
+    void ShaderManager::DeletePipelineStateObjectInUsingPool(const std::string key) noexcept
+    {
+        auto it = pipelineStateObjectPool.find(key);
+        if (it != pipelineStateObjectPool.end())
+        {
+            pipelineStateObjectPool.erase(it);
+        }
     }
 }

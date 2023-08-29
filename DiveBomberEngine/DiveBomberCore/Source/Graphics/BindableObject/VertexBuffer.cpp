@@ -2,6 +2,7 @@
 
 #include "..\..\DiveBomberCore.h"
 #include "..\Graphics.h"
+#include "GlobalBindableManager.h"
 #include "..\..\Exception\GraphicsException.h"
 #include "..\DX\CommandList.h"
 #include "..\DX\ResourceStateTracker.h"
@@ -98,7 +99,7 @@ namespace DiveBomber::BindableObject
 		const VertexProcess::VertexData& vbuf)
 	{
 		assert(tag != "?");
-		return gfx.GetParent().ResolveBindable<VertexBuffer>(gfx, tag, vbuf);
+		return gfx.GetParent().GetGlobalBindableManager()->Resolve<VertexBuffer>(gfx, tag, vbuf);
 	}
 
 	std::string VertexBuffer::GenerateUID_(const std::string& tag)

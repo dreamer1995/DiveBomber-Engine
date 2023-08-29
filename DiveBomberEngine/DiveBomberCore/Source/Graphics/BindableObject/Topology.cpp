@@ -2,6 +2,7 @@
 
 #include "..\..\DiveBomberCore.h"
 #include "..\Graphics.h"
+#include "GlobalBindableManager.h"
 #include "..\..\Exception\GraphicsException.h"
 
 namespace DiveBomber::BindableObject
@@ -33,7 +34,7 @@ namespace DiveBomber::BindableObject
 
 	std::shared_ptr<Topology> Topology::Resolve(Graphics& gfx, const D3D_PRIMITIVE_TOPOLOGY type, const D3D12_PRIMITIVE_TOPOLOGY_TYPE shaderType)
 	{
-		return gfx.GetParent().ResolveBindable<Topology>(gfx, type, shaderType);
+		return gfx.GetParent().GetGlobalBindableManager()->Resolve<Topology>(gfx, type, shaderType);
 	}
 
 	std::string Topology::GenerateUID(const D3D_PRIMITIVE_TOPOLOGY type, const D3D12_PRIMITIVE_TOPOLOGY_TYPE shaderType)

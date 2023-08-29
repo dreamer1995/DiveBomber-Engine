@@ -11,6 +11,7 @@ namespace DiveBomber::BindableObject
 {
 	class Shader;
 	enum class ShaderType;
+	class PipelineStateObject;
 }
 
 namespace DiveBomber::DX
@@ -19,20 +20,14 @@ namespace DiveBomber::DX
 	{
 	public:
 		ShaderManager();
-		[[nodiscard]] static ShaderManager& GetInstance() noexcept;
-		[[nodiscard]] static wrl::ComPtr<ID3DBlob> Compile(const std::wstring shaderDirectory, const std::wstring shaderName,
-			const std::wstring_view entryPoint, BindableObject::ShaderType shaderType);
 
-		static void AddPool(BindableObject::Shader* shader) noexcept;
-		static void ReCompileShader();
-		static void ClearPool() noexcept;
-
-	private:
-		wrl::ComPtr<ID3DBlob> Compile_(const std::wstring shaderDirectory, const std::wstring shaderName,
+		wrl::ComPtr<ID3DBlob> Compile(const std::wstring shaderDirectory, const std::wstring shaderName,
 			const std::wstring_view entryPoint, BindableObject::ShaderType shaderType);
-		void AddPool_(BindableObject::Shader* shader) noexcept;
-		void ReCompileShader_();
-		void ClearPool_() noexcept;
+		void AddToUsingPool(std::shared_ptr<BindableObject::Shader> shader) noexcept;
+		void AddToUsingPool(std::shared_ptr<BindableObject::PipelineStateObject> PSO) noexcept;
+		void ReCompileShader();
+		void DeleteShaderInUsingPool(const std::string key) noexcept;
+		void DeletePipelineStateObjectInUsingPool(const std::string key) noexcept;
 
 	private:
 		// Responsible for the actual compilation of shaders.
@@ -42,7 +37,8 @@ namespace DiveBomber::DX
 		wrl::ComPtr<IDxcUtils> utils;
 		wrl::ComPtr<IDxcIncludeHandler> includeHandler;
 
-		std::unordered_map<std::string, BindableObject::Shader*> shaderPool;
+		std::unordered_map<std::string, std::shared_ptr<BindableObject::Shader>> shaderPool;
+		std::unordered_map<std::string, std::shared_ptr<BindableObject::PipelineStateObject>> pipelineStateObjectPool;
 
 		std::mutex shaderManagerMutex;
 	};
