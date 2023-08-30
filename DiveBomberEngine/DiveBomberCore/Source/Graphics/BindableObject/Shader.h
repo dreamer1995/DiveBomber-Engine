@@ -2,6 +2,8 @@
 #include "Bindable.h"
 #include "..\GraphicsHeader.h"
 
+#include <filesystem>
+
 namespace DiveBomber::DEGraphics
 {
 	class Graphics;
@@ -40,6 +42,10 @@ namespace DiveBomber::BindableObject
 		DEGraphics::Graphics& gfx;
 		std::wstring name;
 		std::wstring directory;
+		std::filesystem::path sourceFile;
+		std::filesystem::file_time_type sourceLastSaveTime;
+		std::filesystem::path builtFile;
+		std::filesystem::file_time_type builtLastSaveTime;
 		wrl::ComPtr<ID3DBlob> bytecodeBlob;
 		ShaderType type;
 		bool isDirty = false;

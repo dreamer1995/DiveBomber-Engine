@@ -8,7 +8,7 @@
 #include "..\..\Utility\GlobalParameters.h"
 #include "..\DX\ShaderManager.h"
 
-#include <filesystem>
+#include <print>
 #include <iostream>
 #include <d3dcompiler.h>
 #pragma comment(lib,"d3dcompiler.lib")
@@ -24,17 +24,20 @@ namespace DiveBomber::BindableObject
 		:
 		gfx(inputGfx),
 		name(inputName),
-		type(inputType)
+		type(inputType),
+		builtFile(ProjectDirectoryW L"Asset\\Shader\\Built\\" + name + L".cso")
 	{
 		fs::path filePath = EngineDirectoryW L"Shader\\" + name + L".hlsl";
 		if (fs::exists(filePath))
 		{
 			directory = EngineDirectoryW L"Shader\\";
+			sourceFile = filePath;
 		}
 		filePath = ProjectDirectoryW L"Asset\\Shader\\" + name + L".hlsl";
 		if (fs::exists(filePath))
 		{
 			directory = ProjectDirectoryW L"Asset\\Shader\\";
+			sourceFile = filePath;
 		}
 
 		LoadShaderBlob();
@@ -49,6 +52,16 @@ namespace DiveBomber::BindableObject
 
 	void Shader::RecompileShader()
 	{
+		if (fs::exists(builtFile))
+		{
+			sourceLastSaveTime = fs::last_write_time(sourceFile);
+			builtLastSaveTime = fs::last_write_time(builtFile);
+			if (builtLastSaveTime > sourceLastSaveTime)
+			{
+				return;
+			}
+		}
+
 		wrl::ComPtr<ID3DBlob> compiledBlob = gfx.GetParent().GetShaderManager()->Compile(directory, name, L"main", type);
 		if (compiledBlob)
 		{
@@ -60,23 +73,11 @@ namespace DiveBomber::BindableObject
 
 	void Shader::LoadShaderBlob()
 	{
-		const std::wstring builtShaderPath(ProjectDirectoryW L"Asset\\Shader\\Built\\" + name + L".cso");
-		fs::path filePath = builtShaderPath;
-
-		bool needRECompile = true;
-		if (fs::exists(filePath))
-		{
-			needRECompile = false;
-		}
-
-		if (needRECompile)
-		{
-			RecompileShader();
-		}
-		else
+		RecompileShader();
+		if (!isDirty)
 		{
 			HRESULT hr;
-			GFX_THROW_INFO(D3DReadFileToBlob(builtShaderPath.c_str(), &bytecodeBlob));
+			GFX_THROW_INFO(D3DReadFileToBlob(builtFile.c_str(), &bytecodeBlob));
 		}
 	}
 
