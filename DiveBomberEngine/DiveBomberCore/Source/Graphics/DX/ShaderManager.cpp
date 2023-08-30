@@ -66,16 +66,25 @@ namespace DiveBomber::DX
         compilationArguments.emplace_back(L"-I");
         compilationArguments.emplace_back(shaderDirectory.c_str());
 
-        compilationArguments.emplace_back(L"-Fo");
-        const std::wstring builtShaderPath(ProjectDirectoryW L"Asset\\Shader\\Built\\" + shaderName + L".cso");
-        compilationArguments.emplace_back(builtShaderPath.c_str());
+#ifdef _DEBUG
+        //compilationArguments.emplace_back(L"-Fo");
+        //const std::wstring builtShaderBinPath(shaderName + L".cso");
+        //compilationArguments.emplace_back(builtShaderBinPath.c_str());
 
-        compilationArguments.emplace_back(L"-Qstrip_debug");
+        //compilationArguments.emplace_back(L"-Fd");
+        //const std::wstring builtShaderPDBPath(shaderName + L".pdb");
+        //compilationArguments.emplace_back(builtShaderPDBPath.c_str());
+        compilationArguments.emplace_back(L"-Qembed_debug");
+        compilationArguments.emplace_back(DXC_ARG_DEBUG); //-Zi
+        compilationArguments.emplace_back(DXC_ARG_SKIP_OPTIMIZATIONS); //-Od
+#else
         compilationArguments.emplace_back(L"-Qstrip_reflect");
+        compilationArguments.push_back(L"-Qstrip_debug");
+        compilationArguments.push_back(DXC_ARG_OPTIMIZATION_LEVEL3);
+#endif // _DEBUG
 
         compilationArguments.emplace_back(DXC_ARG_WARNINGS_ARE_ERRORS); //-WX
-        compilationArguments.emplace_back(DXC_ARG_DEBUG); //-Zi
-        compilationArguments.emplace_back(DXC_ARG_ALL_RESOURCES_BOUND); //-all_resources_bound
+        //compilationArguments.emplace_back(DXC_ARG_ALL_RESOURCES_BOUND); //-all_resources_bound
 
         // Load the shader source file to a blob.
         wrl::ComPtr<IDxcBlobEncoding> sourceBlob{ nullptr };
@@ -85,7 +94,7 @@ namespace DiveBomber::DX
         const DxcBuffer sourceBuffer = {
             .Ptr = sourceBlob->GetBufferPointer(),
             .Size = sourceBlob->GetBufferSize(),
-            .Encoding = 0u,
+            .Encoding = DXC_CP_ACP,
         };
 
         // Compile the shader.
@@ -95,8 +104,8 @@ namespace DiveBomber::DX
             IID_PPV_ARGS(&compiledShaderBuffer)));
 
         wrl::ComPtr<IDxcBlobUtf8> errors{};
-        wrl::ComPtr<IDxcBlobUtf16> debugDataPath{};
-        GFX_THROW_INFO(compiledShaderBuffer->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(&errors), &debugDataPath));
+        wrl::ComPtr<IDxcBlobUtf16> dataPath{};
+        GFX_THROW_INFO(compiledShaderBuffer->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(&errors), &dataPath));
 
         wrl::ComPtr<ID3DBlob> bytecodeBlob;
         if (errors && errors->GetStringLength() > 0)
@@ -106,7 +115,8 @@ namespace DiveBomber::DX
         }
         else
         {
-            compiledShaderBuffer->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(&bytecodeBlob), &debugDataPath);
+            compiledShaderBuffer->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(&bytecodeBlob), &dataPath);
+            const std::wstring builtShaderPath(ProjectDirectoryW L"Asset\\Shader\\Built\\" + shaderName + L".cso");
             D3DWriteBlobToFile(bytecodeBlob.Get(), builtShaderPath.c_str(), TRUE);
         }
 
