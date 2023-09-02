@@ -2,6 +2,7 @@
 #include "..\GraphicsHeader.h"
 
 #include "..\BindableObject\ConstantBufferInHeap.h"
+#include "..\BindableObject\DynamicConstantBufferInHeap.h"
 
 #include <vector>
 
@@ -34,8 +35,9 @@ namespace DiveBomber::Component
 				numConstantIndices = slot + 1;
 			}
 			shaderResourceIndices[slot] = constant->GetCBVDescriptorHeapOffset();
-
 		}
+
+		void AddConstant(const std::shared_ptr<BindableObject::DynamicConstantBufferInHeap> constant, UINT slot) noexcept;
 
 		void Bind(DEGraphics::Graphics& gfx) noxnd;
 	private:

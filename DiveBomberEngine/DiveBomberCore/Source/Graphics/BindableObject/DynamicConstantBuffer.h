@@ -7,48 +7,43 @@
 #include "..\DX\CommandList.h"
 #include "..\DX\ResourceStateTracker.h"
 #include "..\DX\UploadBuffer.h"
+#include "DynamicConstant.h"
 
 namespace DiveBomber::BindableObject
 {
-	template<typename C>
-	class ConstantBuffer: public Bindable
+	class DynamicConstantBuffer : public Bindable
 	{
 	public:
-		ConstantBuffer(DEGraphics::Graphics& gfx, const std::string& inputTag,
-			const C& constantData, UINT inputSlot)
+		DynamicConstantBuffer(DEGraphics::Graphics& gfx, const std::string& inputTag,
+			const DynamicConstantProcess::LayoutElement& inputLayout, UINT inputSlot)
 			:
-			ConstantBuffer(gfx, inputTag, &constantData, sizeof(constantData), inputSlot)
+			DynamicConstantBuffer(gfx, inputTag, inputLayout, nullptr, inputSlot)
 		{
 		}
 
-		ConstantBuffer(DEGraphics::Graphics& gfx, const std::string& inputTag,
-			const C* constantData, size_t inputdataSize, UINT inputSlot)
+		DynamicConstantBuffer(DEGraphics::Graphics& gfx, const std::string& inputTag,
+			const DynamicConstantProcess::Buffer* inputBuffer, UINT inputSlot)
 			:
-			tag(inputTag),
-			slot(inputSlot),
-			bufferSize(inputdataSize)
+			DynamicConstantBuffer(gfx, inputTag, inputBuffer->GetRootLayoutElement(), inputBuffer, inputSlot)
 		{
-			if (bufferSize > 0)
-			{
-				InitializeConstantBufferSize(gfx);
-				Update(gfx, constantData, bufferSize);
-			}
-			else
-			{
-				std::string outPutString = "Constant in " + tag + " has no data!";
-				throw std::exception(outPutString.c_str());
-			}
 		}
 
-		ConstantBuffer(DEGraphics::Graphics& gfx, const std::string& inputTag, UINT inputSlot)
+		DynamicConstantBuffer(DEGraphics::Graphics& gfx, const std::string& inputTag,
+			const DynamicConstantProcess::LayoutElement& inputLayout, const DynamicConstantProcess::Buffer* inputBuffer,
+			UINT inputSlot)
 			:
 			tag(inputTag),
 			slot(inputSlot)
 		{
+			bufferSize = inputLayout.GetSizeInBytes();
 			InitializeConstantBufferSize(gfx);
+			if (bufferSize > 0)
+			{
+				Update(gfx, inputBuffer, bufferSize);
+			}
 		}
 
-		~ConstantBuffer()
+		~DynamicConstantBuffer()
 		{
 			DX::ResourceStateTracker::RemoveGlobalResourceState(constantBuffer);
 		}
@@ -74,12 +69,12 @@ namespace DiveBomber::BindableObject
 			DX::ResourceStateTracker::AddGlobalResourceState(constantBuffer, D3D12_RESOURCE_STATE_COMMON);
 		}
 
-		virtual void Update(DEGraphics::Graphics& gfx, const C& constantData)
+		virtual void Update(DEGraphics::Graphics& gfx, const DynamicConstantProcess::Buffer* buffer)
 		{
-			Update(gfx, &constantData, sizeof(constantData));
+			Update(gfx, buffer, buffer->GetSizeInBytes());
 		}
 
-		virtual void Update(DEGraphics::Graphics& gfx, const C* constantData, size_t dataSize)
+		virtual void Update(DEGraphics::Graphics& gfx, const DynamicConstantProcess::Buffer* buffer, size_t dataSize)
 		{
 			// Create an committed resource for the upload.
 			if (dataSize > 0)
@@ -96,7 +91,7 @@ namespace DiveBomber::BindableObject
 					commandList->AllocateDynamicUploadBuffer(bufferSize, D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT);
 
 				D3D12_SUBRESOURCE_DATA subresourceData = {};
-				subresourceData.pData = constantData;
+				subresourceData.pData = buffer->GetData();
 				subresourceData.RowPitch = bufferSize;
 				subresourceData.SlicePitch = subresourceData.RowPitch;
 
@@ -125,10 +120,11 @@ namespace DiveBomber::BindableObject
 			return constantBuffer;
 		}
 
-		[[nodiscard]] static std::shared_ptr<ConstantBuffer> Resolve(DEGraphics::Graphics& gfx, const std::string& tag,
-			const C* constantData, size_t dataSize, const UINT slot)
+		[[nodiscard]] static std::shared_ptr<DynamicConstantBuffer> Resolve(DEGraphics::Graphics& gfx, const std::string& tag,
+			const DynamicConstantProcess::LayoutElement& layout, const DynamicConstantProcess::Buffer* buffer,
+			UINT slot)
 		{
-			return gfx.GetParent().GetGlobalBindableManager()->Resolve<ConstantBuffer>(gfx, tag, constantData, dataSize, slot);
+			return gfx.GetParent().GetGlobalBindableManager()->Resolve<DynamicConstantBuffer>(gfx, tag, layout, buffer, slot);
 		}
 
 		template<typename...Ignore>
@@ -140,7 +136,7 @@ namespace DiveBomber::BindableObject
 		[[nodiscard]] static std::string GenerateUID_(const std::string& tag)
 		{
 			using namespace std::string_literals;
-			return typeid(ConstantBuffer).name() + "#"s + tag;
+			return typeid(DynamicConstantBuffer).name() + "#"s + tag;
 		}
 
 		[[nodiscard]] std::string GetUID() const noexcept override

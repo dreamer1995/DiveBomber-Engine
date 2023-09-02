@@ -21,8 +21,7 @@ namespace DiveBomber::DX
 	public:
 		ShaderManager();
 
-		wrl::ComPtr<ID3DBlob> Compile(const std::wstring shaderDirectory, const std::wstring shaderName,
-			const std::wstring_view entryPoint, BindableObject::ShaderType shaderType);
+		wrl::ComPtr<ID3DBlob> Compile(const std::wstring shaderDirectory, const std::wstring shaderName, BindableObject::ShaderType shaderType);
 		void AddToUsingPool(std::shared_ptr<BindableObject::Shader> shader) noexcept;
 		void AddToUsingPool(std::shared_ptr<BindableObject::PipelineStateObject> PSO) noexcept;
 		void ReCompileShader();

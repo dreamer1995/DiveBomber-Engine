@@ -25,8 +25,9 @@ namespace DiveBomber::BindableObject
 		gfx(inputGfx),
 		name(inputName),
 		type(inputType),
-		builtFile(ProjectDirectoryW L"Asset\\Shader\\Built\\" + name + L".cso")
+		builtFile(ProjectDirectoryW L"Asset\\Shader\\Built\\" + name + GetShaderTypeAbbreviation() + L".cso")
 	{
+
 		fs::path filePath = EngineDirectoryW L"Shader\\" + name + L".hlsl";
 		if (fs::exists(filePath))
 		{
@@ -62,12 +63,12 @@ namespace DiveBomber::BindableObject
 			}
 		}
 
-		wrl::ComPtr<ID3DBlob> compiledBlob = gfx.GetParent().GetShaderManager()->Compile(directory, name, L"main", type);
+		wrl::ComPtr<ID3DBlob> compiledBlob = gfx.GetParent().GetShaderManager()->Compile(directory, name, type);
 		if (compiledBlob)
 		{
 			bytecodeBlob = compiledBlob;
 			isDirty = true;
-			std::wcout << L"Recompile Shader: " + name << std::endl;
+			std::wcout << L"Recompile Shader: " + name + GetShaderTypeAbbreviation() << std::endl;
 		}
 	}
 
@@ -110,5 +111,27 @@ namespace DiveBomber::BindableObject
 	void Shader::SetDirty(bool inputIsDirty) noexcept
 	{
 		isDirty = inputIsDirty;
+	}
+
+	std::wstring Shader::GetShaderTypeAbbreviation() const noexcept
+	{
+		switch (type)
+		{
+		case ShaderType::VertexShader:
+			return L"VS";
+		case ShaderType::HullShader:
+			return L"HS";
+		case ShaderType::DomainShader:
+			return L"DS";
+		case ShaderType::GeometryShader:
+			return L"GS";
+		case ShaderType::PixelShader:
+			return L"PS";
+		case ShaderType::ComputeShader:
+			return L"CS";
+		default: {
+			return L"";
+		}
+		}
 	}
 }

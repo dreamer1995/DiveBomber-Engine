@@ -86,8 +86,5 @@ namespace DiveBomber::Component
 		bool enableFrustumIndicator = false;
 		std::unique_ptr<Projection> projection;
 		//CameraIndicator indicator;
-		// 
-		//mutable Bind::VertexConstantBuffer<CameraCBuf> vCbuf;
-		//mutable Bind::PixelConstantBuffer<CameraCBuf> pCbuf;
 	};
 }

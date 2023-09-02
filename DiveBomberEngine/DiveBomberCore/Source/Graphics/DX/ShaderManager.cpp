@@ -25,10 +25,31 @@ namespace DiveBomber::DX
         }
     }
 
-    wrl::ComPtr<ID3DBlob> ShaderManager::Compile(const std::wstring shaderDirectory, const std::wstring shaderName,
-        const std::wstring_view entryPoint, BindableObject::ShaderType shaderType)
+    wrl::ComPtr<ID3DBlob> ShaderManager::Compile(const std::wstring shaderDirectory, const std::wstring shaderName, BindableObject::ShaderType shaderType)
     {
         // Setup compilation arguments.
+        const std::wstring shaderTypeAbbreviation = [=]()
+            {
+                switch (shaderType)
+                {
+                case ShaderType::VertexShader:
+                    return L"VS";
+                case ShaderType::HullShader:
+                    return L"HS";
+                case ShaderType::DomainShader:
+                    return L"DS";
+                case ShaderType::GeometryShader:
+                    return L"GS";
+                case ShaderType::PixelShader:
+                    return L"PS";
+                case ShaderType::ComputeShader:
+                    return L"CS";
+                default: {
+                    return L"";
+                }
+                }
+            }();
+
         const std::wstring targetProfile = [=]() 
         {
             switch (shaderType)
@@ -51,6 +72,8 @@ namespace DiveBomber::DX
         }
         }();
 
+        const std::wstring entryPoint = shaderTypeAbbreviation + L"Main";
+
         HRESULT hr;
 
         std::vector<LPCWSTR> compilationArguments;
@@ -58,7 +81,7 @@ namespace DiveBomber::DX
         compilationArguments.emplace_back(L"2021");
 
         compilationArguments.emplace_back(L"-E");
-        compilationArguments.emplace_back(entryPoint.data());
+        compilationArguments.emplace_back(entryPoint.c_str());
 
         compilationArguments.emplace_back(L"-T");
         compilationArguments.emplace_back(targetProfile.c_str());
@@ -116,7 +139,7 @@ namespace DiveBomber::DX
         else
         {
             compiledShaderBuffer->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(&bytecodeBlob), &dataPath);
-            const std::wstring builtShaderPath(ProjectDirectoryW L"Asset\\Shader\\Built\\" + shaderName + L".cso");
+            const std::wstring builtShaderPath(ProjectDirectoryW L"Asset\\Shader\\Built\\" + shaderName + shaderTypeAbbreviation + L".cso");
             D3DWriteBlobToFile(bytecodeBlob.Get(), builtShaderPath.c_str(), TRUE);
         }
 

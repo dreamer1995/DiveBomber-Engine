@@ -34,6 +34,7 @@ namespace DiveBomber::BindableObject
 		[[nodiscard]] std::string GetUID() const noexcept override;
 		[[nodiscard]] bool IsDirty() const noexcept;
 		void SetDirty(bool inputIsDirty) noexcept;
+		[[nodiscard]] std::wstring GetShaderTypeAbbreviation() const noexcept;
 
 	private:
 		void LoadShaderBlob();

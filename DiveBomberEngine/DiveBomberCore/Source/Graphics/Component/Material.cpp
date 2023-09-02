@@ -28,6 +28,18 @@ namespace DiveBomber::Component
         shaderResourceIndices[index] = texture->GetSRVDescriptorHeapOffset();
     }
 
+    void Material::AddConstant(const std::shared_ptr<DynamicConstantBufferInHeap> constant, UINT slot) noexcept
+    {
+        if (slot >= numConstantIndices)
+        {
+            UINT needInsert = slot - numConstantIndices + 1;
+            std::vector<UINT>::iterator it = shaderResourceIndices.begin();
+            shaderResourceIndices.insert(it + slot, needInsert, 0u);
+            numConstantIndices = slot + 1;
+        }
+        shaderResourceIndices[slot] = constant->GetCBVDescriptorHeapOffset();
+    }
+
     void Material::Bind(Graphics& gfx) noxnd
     {
         indexConstantBuffer->Update(gfx, shaderResourceIndices.data(), shaderResourceIndices.size() * sizeof(UINT));

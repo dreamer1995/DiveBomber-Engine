@@ -3,6 +3,7 @@
 #include "..\Graphics.h"
 #include "..\BindableObject\BindableObjectCommon.h"
 #include "..\BindableObject\Geometry\Sphere.h"
+#include "..\BindableObject\DynamicConstantBufferInHeap.h"
 #include "..\Component\Mesh.h"
 #include "..\Component\Material.h"
 #include "..\DX\CommandQueue.h"
@@ -57,10 +58,30 @@ namespace DiveBomber::DrawableObject
 		AddBindable(transformBuffer);
 		material->AddConstant(transformBuffer->GetTransformBuffer(), 0u);
 
-		std::shared_ptr<Shader> vertexShader = Shader::Resolve(gfx, L"VShader", ShaderType::VertexShader);
+		{
+			DynamicConstantProcess::RawLayout DCBLayout;
+			DCBLayout.Add<DynamicConstantProcess::Float3>("baseColor");
+			auto DXBBuffer = DynamicConstantProcess::Buffer(std::move(DCBLayout));
+			DXBBuffer["baseColor"] = dx::XMFLOAT3{ 1.0f,0.0f,0.0f };
+			std::shared_ptr<DynamicConstantBufferInHeap> baseMat = std::make_shared<DynamicConstantBufferInHeap>(gfx, geometryTag + "BaseMat0", &DXBBuffer);
+			AddBindable(baseMat);
+			material->AddConstant(baseMat, 1u);
+		}
+
+		{
+			DynamicConstantProcess::RawLayout DCBLayout;
+			DCBLayout.Add<DynamicConstantProcess::Float3>("baseColor");
+			auto DXBBuffer = DynamicConstantProcess::Buffer(std::move(DCBLayout));
+			DXBBuffer["baseColor"] = dx::XMFLOAT3{ 0.0f,1.0f,0.0f };
+			std::shared_ptr<DynamicConstantBufferInHeap> baseMat = std::make_shared<DynamicConstantBufferInHeap>(gfx, geometryTag + "BaseMat1", &DXBBuffer);
+			AddBindable(baseMat);
+			material->AddConstant(baseMat, 2u);
+		}
+
+		std::shared_ptr<Shader> vertexShader = Shader::Resolve(gfx, L"TestShader", ShaderType::VertexShader);
 		gfx.GetParent().GetShaderManager()->AddToUsingPool(vertexShader);
 		AddBindable(vertexShader);
-		std::shared_ptr<Shader> pixelShader = Shader::Resolve(gfx, L"PShader", ShaderType::PixelShader);
+		std::shared_ptr<Shader> pixelShader = Shader::Resolve(gfx, L"TestShader", ShaderType::PixelShader);
 		gfx.GetParent().GetShaderManager()->AddToUsingPool(pixelShader);
 		AddBindable(pixelShader);
 
