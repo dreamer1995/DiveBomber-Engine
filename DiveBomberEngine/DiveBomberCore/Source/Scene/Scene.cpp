@@ -30,8 +30,10 @@ namespace DiveBomber::DEScene
 		drawableObjects.emplace(L"Sphere01", std::make_shared<SimpleSphere>(gfx, L"Sphere01"));
 		auto another = std::make_shared<SimpleSphere>(gfx, L"Sphere02");
 		another->SetPos({ 2.0f,0,0 });
-		drawableObjects.emplace(L"Sphere02", another);
+		drawableObjects.emplace(another->GetName(), another);
 		uint64_t fenceValue = gfx.ExecuteCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
+		commandQueue->WaitForFenceValue(fenceValue);
+		fenceValue = gfx.ExecuteCommandList();
 		commandQueue->WaitForFenceValue(fenceValue);
 
 		Camera::CameraAttributes cameraAttr;

@@ -50,6 +50,12 @@ namespace DiveBomber::BindableObject
 			UpdateCBV(gfx);
 		}
 
+		[[nodiscard]] UINT GetCBVDescriptorHeapOffset()
+		{
+			return descriptorAllocation->GetBaseOffset();
+		}
+
+	private:
 		void UpdateCBV(DEGraphics::Graphics& gfx)
 		{
 			D3D12_CONSTANT_BUFFER_VIEW_DESC constantBufferViewDesc;
@@ -59,10 +65,6 @@ namespace DiveBomber::BindableObject
 			gfx.GetDecive()->CreateConstantBufferView(&constantBufferViewDesc, descriptorAllocation->GetCPUDescriptorHandle());
 		}
 
-		[[nodiscard]] UINT GetCBVDescriptorHeapOffset()
-		{
-			return descriptorAllocation->GetBaseOffset();
-		}
 	private:
 		std::shared_ptr<DX::DescriptorAllocation> descriptorAllocation;
 	};

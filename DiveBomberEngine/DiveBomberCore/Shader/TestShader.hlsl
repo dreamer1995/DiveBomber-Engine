@@ -28,7 +28,7 @@ struct ModelViewProjection
 
 struct BaseShadingParams
 {
-	float3 baseColor;
+	float4 baseColor;
 };
 
 struct VSIn
@@ -75,7 +75,7 @@ float4 PSMain(ProcessData In) : SV_Target
 	baseColor.rgb = pow(baseColor.rgb, 2.2f);
 	rustColor.rgb = pow(rustColor.rgb, 2.2f);
 	
-	float4 color = lerp(baseColor, rustColor, rustColor.g) * (float4(BaseShadingParamsCB0.baseColor, 1.0f) + float4(BaseShadingParamsCB1.baseColor, 1.0f));
+	float4 color = lerp(baseColor, rustColor, rustColor.g) * (BaseShadingParamsCB0.baseColor/* + BaseShadingParamsCB1.baseColor*/);
 	
 	color.rgb = pow(color.rgb, 1 / 2.2f);
 	

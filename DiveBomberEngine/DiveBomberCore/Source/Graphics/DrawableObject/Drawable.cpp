@@ -29,4 +29,9 @@ namespace DiveBomber::DrawableObject
 	{
 		bindableObjects.emplace_back(bindableObject);
 	}
+
+	std::wstring Drawable::GetName() const noexcept
+	{
+		return name;
+	}
 }

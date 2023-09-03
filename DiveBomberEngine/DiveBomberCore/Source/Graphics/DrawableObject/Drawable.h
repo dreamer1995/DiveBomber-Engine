@@ -30,6 +30,8 @@ namespace DiveBomber::DrawableObject
 		void Submit() const noexcept;
 		virtual void Bind(DEGraphics::Graphics& gfx) const noxnd;
 		void AddBindable(std::shared_ptr<BindableObject::Bindable> bindableObject) noexcept;
+
+		std::wstring GetName() const noexcept;
 	protected:
 		std::wstring name;
 		std::vector<std::shared_ptr<BindableObject::Bindable>> bindableObjects;

@@ -5,6 +5,7 @@
 #include "..\BindableObject\DynamicConstantBufferInHeap.h"
 
 #include <vector>
+#include <unordered_map>
 
 namespace DiveBomber::DEGraphics
 {
@@ -21,11 +22,11 @@ namespace DiveBomber::Component
 	class Material final
 	{
 	public:
-		Material(DEGraphics::Graphics& gfx);
-		void AddTexture(const std::shared_ptr<BindableObject::Texture> texture, UINT slot) noexcept;
+		Material(DEGraphics::Graphics& inputGfx, const std::wstring inputName);
+		void SetTexture(const std::shared_ptr<BindableObject::Texture> texture, UINT slot) noexcept;
 
 		template<typename C>
-		void AddConstant(const std::shared_ptr<BindableObject::ConstantBufferInHeap<C>> constant, UINT slot) noexcept
+		void SetConstant(const std::shared_ptr<BindableObject::ConstantBufferInHeap<C>> constant, UINT slot) noexcept
 		{
 			if (slot >= numConstantIndices)
 			{
@@ -37,13 +38,21 @@ namespace DiveBomber::Component
 			shaderResourceIndices[slot] = constant->GetCBVDescriptorHeapOffset();
 		}
 
-		void AddConstant(const std::shared_ptr<BindableObject::DynamicConstantBufferInHeap> constant, UINT slot) noexcept;
+		void SetConstant(const std::string constantName, const std::shared_ptr<BindableObject::DynamicConstantBufferInHeap> constant, UINT slot) noexcept;
 
 		void Bind(DEGraphics::Graphics& gfx) noxnd;
+
+		[[nodiscard]] std::wstring GetName() const noexcept;
+
+		void SetMaterialParameterScalar(std::string constantName, std::string key, float scalar) const noexcept;
+		void SetMaterialParameterVector(std::string constantName, std::string key, DirectX::XMFLOAT4 vector) const noexcept;
 	private:
+		DEGraphics::Graphics& gfx;
+		std::wstring name;
 		std::shared_ptr<BindableObject::ConstantBuffer<UINT>> indexConstantBuffer;
 		UINT numConstantIndices = 0;
 		UINT numTextureIndices = 0;
 		std::vector<UINT> shaderResourceIndices;
+		std::unordered_map<std::string, std::shared_ptr<BindableObject::DynamicConstantBufferInHeap>> dynamicConstantMap;
 	};
 }

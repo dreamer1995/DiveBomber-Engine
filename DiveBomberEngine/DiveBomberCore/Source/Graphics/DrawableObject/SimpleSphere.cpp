@@ -49,33 +49,33 @@ namespace DiveBomber::DrawableObject
 			UINT texureIndex[2] = { 0 };
 		}indexConstant;
 
-		material = std::make_shared<Material>(gfx);
-		material->AddTexture(Texture::Resolve(gfx, L"earth.dds"), 0u);
-		material->AddTexture(Texture::Resolve(gfx, L"rustediron2_basecolor.png"), 1u);
+		std::shared_ptr<Material> material = std::make_shared<Material>(gfx, name + L"Material");
+		materialMap.emplace(material->GetName(), material);
+
+		material->SetTexture(Texture::Resolve(gfx, L"earth.dds"), 0u);
+		material->SetTexture(Texture::Resolve(gfx, L"rustediron2_basecolor.png"), 1u);
 
 		std::shared_ptr<ConstantTransformBuffer> transformBuffer = std::make_shared<ConstantTransformBuffer>(gfx);
 		transformBuffer->InitializeParentReference(*this);
 		AddBindable(transformBuffer);
-		material->AddConstant(transformBuffer->GetTransformBuffer(), 0u);
+		material->SetConstant(transformBuffer->GetTransformBuffer(), 0u);
 
 		{
 			DynamicConstantProcess::RawLayout DCBLayout;
-			DCBLayout.Add<DynamicConstantProcess::Float3>("baseColor");
+			DCBLayout.Add<DynamicConstantProcess::Float4>("baseColor");
 			auto DXBBuffer = DynamicConstantProcess::Buffer(std::move(DCBLayout));
-			DXBBuffer["baseColor"] = dx::XMFLOAT3{ 1.0f,0.0f,0.0f };
+			DXBBuffer["baseColor"] = dx::XMFLOAT4{ 1.0f,0.0f,0.0f,0.0f };
 			std::shared_ptr<DynamicConstantBufferInHeap> baseMat = std::make_shared<DynamicConstantBufferInHeap>(gfx, geometryTag + "BaseMat0", &DXBBuffer);
-			AddBindable(baseMat);
-			material->AddConstant(baseMat, 1u);
+			material->SetConstant(geometryTag + "BaseMat0", baseMat, 1u);
 		}
 
 		{
 			DynamicConstantProcess::RawLayout DCBLayout;
-			DCBLayout.Add<DynamicConstantProcess::Float3>("baseColor");
+			DCBLayout.Add<DynamicConstantProcess::Float4>("baseColor");
 			auto DXBBuffer = DynamicConstantProcess::Buffer(std::move(DCBLayout));
-			DXBBuffer["baseColor"] = dx::XMFLOAT3{ 0.0f,1.0f,0.0f };
+			DXBBuffer["baseColor"] = dx::XMFLOAT4{ 0.0f,1.0f,0.0f,0.0f };
 			std::shared_ptr<DynamicConstantBufferInHeap> baseMat = std::make_shared<DynamicConstantBufferInHeap>(gfx, geometryTag + "BaseMat1", &DXBBuffer);
-			AddBindable(baseMat);
-			material->AddConstant(baseMat, 2u);
+			material->SetConstant(geometryTag + "BaseMat1", baseMat, 2u);
 		}
 
 		std::shared_ptr<Shader> vertexShader = Shader::Resolve(gfx, L"TestShader", ShaderType::VertexShader);
@@ -103,7 +103,7 @@ namespace DiveBomber::DrawableObject
 		pipelineStateReference.rtvFormats = rtvFormats;
 		pipelineStateReference.dsvFormat = dsvFormat;
 
-		std::shared_ptr<PipelineStateObject> pipelineStateObject = PipelineStateObject::Resolve(gfx, geometryTag + "PSO", std::move(pipelineStateReference));
+		std::shared_ptr<PipelineStateObject> pipelineStateObject = PipelineStateObject::Resolve(gfx, geometryTag, std::move(pipelineStateReference));
 		AddBindable(pipelineStateObject);
 		gfx.GetParent().GetShaderManager()->AddToUsingPool(pipelineStateObject);
 	}
@@ -130,12 +130,27 @@ namespace DiveBomber::DrawableObject
 			dx::XMMatrixTranslation(position.x, position.y, position.z);
 	}
 
+	std::shared_ptr<Material> SimpleSphere::GetMaterialByName(std::wstring name) const noexcept
+	{
+		auto it = materialMap.find(name);
+		if (it != materialMap.end())
+		{
+			return it->second;
+		}
+		else
+		{
+			return nullptr;
+		}
+	}
+
 	void SimpleSphere::Bind(Graphics& gfx) const noxnd
 	{
 		mesh->Bind(gfx);
 		Drawable::Bind(gfx);
-		material->Bind(gfx);
-
-		gfx.GetGraphicsCommandList()->DrawIndexedInstanced(mesh->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
+		for (auto& material : materialMap)
+		{
+			material.second->Bind(gfx);
+			gfx.GetGraphicsCommandList()->DrawIndexedInstanced(mesh->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
+		}
 	}
 }

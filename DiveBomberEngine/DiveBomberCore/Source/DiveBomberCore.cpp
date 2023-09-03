@@ -13,6 +13,7 @@
 #include "Graphics\DX\ShaderManager.h"
 
 #include "Graphics\DrawableObject\SimpleSphere.h"
+#include "Graphics\Component\Material.h"
 
 #include <iostream>
 
@@ -26,6 +27,7 @@ namespace DiveBomber
 	using namespace DEScene;
 	using namespace DrawableObject;
 	using namespace DX;
+	using namespace Component;
 
 	DiveBomberCore::DiveBomberCore()
 	{
@@ -166,7 +168,7 @@ namespace DiveBomber
 			}
 		}
 
-		std::shared_ptr<Component::Camera> mainCamera = currentScene->GetMainCamera();
+		std::shared_ptr<Camera> mainCamera = currentScene->GetMainCamera();
 		float deltaTime = (float)g_RawDeltaTime;
 
 		static float cameraSpeed = 1.0f;
@@ -380,6 +382,8 @@ namespace DiveBomber
 			auto sphere = std::dynamic_pointer_cast<SimpleSphere>(drawable);
 			if (sphere)
 				sphere->SetRotation({ 0, angle ,0 });
+			std::shared_ptr<Material> material = sphere->GetMaterialByName(sphere->GetName() + L"Material");
+			//material->SetMaterialParameterVector(Utility::ToNarrow(sphere->GetName()) + "BaseMat0", "baseColor", { (float)g_GameTime * (float)g_DeltaTime,0.0f ,0.0f ,0.0f });
 		}
 		{
 			auto drawable = currentScene->FindSceneObjectByName(L"Sphere02");
