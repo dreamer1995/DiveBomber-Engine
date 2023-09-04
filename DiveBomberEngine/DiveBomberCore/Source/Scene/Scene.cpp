@@ -33,8 +33,6 @@ namespace DiveBomber::DEScene
 		drawableObjects.emplace(another->GetName(), another);
 		uint64_t fenceValue = gfx.ExecuteCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
 		commandQueue->WaitForFenceValue(fenceValue);
-		fenceValue = gfx.ExecuteCommandList();
-		commandQueue->WaitForFenceValue(fenceValue);
 
 		Camera::CameraAttributes cameraAttr;
 		cameraAttr.position.z = -6.0f;
