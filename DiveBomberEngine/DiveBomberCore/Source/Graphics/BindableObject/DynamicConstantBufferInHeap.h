@@ -10,24 +10,24 @@ namespace DiveBomber::BindableObject
 	{
 	public:
 		DynamicConstantBufferInHeap(DEGraphics::Graphics& gfx, const std::string& inputTag,
-			const DynamicConstantProcess::LayoutElement& inputLayout)
+			const DynamicConstantProcess::CookedLayout& inputLayout)
 			:
-			DynamicConstantBuffer(gfx, inputTag, inputLayout, nullptr, 999u)
+			DynamicConstantBuffer(gfx, inputTag, *inputLayout.ShareRoot(), DynamicConstantProcess::Buffer(inputLayout), 999u)
 		{
 			descriptorAllocation = gfx.GetDescriptorAllocator()->Allocate(1u);
 		}
 
 		DynamicConstantBufferInHeap(DEGraphics::Graphics& gfx, const std::string& inputTag,
-			const DynamicConstantProcess::Buffer* inputBuffer)
+			const DynamicConstantProcess::Buffer& inputBuffer)
 			:
-			DynamicConstantBuffer(gfx, inputTag, inputBuffer->GetRootLayoutElement(), inputBuffer, 999u)
+			DynamicConstantBuffer(gfx, inputTag, inputBuffer.GetRootLayoutElement(), inputBuffer, 999u)
 		{
 			descriptorAllocation = gfx.GetDescriptorAllocator()->Allocate(1u);
 			UpdateCBV(gfx);
 		}
 
 		DynamicConstantBufferInHeap(DEGraphics::Graphics& gfx, const std::string& inputTag,
-			const DynamicConstantProcess::LayoutElement& inputLayout, const DynamicConstantProcess::Buffer* inputBuffer)
+			const DynamicConstantProcess::LayoutElement& inputLayout, const DynamicConstantProcess::Buffer& inputBuffer)
 			:
 			DynamicConstantBuffer(gfx, inputTag, inputLayout, inputBuffer, 999u)
 		{
@@ -39,14 +39,9 @@ namespace DiveBomber::BindableObject
 		{
 		}
 
-		virtual void Update(DEGraphics::Graphics& gfx, const DynamicConstantProcess::Buffer* buffer) override
+		virtual void Update(DEGraphics::Graphics& gfx, const DynamicConstantProcess::Buffer& buffer) override
 		{
-			Update(gfx, buffer, buffer->GetSizeInBytes());
-		}
-
-		virtual void Update(DEGraphics::Graphics& gfx, const DynamicConstantProcess::Buffer* buffer, size_t dataSize) override
-		{
-			DynamicConstantBuffer::Update(gfx, buffer, dataSize);
+			DynamicConstantBuffer::Update(gfx, buffer);
 			UpdateCBV(gfx);
 		}
 

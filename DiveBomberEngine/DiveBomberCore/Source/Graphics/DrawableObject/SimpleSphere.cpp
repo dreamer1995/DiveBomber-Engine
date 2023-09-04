@@ -65,7 +65,7 @@ namespace DiveBomber::DrawableObject
 			DCBLayout.Add<DynamicConstantProcess::Float4>("baseColor");
 			auto DXBBuffer = DynamicConstantProcess::Buffer(std::move(DCBLayout));
 			DXBBuffer["baseColor"] = dx::XMFLOAT4{ 1.0f,0.0f,0.0f,0.0f };
-			std::shared_ptr<DynamicConstantBufferInHeap> baseMat = std::make_shared<DynamicConstantBufferInHeap>(gfx, geometryTag + "BaseMat0", &DXBBuffer);
+			std::shared_ptr<DynamicConstantBufferInHeap> baseMat = std::make_shared<DynamicConstantBufferInHeap>(gfx, geometryTag + "BaseMat0", DXBBuffer);
 			material->SetConstant(geometryTag + "BaseMat0", baseMat, 1u);
 		}
 
@@ -74,7 +74,7 @@ namespace DiveBomber::DrawableObject
 			DCBLayout.Add<DynamicConstantProcess::Float4>("baseColor");
 			auto DXBBuffer = DynamicConstantProcess::Buffer(std::move(DCBLayout));
 			DXBBuffer["baseColor"] = dx::XMFLOAT4{ 0.0f,1.0f,0.0f,0.0f };
-			std::shared_ptr<DynamicConstantBufferInHeap> baseMat = std::make_shared<DynamicConstantBufferInHeap>(gfx, geometryTag + "BaseMat1", &DXBBuffer);
+			std::shared_ptr<DynamicConstantBufferInHeap> baseMat = std::make_shared<DynamicConstantBufferInHeap>(gfx, geometryTag + "BaseMat1", DXBBuffer);
 			material->SetConstant(geometryTag + "BaseMat1", baseMat, 2u);
 		}
 

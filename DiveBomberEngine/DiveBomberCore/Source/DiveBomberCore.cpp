@@ -383,7 +383,7 @@ namespace DiveBomber
 			if (sphere)
 				sphere->SetRotation({ 0, angle ,0 });
 			std::shared_ptr<Material> material = sphere->GetMaterialByName(sphere->GetName() + L"Material");
-			//material->SetMaterialParameterVector(Utility::ToNarrow(sphere->GetName()) + "BaseMat0", "baseColor", { (float)g_GameTime * (float)g_DeltaTime,0.0f ,0.0f ,0.0f });
+			material->SetMaterialParameterVector(Utility::ToNarrow(sphere->GetName()) + "BaseMat0", "baseColor", { std::abs(std::sinf((float)g_GameTime * 2)),0.0f,0.0f,0.0f });
 		}
 		{
 			auto drawable = currentScene->FindSceneObjectByName(L"Sphere02");

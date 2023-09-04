@@ -15,31 +15,32 @@ namespace DiveBomber::BindableObject
 	{
 	public:
 		DynamicConstantBuffer(DEGraphics::Graphics& gfx, const std::string& inputTag,
-			const DynamicConstantProcess::LayoutElement& inputLayout, UINT inputSlot)
+			const DynamicConstantProcess::CookedLayout& inputLayout, UINT inputSlot)
 			:
-			DynamicConstantBuffer(gfx, inputTag, inputLayout, nullptr, inputSlot)
+			DynamicConstantBuffer(gfx, inputTag, *inputLayout.ShareRoot(), DynamicConstantProcess::Buffer(inputLayout), inputSlot)
 		{
 		}
 
 		DynamicConstantBuffer(DEGraphics::Graphics& gfx, const std::string& inputTag,
-			const DynamicConstantProcess::Buffer* inputBuffer, UINT inputSlot)
+			const DynamicConstantProcess::Buffer& inputBuffer, UINT inputSlot)
 			:
-			DynamicConstantBuffer(gfx, inputTag, inputBuffer->GetRootLayoutElement(), inputBuffer, inputSlot)
+			DynamicConstantBuffer(gfx, inputTag, inputBuffer.GetRootLayoutElement(), inputBuffer, inputSlot)
 		{
 		}
 
 		DynamicConstantBuffer(DEGraphics::Graphics& gfx, const std::string& inputTag,
-			const DynamicConstantProcess::LayoutElement& inputLayout, const DynamicConstantProcess::Buffer* inputBuffer,
+			const DynamicConstantProcess::LayoutElement& inputLayout, const DynamicConstantProcess::Buffer& inputBuffer,
 			UINT inputSlot)
 			:
 			tag(inputTag),
-			slot(inputSlot)
+			slot(inputSlot),
+			dynamicBuffer(inputBuffer)
 		{
 			bufferSize = inputLayout.GetSizeInBytes();
 			InitializeConstantBufferSize(gfx);
 			if (bufferSize > 0)
 			{
-				Update(gfx, inputBuffer, bufferSize);
+				Update(gfx, inputBuffer);
 			}
 		}
 
@@ -69,13 +70,11 @@ namespace DiveBomber::BindableObject
 			DX::ResourceStateTracker::AddGlobalResourceState(constantBuffer, D3D12_RESOURCE_STATE_COMMON);
 		}
 
-		virtual void Update(DEGraphics::Graphics& gfx, const DynamicConstantProcess::Buffer* buffer)
+		virtual void Update(DEGraphics::Graphics& gfx, const DynamicConstantProcess::Buffer& buffer)
 		{
-			Update(gfx, buffer, buffer->GetSizeInBytes());
-		}
+			dynamicBuffer.CopyFrom(buffer);
 
-		virtual void Update(DEGraphics::Graphics& gfx, const DynamicConstantProcess::Buffer* buffer, size_t dataSize)
-		{
+			size_t dataSize = dynamicBuffer.GetSizeInBytes();
 			// Create an committed resource for the upload.
 			if (dataSize > 0)
 			{
@@ -91,7 +90,7 @@ namespace DiveBomber::BindableObject
 					commandList->AllocateDynamicUploadBuffer(bufferSize, D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT);
 
 				D3D12_SUBRESOURCE_DATA subresourceData = {};
-				subresourceData.pData = buffer->GetData();
+				subresourceData.pData = dynamicBuffer.GetData();
 				subresourceData.RowPitch = bufferSize;
 				subresourceData.SlicePitch = subresourceData.RowPitch;
 
@@ -121,7 +120,7 @@ namespace DiveBomber::BindableObject
 		}
 
 		[[nodiscard]] static std::shared_ptr<DynamicConstantBuffer> Resolve(DEGraphics::Graphics& gfx, const std::string& tag,
-			const DynamicConstantProcess::LayoutElement& layout, const DynamicConstantProcess::Buffer* buffer,
+			const DynamicConstantProcess::LayoutElement& layout, const DynamicConstantProcess::Buffer& buffer,
 			UINT slot)
 		{
 			return gfx.GetParent().GetGlobalBindableManager()->Resolve<DynamicConstantBuffer>(gfx, tag, layout, buffer, slot);
@@ -143,10 +142,16 @@ namespace DiveBomber::BindableObject
 		{
 			return GenerateUID(tag);
 		}
+
+		[[nodiscard]] const DynamicConstantProcess::Buffer& GetBuffer() const noexcept
+		{
+			return dynamicBuffer;
+		}
 	protected:
 		wrl::ComPtr<ID3D12Resource> constantBuffer;
 		std::string tag;
 		size_t bufferSize = 0u;
+		DynamicConstantProcess::Buffer dynamicBuffer;
 	private:
 		UINT slot;
 	};

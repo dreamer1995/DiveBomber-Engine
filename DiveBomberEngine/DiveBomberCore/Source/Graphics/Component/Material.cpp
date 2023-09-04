@@ -57,28 +57,27 @@ namespace DiveBomber::Component
         return name;
     }
 
-    //void Material::SetMaterialParameterScalar(std::string constantName, std::string key, float scalar) const noexcept
-    //{
-    //    auto it = dynamicConstantMap.find(constantName);
-    //    if (it != dynamicConstantMap.end())
-    //    {
-    //        DynamicConstantProcess::Buffer buffer = it->second->GetBuffer();
-    //        buffer[key] = scalar;
-    //        it->second->Update(gfx, buffer);
-    //    }
-    //}
+    void Material::SetMaterialParameterScalar(std::string constantName, std::string key, float scalar) const noexcept
+    {
+        auto it = dynamicConstantMap.find(constantName);
+        if (it != dynamicConstantMap.end())
+        {
+            DynamicConstantProcess::Buffer buffer = it->second->GetBuffer();
+            buffer[key] = scalar;
+            it->second->Update(gfx, buffer);
+        }
+    }
 
-    //void Material::SetMaterialParameterVector(std::string constantName, std::string key, DirectX::XMFLOAT4 vector) const noexcept
-    //{
-    //    auto it = dynamicConstantMap.find(constantName);
-    //    if (it != dynamicConstantMap.end())
-    //    {
-    //        auto buffer = it->second->GetBuffer();
-    //        auto a = buffer[key];
-    //        DirectX::XMFLOAT4 b = static_cast<dx::XMFLOAT4&>(a);
-    //        std::cout << b.x << std::endl;
-    //        //buffer[key] = vector;
-    //        it->second->Update(gfx, buffer);
-    //    }
-    //}
+    void Material::SetMaterialParameterVector(std::string constantName, std::string key, DirectX::XMFLOAT4 vector) const noexcept
+    {
+        auto it = dynamicConstantMap.find(constantName);
+        if (it != dynamicConstantMap.end())
+        {
+            auto buffer = it->second->GetBuffer();
+            auto a = buffer[key];
+            DirectX::XMFLOAT4 b = static_cast<dx::XMFLOAT4&>(a);
+            buffer[key] = vector;
+            it->second->Update(gfx, buffer);
+        }
+    }
 }
