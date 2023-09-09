@@ -24,9 +24,9 @@ namespace DiveBomber::BindableObject
 		:
 		gfx(inputGfx),
 		name(inputName),
-		type(inputType),
-		builtFile(ProjectDirectoryW L"Asset\\Shader\\Built\\" + name + GetShaderTypeAbbreviation() + L".cso")
+		type(inputType)
 	{
+		builtFile = ProjectDirectoryW L"Asset\\Shader\\Built\\" + name + GetShaderTypeAbbreviation() + L".cso";
 
 		fs::path filePath = EngineDirectoryW L"Shader\\" + name + L".hlsl";
 		if (fs::exists(filePath))
