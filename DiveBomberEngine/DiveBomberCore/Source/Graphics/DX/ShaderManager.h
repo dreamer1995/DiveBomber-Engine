@@ -4,6 +4,7 @@
 #include <string>
 #include <unordered_map>
 #include <mutex>
+#include <memory>
 #include <dxcapi.h>
 #pragma comment(lib,"dxcompiler.lib")
 
@@ -20,7 +21,6 @@ namespace DiveBomber::DX
 	{
 	public:
 		ShaderManager();
-		~ShaderManager();
 		ShaderManager(const ShaderManager&) = delete;
 		ShaderManager& operator =(const ShaderManager&) = delete;
 
@@ -30,13 +30,9 @@ namespace DiveBomber::DX
 		void ReCompileShader();
 		void DeleteShaderInUsingPool(const std::string key) noexcept;
 		void DeletePipelineStateObjectInUsingPool(const std::string key) noexcept;
-		void ClearPool() noexcept;
 
-		[[nodiscard]] static ShaderManager& GetInstance()
-		{
-			static ShaderManager shaderManager;
-			return shaderManager;
-		}
+		[[nodiscard]] static ShaderManager& GetInstance();
+		static void Destructor() noexcept;
 
 	private:
 		// Responsible for the actual compilation of shaders.
@@ -50,5 +46,7 @@ namespace DiveBomber::DX
 		std::unordered_map<std::string, std::shared_ptr<BindableObject::PipelineStateObject>> pipelineStateObjectPool;
 
 		std::mutex shaderManagerMutex;
+
+		static std::unique_ptr<ShaderManager> instance;
 	};
 }

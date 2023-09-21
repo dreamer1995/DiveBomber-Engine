@@ -65,7 +65,5 @@ namespace DiveBomber
 		std::unique_ptr<Utility::Timer> coreTimer;
 
 		std::unique_ptr<DEScene::Scene> currentScene;
-
-		std::unique_ptr<DEGraphics::Graphics> pGfx;
 	};
 }

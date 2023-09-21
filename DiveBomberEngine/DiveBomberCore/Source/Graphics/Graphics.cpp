@@ -13,6 +13,7 @@
 #include "DX\DescriptorAllocator.h"
 #include "DX\DescriptorAllocation.h"
 #include "..\DiveBomberCore.h"
+#include "..\Window\Window.h"
 
 #include <iostream>
 #include <array>
@@ -24,11 +25,13 @@ namespace DiveBomber::DEGraphics
 	using namespace BindableObject;
 	using namespace Component;
 
-	Graphics::Graphics(HWND inputHWnd, UINT inputWidth, UINT inputHeight)
+	std::unique_ptr<Graphics> Graphics::instance;
+
+	Graphics::Graphics()
 		:
-		hWnd(inputHWnd),
-		width(inputWidth),
-		height(inputHeight)
+		hWnd(DEWindow::Window::GetInstance().GetHandle()),
+		width(MainWindowWidth),
+		height(MainWindowHeight)
 	{
 		// Check for DirectX Math library support.
 		if (!DirectX::XMVerifyCPUSupport())
@@ -344,5 +347,22 @@ namespace DiveBomber::DEGraphics
 		};
 
 		GetGraphicsCommandList()->SetDescriptorHeaps(static_cast<UINT>(descriptorHeaps.size()), descriptorHeaps.data());
+	}
+
+	Graphics& Graphics::GetInstance()
+	{
+		if (instance == nullptr)
+		{
+			instance = std::make_unique<Graphics>();
+		}
+		return *instance;
+	}
+
+	void Graphics::Destructor() noexcept
+	{
+		if (instance != nullptr)
+		{
+			instance.reset();
+		}
 	}
 }

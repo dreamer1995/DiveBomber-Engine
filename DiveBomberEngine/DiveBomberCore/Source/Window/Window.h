@@ -64,7 +64,8 @@ namespace DiveBomber::DEWindow
 		bool CursorEnabled() const noexcept;
 		static std::optional<int> ProcessMessages() noexcept;
 		void SetFullScreen(bool fullScreen) noexcept;
-		[[nodiscard]] static Window& GetInstance() noexcept;
+		[[nodiscard]] static Window& GetInstance();
+		static void Destructor() noexcept;
 		[[nodiscard]] HWND GetHandle() const noexcept;
 
 		const wchar_t* title;
@@ -92,5 +93,7 @@ namespace DiveBomber::DEWindow
 		std::vector<BYTE> rawBuffer;
 		std::string commandLine;
 		RECT windowRect;
+
+		static std::unique_ptr<Window> instance;
 	};
 }

@@ -52,6 +52,7 @@
     <ClCompile Include="Source\Graphics\Component\Material.cpp" />
     <ClCompile Include="Source\Graphics\DX\ShaderManager.cpp" />
     <ClCompile Include="Source\Graphics\BindableObject\DynamicConstant.cpp" />
+    <ClCompile Include="Source\Graphics\BindableObject\GlobalBindableManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Utility\Common.h" />

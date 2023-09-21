@@ -36,7 +36,7 @@ namespace DiveBomber::DEGraphics
 	class Graphics final
 	{
 	public:
-		Graphics(HWND inputHWnd, UINT inputWidth, UINT inputHeight);
+		Graphics();
 		Graphics(const Graphics&) = delete;
 		Graphics& operator=(const Graphics&) = delete;
 		~Graphics();
@@ -77,10 +77,8 @@ namespace DiveBomber::DEGraphics
 		[[nodiscard]] std::shared_ptr<DX::DescriptorAllocator> GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV) const noexcept;
 		void BindShaderDescriptorHeaps();
 
-		static Graphics& GetInstance()
-		{
-			return gfx;
-		}
+		[[nodiscard]] static Graphics& GetInstance();
+		static void Destructor() noexcept;
 	private:
 		UINT width = 0;
 		UINT height = 0;
@@ -113,6 +111,8 @@ namespace DiveBomber::DEGraphics
 
 		std::shared_ptr<BindableObject::DepthStencil> mainDS;
 
+		static std::unique_ptr<Graphics> instance;
+
 	public:
 		bool isWireFrame = false;
 		bool isTAA = true;
@@ -120,7 +120,5 @@ namespace DiveBomber::DEGraphics
 		bool isHDR = true;
 		//bool isVolumetricRendering;
 		bool isSkyRendering = true;
-
-		static Graphics gfx;
 	};
 }

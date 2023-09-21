@@ -20,6 +20,7 @@
 namespace DiveBomber
 {
 	using namespace DEWindow;
+	using namespace DEGraphics;
 	using namespace DEConsole;
 	using namespace Utility;
 	using namespace Hardware;
@@ -40,16 +41,10 @@ namespace DiveBomber
 				&Console::GetInput, console.get(), std::ref(command)
 				});
 		}
-
-		// create graphics object
-		pGfx = std::make_unique<DEGraphics::Graphics>(Window::GetInstance().GetHandle(), MainWindowWidth, MainWindowHeight);
 	}
 
 	DiveBomberCore::~DiveBomberCore()
 	{
-		GlobalBindableManager::GetInstance().ClearPool();
-		ShaderManager::GetInstance().ClearPool();
-
 		if (EnableConsole)
 		{
 			console->SetWaitForInput(false);
@@ -61,6 +56,9 @@ namespace DiveBomber
 				threadTasks.pop();
 			}
 		}
+		GlobalBindableManager::Destructor();
+		ShaderManager::Destructor();
+		Graphics::Destructor();
 	}
 
 	int DiveBomberCore::GameLoop()
@@ -71,7 +69,7 @@ namespace DiveBomber
 			// process all messages pending, but to not block for new messages
 			if (const auto ecode = Window::ProcessMessages())
 			{
-				pGfx->Flush();
+				Graphics::GetInstance().Flush();
 
 				// if return optional has value, means we're quitting so return exit code
 				return *ecode;
@@ -85,7 +83,7 @@ namespace DiveBomber
 	{
 		currentScene = std::make_unique<Scene>();
 
-		currentScene->LoadSceneFromFile(*pGfx, L"Test Scene");
+		currentScene->LoadSceneFromFile(Graphics::GetInstance(), L"Test Scene");
 	}
 
 	void DiveBomberCore::Update()
@@ -105,11 +103,11 @@ namespace DiveBomber
 
 	void DiveBomberCore::RenderLogic()
 	{
-		pGfx->BeginFrame();
+		Graphics::GetInstance().BeginFrame();
 
-		currentScene->Render(*pGfx);
+		currentScene->Render(Graphics::GetInstance());
 
-		pGfx->EndFrame();
+		Graphics::GetInstance().EndFrame();
 	}
 
 	void DiveBomberCore::ProcessInput()

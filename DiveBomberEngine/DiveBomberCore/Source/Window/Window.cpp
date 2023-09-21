@@ -22,6 +22,7 @@ namespace DiveBomber::DEWindow
 
 	// Window Class Stuff
 	Window::WindowClass Window::WindowClass::wndClass;
+	std::unique_ptr<Window> Window::instance;
 
 	Window::WindowClass::WindowClass() noexcept
 		:
@@ -197,7 +198,7 @@ namespace DiveBomber::DEWindow
 			{
 				windowWidth = width;
 				windowHeight = height;
-				// todo Resize GFX
+				Graphics::GetInstance().ReSizeMainRT(windowWidth, windowHeight);
 			}
 			break;
 		}
@@ -593,10 +594,21 @@ namespace DiveBomber::DEWindow
 		}
 	}
 
-	Window& Window::GetInstance() noexcept
+	Window& Window::GetInstance()
 	{
-		static Window wnd;
-		return wnd;
+		if (instance == nullptr)
+		{
+			instance = std::make_unique<Window>();
+		}
+		return *instance;
+	}
+
+	void Window::Destructor() noexcept
+	{
+		if (instance != nullptr)
+		{
+			instance.reset();
+		}
 	}
 
 	HWND Window::GetHandle() const noexcept

@@ -14,6 +14,8 @@ namespace DiveBomber::DX
     using namespace DEException;
     using namespace BindableObject;
 
+    std::unique_ptr<ShaderManager> ShaderManager::instance;
+
     ShaderManager::ShaderManager()
     {
         HRESULT hr;
@@ -23,12 +25,6 @@ namespace DiveBomber::DX
             GFX_THROW_INFO(::DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(&compiler)));
             GFX_THROW_INFO(utils->CreateDefaultIncludeHandler(&includeHandler));
         }
-    }
-
-    ShaderManager::~ShaderManager()
-    {
-        shaderPool.clear();
-        pipelineStateObjectPool.clear();
     }
 
     wrl::ComPtr<ID3DBlob> ShaderManager::Compile(const std::wstring shaderDirectory, const std::wstring shaderName, BindableObject::ShaderType shaderType)
@@ -236,15 +232,20 @@ namespace DiveBomber::DX
         }
     }
 
-    static ShaderManager& GetInstance()
+    ShaderManager& ShaderManager::GetInstance()
     {
-        static ShaderManager shaderManager;
-        return shaderManager;
+        if (instance == nullptr)
+        {
+            instance = std::make_unique<ShaderManager>();
+        }
+        return *instance;
     }
 
-    void ShaderManager::ClearPool() noexcept
+    void ShaderManager::Destructor() noexcept
     {
-        shaderPool.clear();
-        pipelineStateObjectPool.clear();
+        if (instance != nullptr)
+        {
+            instance.reset();
+        }
     }
 }

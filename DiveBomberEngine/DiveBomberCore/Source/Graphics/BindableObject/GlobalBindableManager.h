@@ -18,7 +18,7 @@ namespace DiveBomber::BindableObject
 
 namespace DiveBomber::BindableObject
 {
-	class GlobalBindableManager
+	class GlobalBindableManager final
 	{
 	public:
 		GlobalBindableManager()
@@ -28,6 +28,8 @@ namespace DiveBomber::BindableObject
 		GlobalBindableManager(const GlobalBindableManager&) = delete;
 		GlobalBindableManager& operator =(const GlobalBindableManager&) = delete;
 
+		void DeleteBindable(const std::string key) noexcept;
+
 		template<class T, typename...Params>
 		[[nodiscard]] static std::shared_ptr<T> Resolve(DEGraphics::Graphics& gfx, Params&&...p) noxnd
 		{
@@ -35,16 +37,8 @@ namespace DiveBomber::BindableObject
 			return GetInstance().Resolve_<T>(gfx, std::forward<Params>(p)...);
 		}
 
-		[[nodiscard]] static GlobalBindableManager& GetInstance()
-		{
-			static GlobalBindableManager globalBindableManager;
-			return globalBindableManager;
-		}
-
-		void ClearPool() noexcept
-		{
-			binds.clear();
-		}
+		[[nodiscard]] static GlobalBindableManager& GetInstance();
+		static void Destructor() noexcept;
 
 	private:
 		template<class T, typename...Params>
@@ -83,5 +77,7 @@ namespace DiveBomber::BindableObject
 		std::unordered_map<std::string, std::shared_ptr<BindableObject::Bindable>> binds;
 
 		std::mutex globalBindableManagerMutex;
+
+		static std::unique_ptr<GlobalBindableManager> instance;
 	};
 }
