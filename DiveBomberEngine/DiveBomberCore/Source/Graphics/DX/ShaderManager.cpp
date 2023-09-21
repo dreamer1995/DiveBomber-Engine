@@ -25,6 +25,12 @@ namespace DiveBomber::DX
         }
     }
 
+    ShaderManager::~ShaderManager()
+    {
+        shaderPool.clear();
+        pipelineStateObjectPool.clear();
+    }
+
     wrl::ComPtr<ID3DBlob> ShaderManager::Compile(const std::wstring shaderDirectory, const std::wstring shaderName, BindableObject::ShaderType shaderType)
     {
         // Setup compilation arguments.
@@ -228,5 +234,17 @@ namespace DiveBomber::DX
         {
             pipelineStateObjectPool.erase(it);
         }
+    }
+
+    static ShaderManager& GetInstance()
+    {
+        static ShaderManager shaderManager;
+        return shaderManager;
+    }
+
+    void ShaderManager::ClearPool() noexcept
+    {
+        shaderPool.clear();
+        pipelineStateObjectPool.clear();
     }
 }

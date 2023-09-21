@@ -21,8 +21,34 @@ namespace DiveBomber::BindableObject
 	class GlobalBindableManager
 	{
 	public:
+		GlobalBindableManager()
+		{
+		}
+
+		GlobalBindableManager(const GlobalBindableManager&) = delete;
+		GlobalBindableManager& operator =(const GlobalBindableManager&) = delete;
+
 		template<class T, typename...Params>
-		std::shared_ptr<T> Resolve(DEGraphics::Graphics& gfx, Params&&...p) noxnd
+		static std::shared_ptr<T> Resolve(DEGraphics::Graphics& gfx, Params&&...p) noxnd
+		{
+			static_assert(std::is_base_of<Bindable, T>::value, "Can only resolve classes derived from Bindable");
+			return GetInstance().Resolve_<T>(gfx, std::forward<Params>(p)...);
+		}
+
+		static GlobalBindableManager& GetInstance()
+		{
+			static GlobalBindableManager globalBindableManager;
+			return globalBindableManager;
+		}
+
+		void ClearPool() noexcept
+		{
+			binds.clear();
+		}
+
+	private:
+		template<class T, typename...Params>
+		std::shared_ptr<T> Resolve_(DEGraphics::Graphics& gfx, Params&&...p) noxnd
 		{
 			const auto key = T::GenerateUID(std::forward<Params>(p)...);
 			const auto i = binds.find(key);
@@ -30,7 +56,7 @@ namespace DiveBomber::BindableObject
 			bool needConstruct = true;
 			if (i != binds.end())
 			{
-				if(i->second)
+				if (i->second)
 				{
 					needConstruct = false;
 				}

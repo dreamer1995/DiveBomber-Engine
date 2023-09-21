@@ -42,13 +42,13 @@ namespace DiveBomber
 		}
 			
 		wnd = std::make_unique<Window>(L"DiveBomber Engine", *this);
-
-		globalBindableManager = std::make_shared<GlobalBindableManager>();
-		shaderManager = std::make_shared<ShaderManager>();
 	}
 
 	DiveBomberCore::~DiveBomberCore()
 	{
+		GlobalBindableManager::GetInstance().ClearPool();
+		ShaderManager::GetInstance().ClearPool();
+
 		if (EnableConsole)
 		{
 			console->SetWaitForInput(false);
@@ -318,7 +318,7 @@ namespace DiveBomber
 			{
 				// temp strategy 
 				Sleep(100);
-				shaderManager->ReCompileShader();
+				ShaderManager::GetInstance().ReCompileShader();
 			}
 			lastLoadTime = tickCount;
 		}
@@ -337,7 +337,7 @@ namespace DiveBomber
 				{
 					// temp strategy 
 					Sleep(100);
-					shaderManager->ReCompileShader();
+					ShaderManager::GetInstance().ReCompileShader();
 				}
 			}
 
@@ -391,15 +391,5 @@ namespace DiveBomber
 			if (sphere)
 				sphere->SetRotation({ 0, -angle ,0 });
 		}
-	}
-
-	std::shared_ptr<GlobalBindableManager> DiveBomberCore::GetGlobalBindableManager() noxnd
-	{
-		return globalBindableManager;
-	}
-
-	std::shared_ptr<ShaderManager> DiveBomberCore::GetShaderManager() noxnd
-	{
-		return shaderManager;
 	}
 }

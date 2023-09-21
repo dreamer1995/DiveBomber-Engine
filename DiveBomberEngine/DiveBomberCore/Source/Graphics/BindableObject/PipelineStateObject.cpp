@@ -42,7 +42,7 @@ namespace DiveBomber::BindableObject
 
 	std::shared_ptr<PipelineStateObject> PipelineStateObject::Resolve(Graphics& gfx, const std::string& tag, PipelineStateReference pipelineStateReference)
 	{
-		return gfx.GetParent().GetGlobalBindableManager()->Resolve<PipelineStateObject>(gfx, tag, pipelineStateReference);
+		return GlobalBindableManager::Resolve<PipelineStateObject>(gfx, tag, pipelineStateReference);
 	}
 
 	std::string PipelineStateObject::GenerateUID_(const std::string& tag)

@@ -33,7 +33,6 @@ namespace DiveBomber
 
 namespace DiveBomber::DEGraphics
 {
-
 	class Graphics final
 	{
 	public:
@@ -78,6 +77,11 @@ namespace DiveBomber::DEGraphics
 		[[nodiscard]] std::shared_ptr<DX::DescriptorAllocator> GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV) const noexcept;
 		void BindShaderDescriptorHeaps();
 		[[nodiscard]] DiveBomberCore& GetParent() const noexcept;
+
+		static Graphics& GetInstance()
+		{
+			return gfx;
+		}
 	private:
 		UINT width = 0;
 		UINT height = 0;
@@ -119,5 +123,6 @@ namespace DiveBomber::DEGraphics
 		bool isSkyRendering = true;
 
 		DiveBomberCore& parent;
+		static Graphics gfx;
 	};
 }

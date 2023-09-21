@@ -51,9 +51,6 @@ namespace DiveBomber
 		void ExecuteConsoleCommand();
 		void RefreshRenderReport();
 
-		[[nodiscard]] std::shared_ptr<BindableObject::GlobalBindableManager> GetGlobalBindableManager() noxnd;
-		[[nodiscard]] std::shared_ptr<DX::ShaderManager> GetShaderManager() noxnd;
-
 	private:
 		void Start();
 		void Update();
@@ -69,8 +66,5 @@ namespace DiveBomber
 		std::unique_ptr<Utility::Timer> coreTimer;
 
 		std::unique_ptr<DEScene::Scene> currentScene;
-
-		std::shared_ptr<BindableObject::GlobalBindableManager> globalBindableManager;
-		std::shared_ptr<DX::ShaderManager> shaderManager;
 	};
 }

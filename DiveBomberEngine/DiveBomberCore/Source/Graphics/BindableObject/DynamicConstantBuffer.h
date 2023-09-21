@@ -123,7 +123,7 @@ namespace DiveBomber::BindableObject
 			const DynamicConstantProcess::LayoutElement& layout, const DynamicConstantProcess::Buffer& buffer,
 			UINT slot)
 		{
-			return gfx.GetParent().GetGlobalBindableManager()->Resolve<DynamicConstantBuffer>(gfx, tag, layout, buffer, slot);
+			return GlobalBindableManager::Resolve<DynamicConstantBuffer>(gfx, tag, layout, buffer, slot);
 		}
 
 		template<typename...Ignore>

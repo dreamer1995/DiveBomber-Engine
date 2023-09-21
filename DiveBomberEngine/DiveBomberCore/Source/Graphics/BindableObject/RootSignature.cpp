@@ -60,7 +60,7 @@ namespace DiveBomber::BindableObject
 
 	std::shared_ptr<RootSignature> RootSignature::Resolve(Graphics& gfx, const std::string& tag)
 	{
-		return gfx.GetParent().GetGlobalBindableManager()->Resolve<RootSignature>(gfx, tag);
+		return GlobalBindableManager::Resolve<RootSignature>(gfx, tag);
 	}
 
 	std::string RootSignature::GenerateUID_(const std::string& tag)

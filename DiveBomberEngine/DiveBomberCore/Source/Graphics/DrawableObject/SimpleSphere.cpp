@@ -79,10 +79,10 @@ namespace DiveBomber::DrawableObject
 		}
 
 		std::shared_ptr<Shader> vertexShader = Shader::Resolve(gfx, L"TestShader", ShaderType::VertexShader);
-		gfx.GetParent().GetShaderManager()->AddToUsingPool(vertexShader);
+		ShaderManager::GetInstance().AddToUsingPool(vertexShader);
 		AddBindable(vertexShader);
 		std::shared_ptr<Shader> pixelShader = Shader::Resolve(gfx, L"TestShader", ShaderType::PixelShader);
-		gfx.GetParent().GetShaderManager()->AddToUsingPool(pixelShader);
+		ShaderManager::GetInstance().AddToUsingPool(pixelShader);
 		AddBindable(pixelShader);
 
 		std::shared_ptr<RootSignature> rootSignature = RootSignature::Resolve(gfx, "StandardSRVFullStage");
@@ -105,7 +105,7 @@ namespace DiveBomber::DrawableObject
 
 		std::shared_ptr<PipelineStateObject> pipelineStateObject = PipelineStateObject::Resolve(gfx, geometryTag, std::move(pipelineStateReference));
 		AddBindable(pipelineStateObject);
-		gfx.GetParent().GetShaderManager()->AddToUsingPool(pipelineStateObject);
+		ShaderManager::GetInstance().AddToUsingPool(pipelineStateObject);
 	}
 
 	SimpleSphere::~SimpleSphere()

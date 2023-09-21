@@ -63,7 +63,7 @@ namespace DiveBomber::BindableObject
 			}
 		}
 
-		wrl::ComPtr<ID3DBlob> compiledBlob = gfx.GetParent().GetShaderManager()->Compile(directory, name, type);
+		wrl::ComPtr<ID3DBlob> compiledBlob = ShaderManager::GetInstance().Compile(directory, name, type);
 		if (compiledBlob)
 		{
 			bytecodeBlob = compiledBlob;
@@ -89,7 +89,7 @@ namespace DiveBomber::BindableObject
 
 	std::shared_ptr<Shader> Shader::Resolve(Graphics& gfx, const std::wstring& name, ShaderType type)
 	{
-		return gfx.GetParent().GetGlobalBindableManager()->Resolve<Shader>(gfx, name, type);
+		return GlobalBindableManager::Resolve<Shader>(gfx, name, type);
 	}
 
 	std::string Shader::GenerateUID(const std::wstring& name, ShaderType type)

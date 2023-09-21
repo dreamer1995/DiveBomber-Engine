@@ -99,7 +99,7 @@ namespace DiveBomber::BindableObject
 		const VertexProcess::VertexData& vbuf)
 	{
 		assert(tag != "?");
-		return gfx.GetParent().GetGlobalBindableManager()->Resolve<VertexBuffer>(gfx, tag, vbuf);
+		return GlobalBindableManager::Resolve<VertexBuffer>(gfx, tag, vbuf);
 	}
 
 	std::string VertexBuffer::GenerateUID_(const std::string& tag)
