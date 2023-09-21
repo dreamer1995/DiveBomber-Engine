@@ -54,7 +54,7 @@ namespace DiveBomber::DEWindow
 			HINSTANCE hInst;
 		};
 	public:
-		Window(const wchar_t* name, DiveBomberCore& parent);
+		Window();
 		~Window();
 		Window(const Window&) = delete;
 		Window& operator = (const Window&) = delete;
@@ -63,8 +63,9 @@ namespace DiveBomber::DEWindow
 		void DisableCursor() noexcept;
 		bool CursorEnabled() const noexcept;
 		static std::optional<int> ProcessMessages() noexcept;
-		DEGraphics::Graphics& Gfx();
 		void SetFullScreen(bool fullScreen) noexcept;
+		[[nodiscard]] static Window& GetInstance() noexcept;
+		[[nodiscard]] HWND GetHandle() const noexcept;
 
 		const wchar_t* title;
 		std::unique_ptr<Hardware::Keyboard> kbd;
@@ -88,7 +89,6 @@ namespace DiveBomber::DEWindow
 		int screenWidth;
 		int screenHeight;
 		HWND hWnd;
-		std::unique_ptr<DEGraphics::Graphics> pGfx;
 		std::vector<BYTE> rawBuffer;
 		std::string commandLine;
 		RECT windowRect;

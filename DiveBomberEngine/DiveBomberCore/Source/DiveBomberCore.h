@@ -58,7 +58,6 @@ namespace DiveBomber
 		void GameLogic();
 		void RenderLogic();
 
-		std::unique_ptr<DEWindow::Window> wnd;
 		std::unique_ptr<DEConsole::Console> console;
 		std::queue<std::thread> threadTasks;
 		std::wstring command;
@@ -66,5 +65,7 @@ namespace DiveBomber
 		std::unique_ptr<Utility::Timer> coreTimer;
 
 		std::unique_ptr<DEScene::Scene> currentScene;
+
+		std::unique_ptr<DEGraphics::Graphics> pGfx;
 	};
 }

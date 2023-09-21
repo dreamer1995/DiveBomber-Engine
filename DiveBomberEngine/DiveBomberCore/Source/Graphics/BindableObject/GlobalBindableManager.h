@@ -29,13 +29,13 @@ namespace DiveBomber::BindableObject
 		GlobalBindableManager& operator =(const GlobalBindableManager&) = delete;
 
 		template<class T, typename...Params>
-		static std::shared_ptr<T> Resolve(DEGraphics::Graphics& gfx, Params&&...p) noxnd
+		[[nodiscard]] static std::shared_ptr<T> Resolve(DEGraphics::Graphics& gfx, Params&&...p) noxnd
 		{
 			static_assert(std::is_base_of<Bindable, T>::value, "Can only resolve classes derived from Bindable");
 			return GetInstance().Resolve_<T>(gfx, std::forward<Params>(p)...);
 		}
 
-		static GlobalBindableManager& GetInstance()
+		[[nodiscard]] static GlobalBindableManager& GetInstance()
 		{
 			static GlobalBindableManager globalBindableManager;
 			return globalBindableManager;

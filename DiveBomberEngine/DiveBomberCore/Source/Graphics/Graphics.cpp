@@ -24,12 +24,11 @@ namespace DiveBomber::DEGraphics
 	using namespace BindableObject;
 	using namespace Component;
 
-	Graphics::Graphics(HWND inputHWnd, UINT inputWidth, UINT inputHeight, DiveBomberCore& inputParent)
+	Graphics::Graphics(HWND inputHWnd, UINT inputWidth, UINT inputHeight)
 		:
 		hWnd(inputHWnd),
 		width(inputWidth),
-		height(inputHeight),
-		parent(inputParent)
+		height(inputHeight)
 	{
 		// Check for DirectX Math library support.
 		if (!DirectX::XMVerifyCPUSupport())
@@ -345,10 +344,5 @@ namespace DiveBomber::DEGraphics
 		};
 
 		GetGraphicsCommandList()->SetDescriptorHeaps(static_cast<UINT>(descriptorHeaps.size()), descriptorHeaps.data());
-	}
-
-	DiveBomberCore& Graphics::GetParent() const noexcept
-	{
-		return parent;
 	}
 }

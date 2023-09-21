@@ -24,7 +24,7 @@ namespace DiveBomber::DX
 		ShaderManager(const ShaderManager&) = delete;
 		ShaderManager& operator =(const ShaderManager&) = delete;
 
-		wrl::ComPtr<ID3DBlob> Compile(const std::wstring shaderDirectory, const std::wstring shaderName, BindableObject::ShaderType shaderType);
+		[[nodiscard]] wrl::ComPtr<ID3DBlob> Compile(const std::wstring shaderDirectory, const std::wstring shaderName, BindableObject::ShaderType shaderType);
 		void AddToUsingPool(std::shared_ptr<BindableObject::Shader> shader) noexcept;
 		void AddToUsingPool(std::shared_ptr<BindableObject::PipelineStateObject> PSO) noexcept;
 		void ReCompileShader();
@@ -32,7 +32,7 @@ namespace DiveBomber::DX
 		void DeletePipelineStateObjectInUsingPool(const std::string key) noexcept;
 		void ClearPool() noexcept;
 
-		static ShaderManager& GetInstance()
+		[[nodiscard]] static ShaderManager& GetInstance()
 		{
 			static ShaderManager shaderManager;
 			return shaderManager;

@@ -66,11 +66,11 @@ namespace DiveBomber::DEWindow
 		return wndClass.hInst;
 	}
 
-	Window::Window(const wchar_t* name, DiveBomberCore& parent)
+	Window::Window()
 		:
 		screenWidth(GetSystemMetrics(SM_CXSCREEN)),
 		screenHeight(GetSystemMetrics(SM_CYSCREEN)),
-		title(name)
+		title(MainWindowTitle)
 	{
 		// First check if a window with the given name already exists.
 		//WindowNameMap::iterator windowIter = gs_WindowByName.find(windowName);
@@ -104,7 +104,7 @@ namespace DiveBomber::DEWindow
 		hWnd = ::CreateWindowEx(
 			0L,
 			WindowClass::GetName(),
-			name,
+			title,
 			WS_OVERLAPPEDWINDOW,
 			windowX,
 			windowY,
@@ -130,9 +130,6 @@ namespace DiveBomber::DEWindow
 		{
 			throw WND_LAST_EXCEPT();
 		}
-
-		// create graphics object
-		pGfx = std::make_unique<Graphics>(hWnd, windowWidth, windowHeight, parent);
 
 		kbd = std::make_unique<Keyboard>();
 		mouse = std::make_unique<Mouse>();
@@ -200,7 +197,7 @@ namespace DiveBomber::DEWindow
 			{
 				windowWidth = width;
 				windowHeight = height;
-				Gfx().ReSizeMainRT(width, height);
+				// todo Resize GFX
 			}
 			break;
 		}
@@ -544,15 +541,6 @@ namespace DiveBomber::DEWindow
 		return {};
 	}
 
-	Graphics& Window::Gfx()
-	{
-		if (!pGfx)
-		{
-			throw WND_NOGFX_EXCEPT();
-		}
-		return *pGfx;
-	}
-
 	void Window::SetFullScreen(bool fullScreen) noexcept
 	{
 		if (isFullScreen != fullScreen)
@@ -603,5 +591,16 @@ namespace DiveBomber::DEWindow
 				::ShowWindow(hWnd, SW_NORMAL);
 			}
 		}
+	}
+
+	Window& Window::GetInstance() noexcept
+	{
+		static Window wnd;
+		return wnd;
+	}
+
+	HWND Window::GetHandle() const noexcept
+	{
+		return hWnd;
 	}
 }

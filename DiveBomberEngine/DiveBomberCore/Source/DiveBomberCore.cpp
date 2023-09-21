@@ -40,8 +40,9 @@ namespace DiveBomber
 				&Console::GetInput, console.get(), std::ref(command)
 				});
 		}
-			
-		wnd = std::make_unique<Window>(L"DiveBomber Engine", *this);
+
+		// create graphics object
+		pGfx = std::make_unique<DEGraphics::Graphics>(Window::GetInstance().GetHandle(), MainWindowWidth, MainWindowHeight);
 	}
 
 	DiveBomberCore::~DiveBomberCore()
@@ -70,7 +71,7 @@ namespace DiveBomber
 			// process all messages pending, but to not block for new messages
 			if (const auto ecode = Window::ProcessMessages())
 			{
-				wnd->Gfx().Flush();
+				pGfx->Flush();
 
 				// if return optional has value, means we're quitting so return exit code
 				return *ecode;
@@ -84,7 +85,7 @@ namespace DiveBomber
 	{
 		currentScene = std::make_unique<Scene>();
 
-		currentScene->LoadSceneFromFile(wnd->Gfx(), L"Test Scene");
+		currentScene->LoadSceneFromFile(*pGfx, L"Test Scene");
 	}
 
 	void DiveBomberCore::Update()
@@ -104,18 +105,20 @@ namespace DiveBomber
 
 	void DiveBomberCore::RenderLogic()
 	{
-		wnd->Gfx().BeginFrame();
+		pGfx->BeginFrame();
 
-		currentScene->Render(wnd->Gfx());
+		currentScene->Render(*pGfx);
 
-		wnd->Gfx().EndFrame();
+		pGfx->EndFrame();
 	}
 
 	void DiveBomberCore::ProcessInput()
 	{
 		ExecuteConsoleCommand();
 
-		while (const auto e = wnd->kbd->ReadKey())
+#define	wnd Window::GetInstance()
+
+		while (const auto e = wnd.kbd->ReadKey())
 		{
 			if (!(e->IsKeyDown()))
 			{
@@ -131,7 +134,7 @@ namespace DiveBomber
 					//isWireframe = true;
 					//break;
 				//case VK_F4:
-					//wnd->Gfx().isWireFrame = !wnd->Gfx().isWireFrame;
+					//wnd.Gfx().isWireFrame = !wnd.Gfx().isWireFrame;
 					//break;
 				//case VK_F5:
 					//if (uvPannel->showUV)
@@ -145,9 +148,9 @@ namespace DiveBomber
 					//break;
 
 			case VK_F11:
-				if (wnd->kbd->KeyIsDown(VK_MENU))
+				if (wnd.kbd->KeyIsDown(VK_MENU))
 				{
-					wnd->SetFullScreen(!wnd->isFullScreen);
+					wnd.SetFullScreen(!wnd.isFullScreen);
 				}
 				break;
 
@@ -172,51 +175,51 @@ namespace DiveBomber
 		float deltaTime = (float)g_RawDeltaTime;
 
 		static float cameraSpeed = 1.0f;
-		while (!wnd->mouse->IsEmpty())
+		while (!wnd.mouse->IsEmpty())
 		{
-			const auto e = wnd->mouse->Read();
+			const auto e = wnd.mouse->Read();
 
 			switch (e->GetType())
 			{
 			case Mouse::Event::Type::MBE_RDown:
 			{
-				wnd->DisableCursor();
-				wnd->mouse->EnableRaw();
+				wnd.DisableCursor();
+				wnd.mouse->EnableRaw();
 				break;
 			}
 			case Mouse::Event::Type::MBE_RUp:
 			{
-				wnd->EnableCursor();
-				wnd->mouse->DisableRaw();
+				wnd.EnableCursor();
+				wnd.mouse->DisableRaw();
 				break;
 			}
 
 			case Mouse::Event::Type::MBE_LUp:
 			{
-				wnd->EnableCursor();
-				wnd->mouse->DisableRaw();
+				wnd.EnableCursor();
+				wnd.mouse->DisableRaw();
 				break;
 			}
 			case Mouse::Event::Type::MBE_LDown:
 			{
-				if (wnd->kbd->KeyIsDown(VK_MENU))
+				if (wnd.kbd->KeyIsDown(VK_MENU))
 				{
-					wnd->DisableCursor();
-					wnd->mouse->EnableRaw();
+					wnd.DisableCursor();
+					wnd.mouse->EnableRaw();
 					break;
 				}
 
-				if (wnd->kbd->KeyIsDown('L') || wnd->kbd->KeyIsDown(VK_SHIFT))
+				if (wnd.kbd->KeyIsDown('L') || wnd.kbd->KeyIsDown(VK_SHIFT))
 				{
-					wnd->DisableCursor();
-					wnd->mouse->EnableRaw();
+					wnd.DisableCursor();
+					wnd.mouse->EnableRaw();
 					break;
 				}
 				break;
 			}
 			case Mouse::Event::Type::MBE_WheelFront:
 			{
-				if (wnd->mouse->RightIsDown())
+				if (wnd.mouse->RightIsDown())
 				{
 					cameraSpeed += 0.3;
 				}
@@ -228,7 +231,7 @@ namespace DiveBomber
 			}
 			case Mouse::Event::Type::MBE_WheelBack:
 			{
-				if (wnd->mouse->RightIsDown())
+				if (wnd.mouse->RightIsDown())
 				{
 					cameraSpeed -= 0.3;
 				}
@@ -240,69 +243,69 @@ namespace DiveBomber
 			}
 			case Mouse::Event::Type::MBE_WheelDown:
 			{
-				wnd->DisableCursor();
-				wnd->mouse->EnableRaw();
+				wnd.DisableCursor();
+				wnd.mouse->EnableRaw();
 				break;
 			}
 			case Mouse::Event::Type::MBE_WheelUp:
 			{
-				wnd->EnableCursor();
-				wnd->mouse->DisableRaw();
+				wnd.EnableCursor();
+				wnd.mouse->DisableRaw();
 				break;
 			}
 			}
 			cameraSpeed = std::clamp(cameraSpeed, 0.3f, 9.9f);
 		}
 
-		if (!wnd->CursorEnabled())
+		if (!wnd.CursorEnabled())
 		{
-			if (wnd->kbd->KeyIsDown('W'))
+			if (wnd.kbd->KeyIsDown('W'))
 			{
 				mainCamera->Translate({ 0.0f,0.0f,deltaTime * cameraSpeed });
 			}
-			if (wnd->kbd->KeyIsDown('A'))
+			if (wnd.kbd->KeyIsDown('A'))
 			{
 				mainCamera->Translate({ -deltaTime * cameraSpeed,0.0f,0.0f });
 			}
-			if (wnd->kbd->KeyIsDown('S'))
+			if (wnd.kbd->KeyIsDown('S'))
 			{
 				mainCamera->Translate({ 0.0f,0.0f,-deltaTime * cameraSpeed });
 			}
-			if (wnd->kbd->KeyIsDown('D'))
+			if (wnd.kbd->KeyIsDown('D'))
 			{
 				mainCamera->Translate({ deltaTime * cameraSpeed,0.0f,0.0f });
 			}
-			if (wnd->kbd->KeyIsDown('E'))
+			if (wnd.kbd->KeyIsDown('E'))
 			{
 				mainCamera->Translate({ 0.0f,deltaTime * cameraSpeed,0.0f });
 			}
-			if (wnd->kbd->KeyIsDown('Q'))
+			if (wnd.kbd->KeyIsDown('Q'))
 			{
 				mainCamera->Translate({ 0.0f,-deltaTime * cameraSpeed,0.0f });
 			}
 		}
 
-		if (wnd->kbd->KeyIsDown('F'))
+		if (wnd.kbd->KeyIsDown('F'))
 		{
 			mainCamera->LookZero({ 0.0f, 0.0f, 0.0f });
 		}
 
-		while (const auto delta = wnd->mouse->ReadRawDelta())
+		while (const auto delta = wnd.mouse->ReadRawDelta())
 		{
-			if (!wnd->CursorEnabled() && wnd->mouse->RightIsDown())
+			if (!wnd.CursorEnabled() && wnd.mouse->RightIsDown())
 			{
 				mainCamera->Rotate((float)delta->x, (float)delta->y);
 			}
-			else if (!wnd->CursorEnabled() && wnd->kbd->KeyIsDown(VK_MENU) && wnd->mouse->LeftIsDown())
+			else if (!wnd.CursorEnabled() && wnd.kbd->KeyIsDown(VK_MENU) && wnd.mouse->LeftIsDown())
 			{
 				mainCamera->RotateAround((float)delta->x, (float)delta->y, { 0.0f, 0.0f, 0.0f });
 			}
-			else if (!wnd->CursorEnabled() && wnd->mouse->WheelIsDown())
+			else if (!wnd.CursorEnabled() && wnd.mouse->WheelIsDown())
 			{
 				static float mKeyMoveSpeed = 0.1f;
 				mainCamera->Translate({ -(float)delta->x * deltaTime * mKeyMoveSpeed,(float)delta->y * deltaTime * mKeyMoveSpeed,0.0f });
 			}
-			else if (!wnd->CursorEnabled() && (wnd->kbd->KeyIsDown('L') || wnd->kbd->KeyIsDown(VK_SHIFT)) && wnd->mouse->LeftIsDown())
+			else if (!wnd.CursorEnabled() && (wnd.kbd->KeyIsDown('L') || wnd.kbd->KeyIsDown(VK_SHIFT)) && wnd.mouse->LeftIsDown())
 			{
 				//dLight.Rotate((float)delta->x, (float)delta->y);
 				std::wcout << L"Light Rotated!" << std::endl;
@@ -322,6 +325,8 @@ namespace DiveBomber
 			}
 			lastLoadTime = tickCount;
 		}
+
+#undef wnd
 	}
 
 	void DiveBomberCore::ExecuteConsoleCommand()
