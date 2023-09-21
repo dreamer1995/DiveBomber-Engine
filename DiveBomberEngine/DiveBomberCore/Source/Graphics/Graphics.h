@@ -40,6 +40,9 @@ namespace DiveBomber::DEGraphics
 		Graphics(const Graphics&) = delete;
 		Graphics& operator=(const Graphics&) = delete;
 		~Graphics();
+
+		void PostInitializeGraphics();
+
 		void DrawIndexed(UINT count) noxnd;
 		void DrawInstanced(UINT vertexCount, UINT instanceCount) noxnd;
 		void Dispatch(const UINT x, const UINT y, UINT const group) noxnd;
@@ -66,7 +69,7 @@ namespace DiveBomber::DEGraphics
 		void ReSizeMainRT(const uint32_t inputWidth, const uint32_t inputHeight);
 		[[nodiscard]] std::shared_ptr<DX::CommandQueue> GetCommandQueue(D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT) const noexcept;
 		void Flush() const noexcept;
-		[[nodiscard]] wrl::ComPtr<ID3D12Device10> GetDecive() const noexcept;
+		[[nodiscard]] wrl::ComPtr<ID3D12Device10> GetDevice() const noexcept;
 		[[nodiscard]] std::shared_ptr<DX::CommandList> GetCommandList(const D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT) noexcept;
 		[[nodiscard]] wrl::ComPtr<ID3D12GraphicsCommandList7> GetGraphicsCommandList(const D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT) noexcept;
 		[[nodiscard]] std::shared_ptr<BindableObject::RenderTarget> GetCurrentBackBuffer() const noexcept;

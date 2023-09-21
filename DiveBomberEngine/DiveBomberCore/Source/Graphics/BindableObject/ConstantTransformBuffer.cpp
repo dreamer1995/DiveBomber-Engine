@@ -9,14 +9,14 @@ namespace DiveBomber::BindableObject
 	using namespace DEException;
 	using namespace DrawableObject;
 
-	ConstantTransformBuffer::ConstantTransformBuffer(Graphics& gfx)
+	ConstantTransformBuffer::ConstantTransformBuffer()
 	{
-		transformCBuffer = std::make_shared<ConstantBufferInHeap<Transforms>>(gfx, "Transform Metrices");
+		transformCBuffer = std::make_shared<ConstantBufferInHeap<Transforms>>("Transform Metrices");
 	}
 
-	void ConstantTransformBuffer::Bind(Graphics& gfx) noxnd
+	void ConstantTransformBuffer::Bind() noxnd
 	{
-		transformCBuffer->Update(gfx, CalculateTransformMatrices(gfx));
+		transformCBuffer->Update(CalculateTransformMatrices());
 	}
 
 	ConstantTransformBuffer::Transforms ConstantTransformBuffer::GetTransformMatrices() const noexcept
@@ -34,11 +34,11 @@ namespace DiveBomber::BindableObject
 		return transformCBuffer;
 	}
 
-	ConstantTransformBuffer::Transforms ConstantTransformBuffer::CalculateTransformMatrices(const Graphics& gfx) noxnd
+	ConstantTransformBuffer::Transforms ConstantTransformBuffer::CalculateTransformMatrices() noxnd
 	{
 		const auto modelMatrix = parent->GetTransformXM();
-		const auto cameraMatrix = gfx.GetCameraMatrix();
-		const auto projectionMatrix = gfx.GetProjetionMatrix();
+		const auto cameraMatrix = Graphics::GetInstance().GetCameraMatrix();
+		const auto projectionMatrix = Graphics::GetInstance().GetProjetionMatrix();
 
 		const auto matrix_M2W = DirectX::XMMatrixTranspose(modelMatrix);
 		const auto matrix_W2M = DirectX::XMMatrixInverse(nullptr, matrix_M2W);

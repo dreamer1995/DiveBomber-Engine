@@ -6,11 +6,6 @@
 #include <unordered_map>
 #include <mutex>
 
-namespace DiveBomber::DEGraphics
-{
-	class Graphics;
-}
-
 namespace DiveBomber::BindableObject
 {
 	class Bindable;
@@ -31,10 +26,10 @@ namespace DiveBomber::BindableObject
 		void DeleteBindable(const std::string key) noexcept;
 
 		template<class T, typename...Params>
-		[[nodiscard]] static std::shared_ptr<T> Resolve(DEGraphics::Graphics& gfx, Params&&...p) noxnd
+		[[nodiscard]] static std::shared_ptr<T> Resolve(Params&&...p) noxnd
 		{
 			static_assert(std::is_base_of<Bindable, T>::value, "Can only resolve classes derived from Bindable");
-			return GetInstance().Resolve_<T>(gfx, std::forward<Params>(p)...);
+			return GetInstance().Resolve_<T>(std::forward<Params>(p)...);
 		}
 
 		[[nodiscard]] static GlobalBindableManager& GetInstance();
@@ -42,7 +37,7 @@ namespace DiveBomber::BindableObject
 
 	private:
 		template<class T, typename...Params>
-		std::shared_ptr<T> Resolve_(DEGraphics::Graphics& gfx, Params&&...p) noxnd
+		std::shared_ptr<T> Resolve_(Params&&...p) noxnd
 		{
 			const auto key = T::GenerateUID(std::forward<Params>(p)...);
 			const auto i = binds.find(key);
@@ -63,7 +58,7 @@ namespace DiveBomber::BindableObject
 			if (needConstruct)
 			{
 				std::lock_guard<std::mutex> lock(globalBindableManagerMutex);
-				auto bind = std::make_shared<T>(gfx, std::forward<Params>(p)...);
+				auto bind = std::make_shared<T>(std::forward<Params>(p)...);
 				binds[key] = bind;
 				return bind;
 			}

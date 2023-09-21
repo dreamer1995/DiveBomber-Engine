@@ -6,11 +6,6 @@
 #include <vector>
 #include <memory>
 
-namespace DiveBomber::DEGraphics
-{
-	class Graphics;
-}
-
 namespace DiveBomber::BindableObject
 {
 	class Bindable;
@@ -22,13 +17,13 @@ namespace DiveBomber::DrawableObject
 	{
 	public:
 		Drawable() = default;
-		Drawable(DEGraphics::Graphics& gfx, const std::wstring inputName);
+		Drawable(const std::wstring inputName);
 		virtual ~Drawable();
 
 		[[nodiscard]] virtual DirectX::XMMATRIX GetTransformXM() const noexcept = 0;
 
 		void Submit() const noexcept;
-		virtual void Bind(DEGraphics::Graphics& gfx) const noxnd;
+		virtual void Bind() const noxnd;
 		void AddBindable(std::shared_ptr<BindableObject::Bindable> bindableObject) noexcept;
 
 		std::wstring GetName() const noexcept;

@@ -41,6 +41,8 @@ namespace DiveBomber
 				&Console::GetInput, console.get(), std::ref(command)
 				});
 		}
+
+		Graphics::GetInstance().PostInitializeGraphics();
 	}
 
 	DiveBomberCore::~DiveBomberCore()
@@ -83,7 +85,7 @@ namespace DiveBomber
 	{
 		currentScene = std::make_unique<Scene>();
 
-		currentScene->LoadSceneFromFile(Graphics::GetInstance(), L"Test Scene");
+		currentScene->LoadSceneFromFile(L"Test Scene");
 	}
 
 	void DiveBomberCore::Update()
@@ -105,7 +107,7 @@ namespace DiveBomber
 	{
 		Graphics::GetInstance().BeginFrame();
 
-		currentScene->Render(Graphics::GetInstance());
+		currentScene->Render();
 
 		Graphics::GetInstance().EndFrame();
 	}

@@ -5,11 +5,6 @@
 #include <DirectXMath.h>
 #include <string>
 
-namespace DiveBomber::DEGraphics
-{
-	class Graphics;
-}
-
 namespace DiveBomber::BindableObject
 {
 	template<typename C>
@@ -29,15 +24,15 @@ namespace DiveBomber::Component
 		};
 
 	public:
-		Camera(DEGraphics::Graphics& gfx, std::string inputName, CameraAttributes attributes, bool inputTethered = false) noexcept;
-		Camera(DEGraphics::Graphics& gfx, std::string inputName, bool tethered = false) noexcept;
-		void BindToGraphics(DEGraphics::Graphics& gfx, std::shared_ptr<Camera> camera) const;
+		Camera(std::string inputName, CameraAttributes attributes, bool inputTethered = false) noexcept;
+		Camera(std::string inputName, bool tethered = false) noexcept;
+		void BindToGraphics(std::shared_ptr<Camera> camera) const;
 		[[nodiscard]] DirectX::XMMATRIX GetMatrix() const noexcept;
-		[[nodiscard]] DirectX::XMMATRIX GetProjection(DEGraphics::Graphics& gfx) const noexcept;
+		[[nodiscard]] DirectX::XMMATRIX GetProjection() const noexcept;
 		[[nodiscard]] DirectX::XMMATRIX GetProjection(UINT renderTargetWidth, UINT renderTargetHeight) const noexcept;
 		[[nodiscard]] float GetFOV() const noexcept;
 		//void SpawnControlWidgets(DEGraphics::Graphics& gfx) noexcept;
-		void Reset(const DEGraphics::Graphics& gfx) noexcept;
+		void Reset() noexcept;
 		void Rotate(const float dx, const float dy) noexcept;
 		void Translate(const DirectX::XMFLOAT3 translation) noexcept;
 		[[nodiscard]] DirectX::XMFLOAT3 GetPos() const noexcept;
@@ -48,12 +43,12 @@ namespace DiveBomber::Component
 
 		void LookZero(const DirectX::XMFLOAT3 inputPos) noexcept;
 		void RotateAround(const float dx, const float dy, const DirectX::XMFLOAT3 centralPoint) noexcept;
-		void Bind(const DEGraphics::Graphics& gfx) const noexcept;
+		void Bind() const noexcept;
 		void SetRotation(const float pitch, const float yaw) noexcept;
 		void ProjectScreenToWorldExpansionBasis(DirectX::XMFLOAT4& vWBasisX, DirectX::XMFLOAT4& vWBasisY, DirectX::XMFLOAT4& vWBasisZ,
 			DirectX::XMFLOAT2& UVToViewA, DirectX::XMFLOAT2& UVToViewB) const noxnd;
 		void SetOffsetPixels(const float offsetX, const float offsetY) noxnd;
-		void ResizeAspectRatio(const DEGraphics::Graphics& gfx) noexcept;
+		void ResizeAspectRatio() noexcept;
 		void ResizeAspectRatio(const UINT width, const UINT height) noexcept;
 
 	private:

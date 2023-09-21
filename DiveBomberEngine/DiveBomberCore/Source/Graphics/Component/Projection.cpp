@@ -7,7 +7,7 @@ namespace DiveBomber::Component
 {
 	using namespace DEGraphics;
 
-	Projection::Projection(Graphics& gfx, ProjectionAttributes attributes)
+	Projection::Projection(ProjectionAttributes attributes)
 		:
 		aspectRatio(attributes.aspectRatio),
 		nearPlane(attributes.nearPlane),
@@ -40,9 +40,9 @@ namespace DiveBomber::Component
 	}
 
 	// need to be re-designed, make sure the cost is fine
-	DirectX::XMMATRIX Projection::GetMatrix(Graphics& gfx) const
+	DirectX::XMMATRIX Projection::GetMatrix() const
 	{
-		return GetMatrix(gfx.GetWidth(), gfx.GetHeight());
+		return GetMatrix(Graphics::GetInstance().GetWidth(), Graphics::GetInstance().GetHeight());
 	}
 
 	DirectX::XMMATRIX Projection::GetMatrix(UINT renderTargetWidth, UINT renderTargetHeight) const
@@ -127,7 +127,7 @@ namespace DiveBomber::Component
 	//	frust->LinkTechniques(rg);
 	//}
 
-	void Projection::Reset(const Graphics& gfx)
+	void Projection::Reset()
 	{
 		width = homeWidth;
 		height = homeHeight;
@@ -182,9 +182,9 @@ namespace DiveBomber::Component
 		offsetPixelY = offsetY;
 	}
 
-	void Projection::ResizeAspectRatio(const Graphics& gfx) noexcept
+	void Projection::ResizeAspectRatio() noexcept
 	{
-		ResizeAspectRatio(gfx.GetWidth(), gfx.GetHeight());
+		ResizeAspectRatio(Graphics::GetInstance().GetWidth(), Graphics::GetInstance().GetHeight());
 	}
 
 	void Projection::ResizeAspectRatio(const UINT inputWidth, const UINT inputHeight) noexcept

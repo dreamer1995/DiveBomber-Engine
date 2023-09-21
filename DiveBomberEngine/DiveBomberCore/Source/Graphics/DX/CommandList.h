@@ -3,11 +3,6 @@
 
 #include <memory>
 
-namespace DiveBomber::DEGraphics
-{
-	class Graphics;
-}
-
 namespace DiveBomber::DX
 {
 	class UploadBuffer;
@@ -17,7 +12,7 @@ namespace DiveBomber::DX
 	class CommandList final
 	{
 	public:
-		CommandList(wrl::ComPtr<ID3D12Device10> device, D3D12_COMMAND_LIST_TYPE inputType);
+		CommandList(D3D12_COMMAND_LIST_TYPE inputType);
 		~CommandList();
 		void Reset();
 		[[nodiscard]] wrl::ComPtr<ID3D12GraphicsCommandList7> GetGraphicsCommandList() const;

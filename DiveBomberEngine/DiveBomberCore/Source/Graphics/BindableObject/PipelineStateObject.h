@@ -2,11 +2,6 @@
 #include "Bindable.h"
 #include "..\GraphicsHeader.h"
 
-namespace DiveBomber::DEGraphics
-{
-	class Graphics;
-}
-
 namespace DiveBomber::BindableObject
 {
 	class RootSignature;
@@ -29,12 +24,12 @@ namespace DiveBomber::BindableObject
 		};
 
 	public:
-		PipelineStateObject(DEGraphics::Graphics& gfx, const std::string& inputTag, PipelineStateReference inputPipelineStateReference);
+		PipelineStateObject(const std::string& inputTag, PipelineStateReference inputPipelineStateReference);
 
 		[[nodiscard]] PipelineStateReference GetPipelineStateReference() const noexcept;
 		[[nodiscard]] wrl::ComPtr<ID3D12PipelineState> GetPipelineStateObject() const noexcept;
-		void Bind(DEGraphics::Graphics& gfx) noxnd override;
-		[[nodiscard]] static std::shared_ptr<PipelineStateObject> Resolve(DEGraphics::Graphics& gfx, const std::string& tag, PipelineStateReference pipelineStateReference);
+		void Bind() noxnd override;
+		[[nodiscard]] static std::shared_ptr<PipelineStateObject> Resolve(const std::string& tag, PipelineStateReference pipelineStateReference);
 		template<typename...Ignore>
 		[[nodiscard]] static std::string GenerateUID(const std::string& tag, Ignore&&...ignore)
 		{
@@ -61,7 +56,6 @@ namespace DiveBomber::BindableObject
 		[[nodiscard]] static std::string GenerateUID_(const std::string& tag);
 
 	private:
-		wrl::ComPtr<ID3D12Device10> device;
 		std::string tag;
 		wrl::ComPtr<ID3D12PipelineState> pipelineState;
 		PipelineStateReference pipelineStateReference;

@@ -3,11 +3,6 @@
 
 #include <memory>
 
-namespace DiveBomber::DEGraphics
-{
-	class Graphics;
-}
-
 namespace DiveBomber::RenderPipeline
 {
 	class RenderPipelineGraph
@@ -16,7 +11,7 @@ namespace DiveBomber::RenderPipeline
 		RenderPipelineGraph();
 		~RenderPipelineGraph();
 
-		void Bind(DEGraphics::Graphics& gfx) noxnd;
+		void Bind() noxnd;
 	private:
 	};
 }

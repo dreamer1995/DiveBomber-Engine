@@ -11,12 +11,11 @@ namespace DiveBomber::Component
     using namespace DEGraphics;
     using namespace BindableObject;
 
-    Material::Material(Graphics& inputGfx, const std::wstring inputName)
+    Material::Material(const std::wstring inputName)
         :
-        gfx(inputGfx),
         name(inputName)
     {
-        indexConstantBuffer = std::make_shared<ConstantBuffer<UINT>>(gfx, "TestSphereIndexConstant", 0u);
+        indexConstantBuffer = std::make_shared<ConstantBuffer<UINT>>("TestSphereIndexConstant", 0u);
     }
 
     void Material::SetTexture(const std::shared_ptr<Texture> texture, UINT slot) noexcept
@@ -46,10 +45,10 @@ namespace DiveBomber::Component
         dynamicConstantMap[constantName] = constant;
     }
 
-    void Material::Bind(Graphics& gfx) noxnd
+    void Material::Bind() noxnd
     {
-        indexConstantBuffer->Update(gfx, shaderResourceIndices.data(), shaderResourceIndices.size() * sizeof(UINT));
-        indexConstantBuffer->Bind(gfx);
+        indexConstantBuffer->Update(shaderResourceIndices.data(), shaderResourceIndices.size() * sizeof(UINT));
+        indexConstantBuffer->Bind();
     }
 
     std::wstring Material::GetName() const noexcept
@@ -64,7 +63,7 @@ namespace DiveBomber::Component
         {
             DynamicConstantProcess::Buffer buffer = it->second->GetBuffer();
             buffer[key] = scalar;
-            it->second->Update(gfx, buffer);
+            it->second->Update(buffer);
         }
     }
 
@@ -77,7 +76,7 @@ namespace DiveBomber::Component
             auto a = buffer[key];
             DirectX::XMFLOAT4 b = static_cast<dx::XMFLOAT4&>(a);
             buffer[key] = vector;
-            it->second->Update(gfx, buffer);
+            it->second->Update(buffer);
         }
     }
 }

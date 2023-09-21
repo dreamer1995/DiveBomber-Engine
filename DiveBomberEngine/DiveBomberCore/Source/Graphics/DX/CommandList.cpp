@@ -7,17 +7,19 @@
 
 namespace DiveBomber::DX
 {
-	//using namespace DEGraphics;
+	using namespace DEGraphics;
 	using namespace DEException;
-	CommandList::CommandList(wrl::ComPtr<ID3D12Device10> device, D3D12_COMMAND_LIST_TYPE inputType)
+	CommandList::CommandList(D3D12_COMMAND_LIST_TYPE inputType)
 		:
 		type(inputType)
 	{
+		auto device = Graphics::GetInstance().GetDevice();
+
 		HRESULT hr;
 		GFX_THROW_INFO(device->CreateCommandAllocator(type, IID_PPV_ARGS(&commandAllocator)));
 		GFX_THROW_INFO(device->CreateCommandList(0, type, commandAllocator.Get(), nullptr, IID_PPV_ARGS(&commandList)));
 		
-		uploadBuffer = std::make_unique<UploadBuffer>(device);
+		uploadBuffer = std::make_unique<UploadBuffer>();
 		resourceStateTracker = std::make_unique<ResourceStateTracker>();
 	}
 

@@ -16,11 +16,10 @@ namespace DiveBomber::BindableObject
 	using namespace DEException;
 	using namespace DX;
 
-	PipelineStateObject::PipelineStateObject(Graphics& gfx, const std::string& inputTag, PipelineStateReference inputPipelineStateReference)
+	PipelineStateObject::PipelineStateObject(const std::string& inputTag, PipelineStateReference inputPipelineStateReference)
 		:
 		tag(inputTag),
-		pipelineStateReference(inputPipelineStateReference),
-		device(gfx.GetDecive())
+		pipelineStateReference(inputPipelineStateReference)
 	{
 		UpdatePipelineState();
 	}
@@ -35,14 +34,14 @@ namespace DiveBomber::BindableObject
 		return pipelineState;
 	}
 
-	void PipelineStateObject::Bind(Graphics& gfx) noxnd
+	void PipelineStateObject::Bind() noxnd
 	{
-		GFX_THROW_INFO_ONLY(gfx.GetGraphicsCommandList()->SetPipelineState(pipelineState.Get()));
+		GFX_THROW_INFO_ONLY(Graphics::GetInstance().GetGraphicsCommandList()->SetPipelineState(pipelineState.Get()));
 	}
 
-	std::shared_ptr<PipelineStateObject> PipelineStateObject::Resolve(Graphics& gfx, const std::string& tag, PipelineStateReference pipelineStateReference)
+	std::shared_ptr<PipelineStateObject> PipelineStateObject::Resolve(const std::string& tag, PipelineStateReference pipelineStateReference)
 	{
-		return GlobalBindableManager::Resolve<PipelineStateObject>(gfx, tag, pipelineStateReference);
+		return GlobalBindableManager::Resolve<PipelineStateObject>(tag, pipelineStateReference);
 	}
 
 	std::string PipelineStateObject::GenerateUID_(const std::string& tag)
@@ -89,6 +88,6 @@ namespace DiveBomber::BindableObject
 			sizeof(PipelineStateStream), &pipelineStateStream
 		};
 
-		GFX_THROW_INFO(device->CreatePipelineState(&pipelineStateStreamDesc, IID_PPV_ARGS(&pipelineState)));
+		GFX_THROW_INFO(Graphics::GetInstance().GetDevice()->CreatePipelineState(&pipelineStateStreamDesc, IID_PPV_ARGS(&pipelineState)));
 	}
 }

@@ -3,21 +3,24 @@
 #include "..\..\Exception\GraphicsException.h"
 #include "CommandList.h"
 #include "ResourceStateTracker.h"
+#include "..\Graphics.h"
 
 namespace DiveBomber::DX
 {
+    using namespace DEGraphics;
     using namespace DEException;
 
-    CommandQueue::CommandQueue(wrl::ComPtr<ID3D12Device10> inputDevice, D3D12_COMMAND_LIST_TYPE intputType)
+    CommandQueue::CommandQueue(D3D12_COMMAND_LIST_TYPE intputType)
         :
-        type(intputType),
-        device(inputDevice)
+        type(intputType)
     {
         D3D12_COMMAND_QUEUE_DESC desc = {};
         desc.Type = type;
         desc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;
         desc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
         desc.NodeMask = 0;
+
+        auto device = Graphics::GetInstance().GetDevice();
 
         HRESULT hr;
         GFX_THROW_INFO(device->CreateCommandQueue(&desc, IID_PPV_ARGS(&commandQueue)));
@@ -81,7 +84,7 @@ namespace DiveBomber::DX
         else
         {
             // Otherwise create a new command list.
-            commandList = std::make_shared<CommandList>(device, type);
+            commandList = std::make_shared<CommandList>(type);
         }
 
         return commandList;

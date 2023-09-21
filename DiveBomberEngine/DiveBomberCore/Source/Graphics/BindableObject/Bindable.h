@@ -4,17 +4,12 @@
 #include <memory>
 #include <cassert>
 
-namespace DiveBomber::DEGraphics
-{
-	class Graphics;
-}
-
 namespace DiveBomber::BindableObject
 {
 	class Bindable
 	{
 	public:
-		virtual void Bind(DEGraphics::Graphics& gfx) noxnd = 0;
+		virtual void Bind() noxnd = 0;
 		//virtual void InitializeParentReference(const Drawable&) noexcept
 		//{}
 		//virtual void Accept(TechniqueProbe&)

@@ -5,11 +5,6 @@
 #include <map>
 #include <vector>
 
-namespace DiveBomber::DEGraphics
-{
-	class Graphics;
-}
-
 namespace DiveBomber::DrawableObject
 {
 	class Drawable;
@@ -33,8 +28,8 @@ namespace DiveBomber::DEScene
 		Scene();
 		~Scene();
 
-		void LoadSceneFromFile(DEGraphics::Graphics& gfx, const std::wstring name) noexcept;
-		void Render(DEGraphics::Graphics& gfx) noxnd;
+		void LoadSceneFromFile(const std::wstring name) noexcept;
+		void Render() noxnd;
 		std::shared_ptr<Component::Camera> GetMainCamera() const noexcept;
 		std::shared_ptr<DrawableObject::Drawable> FindSceneObjectByName(std::wstring name) const noexcept;
 	private:

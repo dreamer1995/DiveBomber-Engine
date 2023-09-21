@@ -10,14 +10,14 @@ namespace DiveBomber::BindableObject
 	using namespace DEGraphics;
 	using namespace DEException;
 
-	RootSignature::RootSignature(Graphics& gfx, const std::string& inputTag)
+	RootSignature::RootSignature(const std::string& inputTag)
 		:
 		tag(inputTag)
 	{
 		HRESULT hr;
 		D3D12_FEATURE_DATA_ROOT_SIGNATURE featureData = {};
 		featureData.HighestVersion = D3D_ROOT_SIGNATURE_VERSION_1_1;
-		if (FAILED(gfx.GetDecive()->CheckFeatureSupport(D3D12_FEATURE_ROOT_SIGNATURE, &featureData, sizeof(featureData))))
+		if (FAILED(Graphics::GetInstance().GetDevice()->CheckFeatureSupport(D3D12_FEATURE_ROOT_SIGNATURE, &featureData, sizeof(featureData))))
 		{
 			featureData.HighestVersion = D3D_ROOT_SIGNATURE_VERSION_1_0;
 		}
@@ -44,7 +44,7 @@ namespace DiveBomber::BindableObject
 		GFX_THROW_INFO(D3DX12SerializeVersionedRootSignature(&rootSignatureDescription,
 			featureData.HighestVersion, &rootSignatureBlob, &errorBlob));
 		// Create the root signature.
-		GFX_THROW_INFO(gfx.GetDecive()->CreateRootSignature(0, rootSignatureBlob->GetBufferPointer(),
+		GFX_THROW_INFO(Graphics::GetInstance().GetDevice()->CreateRootSignature(0, rootSignatureBlob->GetBufferPointer(),
 			rootSignatureBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignature)));
 	}
 
@@ -53,14 +53,14 @@ namespace DiveBomber::BindableObject
 		return rootSignature;
 	}
 
-	void RootSignature::Bind(Graphics& gfx) noxnd
+	void RootSignature::Bind() noxnd
 	{
-		GFX_THROW_INFO_ONLY(gfx.GetGraphicsCommandList()->SetGraphicsRootSignature(rootSignature.Get()));
+		GFX_THROW_INFO_ONLY(Graphics::GetInstance().GetGraphicsCommandList()->SetGraphicsRootSignature(rootSignature.Get()));
 	}
 
-	std::shared_ptr<RootSignature> RootSignature::Resolve(Graphics& gfx, const std::string& tag)
+	std::shared_ptr<RootSignature> RootSignature::Resolve(const std::string& tag)
 	{
-		return GlobalBindableManager::Resolve<RootSignature>(gfx, tag);
+		return GlobalBindableManager::Resolve<RootSignature>(tag);
 	}
 
 	std::string RootSignature::GenerateUID_(const std::string& tag)

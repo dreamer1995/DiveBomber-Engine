@@ -2,20 +2,15 @@
 #include "Bindable.h"
 #include "..\GraphicsHeader.h"
 
-namespace DiveBomber::DEGraphics
-{
-	class Graphics;
-}
-
 namespace DiveBomber::BindableObject
 {
 	class RootSignature final : public Bindable
 	{
 	public:
-		RootSignature(DEGraphics::Graphics& gfx, const std::string& inputTag);
+		RootSignature(const std::string& inputTag);
 		[[nodiscard]] wrl::ComPtr<ID3D12RootSignature> GetRootSignature() noexcept;
-		void Bind(DEGraphics::Graphics& gfx) noxnd override;
-		[[nodiscard]] static std::shared_ptr<RootSignature> Resolve(DEGraphics::Graphics& gfx, const std::string& tag);
+		void Bind() noxnd override;
+		[[nodiscard]] static std::shared_ptr<RootSignature> Resolve(const std::string& tag);
 		template<typename...Ignore>
 		[[nodiscard]] static std::string GenerateUID(const std::string& tag, Ignore&&...ignore)
 		{

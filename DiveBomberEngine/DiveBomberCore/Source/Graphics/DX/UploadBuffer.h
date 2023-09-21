@@ -19,11 +19,6 @@
 #define _128MB _MB(128)
 #define _256MB _MB(256)
 
-namespace DiveBomber::DEGraphics
-{
-	class Graphics;
-}
-
 namespace DiveBomber::DX
 {
 	struct UploadBufferAllocation
@@ -37,8 +32,7 @@ namespace DiveBomber::DX
 	class UploadBuffer final
 	{
 	public:
-		UploadBuffer(DEGraphics::Graphics& gfx, size_t inputPageSize = _2MB);
-		UploadBuffer(wrl::ComPtr<ID3D12Device10> inputDevice, size_t inputPageSize = _2MB);
+		UploadBuffer(size_t inputPageSize = _2MB);
 		~UploadBuffer();
 
 		[[nodiscard]] size_t GetPageSize() const noexcept;
@@ -49,7 +43,7 @@ namespace DiveBomber::DX
 		struct Page
 		{
 		public:
-			Page(wrl::ComPtr<ID3D12Device10> device, size_t inputPageSize);
+			Page(size_t inputPageSize);
 			~Page();
 
 			[[nodiscard]] bool AvailableSpace(const size_t size, const size_t alignment) const noexcept;
@@ -67,7 +61,6 @@ namespace DiveBomber::DX
 		[[nodiscard]] std::shared_ptr<Page> RequestPage();
 
 	private:
-		wrl::ComPtr<ID3D12Device10> device;
 		size_t pageSize;
 
 		std::deque<std::shared_ptr<Page>> pagePool;

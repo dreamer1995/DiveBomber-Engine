@@ -7,11 +7,6 @@
 #include <unordered_map>
 #include <vector>
 
-namespace DiveBomber::DEGraphics
-{
-	class Graphics;
-}
-
 namespace DiveBomber::DX
 {
 	class CommandList;

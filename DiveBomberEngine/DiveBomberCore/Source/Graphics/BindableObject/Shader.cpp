@@ -20,9 +20,8 @@ namespace DiveBomber::BindableObject
 	using namespace DX;
 	namespace fs = std::filesystem;
 
-	Shader::Shader(Graphics& inputGfx, const std::wstring& inputName, ShaderType inputType)
+	Shader::Shader(const std::wstring& inputName, ShaderType inputType)
 		:
-		gfx(inputGfx),
 		name(inputName),
 		type(inputType)
 	{
@@ -82,14 +81,14 @@ namespace DiveBomber::BindableObject
 		}
 	}
 
-	void Shader::Bind(Graphics& gfx) noxnd
+	void Shader::Bind() noxnd
 	{
 
 	}
 
-	std::shared_ptr<Shader> Shader::Resolve(Graphics& gfx, const std::wstring& name, ShaderType type)
+	std::shared_ptr<Shader> Shader::Resolve(const std::wstring& name, ShaderType type)
 	{
-		return GlobalBindableManager::Resolve<Shader>(gfx, name, type);
+		return GlobalBindableManager::Resolve<Shader>(name, type);
 	}
 
 	std::string Shader::GenerateUID(const std::wstring& name, ShaderType type)

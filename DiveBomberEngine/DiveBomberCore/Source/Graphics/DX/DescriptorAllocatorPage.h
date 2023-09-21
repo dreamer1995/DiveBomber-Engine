@@ -7,11 +7,6 @@
 #include <mutex>
 #include <queue>
 
-namespace DiveBomber::DEGraphics
-{
-	class Graphics;
-}
-
 namespace DiveBomber::DX
 {
 	class DescriptorAllocation;
@@ -19,8 +14,7 @@ namespace DiveBomber::DX
 	class DescriptorAllocatorPage final : public std::enable_shared_from_this<DescriptorAllocatorPage>
 	{
 	public:
-		DescriptorAllocatorPage(DEGraphics::Graphics& gfx, D3D12_DESCRIPTOR_HEAP_TYPE inputType, uint32_t inputNumDescriptors);
-		DescriptorAllocatorPage(wrl::ComPtr<ID3D12Device10> device, D3D12_DESCRIPTOR_HEAP_TYPE inputType, uint32_t inputNumDescriptors);
+		DescriptorAllocatorPage(D3D12_DESCRIPTOR_HEAP_TYPE inputType, uint32_t inputNumDescriptors);
 
 		[[nodiscard]] D3D12_DESCRIPTOR_HEAP_TYPE GetHeapType() const noexcept;
 		[[nodiscard]] bool AvailableSpace(const uint32_t numDescriptors) const;

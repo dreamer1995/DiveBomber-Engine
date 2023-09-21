@@ -42,30 +42,33 @@ namespace DiveBomber::DEGraphics
 
 		gpuAdapter = std::make_unique<GPUAdapter>();
 		dxDevice = std::make_unique<DXDevice>(gpuAdapter->GetAdapter());
-
-		fenceEvent = ::CreateEvent(nullptr, FALSE, FALSE, nullptr);
-		assert(fenceEvent && "Failed to create fence event.");
-
-		cbvSrvUavDescriptorHeap = std::make_shared<DescriptorAllocator>(dxDevice->GetDecive(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 10'000u);
-		rtvDescriptorHeap = std::make_shared<DescriptorAllocator>(dxDevice->GetDecive(), D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 50u);
-		dsvDescriptorHeap = std::make_shared<DescriptorAllocator>(dxDevice->GetDecive(), D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 50u);
-		samplerDescriptorHeap = std::make_shared<DescriptorAllocator>(dxDevice->GetDecive(), D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER, 1024u);
-
-		directCommandQueue = std::make_unique<CommandQueue>(dxDevice->GetDecive(), D3D12_COMMAND_LIST_TYPE_DIRECT);
-		computeCommandQueue = std::make_unique<CommandQueue>(dxDevice->GetDecive(), D3D12_COMMAND_LIST_TYPE_COMPUTE);
-		copyCommandQueue = std::make_unique<CommandQueue>(dxDevice->GetDecive(), D3D12_COMMAND_LIST_TYPE_COPY);
-		swapChain = std::make_unique<SwapChain>(hWnd, directCommandQueue->GetCommandQueue());
-		swapChain->UpdateBackBuffer(dxDevice->GetDecive(), rtvDescriptorHeap);
-		viewport = std::make_unique<Viewport>();
-		scissorRects = std::make_unique<ScissorRects>();
-
-		std::shared_ptr<DescriptorAllocation> dsvHandle = dsvDescriptorHeap->Allocate(1u);
-		mainDS = std::make_shared<DepthStencil>(dxDevice->GetDecive(), width, height, std::move(dsvHandle), 0u);
 	}
 
 	Graphics::~Graphics()
 	{
 		Flush();
+	}
+
+	void Graphics::PostInitializeGraphics()
+	{
+		fenceEvent = ::CreateEvent(nullptr, FALSE, FALSE, nullptr);
+		assert(fenceEvent && "Failed to create fence event.");
+
+		cbvSrvUavDescriptorHeap = std::make_shared<DescriptorAllocator>(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 10'000u);
+		rtvDescriptorHeap = std::make_shared<DescriptorAllocator>(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 50u);
+		dsvDescriptorHeap = std::make_shared<DescriptorAllocator>(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 50u);
+		samplerDescriptorHeap = std::make_shared<DescriptorAllocator>(D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER, 1024u);
+
+		directCommandQueue = std::make_unique<CommandQueue>(D3D12_COMMAND_LIST_TYPE_DIRECT);
+		computeCommandQueue = std::make_unique<CommandQueue>(D3D12_COMMAND_LIST_TYPE_COMPUTE);
+		copyCommandQueue = std::make_unique<CommandQueue>(D3D12_COMMAND_LIST_TYPE_COPY);
+		swapChain = std::make_unique<SwapChain>(hWnd, directCommandQueue->GetCommandQueue());
+		swapChain->UpdateBackBuffer(rtvDescriptorHeap);
+		viewport = std::make_unique<Viewport>();
+		scissorRects = std::make_unique<ScissorRects>();
+
+		std::shared_ptr<DescriptorAllocation> dsvHandle = dsvDescriptorHeap->Allocate(1u);
+		mainDS = std::make_shared<DepthStencil>(width, height, std::move(dsvHandle), 0u);
 	}
 
 	void Graphics::BeginFrame()
@@ -136,9 +139,9 @@ namespace DiveBomber::DEGraphics
 			frameFenceValues[i] = frameFenceValues[swapChain->GetSwapChain()->GetCurrentBackBufferIndex()];
 		}
 
-		swapChain->ResetSizeBackBuffer(GetDecive(), width, height, rtvDescriptorHeap);
+		swapChain->ResetSizeBackBuffer(width, height, rtvDescriptorHeap);
 
-		mainDS->Resize(GetDecive(), width, height);
+		mainDS->Resize(width, height);
 
 		renderCamera->ResizeAspectRatio(width, height);
 
@@ -181,9 +184,9 @@ namespace DiveBomber::DEGraphics
 		copyCommandQueue->Flush();
 	}
 
-	wrl::ComPtr<ID3D12Device10> Graphics::GetDecive() const noexcept
+	wrl::ComPtr<ID3D12Device10> Graphics::GetDevice() const noexcept
 	{
-		return dxDevice->GetDecive();
+		return dxDevice->GetDevice();
 	}
 
 	std::shared_ptr<RenderTarget> Graphics::GetCurrentBackBuffer() const noexcept

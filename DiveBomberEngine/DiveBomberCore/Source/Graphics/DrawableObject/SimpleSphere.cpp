@@ -20,7 +20,7 @@ namespace DiveBomber::DrawableObject
 	using namespace Component;
 	namespace dx = DirectX;
 
-	SimpleSphere::SimpleSphere(Graphics& gfx, const std::wstring inputName)
+	SimpleSphere::SimpleSphere(const std::wstring inputName)
 	{
 		name = inputName;
 
@@ -36,12 +36,12 @@ namespace DiveBomber::DrawableObject
 
 		const std::string geometryTag = Utility::ToNarrow(name);
 
-		std::shared_ptr<VertexBuffer> vertexBuffer = VertexBuffer::Resolve(gfx, geometryTag, sphere.vertices);
-		std::shared_ptr<IndexBuffer> indexBuffer = IndexBuffer::Resolve(gfx, geometryTag, sphere.indices);
+		std::shared_ptr<VertexBuffer> vertexBuffer = VertexBuffer::Resolve(geometryTag, sphere.vertices);
+		std::shared_ptr<IndexBuffer> indexBuffer = IndexBuffer::Resolve(geometryTag, sphere.indices);
 
-		std::shared_ptr<Topology> topology = Topology::Resolve(gfx, D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+		std::shared_ptr<Topology> topology = Topology::Resolve(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
 		
-		mesh = std::make_shared<Mesh>(gfx, vertexBuffer, indexBuffer);
+		mesh = std::make_shared<Mesh>(vertexBuffer, indexBuffer);
 
 		struct IndexConstant
 		{
@@ -49,13 +49,13 @@ namespace DiveBomber::DrawableObject
 			UINT texureIndex[2] = { 0 };
 		}indexConstant;
 
-		std::shared_ptr<Material> material = std::make_shared<Material>(gfx, name + L"Material");
+		std::shared_ptr<Material> material = std::make_shared<Material>(name + L"Material");
 		materialMap.emplace(material->GetName(), material);
 
-		material->SetTexture(Texture::Resolve(gfx, L"earth.dds"), 0u);
-		material->SetTexture(Texture::Resolve(gfx, L"rustediron2_basecolor.png"), 1u);
+		material->SetTexture(Texture::Resolve(L"earth.dds"), 0u);
+		material->SetTexture(Texture::Resolve(L"rustediron2_basecolor.png"), 1u);
 
-		std::shared_ptr<ConstantTransformBuffer> transformBuffer = std::make_shared<ConstantTransformBuffer>(gfx);
+		std::shared_ptr<ConstantTransformBuffer> transformBuffer = std::make_shared<ConstantTransformBuffer>();
 		transformBuffer->InitializeParentReference(*this);
 		AddBindable(transformBuffer);
 		material->SetConstant(transformBuffer->GetTransformBuffer(), 0u);
@@ -65,7 +65,7 @@ namespace DiveBomber::DrawableObject
 			DCBLayout.Add<DynamicConstantProcess::Float4>("baseColor");
 			auto DXBBuffer = DynamicConstantProcess::Buffer(std::move(DCBLayout));
 			DXBBuffer["baseColor"] = dx::XMFLOAT4{ 1.0f,0.0f,0.0f,0.0f };
-			std::shared_ptr<DynamicConstantBufferInHeap> baseMat = std::make_shared<DynamicConstantBufferInHeap>(gfx, geometryTag + "BaseMat0", DXBBuffer);
+			std::shared_ptr<DynamicConstantBufferInHeap> baseMat = std::make_shared<DynamicConstantBufferInHeap>(geometryTag + "BaseMat0", DXBBuffer);
 			material->SetConstant(geometryTag + "BaseMat0", baseMat, 1u);
 		}
 
@@ -74,18 +74,18 @@ namespace DiveBomber::DrawableObject
 			DCBLayout.Add<DynamicConstantProcess::Float4>("baseColor");
 			auto DXBBuffer = DynamicConstantProcess::Buffer(std::move(DCBLayout));
 			DXBBuffer["baseColor"] = dx::XMFLOAT4{ 0.0f,1.0f,0.0f,0.0f };
-			std::shared_ptr<DynamicConstantBufferInHeap> baseMat = std::make_shared<DynamicConstantBufferInHeap>(gfx, geometryTag + "BaseMat1", DXBBuffer);
+			std::shared_ptr<DynamicConstantBufferInHeap> baseMat = std::make_shared<DynamicConstantBufferInHeap>(geometryTag + "BaseMat1", DXBBuffer);
 			material->SetConstant(geometryTag + "BaseMat1", baseMat, 2u);
 		}
 
-		std::shared_ptr<Shader> vertexShader = Shader::Resolve(gfx, L"TestShader", ShaderType::VertexShader);
+		std::shared_ptr<Shader> vertexShader = Shader::Resolve(L"TestShader", ShaderType::VertexShader);
 		ShaderManager::GetInstance().AddToUsingPool(vertexShader);
 		AddBindable(vertexShader);
-		std::shared_ptr<Shader> pixelShader = Shader::Resolve(gfx, L"TestShader", ShaderType::PixelShader);
+		std::shared_ptr<Shader> pixelShader = Shader::Resolve(L"TestShader", ShaderType::PixelShader);
 		ShaderManager::GetInstance().AddToUsingPool(pixelShader);
 		AddBindable(pixelShader);
 
-		std::shared_ptr<RootSignature> rootSignature = RootSignature::Resolve(gfx, "StandardSRVFullStage");
+		std::shared_ptr<RootSignature> rootSignature = RootSignature::Resolve("StandardSRVFullStage");
 		AddBindable(rootSignature);
 
 		D3D12_RT_FORMAT_ARRAY rtvFormats = {};
@@ -103,7 +103,7 @@ namespace DiveBomber::DrawableObject
 		pipelineStateReference.rtvFormats = rtvFormats;
 		pipelineStateReference.dsvFormat = dsvFormat;
 
-		std::shared_ptr<PipelineStateObject> pipelineStateObject = PipelineStateObject::Resolve(gfx, geometryTag, std::move(pipelineStateReference));
+		std::shared_ptr<PipelineStateObject> pipelineStateObject = PipelineStateObject::Resolve(geometryTag, std::move(pipelineStateReference));
 		AddBindable(pipelineStateObject);
 		ShaderManager::GetInstance().AddToUsingPool(pipelineStateObject);
 	}
@@ -143,14 +143,14 @@ namespace DiveBomber::DrawableObject
 		}
 	}
 
-	void SimpleSphere::Bind(Graphics& gfx) const noxnd
+	void SimpleSphere::Bind() const noxnd
 	{
-		mesh->Bind(gfx);
-		Drawable::Bind(gfx);
+		mesh->Bind();
+		Drawable::Bind();
 		for (auto& material : materialMap)
 		{
-			material.second->Bind(gfx);
-			gfx.GetGraphicsCommandList()->DrawIndexedInstanced(mesh->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
+			material.second->Bind();
+			Graphics::GetInstance().GetGraphicsCommandList()->DrawIndexedInstanced(mesh->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
 		}
 	}
 }

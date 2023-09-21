@@ -9,7 +9,7 @@ namespace DiveBomber::Component
 	using namespace Utility;
 	namespace dx = DirectX;
 
-	Camera::Camera(Graphics& gfx, std::string inputName, CameraAttributes attributes, bool inputTethered) noexcept
+	Camera::Camera(std::string inputName, CameraAttributes attributes, bool inputTethered) noexcept
 		:
 		name(std::move(inputName)),
 		homePos(attributes.position),
@@ -19,7 +19,7 @@ namespace DiveBomber::Component
 		//vCbuf(gfx, 1u),
 		//pCbuf(gfx, 1u),
 	{
-		projection = std::make_unique<Projection>(gfx, attributes.projectionAttributes);
+		projection = std::make_unique<Projection>(attributes.projectionAttributes);
 
 		if (tethered)
 		{
@@ -28,12 +28,12 @@ namespace DiveBomber::Component
 			//indicator.SetPos(pos);
 			//proj.SetPos(pos);
 		}
-		Reset(gfx);
+		Reset();
 	}
 
-	void Camera::BindToGraphics(DEGraphics::Graphics& gfx, std::shared_ptr<Camera> camera) const
+	void Camera::BindToGraphics(std::shared_ptr<Camera> camera) const
 	{
-		gfx.SetCamera(camera);
+		Graphics::GetInstance().SetCamera(camera);
 		//gfx.SetProjection(proj.GetMatrix());
 		//gfx.SetFOV(proj.GetFOV());
 	}
@@ -65,9 +65,9 @@ namespace DiveBomber::Component
 		return XMMatrixLookAtLH(camPosition, camTarget, upVector);
 	}
 
-	DirectX::XMMATRIX Camera::GetProjection(DEGraphics::Graphics& gfx) const noexcept
+	DirectX::XMMATRIX Camera::GetProjection() const noexcept
 	{
-		return projection->GetMatrix(gfx);
+		return projection->GetMatrix();
 	}
 
 	DirectX::XMMATRIX Camera::GetProjection(UINT renderTargetWidth, UINT renderTargetHeight) const noexcept
@@ -117,7 +117,7 @@ namespace DiveBomber::Component
 	//	}
 	//}
 
-	void Camera::Reset(const Graphics& gfx) noexcept
+	void Camera::Reset() noexcept
 	{
 		if (!tethered)
 		{
@@ -266,7 +266,7 @@ namespace DiveBomber::Component
 		}
 	}
 
-	void Camera::Bind(const Graphics& gfx) const noexcept
+	void Camera::Bind() const noexcept
 	{
 		using namespace dx;
 		const dx::XMVECTOR forwardBaseVector = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
@@ -347,9 +347,9 @@ namespace DiveBomber::Component
 		projection->SetOffsetPixels(offsetX, offsetY);
 	}
 
-	void Camera::ResizeAspectRatio(const Graphics& gfx) noexcept
+	void Camera::ResizeAspectRatio() noexcept
 	{
-		ResizeAspectRatio(gfx.GetWidth(), gfx.GetHeight());
+		ResizeAspectRatio(Graphics::GetInstance().GetWidth(), Graphics::GetInstance().GetHeight());
 	}
 	void Camera::ResizeAspectRatio(const UINT width, const UINT height) noexcept
 	{

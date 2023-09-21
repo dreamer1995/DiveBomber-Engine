@@ -9,12 +9,7 @@ namespace DiveBomber::DX
 	using namespace DEGraphics;
 	using namespace DEException;
 
-	DescriptorAllocatorPage::DescriptorAllocatorPage(Graphics& gfx, D3D12_DESCRIPTOR_HEAP_TYPE inputType, uint32_t inputNumDescriptors)
-		:
-		DescriptorAllocatorPage(gfx.GetDecive(), inputType, inputNumDescriptors)
-	{
-	}
-	DescriptorAllocatorPage::DescriptorAllocatorPage(wrl::ComPtr<ID3D12Device10> device, D3D12_DESCRIPTOR_HEAP_TYPE inputType, uint32_t inputNumDescriptors)
+	DescriptorAllocatorPage::DescriptorAllocatorPage(D3D12_DESCRIPTOR_HEAP_TYPE inputType, uint32_t inputNumDescriptors)
 		:
 		type(inputType),
 		numDescriptorsInHeap(inputNumDescriptors),
@@ -28,6 +23,8 @@ namespace DiveBomber::DX
 		heapDesc.Type = type;
 		heapDesc.NumDescriptors = numDescriptorsInHeap;
 		heapDesc.Flags = descriptorHeapFlags;
+
+		auto device = Graphics::GetInstance().GetDevice();
 
 		HRESULT hr;
 		GFX_THROW_INFO(device->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&descriptorHeap)));

@@ -21,11 +21,11 @@ namespace DiveBomber::RenderPipeline
 	{
 	}
 
-	void RenderPipelineGraph::Bind(DEGraphics::Graphics& gfx) noxnd
+	void RenderPipelineGraph::Bind() noxnd
 	{
-		gfx.BindShaderDescriptorHeaps();
+		Graphics::GetInstance().BindShaderDescriptorHeaps();
 
-		gfx.GetCurrentBackBuffer()->BindTarget(gfx, gfx.GetMainDS());
+		Graphics::GetInstance().GetCurrentBackBuffer()->BindTarget(Graphics::GetInstance().GetMainDS());
 
 	}
 }

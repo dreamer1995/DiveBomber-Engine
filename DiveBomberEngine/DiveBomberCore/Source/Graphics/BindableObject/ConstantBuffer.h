@@ -14,14 +14,14 @@ namespace DiveBomber::BindableObject
 	class ConstantBuffer: public Bindable
 	{
 	public:
-		ConstantBuffer(DEGraphics::Graphics& gfx, const std::string& inputTag,
+		ConstantBuffer(const std::string& inputTag,
 			const C& constantData, UINT inputSlot)
 			:
-			ConstantBuffer(gfx, inputTag, &constantData, sizeof(constantData), inputSlot)
+			ConstantBuffer(inputTag, &constantData, sizeof(constantData), inputSlot)
 		{
 		}
 
-		ConstantBuffer(DEGraphics::Graphics& gfx, const std::string& inputTag,
+		ConstantBuffer(const std::string& inputTag,
 			const C* constantData, size_t inputdataSize, UINT inputSlot)
 			:
 			tag(inputTag),
@@ -30,8 +30,8 @@ namespace DiveBomber::BindableObject
 		{
 			if (bufferSize > 0)
 			{
-				InitializeConstantBufferSize(gfx);
-				Update(gfx, constantData, bufferSize);
+				InitializeConstantBufferSize();
+				Update(constantData, bufferSize);
 			}
 			else
 			{
@@ -40,12 +40,12 @@ namespace DiveBomber::BindableObject
 			}
 		}
 
-		ConstantBuffer(DEGraphics::Graphics& gfx, const std::string& inputTag, UINT inputSlot)
+		ConstantBuffer(const std::string& inputTag, UINT inputSlot)
 			:
 			tag(inputTag),
 			slot(inputSlot)
 		{
-			InitializeConstantBufferSize(gfx);
+			InitializeConstantBufferSize();
 		}
 
 		~ConstantBuffer()
@@ -53,7 +53,7 @@ namespace DiveBomber::BindableObject
 			DX::ResourceStateTracker::RemoveGlobalResourceState(constantBuffer);
 		}
 
-		void InitializeConstantBufferSize(DEGraphics::Graphics& gfx)
+		void InitializeConstantBufferSize()
 		{
 			HRESULT hr;
 
@@ -63,7 +63,7 @@ namespace DiveBomber::BindableObject
 			const CD3DX12_RESOURCE_DESC resDes = CD3DX12_RESOURCE_DESC::Buffer(initBufferSize, D3D12_RESOURCE_FLAG_NONE);
 
 			// Create a committed resource for the GPU resource in a default heap.
-			GFX_THROW_INFO_NAMESPACE(gfx.GetDecive()->CreateCommittedResource(
+			GFX_THROW_INFO_NAMESPACE(DEGraphics::Graphics::GetInstance().GetDevice()->CreateCommittedResource(
 				&heapProp,
 				D3D12_HEAP_FLAG_NONE,
 				&resDes,
@@ -74,12 +74,12 @@ namespace DiveBomber::BindableObject
 			DX::ResourceStateTracker::AddGlobalResourceState(constantBuffer, D3D12_RESOURCE_STATE_COMMON);
 		}
 
-		virtual void Update(DEGraphics::Graphics& gfx, const C& constantData)
+		virtual void Update(const C& constantData)
 		{
-			Update(gfx, &constantData, sizeof(constantData));
+			Update(&constantData, sizeof(constantData));
 		}
 
-		virtual void Update(DEGraphics::Graphics& gfx, const C* constantData, size_t dataSize)
+		virtual void Update(const C* constantData, size_t dataSize)
 		{
 			// Create an committed resource for the upload.
 			if (dataSize > 0)
@@ -87,10 +87,10 @@ namespace DiveBomber::BindableObject
 				if (bufferSize != dataSize)
 				{
 					bufferSize = dataSize;
-					InitializeConstantBufferSize(gfx);
+					InitializeConstantBufferSize();
 				}
 
-				std::shared_ptr<DX::CommandList> commandList = gfx.GetCommandList();
+				std::shared_ptr<DX::CommandList> commandList = DEGraphics::Graphics::GetInstance().GetCommandList();
 
 				std::shared_ptr<DX::UploadBufferAllocation> uploadBufferAllocation =
 					commandList->AllocateDynamicUploadBuffer(bufferSize, D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT);
@@ -115,9 +115,9 @@ namespace DiveBomber::BindableObject
 			}
 		}
 
-		void Bind(DEGraphics::Graphics& gfx) noxnd override
+		void Bind() noxnd override
 		{
-			gfx.GetGraphicsCommandList()->SetGraphicsRootConstantBufferView(slot, constantBuffer->GetGPUVirtualAddress());
+			DEGraphics::Graphics::GetInstance().GetGraphicsCommandList()->SetGraphicsRootConstantBufferView(slot, constantBuffer->GetGPUVirtualAddress());
 		}
 
 		[[nodiscard]] wrl::ComPtr<ID3D12Resource> GetConstantBuffer() noexcept
@@ -125,10 +125,10 @@ namespace DiveBomber::BindableObject
 			return constantBuffer;
 		}
 
-		[[nodiscard]] static std::shared_ptr<ConstantBuffer> Resolve(DEGraphics::Graphics& gfx, const std::string& tag,
+		[[nodiscard]] static std::shared_ptr<ConstantBuffer> Resolve(const std::string& tag,
 			const C* constantData, size_t dataSize, const UINT slot)
 		{
-			return GlobalBindableManager::Resolve<ConstantBuffer>(gfx, tag, constantData, dataSize, slot);
+			return GlobalBindableManager::Resolve<ConstantBuffer>(tag, constantData, dataSize, slot);
 		}
 
 		template<typename...Ignore>

@@ -9,40 +9,40 @@ namespace DiveBomber::BindableObject
 	class DynamicConstantBufferInHeap final : public DynamicConstantBuffer
 	{
 	public:
-		DynamicConstantBufferInHeap(DEGraphics::Graphics& gfx, const std::string& inputTag,
+		DynamicConstantBufferInHeap(const std::string& inputTag,
 			const DynamicConstantProcess::CookedLayout& inputLayout)
 			:
-			DynamicConstantBuffer(gfx, inputTag, *inputLayout.ShareRoot(), DynamicConstantProcess::Buffer(inputLayout), 999u)
+			DynamicConstantBuffer(inputTag, *inputLayout.ShareRoot(), DynamicConstantProcess::Buffer(inputLayout), 999u)
 		{
-			descriptorAllocation = gfx.GetDescriptorAllocator()->Allocate(1u);
+			descriptorAllocation = DEGraphics::Graphics::GetInstance().GetDescriptorAllocator()->Allocate(1u);
 		}
 
-		DynamicConstantBufferInHeap(DEGraphics::Graphics& gfx, const std::string& inputTag,
+		DynamicConstantBufferInHeap(const std::string& inputTag,
 			const DynamicConstantProcess::Buffer& inputBuffer)
 			:
-			DynamicConstantBuffer(gfx, inputTag, inputBuffer.GetRootLayoutElement(), inputBuffer, 999u)
+			DynamicConstantBuffer(inputTag, inputBuffer.GetRootLayoutElement(), inputBuffer, 999u)
 		{
-			descriptorAllocation = gfx.GetDescriptorAllocator()->Allocate(1u);
-			UpdateCBV(gfx);
+			descriptorAllocation = DEGraphics::Graphics::GetInstance().GetDescriptorAllocator()->Allocate(1u);
+			UpdateCBV();
 		}
 
-		DynamicConstantBufferInHeap(DEGraphics::Graphics& gfx, const std::string& inputTag,
+		DynamicConstantBufferInHeap(const std::string& inputTag,
 			const DynamicConstantProcess::LayoutElement& inputLayout, const DynamicConstantProcess::Buffer& inputBuffer)
 			:
-			DynamicConstantBuffer(gfx, inputTag, inputLayout, inputBuffer, 999u)
+			DynamicConstantBuffer(inputTag, inputLayout, inputBuffer, 999u)
 		{
-			descriptorAllocation = gfx.GetDescriptorAllocator()->Allocate(1u);
-			UpdateCBV(gfx);
+			descriptorAllocation = DEGraphics::Graphics::GetInstance().GetDescriptorAllocator()->Allocate(1u);
+			UpdateCBV();
 		}
 
-		void Bind(DEGraphics::Graphics& gfx) noxnd override
+		void Bind() noxnd override
 		{
 		}
 
-		virtual void Update(DEGraphics::Graphics& gfx, const DynamicConstantProcess::Buffer& buffer) override
+		virtual void Update(const DynamicConstantProcess::Buffer& buffer) override
 		{
-			DynamicConstantBuffer::Update(gfx, buffer);
-			UpdateCBV(gfx);
+			DynamicConstantBuffer::Update(buffer);
+			UpdateCBV();
 		}
 
 		[[nodiscard]] UINT GetCBVDescriptorHeapOffset()
@@ -51,13 +51,13 @@ namespace DiveBomber::BindableObject
 		}
 
 	private:
-		void UpdateCBV(DEGraphics::Graphics& gfx)
+		void UpdateCBV()
 		{
 			D3D12_CONSTANT_BUFFER_VIEW_DESC constantBufferViewDesc;
 			constantBufferViewDesc.BufferLocation = DynamicConstantBuffer::constantBuffer->GetGPUVirtualAddress();
 			constantBufferViewDesc.SizeInBytes = Utility::AlignUp((UINT)DynamicConstantBuffer::bufferSize, D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT);
 
-			gfx.GetDecive()->CreateConstantBufferView(&constantBufferViewDesc, descriptorAllocation->GetCPUDescriptorHandle());
+			DEGraphics::Graphics::GetInstance().GetDevice()->CreateConstantBufferView(&constantBufferViewDesc, descriptorAllocation->GetCPUDescriptorHandle());
 		}
 
 	private:

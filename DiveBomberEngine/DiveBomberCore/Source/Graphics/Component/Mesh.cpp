@@ -10,13 +10,13 @@ namespace DiveBomber::Component
     using namespace DEGraphics;
     using namespace BindableObject;
 
-    Mesh::Mesh(Graphics& gfx, std::shared_ptr<VertexBuffer> inputVertexbuffer, std::shared_ptr<IndexBuffer> inputIndexBuffer)
+    Mesh::Mesh(std::shared_ptr<VertexBuffer> inputVertexbuffer, std::shared_ptr<IndexBuffer> inputIndexBuffer)
         :
-        Mesh(gfx, inputVertexbuffer, inputIndexBuffer, Topology::Resolve(gfx, D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE))
+        Mesh(inputVertexbuffer, inputIndexBuffer, Topology::Resolve(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE))
     {
     }
 
-    Mesh::Mesh(Graphics& gfx, std::shared_ptr<VertexBuffer> inputVertexbuffer, std::shared_ptr<IndexBuffer> inputIndexBuffer, std::shared_ptr<Topology> inputTopology)
+    Mesh::Mesh(std::shared_ptr<VertexBuffer> inputVertexbuffer, std::shared_ptr<IndexBuffer> inputIndexBuffer, std::shared_ptr<Topology> inputTopology)
         :
         vertexBuffer(inputVertexbuffer),
         indexBuffer(inputIndexBuffer),
@@ -50,10 +50,10 @@ namespace DiveBomber::Component
         return topology;
     }
 
-    void Mesh::Bind(Graphics& gfx) noxnd
+    void Mesh::Bind() noxnd
     {
-        vertexBuffer->Bind(gfx);
-        indexBuffer->Bind(gfx);
-        topology->Bind(gfx);
+        vertexBuffer->Bind();
+        indexBuffer->Bind();
+        topology->Bind();
     }
 }

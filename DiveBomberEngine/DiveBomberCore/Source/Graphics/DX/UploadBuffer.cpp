@@ -8,16 +8,9 @@ namespace DiveBomber::DX
 	using namespace DEGraphics;
 	using namespace DEException;
 
-	UploadBuffer::UploadBuffer(Graphics& gfx, size_t inputPageSize)
+	UploadBuffer::UploadBuffer(size_t inputPageSize)
 		:
-		UploadBuffer(gfx.GetDecive(), inputPageSize)
-	{
-	}
-
-	UploadBuffer::UploadBuffer(wrl::ComPtr<ID3D12Device10> inputDevice, size_t inputPageSize)
-		:
-		pageSize(inputPageSize),
-		device(inputDevice)
+		pageSize(inputPageSize)
 	{
 	}
 
@@ -67,14 +60,14 @@ namespace DiveBomber::DX
 		}
 		else
 		{
-			page = std::make_shared<Page>(device, pageSize);
+			page = std::make_shared<Page>(pageSize);
 			pagePool.emplace_back(page);
 		}
 
 		return page;
 	}
 
-	UploadBuffer::Page::Page(wrl::ComPtr<ID3D12Device10> device, size_t inputPageSize)
+	UploadBuffer::Page::Page(size_t inputPageSize)
 		:
 		pageSize(inputPageSize)
 	{
@@ -82,7 +75,7 @@ namespace DiveBomber::DX
 		const CD3DX12_RESOURCE_DESC resDes = CD3DX12_RESOURCE_DESC::Buffer(pageSize);
 
 		HRESULT hr;
-		GFX_THROW_INFO(device->CreateCommittedResource(
+		GFX_THROW_INFO(Graphics::GetInstance().GetDevice()->CreateCommittedResource(
 			&heapProp,
 			D3D12_HEAP_FLAG_NONE,
 			&resDes,

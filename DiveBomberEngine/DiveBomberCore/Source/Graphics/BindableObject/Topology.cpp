@@ -10,16 +10,16 @@ namespace DiveBomber::BindableObject
 	using namespace DEGraphics;
 	using namespace DEException;
 
-	Topology::Topology(Graphics& gfx, D3D_PRIMITIVE_TOPOLOGY inputType, D3D12_PRIMITIVE_TOPOLOGY_TYPE inputShaderType)
+	Topology::Topology(D3D_PRIMITIVE_TOPOLOGY inputType, D3D12_PRIMITIVE_TOPOLOGY_TYPE inputShaderType)
 		:
 		type(inputType),
 		shaderType(inputShaderType)
 	{
 	}
 
-	void Topology::Bind(Graphics& gfx) noxnd
+	void Topology::Bind() noxnd
 	{
-		GFX_THROW_INFO_ONLY(gfx.GetGraphicsCommandList()->IASetPrimitiveTopology(type));
+		GFX_THROW_INFO_ONLY(Graphics::GetInstance().GetGraphicsCommandList()->IASetPrimitiveTopology(type));
 	}
 
 	D3D12_PRIMITIVE_TOPOLOGY Topology::GetTopology() noexcept
@@ -32,9 +32,9 @@ namespace DiveBomber::BindableObject
 		return shaderType;
 	}
 
-	std::shared_ptr<Topology> Topology::Resolve(Graphics& gfx, const D3D_PRIMITIVE_TOPOLOGY type, const D3D12_PRIMITIVE_TOPOLOGY_TYPE shaderType)
+	std::shared_ptr<Topology> Topology::Resolve(const D3D_PRIMITIVE_TOPOLOGY type, const D3D12_PRIMITIVE_TOPOLOGY_TYPE shaderType)
 	{
-		return GlobalBindableManager::Resolve<Topology>(gfx, type, shaderType);
+		return GlobalBindableManager::Resolve<Topology>(type, shaderType);
 	}
 
 	std::string Topology::GenerateUID(const D3D_PRIMITIVE_TOPOLOGY type, const D3D12_PRIMITIVE_TOPOLOGY_TYPE shaderType)

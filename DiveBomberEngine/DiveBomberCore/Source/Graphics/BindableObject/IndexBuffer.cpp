@@ -13,11 +13,11 @@ namespace DiveBomber::BindableObject
 	using namespace DEException;
 	using namespace DX;
 
-	IndexBuffer::IndexBuffer(Graphics& gfx, const std::vector<unsigned short>& indices)
+	IndexBuffer::IndexBuffer(const std::vector<unsigned short>& indices)
 		:
-		IndexBuffer(gfx, "?", indices)
+		IndexBuffer("?", indices)
 	{}
-	IndexBuffer::IndexBuffer(Graphics& gfx, std::string inputTag, const std::vector<unsigned short>& indices)
+	IndexBuffer::IndexBuffer(std::string inputTag, const std::vector<unsigned short>& indices)
 		:
 		tag(inputTag),
 		count((UINT)indices.size())
@@ -30,7 +30,7 @@ namespace DiveBomber::BindableObject
 		const CD3DX12_RESOURCE_DESC resDes = CD3DX12_RESOURCE_DESC::Buffer(bufferSize, D3D12_RESOURCE_FLAG_NONE);
 
 		// Create a committed resource for the GPU resource in a default heap.
-		GFX_THROW_INFO(gfx.GetDecive()->CreateCommittedResource(
+		GFX_THROW_INFO(Graphics::GetInstance().GetDevice()->CreateCommittedResource(
 			&heapProp,
 			D3D12_HEAP_FLAG_NONE,
 			&resDes,
@@ -47,7 +47,7 @@ namespace DiveBomber::BindableObject
 			const CD3DX12_HEAP_PROPERTIES heapProp{ D3D12_HEAP_TYPE_UPLOAD };
 			const CD3DX12_RESOURCE_DESC resDes = CD3DX12_RESOURCE_DESC::Buffer(bufferSize);
 
-			GFX_THROW_INFO(gfx.GetDecive()->CreateCommittedResource(
+			GFX_THROW_INFO(Graphics::GetInstance().GetDevice()->CreateCommittedResource(
 				&heapProp,
 				D3D12_HEAP_FLAG_NONE,
 				&resDes,
@@ -60,7 +60,7 @@ namespace DiveBomber::BindableObject
 			subresourceData.RowPitch = bufferSize;
 			subresourceData.SlicePitch = subresourceData.RowPitch;
 
-			std::shared_ptr<CommandList> copyCommandList = gfx.GetCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
+			std::shared_ptr<CommandList> copyCommandList = Graphics::GetInstance().GetCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
 
 			UpdateSubresources(copyCommandList->GetGraphicsCommandList().Get(),
 				indexBuffer.Get(), indexUploadBuffer.Get(),
@@ -69,7 +69,7 @@ namespace DiveBomber::BindableObject
 			copyCommandList->TrackResource(indexUploadBuffer);
 		}
 
-		gfx.GetCommandList()->AddTransitionBarrier(indexBuffer, D3D12_RESOURCE_STATE_INDEX_BUFFER, true);
+		Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(indexBuffer, D3D12_RESOURCE_STATE_INDEX_BUFFER, true);
 
 		// Create index buffer view.
 		indexBufferView.BufferLocation = indexBuffer->GetGPUVirtualAddress();
@@ -82,20 +82,20 @@ namespace DiveBomber::BindableObject
 		ResourceStateTracker::RemoveGlobalResourceState(indexBuffer);
 	}
 
-	void IndexBuffer::Bind(Graphics& gfx) noxnd
+	void IndexBuffer::Bind() noxnd
 	{
-		GFX_THROW_INFO_ONLY(gfx.GetGraphicsCommandList()->IASetIndexBuffer(&indexBufferView));
+		GFX_THROW_INFO_ONLY(Graphics::GetInstance().GetGraphicsCommandList()->IASetIndexBuffer(&indexBufferView));
 	}
 
 	UINT IndexBuffer::GetCount() const noexcept
 	{
 		return count;
 	}
-	std::shared_ptr<IndexBuffer> IndexBuffer::Resolve(Graphics& gfx, const std::string& tag,
+	std::shared_ptr<IndexBuffer> IndexBuffer::Resolve(const std::string& tag,
 		const std::vector<unsigned short>& indices)
 	{
 		assert(tag != "?");
-		return GlobalBindableManager::Resolve<IndexBuffer>(gfx, tag, indices);
+		return GlobalBindableManager::Resolve<IndexBuffer>(tag, indices);
 	}
 	std::string IndexBuffer::GenerateUID_(const std::string& tag)
 	{

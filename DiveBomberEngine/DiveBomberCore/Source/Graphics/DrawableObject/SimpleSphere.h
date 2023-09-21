@@ -3,11 +3,6 @@
 
 #include <unordered_map>
 
-namespace DiveBomber::DEGraphics
-{
-	class Graphics;
-}
-
 namespace DiveBomber::BindableObject
 {
 	class Bindable;
@@ -25,10 +20,10 @@ namespace DiveBomber::DrawableObject
 	class SimpleSphere final : public Drawable
 	{
 	public:
-		SimpleSphere(DEGraphics::Graphics& gfx, const std::wstring inputName = L"Sphere");
+		SimpleSphere(const std::wstring inputName = L"Sphere");
 		~SimpleSphere();
 
-		void Bind(DEGraphics::Graphics& gfx) const noxnd override;
+		void Bind() const noxnd override;
 
 		void SetPos(DirectX::XMFLOAT3 inputPosition = { 0.0f,0.0f,0.0f }) noexcept;
 		void SetRotation(DirectX::XMFLOAT3 inputRotation = { 0.0f,0.0f,0.0f }) noexcept;

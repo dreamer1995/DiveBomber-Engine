@@ -23,12 +23,12 @@ namespace DiveBomber::BindableObject
 	namespace fs = std::filesystem;
 	namespace dx = DirectX;
 
-	Texture::Texture(Graphics& gfx, const std::wstring& inputName)
+	Texture::Texture(const std::wstring& inputName)
 		:
-		Texture(gfx, inputName, TextureDescription{})
+		Texture(inputName, TextureDescription{})
 	{
 	}
-	Texture::Texture(Graphics& gfx, const std::wstring& inputName, TextureDescription inputTextureDesc)
+	Texture::Texture(const std::wstring& inputName, TextureDescription inputTextureDesc)
 		:
 		name(inputName),
 		textureDesc(inputTextureDesc)
@@ -105,7 +105,7 @@ namespace DiveBomber::BindableObject
 		};
 
 		const CD3DX12_HEAP_PROPERTIES heapProps{ D3D12_HEAP_TYPE_DEFAULT };
-		GFX_THROW_INFO(gfx.GetDecive()->CreateCommittedResource(
+		GFX_THROW_INFO(Graphics::GetInstance().GetDevice()->CreateCommittedResource(
 			&heapProps,
 			D3D12_HEAP_FLAG_NONE,
 			&texDesc,
@@ -139,7 +139,7 @@ namespace DiveBomber::BindableObject
 				textureBuffer.Get(), 0, (UINT)subresourceData.size()
 			);
 			const auto resourceDesc = CD3DX12_RESOURCE_DESC::Buffer(uploadBufferSize);
-			GFX_THROW_INFO(gfx.GetDecive()->CreateCommittedResource(
+			GFX_THROW_INFO(Graphics::GetInstance().GetDevice()->CreateCommittedResource(
 				&heapProps,
 				D3D12_HEAP_FLAG_NONE,
 				&resourceDesc,
@@ -148,7 +148,7 @@ namespace DiveBomber::BindableObject
 				IID_PPV_ARGS(&textureUploadBuffer)
 			));
 
-			std::shared_ptr<CommandList> copyCommandList = gfx.GetCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
+			std::shared_ptr<CommandList> copyCommandList = Graphics::GetInstance().GetCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
 
 			UpdateSubresources(
 				copyCommandList->GetGraphicsCommandList().Get(),
@@ -162,7 +162,7 @@ namespace DiveBomber::BindableObject
 			copyCommandList->TrackResource(textureUploadBuffer);
 		}
 
-		gfx.GetCommandList()->AddTransitionBarrier(textureBuffer, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, true);
+		Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(textureBuffer, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, true);
 
 		const D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{
 				.Format = texDesc.Format,
@@ -171,8 +171,8 @@ namespace DiveBomber::BindableObject
 				.Texture2D{.MipLevels = texDesc.MipLevels },
 		};
 
-		descriptorAllocation = gfx.GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)->Allocate(1u);
-		gfx.GetDecive()->CreateShaderResourceView(textureBuffer.Get(), &srvDesc, descriptorAllocation->GetCPUDescriptorHandle());
+		descriptorAllocation = Graphics::GetInstance().GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)->Allocate(1u);
+		Graphics::GetInstance().GetDevice()->CreateShaderResourceView(textureBuffer.Get(), &srvDesc, descriptorAllocation->GetCPUDescriptorHandle());
 	}
 
 	Texture::~Texture()
@@ -185,18 +185,18 @@ namespace DiveBomber::BindableObject
 		return descriptorAllocation->GetBaseOffset();
 	}
 
-	void Texture::Bind(Graphics& gfx) noxnd
+	void Texture::Bind() noxnd
 	{
 	}
 
-	std::shared_ptr<Texture> Texture::Resolve(DEGraphics::Graphics& gfx, const std::wstring& name)
+	std::shared_ptr<Texture> Texture::Resolve(const std::wstring& name)
 	{
-		return GlobalBindableManager::Resolve<Texture>(gfx, name);
+		return GlobalBindableManager::Resolve<Texture>(name);
 	}
 
-	std::shared_ptr<Texture> Texture::Resolve(Graphics& gfx, const std::wstring& name, TextureDescription textureDesc)
+	std::shared_ptr<Texture> Texture::Resolve(const std::wstring& name, TextureDescription textureDesc)
 	{
-		return GlobalBindableManager::Resolve<Texture>(gfx, name, textureDesc);
+		return GlobalBindableManager::Resolve<Texture>(name, textureDesc);
 	}
 
 	std::string Texture::GenerateUID_(const std::wstring& name)

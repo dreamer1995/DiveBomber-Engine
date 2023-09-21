@@ -8,11 +8,6 @@
 #include <memory>
 #include <DirectXMath.h>
 
-namespace DiveBomber::DEGraphics
-{
-	class Graphics;
-}
-
 namespace DiveBomber::Component
 {
 	class Projection final
@@ -28,22 +23,22 @@ namespace DiveBomber::Component
 		};
 
 	public:
-		Projection(DEGraphics::Graphics& gfx, ProjectionAttributes projectionAttributes);
-		[[nodiscard]] DirectX::XMMATRIX GetMatrix(DEGraphics::Graphics& gfx) const;
+		Projection(ProjectionAttributes projectionAttributes);
+		[[nodiscard]] DirectX::XMMATRIX GetMatrix() const;
 		[[nodiscard]] DirectX::XMMATRIX GetMatrix(UINT renderTargetWidth, UINT renderTargetHeight) const;
 		//void RenderWidgets(DEGraphics::Graphics& gfx);
 		void SetPos(const DirectX::XMFLOAT3);
 		void SetRotation(const DirectX::XMFLOAT3);
 		void Submit(size_t channel) const;
 		//void LinkTechniques(Rgph::RenderGraph& rg);
-		void Reset(const DEGraphics::Graphics& gfx);
+		void Reset();
 		void SetProjection(const float inputFOV, const float inputAspectRatio,
 			const float inputNearPlane, const float inputFarPlane);
 		[[nodiscard]] DirectX::XMFLOAT2 GetFarNearPlane() const;
 		float GetFOV() const;
 		float GetAspectRatio() const;
 		void SetOffsetPixels(const float offsetX, const float offsetY) noexcept;
-		void ResizeAspectRatio(const DEGraphics::Graphics& gfx) noexcept;
+		void ResizeAspectRatio() noexcept;
 		void ResizeAspectRatio(const UINT inputWidth, const UINT inputHeight) noexcept;
 	private:
 		float width;

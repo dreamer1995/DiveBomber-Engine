@@ -18,11 +18,6 @@
 #include <memory>
 #include <vector>
 
-namespace DiveBomber::DEGraphics
-{
-	class Graphics;
-}
-
 namespace DiveBomber::Hardware
 {
 	class Keyboard;

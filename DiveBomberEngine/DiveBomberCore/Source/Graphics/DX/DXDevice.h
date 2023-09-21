@@ -7,7 +7,7 @@ namespace DiveBomber::DX
 	{
 	public:
 		DXDevice(const wrl::ComPtr<IDXGIAdapter4> adapter);
-		[[nodiscard]] wrl::ComPtr<ID3D12Device10> GetDecive() const noexcept;
+		[[nodiscard]] wrl::ComPtr<ID3D12Device10> GetDevice() const noexcept;
 	private:
 		wrl::ComPtr<ID3D12Device10> dxDevice;
 	};

@@ -5,43 +5,38 @@
 #include <queue>
 #include <string>
 
+namespace DiveBomber::DEWindow
+{
+	class Window;
+}
+
+namespace DiveBomber::DEConsole
+{
+	class Console;
+}
+
+namespace DiveBomber::Utility
+{
+	class Timer;
+}
+
+namespace DiveBomber::DEScene
+{
+	class Scene;
+}
+
+namespace DiveBomber::BindableObject
+{
+	class GlobalBindableManager;
+}
+
+namespace DiveBomber::DX
+{
+	class ShaderManager;
+}
+
 namespace DiveBomber
 {
-	namespace DEWindow
-	{
-		class Window;
-	}
-
-	namespace DEConsole
-	{
-		class Console;
-	}
-
-	namespace Utility
-	{
-		class Timer;
-	}
-
-	namespace DEScene
-	{
-		class Scene;
-	}
-
-	namespace DEGraphics
-	{
-		class Graphics;
-	}
-
-	namespace BindableObject
-	{
-		class GlobalBindableManager;
-	}
-
-	namespace DX
-	{
-		class ShaderManager;
-	}
-
 	class DiveBomberCore final
 	{
 	public:

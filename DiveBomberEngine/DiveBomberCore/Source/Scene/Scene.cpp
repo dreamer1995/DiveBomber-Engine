@@ -22,30 +22,30 @@ namespace DiveBomber::DEScene
 	{
 	}
 
-	void Scene::LoadSceneFromFile(Graphics& gfx, const std::wstring name) noexcept
+	void Scene::LoadSceneFromFile(const std::wstring name) noexcept
 	{
 		mainRenderPipeline = std::make_unique<RenderPipelineGraph>();
 
-		std::shared_ptr<CommandQueue> commandQueue = gfx.GetCommandQueue(D3D12_COMMAND_LIST_TYPE_COPY);
-		drawableObjects.emplace(L"Sphere01", std::make_shared<SimpleSphere>(gfx, L"Sphere01"));
-		auto another = std::make_shared<SimpleSphere>(gfx, L"Sphere02");
+		std::shared_ptr<CommandQueue> commandQueue = Graphics::GetInstance().GetCommandQueue(D3D12_COMMAND_LIST_TYPE_COPY);
+		drawableObjects.emplace(L"Sphere01", std::make_shared<SimpleSphere>(L"Sphere01"));
+		auto another = std::make_shared<SimpleSphere>(L"Sphere02");
 		another->SetPos({ 2.0f,0,0 });
 		drawableObjects.emplace(another->GetName(), another);
-		uint64_t fenceValue = gfx.ExecuteCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
+		uint64_t fenceValue = Graphics::GetInstance().ExecuteCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
 		commandQueue->WaitForFenceValue(fenceValue);
 
 		Camera::CameraAttributes cameraAttr;
 		cameraAttr.position.z = -6.0f;
-		mainCamera = std::make_shared<Camera>(gfx, "Main Camera", cameraAttr, false);
-		mainCamera->BindToGraphics(gfx, mainCamera);
+		mainCamera = std::make_shared<Camera>("Main Camera", cameraAttr, false);
+		mainCamera->BindToGraphics(mainCamera);
 	}
 
-	void Scene::Render(Graphics& gfx) noxnd
+	void Scene::Render() noxnd
 	{
-		mainRenderPipeline->Bind(gfx);
+		mainRenderPipeline->Bind();
 		for (auto& drawableObject : drawableObjects)
 		{
-			drawableObject.second->Bind(gfx);
+			drawableObject.second->Bind();
 		}
 	}
 

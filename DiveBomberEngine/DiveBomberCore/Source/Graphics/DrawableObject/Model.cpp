@@ -4,7 +4,6 @@
 
 namespace DiveBomber::DrawableObject
 {
-    using namespace DEGraphics;
     using namespace DEException;
 
     Model::Model()
@@ -16,7 +15,7 @@ namespace DiveBomber::DrawableObject
         return 0;
     }
 
-    void Model::Bind(Graphics& gfx) noxnd
+    void Model::Bind() noxnd
     {
 
     }

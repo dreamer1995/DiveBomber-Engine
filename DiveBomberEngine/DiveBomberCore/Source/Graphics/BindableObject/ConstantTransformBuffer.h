@@ -3,11 +3,6 @@
 
 #include <DirectXMath.h>
 
-namespace DiveBomber::DEGraphics
-{
-	class Graphics;
-}
-
 namespace DiveBomber::DrawableObject
 {
 	class Drawable;
@@ -38,10 +33,10 @@ namespace DiveBomber::BindableObject
 			DirectX::XMMATRIX matrix_I_MVP;
 		};
 	public:
-		ConstantTransformBuffer(DEGraphics::Graphics& gfx);
-		void Bind(DEGraphics::Graphics& gfx) noxnd override;
+		ConstantTransformBuffer();
+		void Bind() noxnd override;
 		[[nodiscard]] Transforms GetTransformMatrices() const noexcept;
-		[[nodiscard]] Transforms CalculateTransformMatrices(const DEGraphics::Graphics& gfx) noxnd;
+		[[nodiscard]] Transforms CalculateTransformMatrices() noxnd;
 		void InitializeParentReference(const DrawableObject::Drawable& inputParent) noexcept;
 		std::shared_ptr<ConstantBufferInHeap<Transforms>> GetTransformBuffer() const noexcept;
 

@@ -10,42 +10,42 @@ namespace DiveBomber::BindableObject
 	class ConstantBufferInHeap final : public ConstantBuffer<C>
 	{
 	public:
-		ConstantBufferInHeap(DEGraphics::Graphics& gfx, const std::string& inputTag)
+		ConstantBufferInHeap(const std::string& inputTag)
 			:
-			ConstantBuffer<C>(gfx, inputTag, 999u)
+			ConstantBuffer<C>(inputTag, 999u)
 		{
-			descriptorAllocation = gfx.GetDescriptorAllocator()->Allocate(1u);
+			descriptorAllocation = DEGraphics::Graphics::GetInstance().GetDescriptorAllocator()->Allocate(1u);
 		}
 
-		ConstantBufferInHeap(DEGraphics::Graphics& gfx, const std::string& inputTag, const C& constantData)
+		ConstantBufferInHeap(const std::string& inputTag, const C& constantData)
 			:
-			ConstantBuffer<C>(gfx, inputTag, &constantData, sizeof(constantData), 999u)
+			ConstantBuffer<C>(inputTag, &constantData, sizeof(constantData), 999u)
 		{
-			descriptorAllocation = gfx.GetDescriptorAllocator()->Allocate(1u);
-			UpdateCBV(gfx);
+			descriptorAllocation = DEGraphics::Graphics::GetInstance().GetDescriptorAllocator()->Allocate(1u);
+			UpdateCBV();
 		}
 
-		ConstantBufferInHeap(DEGraphics::Graphics& gfx, const std::string& inputTag, const C* constantData, size_t inputDataSize)
+		ConstantBufferInHeap(const std::string& inputTag, const C* constantData, size_t inputDataSize)
 			:
-			ConstantBuffer<C>(gfx, inputTag, constantData, inputDataSize, 999u)
+			ConstantBuffer<C>(inputTag, constantData, inputDataSize, 999u)
 		{
-			descriptorAllocation = gfx.GetDescriptorAllocator()->Allocate(1u);
-			UpdateCBV(gfx);
+			descriptorAllocation = DEGraphics::Graphics::GetInstance().GetDescriptorAllocator()->Allocate(1u);
+			UpdateCBV();
 		}
 
-		void Bind(DEGraphics::Graphics& gfx) noxnd override
+		void Bind() noxnd override
 		{
 		}
 
-		virtual void Update(DEGraphics::Graphics& gfx, const C& constantData) override
+		virtual void Update(const C& constantData) override
 		{
-			Update(gfx, &constantData, sizeof(constantData));
+			Update(&constantData, sizeof(constantData));
 		}
 
-		virtual void Update(DEGraphics::Graphics& gfx, const C* constantData, size_t dataSize) override
+		virtual void Update(const C* constantData, size_t dataSize) override
 		{
-			ConstantBuffer<C>::Update(gfx, constantData, dataSize);
-			UpdateCBV(gfx);
+			ConstantBuffer<C>::Update(constantData, dataSize);
+			UpdateCBV();
 		}
 
 		[[nodiscard]] UINT GetCBVDescriptorHeapOffset()
@@ -53,13 +53,13 @@ namespace DiveBomber::BindableObject
 			return descriptorAllocation->GetBaseOffset();
 		}
 	private:
-		void UpdateCBV(DEGraphics::Graphics& gfx)
+		void UpdateCBV()
 		{
 			D3D12_CONSTANT_BUFFER_VIEW_DESC constantBufferViewDesc;
 			constantBufferViewDesc.BufferLocation = ConstantBuffer<C>::constantBuffer->GetGPUVirtualAddress();
 			constantBufferViewDesc.SizeInBytes = Utility::AlignUp((UINT)ConstantBuffer<C>::bufferSize, D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT);
 
-			gfx.GetDecive()->CreateConstantBufferView(&constantBufferViewDesc, descriptorAllocation->GetCPUDescriptorHandle());
+			DEGraphics::Graphics::GetInstance().GetDevice()->CreateConstantBufferView(&constantBufferViewDesc, descriptorAllocation->GetCPUDescriptorHandle());
 		}
 
 	private:

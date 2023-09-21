@@ -7,7 +7,7 @@ namespace DiveBomber::DrawableObject
 {
 	using namespace DEGraphics;
 
-	Drawable::Drawable(Graphics& gfx, const std::wstring inputName)
+	Drawable::Drawable(const std::wstring inputName)
 		:
 		name(inputName)
 	{
@@ -17,11 +17,11 @@ namespace DiveBomber::DrawableObject
 	{
 	}
 
-	void Drawable::Bind(Graphics& gfx) const noxnd
+	void Drawable::Bind() const noxnd
 	{
 		for (auto& bindableObject : bindableObjects)
 		{
-			bindableObject->Bind(gfx);
+			bindableObject->Bind();
 		}
 	}
 

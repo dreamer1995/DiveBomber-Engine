@@ -10,14 +10,8 @@ namespace DiveBomber::DX
 {
 	using namespace DEGraphics;
 
-	DescriptorAllocator::DescriptorAllocator(Graphics& gfx, D3D12_DESCRIPTOR_HEAP_TYPE inputType, uint32_t inputNumDescriptorsPerHeap)
+	DescriptorAllocator::DescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE inputType, uint32_t inputNumDescriptorsPerHeap)
 		:
-		DescriptorAllocator(gfx.GetDecive(), inputType, inputNumDescriptorsPerHeap)
-	{
-	}
-	DescriptorAllocator::DescriptorAllocator(wrl::ComPtr<ID3D12Device10> inputDevice, D3D12_DESCRIPTOR_HEAP_TYPE inputType, uint32_t inputNumDescriptorsPerHeap)
-		:
-		device(inputDevice),
 		type(inputType),
 		numDescriptorsPerHeap(inputNumDescriptorsPerHeap)
 	{
@@ -132,7 +126,7 @@ namespace DiveBomber::DX
 
 	std::shared_ptr<DescriptorAllocatorPage> DescriptorAllocator::CreateAllocatorPage()
 	{
-		auto newPage = std::make_shared<DescriptorAllocatorPage>(device, type, numDescriptorsPerHeap);
+		auto newPage = std::make_shared<DescriptorAllocatorPage>(type, numDescriptorsPerHeap);
 
 		heapPool.emplace_back(newPage);
 		availableHeaps.insert(heapPool.size() - 1);

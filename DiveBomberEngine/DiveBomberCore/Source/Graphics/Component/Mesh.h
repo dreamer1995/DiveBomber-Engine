@@ -1,11 +1,6 @@
 #pragma once
 #include "..\GraphicsHeader.h"
 
-namespace DiveBomber::DEGraphics
-{
-	class Graphics;
-}
-
 namespace DiveBomber::BindableObject
 {
 	class VertexBuffer;
@@ -18,8 +13,8 @@ namespace DiveBomber::Component
 	class Mesh final
 	{
 	public:
-		Mesh(DEGraphics::Graphics & gfx, std::shared_ptr<BindableObject::VertexBuffer> inputVertexbuffer, std::shared_ptr<BindableObject::IndexBuffer> inputIndexBuffer);
-		Mesh(DEGraphics::Graphics& gfx, std::shared_ptr<BindableObject::VertexBuffer> inputVertexbuffer, std::shared_ptr<BindableObject::IndexBuffer> inputIndexBuffer,
+		Mesh(std::shared_ptr<BindableObject::VertexBuffer> inputVertexbuffer, std::shared_ptr<BindableObject::IndexBuffer> inputIndexBuffer);
+		Mesh(std::shared_ptr<BindableObject::VertexBuffer> inputVertexbuffer, std::shared_ptr<BindableObject::IndexBuffer> inputIndexBuffer,
 			std::shared_ptr<BindableObject::Topology> inputTopology);
 
 		void SetMesh(std::shared_ptr<BindableObject::VertexBuffer> inputVertexbuffer,
@@ -29,7 +24,7 @@ namespace DiveBomber::Component
 		[[nodiscard]] std::shared_ptr<BindableObject::IndexBuffer> GetIndexBuffer() const noexcept;
 		[[nodiscard]] std::shared_ptr<BindableObject::Topology> GetTopology() const noexcept;
 
-		void Bind(DEGraphics::Graphics& gfx) noxnd;
+		void Bind() noxnd;
 	private:
 		std::shared_ptr<BindableObject::VertexBuffer> vertexBuffer;
 		std::shared_ptr<BindableObject::IndexBuffer> indexBuffer;

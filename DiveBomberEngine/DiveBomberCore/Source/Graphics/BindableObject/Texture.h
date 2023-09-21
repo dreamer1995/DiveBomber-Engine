@@ -2,11 +2,6 @@
 #include "Bindable.h"
 #include "..\GraphicsHeader.h"
 
-namespace DiveBomber::DEGraphics
-{
-	class Graphics;
-}
-
 namespace DiveBomber::DX
 {
 	class DescriptorAllocation;
@@ -23,15 +18,15 @@ namespace DiveBomber::BindableObject
 			bool generateMip = true;
 		};
 	public:
-		Texture(DEGraphics::Graphics& gfx, const std::wstring& inputName);
-		Texture(DEGraphics::Graphics& gfx, const std::wstring& inputName, TextureDescription inputTextureDesc);
+		Texture(const std::wstring& inputName);
+		Texture(const std::wstring& inputName, TextureDescription inputTextureDesc);
 		~Texture();
 
 		[[nodiscard]] UINT GetSRVDescriptorHeapOffset() const noexcept;
 		
-		void Bind(DEGraphics::Graphics& gfx) noxnd override;
-		[[nodiscard]] static std::shared_ptr<Texture> Resolve(DEGraphics::Graphics& gfx, const std::wstring& name);
-		[[nodiscard]] static std::shared_ptr<Texture> Resolve(DEGraphics::Graphics& gfx, const std::wstring& name,
+		void Bind() noxnd override;
+		[[nodiscard]] static std::shared_ptr<Texture> Resolve(const std::wstring& name);
+		[[nodiscard]] static std::shared_ptr<Texture> Resolve(const std::wstring& name,
 			TextureDescription textureDesc);
 		template<typename...Ignore>
 		[[nodiscard]] static std::string GenerateUID(const std::wstring& name, Ignore&&...ignore)

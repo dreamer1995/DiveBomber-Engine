@@ -51,7 +51,7 @@ namespace DiveBomber::DX
 #endif
     }
 
-    wrl::ComPtr<ID3D12Device10> DXDevice::GetDecive() const noexcept
+    wrl::ComPtr<ID3D12Device10> DXDevice::GetDevice() const noexcept
     {
         return dxDevice;
     }

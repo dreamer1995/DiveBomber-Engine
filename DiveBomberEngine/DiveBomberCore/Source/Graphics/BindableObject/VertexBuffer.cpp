@@ -13,12 +13,12 @@ namespace DiveBomber::BindableObject
 	using namespace DEException;
 	using namespace DX;
 
-	VertexBuffer::VertexBuffer(Graphics& gfx, const VertexProcess::VertexData& vbuf)
+	VertexBuffer::VertexBuffer(const VertexProcess::VertexData& vbuf)
 		:
-		VertexBuffer(gfx, "?", vbuf)
+		VertexBuffer("?", vbuf)
 	{
 	}
-	VertexBuffer::VertexBuffer(Graphics& gfx, const std::string& inputTag, const VertexProcess::VertexData& vbuf)
+	VertexBuffer::VertexBuffer(const std::string& inputTag, const VertexProcess::VertexData& vbuf)
 		:
 		stride((UINT)vbuf.GetLayout().Size()),
 		tag(inputTag),
@@ -32,7 +32,7 @@ namespace DiveBomber::BindableObject
 		const CD3DX12_RESOURCE_DESC resDes = CD3DX12_RESOURCE_DESC::Buffer(bufferSize, D3D12_RESOURCE_FLAG_NONE);
 
 		// Create a committed resource for the GPU resource in a default heap.
-		GFX_THROW_INFO(gfx.GetDecive()->CreateCommittedResource(
+		GFX_THROW_INFO(Graphics::GetInstance().GetDevice()->CreateCommittedResource(
 			&heapProp,
 			D3D12_HEAP_FLAG_NONE,
 			&resDes,
@@ -50,7 +50,7 @@ namespace DiveBomber::BindableObject
 			const CD3DX12_HEAP_PROPERTIES heapProp{ D3D12_HEAP_TYPE_UPLOAD };
 			const CD3DX12_RESOURCE_DESC resDes = CD3DX12_RESOURCE_DESC::Buffer(bufferSize);
 
-			GFX_THROW_INFO(gfx.GetDecive()->CreateCommittedResource(
+			GFX_THROW_INFO(Graphics::GetInstance().GetDevice()->CreateCommittedResource(
 				&heapProp,
 				D3D12_HEAP_FLAG_NONE,
 				&resDes,
@@ -63,7 +63,7 @@ namespace DiveBomber::BindableObject
 			subresourceData.RowPitch = bufferSize;
 			subresourceData.SlicePitch = subresourceData.RowPitch;
 
-			std::shared_ptr<CommandList> copyCommandList = gfx.GetCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
+			std::shared_ptr<CommandList> copyCommandList = Graphics::GetInstance().GetCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
 
 			UpdateSubresources(copyCommandList->GetGraphicsCommandList().Get(),
 				vertexBuffer.Get(), vertexUploadBuffer.Get(),
@@ -72,7 +72,7 @@ namespace DiveBomber::BindableObject
 			copyCommandList->TrackResource(vertexUploadBuffer);
 		}
 
-		gfx.GetCommandList()->AddTransitionBarrier(vertexBuffer, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
+		Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(vertexBuffer, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
 
 		// Create the vertex buffer view.
 		vertexBufferView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
@@ -90,16 +90,16 @@ namespace DiveBomber::BindableObject
 		return layout;
 	}
 
-	void VertexBuffer::Bind(Graphics& gfx) noxnd
+	void VertexBuffer::Bind() noxnd
 	{
-		GFX_THROW_INFO_ONLY(gfx.GetGraphicsCommandList()->IASetVertexBuffers(0u, 1u, &vertexBufferView));
+		GFX_THROW_INFO_ONLY(Graphics::GetInstance().GetGraphicsCommandList()->IASetVertexBuffers(0u, 1u, &vertexBufferView));
 	}
 
-	std::shared_ptr<VertexBuffer> VertexBuffer::Resolve(Graphics& gfx, const std::string& tag,
+	std::shared_ptr<VertexBuffer> VertexBuffer::Resolve(const std::string& tag,
 		const VertexProcess::VertexData& vbuf)
 	{
 		assert(tag != "?");
-		return GlobalBindableManager::Resolve<VertexBuffer>(gfx, tag, vbuf);
+		return GlobalBindableManager::Resolve<VertexBuffer>(tag, vbuf);
 	}
 
 	std::string VertexBuffer::GenerateUID_(const std::string& tag)

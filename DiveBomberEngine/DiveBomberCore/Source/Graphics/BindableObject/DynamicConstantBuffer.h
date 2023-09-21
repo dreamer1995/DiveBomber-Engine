@@ -14,21 +14,21 @@ namespace DiveBomber::BindableObject
 	class DynamicConstantBuffer : public Bindable
 	{
 	public:
-		DynamicConstantBuffer(DEGraphics::Graphics& gfx, const std::string& inputTag,
+		DynamicConstantBuffer(const std::string& inputTag,
 			const DynamicConstantProcess::CookedLayout& inputLayout, UINT inputSlot)
 			:
-			DynamicConstantBuffer(gfx, inputTag, *inputLayout.ShareRoot(), DynamicConstantProcess::Buffer(inputLayout), inputSlot)
+			DynamicConstantBuffer(inputTag, *inputLayout.ShareRoot(), DynamicConstantProcess::Buffer(inputLayout), inputSlot)
 		{
 		}
 
-		DynamicConstantBuffer(DEGraphics::Graphics& gfx, const std::string& inputTag,
+		DynamicConstantBuffer(const std::string& inputTag,
 			const DynamicConstantProcess::Buffer& inputBuffer, UINT inputSlot)
 			:
-			DynamicConstantBuffer(gfx, inputTag, inputBuffer.GetRootLayoutElement(), inputBuffer, inputSlot)
+			DynamicConstantBuffer(inputTag, inputBuffer.GetRootLayoutElement(), inputBuffer, inputSlot)
 		{
 		}
 
-		DynamicConstantBuffer(DEGraphics::Graphics& gfx, const std::string& inputTag,
+		DynamicConstantBuffer(const std::string& inputTag,
 			const DynamicConstantProcess::LayoutElement& inputLayout, const DynamicConstantProcess::Buffer& inputBuffer,
 			UINT inputSlot)
 			:
@@ -37,10 +37,10 @@ namespace DiveBomber::BindableObject
 			dynamicBuffer(inputBuffer)
 		{
 			bufferSize = inputLayout.GetSizeInBytes();
-			InitializeConstantBufferSize(gfx);
+			InitializeConstantBufferSize();
 			if (bufferSize > 0)
 			{
-				Update(gfx, inputBuffer);
+				Update(inputBuffer);
 			}
 		}
 
@@ -49,7 +49,7 @@ namespace DiveBomber::BindableObject
 			DX::ResourceStateTracker::RemoveGlobalResourceState(constantBuffer);
 		}
 
-		void InitializeConstantBufferSize(DEGraphics::Graphics& gfx)
+		void InitializeConstantBufferSize()
 		{
 			HRESULT hr;
 
@@ -59,7 +59,7 @@ namespace DiveBomber::BindableObject
 			const CD3DX12_RESOURCE_DESC resDes = CD3DX12_RESOURCE_DESC::Buffer(initBufferSize, D3D12_RESOURCE_FLAG_NONE);
 
 			// Create a committed resource for the GPU resource in a default heap.
-			GFX_THROW_INFO_NAMESPACE(gfx.GetDecive()->CreateCommittedResource(
+			GFX_THROW_INFO_NAMESPACE(DEGraphics::Graphics::GetInstance().GetDevice()->CreateCommittedResource(
 				&heapProp,
 				D3D12_HEAP_FLAG_NONE,
 				&resDes,
@@ -70,7 +70,7 @@ namespace DiveBomber::BindableObject
 			DX::ResourceStateTracker::AddGlobalResourceState(constantBuffer, D3D12_RESOURCE_STATE_COMMON);
 		}
 
-		virtual void Update(DEGraphics::Graphics& gfx, const DynamicConstantProcess::Buffer& buffer)
+		virtual void Update(const DynamicConstantProcess::Buffer& buffer)
 		{
 			dynamicBuffer.CopyFrom(buffer);
 
@@ -81,10 +81,10 @@ namespace DiveBomber::BindableObject
 				if (bufferSize != dataSize)
 				{
 					bufferSize = dataSize;
-					InitializeConstantBufferSize(gfx);
+					InitializeConstantBufferSize();
 				}
 
-				std::shared_ptr<DX::CommandList> commandList = gfx.GetCommandList();
+				std::shared_ptr<DX::CommandList> commandList = DEGraphics::Graphics::GetInstance().GetCommandList();
 
 				std::shared_ptr<DX::UploadBufferAllocation> uploadBufferAllocation =
 					commandList->AllocateDynamicUploadBuffer(bufferSize, D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT);
@@ -109,9 +109,9 @@ namespace DiveBomber::BindableObject
 			}
 		}
 
-		void Bind(DEGraphics::Graphics& gfx) noxnd override
+		void Bind() noxnd override
 		{
-			gfx.GetGraphicsCommandList()->SetGraphicsRootConstantBufferView(slot, constantBuffer->GetGPUVirtualAddress());
+			DEGraphics::Graphics::GetInstance().GetGraphicsCommandList()->SetGraphicsRootConstantBufferView(slot, constantBuffer->GetGPUVirtualAddress());
 		}
 
 		[[nodiscard]] wrl::ComPtr<ID3D12Resource> GetConstantBuffer() noexcept
@@ -119,11 +119,11 @@ namespace DiveBomber::BindableObject
 			return constantBuffer;
 		}
 
-		[[nodiscard]] static std::shared_ptr<DynamicConstantBuffer> Resolve(DEGraphics::Graphics& gfx, const std::string& tag,
+		[[nodiscard]] static std::shared_ptr<DynamicConstantBuffer> Resolve(const std::string& tag,
 			const DynamicConstantProcess::LayoutElement& layout, const DynamicConstantProcess::Buffer& buffer,
 			UINT slot)
 		{
-			return GlobalBindableManager::Resolve<DynamicConstantBuffer>(gfx, tag, layout, buffer, slot);
+			return GlobalBindableManager::Resolve<DynamicConstantBuffer>(tag, layout, buffer, slot);
 		}
 
 		template<typename...Ignore>

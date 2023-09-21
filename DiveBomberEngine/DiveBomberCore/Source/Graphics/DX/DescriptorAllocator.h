@@ -7,11 +7,6 @@
 #include <set>
 #include <vector>
 
-namespace DiveBomber::DEGraphics
-{
-	class Graphics;
-}
-
 namespace DiveBomber::DX
 {
 	class DescriptorAllocation;
@@ -20,8 +15,7 @@ namespace DiveBomber::DX
 	class DescriptorAllocator final
 	{
 	public:
-		DescriptorAllocator(DEGraphics::Graphics& gfx, D3D12_DESCRIPTOR_HEAP_TYPE inputType, uint32_t inputNumDescriptorsPerHeap = 256);
-		DescriptorAllocator(wrl::ComPtr<ID3D12Device10> inputDevice, D3D12_DESCRIPTOR_HEAP_TYPE inputType, uint32_t inputNumDescriptorsPerHeap = 256);
+		DescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE inputType, uint32_t inputNumDescriptorsPerHeap = 256);
 		~DescriptorAllocator();
 
 		[[nodiscard]] std::shared_ptr<DescriptorAllocation> Allocate(const uint32_t numDescriptors = 1);
@@ -32,7 +26,6 @@ namespace DiveBomber::DX
 		[[nodiscard]] std::shared_ptr<DescriptorAllocatorPage> CreateAllocatorPage();
 
 	private:
-		wrl::ComPtr<ID3D12Device10> device;
 		D3D12_DESCRIPTOR_HEAP_TYPE type;
 		uint32_t numDescriptorsPerHeap;
 

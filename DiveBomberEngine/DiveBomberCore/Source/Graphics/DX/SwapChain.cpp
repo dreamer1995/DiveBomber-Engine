@@ -83,8 +83,7 @@ namespace DiveBomber::DX
         return swapChain;
     }
 
-    void SwapChain::UpdateBackBuffer(const wrl::ComPtr<ID3D12Device10> device,
-        std::shared_ptr<DescriptorAllocator> descriptorAllocator)
+    void SwapChain::UpdateBackBuffer(std::shared_ptr<DescriptorAllocator> descriptorAllocator)
     {
         if(!rtvDescHeaps)
             rtvDescHeaps = descriptorAllocator->Allocate(SwapChainBufferCount);
@@ -96,7 +95,7 @@ namespace DiveBomber::DX
             GFX_THROW_INFO(swapChain->GetBuffer(i, IID_PPV_ARGS(&backBuffer)));
 
             std::shared_ptr<RenderTarget> renderTarget;
-            renderTarget = std::make_shared<RenderTarget>(device, backBuffer, rtvDescHeaps, i);
+            renderTarget = std::make_shared<RenderTarget>(backBuffer, rtvDescHeaps, i);
             backBuffers[i] = renderTarget;
         }
     }
@@ -121,8 +120,7 @@ namespace DiveBomber::DX
         }
     }
 
-    void SwapChain::ResetSizeBackBuffer(const wrl::ComPtr<ID3D12Device10> device,
-        const uint32_t inputWidth, const uint32_t inputHeight,
+    void SwapChain::ResetSizeBackBuffer(const uint32_t inputWidth, const uint32_t inputHeight,
         std::shared_ptr<DescriptorAllocator> descriptorAllocator)
     {
         // Any references to the back buffers must be released
@@ -139,7 +137,7 @@ namespace DiveBomber::DX
         GFX_THROW_INFO(GetSwapChain()->ResizeBuffers(SwapChainBufferCount, width, height,
             swapChainDesc.BufferDesc.Format, swapChainDesc.Flags));
 
-        UpdateBackBuffer(device, descriptorAllocator);
+        UpdateBackBuffer(descriptorAllocator);
     }
 
     D3D12_CPU_DESCRIPTOR_HANDLE SwapChain::GetBackBufferDescriptorHandle() const noexcept
