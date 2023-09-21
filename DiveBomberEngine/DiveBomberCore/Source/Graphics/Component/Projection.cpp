@@ -1,6 +1,7 @@
 #include "Projection.h"
 
 #include "..\Graphics.h"
+#include <algorithm>
 //#include "imgui/imgui.h"
 
 namespace DiveBomber::Component
@@ -48,7 +49,7 @@ namespace DiveBomber::Component
 	DirectX::XMMATRIX Projection::GetMatrix(UINT renderTargetWidth, UINT renderTargetHeight) const
 	{
 		if (isPerspective)
-		{
+		{	
 			DirectX::XMFLOAT4X4 projArray4x4;
 			DirectX::XMStoreFloat4x4(&projArray4x4, DirectX::XMMatrixPerspectiveFovLH(FOV, aspectRatio, nearPlane, farPlane));
 			//float vDirection = -1 //For OpenGL? Fuck mesxiah;
@@ -189,7 +190,7 @@ namespace DiveBomber::Component
 
 	void Projection::ResizeAspectRatio(const UINT inputWidth, const UINT inputHeight) noexcept
 	{
-		float inputAspectRatio = (float)inputWidth / inputHeight;
+		float inputAspectRatio = std::max(0.00001f, (float)inputWidth) / std::max(0.00001f, (float)inputHeight);
 		SetProjection(FOV, inputAspectRatio, nearPlane, farPlane);
 	}
 }
