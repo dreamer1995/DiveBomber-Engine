@@ -22,7 +22,7 @@ namespace DiveBomber::BindableObject
 		Shader(const std::wstring& inputName, ShaderType inputType);
 
 		[[nodiscard]] wrl::ComPtr<ID3DBlob> GetBytecode() const noexcept;
-		void RecompileShader();
+		[[nodiscard]] std::wstring RecompileShader();
 		void Bind() noxnd override;
 		[[nodiscard]] static std::shared_ptr<Shader> Resolve(const std::wstring& name, ShaderType type);
 		[[nodiscard]] static std::string GenerateUID(const std::wstring& name, ShaderType type);
@@ -30,9 +30,7 @@ namespace DiveBomber::BindableObject
 		[[nodiscard]] bool IsDirty() const noexcept;
 		void SetDirty(bool inputIsDirty) noexcept;
 		[[nodiscard]] std::wstring GetShaderTypeAbbreviation() const noexcept;
-
-	private:
-		void LoadShaderBlob();
+		[[nodiscard]] std::wstring LoadShaderBlob();
 
 	private:
 		std::wstring name;

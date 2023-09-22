@@ -10,6 +10,7 @@
 
 #include <print>
 #include <iostream>
+#include <fstream>
 #include <d3dcompiler.h>
 #pragma comment(lib,"d3dcompiler.lib")
 
@@ -40,8 +41,6 @@ namespace DiveBomber::BindableObject
 			sourceFile = filePath;
 		}
 
-		LoadShaderBlob();
-
 		isDirty = false;
 	}
 
@@ -50,7 +49,7 @@ namespace DiveBomber::BindableObject
 		return bytecodeBlob;
 	}
 
-	void Shader::RecompileShader()
+	std::wstring Shader::RecompileShader()
 	{
 		if (fs::exists(builtFile))
 		{
@@ -58,27 +57,57 @@ namespace DiveBomber::BindableObject
 			builtLastSaveTime = fs::last_write_time(builtFile);
 			if (builtLastSaveTime > sourceLastSaveTime)
 			{
-				return;
+				return L"";
 			}
 		}
 
-		wrl::ComPtr<ID3DBlob> compiledBlob = ShaderManager::GetInstance().Compile(directory, name, type);
+		std::wstring line;
+		std::wstring paramsFile;
+		std::string hlslFile;
+
+		std::wifstream rawFile;
+		rawFile.open(sourceFile);
+
+		while (std::getline(rawFile, line)) {
+			if (line != L"\"Properties\"")
+			{
+				hlslFile.append(Utility::ToNarrow(line));
+				hlslFile.append("\n");
+			}
+			else
+			{
+				std::getline(rawFile, line);
+				while (line != L"\"/Properties\"")
+				{
+					paramsFile.append(line);
+					paramsFile.append(L"\n");
+					std::getline(rawFile, line);
+				}
+			}
+		}
+
+		rawFile.close();
+
+		wrl::ComPtr<ID3DBlob> compiledBlob = ShaderManager::GetInstance().Compile(hlslFile, directory, name, type);
 		if (compiledBlob)
 		{
 			bytecodeBlob = compiledBlob;
 			isDirty = true;
 			std::wcout << L"Recompile Shader: " + name + GetShaderTypeAbbreviation() << std::endl;
 		}
+
+		return paramsFile;
 	}
 
-	void Shader::LoadShaderBlob()
+	std::wstring Shader::LoadShaderBlob()
 	{
-		RecompileShader();
+		std::wstring paramsFile = RecompileShader();
 		if (!isDirty)
 		{
 			HRESULT hr;
 			GFX_THROW_INFO(D3DReadFileToBlob(builtFile.c_str(), &bytecodeBlob));
 		}
+		return paramsFile;
 	}
 
 	void Shader::Bind() noxnd

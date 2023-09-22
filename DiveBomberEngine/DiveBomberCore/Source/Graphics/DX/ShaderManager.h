@@ -24,7 +24,7 @@ namespace DiveBomber::DX
 		ShaderManager(const ShaderManager&) = delete;
 		ShaderManager& operator =(const ShaderManager&) = delete;
 
-		[[nodiscard]] wrl::ComPtr<ID3DBlob> Compile(const std::wstring shaderDirectory, const std::wstring shaderName, BindableObject::ShaderType shaderType);
+		[[nodiscard]] wrl::ComPtr<ID3DBlob> Compile(const std::string& hlslFile, const std::wstring shaderDirectory, const std::wstring shaderName, BindableObject::ShaderType shaderType);
 		void AddToUsingPool(std::shared_ptr<BindableObject::Shader> shader) noexcept;
 		void AddToUsingPool(std::shared_ptr<BindableObject::PipelineStateObject> PSO) noexcept;
 		void ReCompileShader();

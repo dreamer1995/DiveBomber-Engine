@@ -3,6 +3,7 @@
 #include "..\Graphics.h"
 #include "..\BindableObject\ConstantBuffer.h"
 #include "..\BindableObject\Texture.h"
+#include "..\..\..\ThirdParty\json.hpp"
 
 #include <iostream>
 
@@ -10,12 +11,24 @@ namespace DiveBomber::Component
 {
     using namespace DEGraphics;
     using namespace BindableObject;
+    using json = nlohmann::json;
 
     Material::Material(const std::wstring inputName)
+        :
+        Material(inputName, L"")
+    {
+    }
+
+
+    Material::Material(const std::wstring inputName, const std::wstring paramsFile)
         :
         name(inputName)
     {
         indexConstantBuffer = std::make_shared<ConstantBuffer<UINT>>("TestSphereIndexConstant", 0u);
+        if (paramsFile.size() > 0)
+        {
+            ParseParamsFile(paramsFile);
+        }
     }
 
     void Material::SetTexture(const std::shared_ptr<Texture> texture, UINT slot) noexcept
@@ -77,6 +90,27 @@ namespace DiveBomber::Component
             DirectX::XMFLOAT4 b = static_cast<dx::XMFLOAT4&>(a);
             buffer[key] = vector;
             it->second->Update(buffer);
+        }
+    }
+
+    void DiveBomber::Component::Material::ParseParamsFile(const std::wstring paramsFile)
+    {
+        json paramsData;
+        paramsData = json::parse(paramsFile, nullptr, false);
+
+        if (paramsData.is_discarded())
+        {
+            std::cout << "parse json error" << std::endl;
+        }
+
+        for (const auto& param : paramsData.at("Param"))
+        {
+            auto a = param.find("enabled");
+            if (a == param.end())
+            {
+                auto b = 1;
+            }
+            std::cout << param.at("Name") << std::endl;
         }
     }
 }

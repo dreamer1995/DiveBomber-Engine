@@ -49,7 +49,16 @@ namespace DiveBomber::DrawableObject
 			UINT texureIndex[2] = { 0 };
 		}indexConstant;
 
-		std::shared_ptr<Material> material = std::make_shared<Material>(name + L"Material");
+		std::shared_ptr<Shader> vertexShader = Shader::Resolve(L"TestShader", ShaderType::VertexShader);
+		std::wstring paramsFile = vertexShader->LoadShaderBlob();
+		ShaderManager::GetInstance().AddToUsingPool(vertexShader);
+		AddBindable(vertexShader);
+		std::shared_ptr<Shader> pixelShader = Shader::Resolve(L"TestShader", ShaderType::PixelShader);
+		paramsFile = paramsFile.size() > 0 ? paramsFile : pixelShader->LoadShaderBlob();
+		ShaderManager::GetInstance().AddToUsingPool(pixelShader);
+		AddBindable(pixelShader);
+
+		std::shared_ptr<Material> material = std::make_shared<Material>(name + L"Material", paramsFile);
 		materialMap.emplace(material->GetName(), material);
 
 		material->SetTexture(Texture::Resolve(L"earth.dds"), 0u);
@@ -77,13 +86,6 @@ namespace DiveBomber::DrawableObject
 			std::shared_ptr<DynamicConstantBufferInHeap> baseMat = std::make_shared<DynamicConstantBufferInHeap>(geometryTag + "BaseMat1", DXBBuffer);
 			material->SetConstant(geometryTag + "BaseMat1", baseMat, 2u);
 		}
-
-		std::shared_ptr<Shader> vertexShader = Shader::Resolve(L"TestShader", ShaderType::VertexShader);
-		ShaderManager::GetInstance().AddToUsingPool(vertexShader);
-		AddBindable(vertexShader);
-		std::shared_ptr<Shader> pixelShader = Shader::Resolve(L"TestShader", ShaderType::PixelShader);
-		ShaderManager::GetInstance().AddToUsingPool(pixelShader);
-		AddBindable(pixelShader);
 
 		std::shared_ptr<RootSignature> rootSignature = RootSignature::Resolve("StandardSRVFullStage");
 		AddBindable(rootSignature);

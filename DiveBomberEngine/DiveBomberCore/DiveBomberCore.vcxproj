@@ -202,6 +202,7 @@
     <ClInclude Include="Source\Window\Window.h" />
     <ClInclude Include="Source\Exception\WindowException.h" />
     <ClInclude Include="Source\Window\DEWindows.h" />
+    <ClInclude Include="ThirdParty\json.hpp" />
     <ClInclude Include="ThirdParty\WindowsMessageMap.h" />
     <ClInclude Include="Source\Graphics\DEWrl.h" />
     <ClInclude Include="Source\Graphics\BindableObject\Vertex.h" />

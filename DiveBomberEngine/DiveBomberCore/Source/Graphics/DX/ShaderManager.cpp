@@ -27,7 +27,7 @@ namespace DiveBomber::DX
         }
     }
 
-    wrl::ComPtr<ID3DBlob> ShaderManager::Compile(const std::wstring shaderDirectory, const std::wstring shaderName, BindableObject::ShaderType shaderType)
+    wrl::ComPtr<ID3DBlob> ShaderManager::Compile(const std::string& hlslFile, const std::wstring shaderDirectory, const std::wstring shaderName, BindableObject::ShaderType shaderType)
     {
         // Setup compilation arguments.
         const std::wstring shaderTypeAbbreviation = [=]()
@@ -112,9 +112,8 @@ namespace DiveBomber::DX
         //compilationArguments.emplace_back(DXC_ARG_ALL_RESOURCES_BOUND); //-all_resources_bound
 
         // Load the shader source file to a blob.
-        wrl::ComPtr<IDxcBlobEncoding> sourceBlob{ nullptr };
-        const std::wstring sourceFilePath(shaderDirectory + shaderName + L".hlsl");
-        GFX_THROW_INFO(utils->LoadFile(sourceFilePath.c_str(), nullptr, &sourceBlob));
+        wrl::ComPtr<IDxcBlobEncoding> sourceBlob;
+        GFX_THROW_INFO(utils->CreateBlob(hlslFile.c_str(), hlslFile.size(), DXC_CP_ACP, &sourceBlob));
 
         const DxcBuffer sourceBuffer = {
             .Ptr = sourceBlob->GetBufferPointer(),

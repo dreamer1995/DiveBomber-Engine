@@ -18,6 +18,7 @@ namespace DiveBomber::Component
 	{
 	public:
 		Material(const std::wstring inputName);
+		Material(const std::wstring inputName, const std::wstring paramsFile);
 		void SetTexture(const std::shared_ptr<BindableObject::Texture> texture, UINT slot) noexcept;
 
 		template<typename C>
@@ -41,6 +42,8 @@ namespace DiveBomber::Component
 
 		void SetMaterialParameterScalar(std::string constantName, std::string key, float scalar) const noexcept;
 		void SetMaterialParameterVector(std::string constantName, std::string key, DirectX::XMFLOAT4 vector) const noexcept;
+
+		void ParseParamsFile(const std::wstring paramsFile);
 	private:
 		std::wstring name;
 		std::shared_ptr<BindableObject::ConstantBuffer<UINT>> indexConstantBuffer;

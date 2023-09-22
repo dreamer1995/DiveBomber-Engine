@@ -1,5 +1,17 @@
 #include "header.hlsli"
 
+"Properties"
+{
+	"Param":
+	[
+		{"Name":"baseMap", "Type":"Texture", "sRGB":true},
+		{"Name":"rustMap", "Type":"Texture", "sRGB":false},
+
+		{"Name":"baseColor", "Type":"Float3", "sRGB":true}
+	]
+}
+"/Properties"
+
 struct IndexConstant
 {
 	uint transform0Index;
