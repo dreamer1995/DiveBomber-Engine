@@ -43,12 +43,6 @@ namespace DiveBomber::DrawableObject
 		
 		mesh = std::make_shared<Mesh>(vertexBuffer, indexBuffer);
 
-		struct IndexConstant
-		{
-			UINT transformIndex[1] = { 0 };
-			UINT texureIndex[2] = { 0 };
-		}indexConstant;
-
 		std::shared_ptr<Shader> vertexShader = Shader::Resolve(L"TestShader", ShaderType::VertexShader);
 		std::wstring paramsFile = vertexShader->LoadShaderBlob();
 		ShaderManager::GetInstance().AddToUsingPool(vertexShader);
@@ -57,6 +51,28 @@ namespace DiveBomber::DrawableObject
 		paramsFile = paramsFile.size() > 0 ? paramsFile : pixelShader->LoadShaderBlob();
 		ShaderManager::GetInstance().AddToUsingPool(pixelShader);
 		AddBindable(pixelShader);
+
+		std::shared_ptr<RootSignature> rootSignature = RootSignature::Resolve("StandardSRVFullStage");
+		AddBindable(rootSignature);
+
+		D3D12_RT_FORMAT_ARRAY rtvFormats = {};
+		rtvFormats.NumRenderTargets = 1;
+		rtvFormats.RTFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+
+		auto dsvFormat = DXGI_FORMAT_D32_FLOAT;
+
+		PipelineStateObject::PipelineStateReference pipelineStateReference;
+		pipelineStateReference.rootSignature = rootSignature;
+		pipelineStateReference.vertexBuffer = vertexBuffer;
+		pipelineStateReference.topology = topology;
+		pipelineStateReference.vertexShader = vertexShader;
+		pipelineStateReference.pixelShader = pixelShader;
+		pipelineStateReference.rtvFormats = rtvFormats;
+		pipelineStateReference.dsvFormat = dsvFormat;
+
+		std::shared_ptr<PipelineStateObject> pipelineStateObject = PipelineStateObject::Resolve(geometryTag, std::move(pipelineStateReference));
+		AddBindable(pipelineStateObject);
+		ShaderManager::GetInstance().AddToUsingPool(pipelineStateObject);
 
 		std::shared_ptr<Material> material = std::make_shared<Material>(name + L"Material", paramsFile);
 		materialMap.emplace(material->GetName(), material);
@@ -86,28 +102,6 @@ namespace DiveBomber::DrawableObject
 			std::shared_ptr<DynamicConstantBufferInHeap> baseMat = std::make_shared<DynamicConstantBufferInHeap>(geometryTag + "BaseMat1", DXBBuffer);
 			material->SetConstant(geometryTag + "BaseMat1", baseMat, 2u);
 		}
-
-		std::shared_ptr<RootSignature> rootSignature = RootSignature::Resolve("StandardSRVFullStage");
-		AddBindable(rootSignature);
-
-		D3D12_RT_FORMAT_ARRAY rtvFormats = {};
-		rtvFormats.NumRenderTargets = 1;
-		rtvFormats.RTFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
-
-		auto dsvFormat = DXGI_FORMAT_D32_FLOAT;
-
-		PipelineStateObject::PipelineStateReference pipelineStateReference;
-		pipelineStateReference.rootSignature = rootSignature;
-		pipelineStateReference.vertexBuffer = vertexBuffer;
-		pipelineStateReference.topology = topology;
-		pipelineStateReference.vertexShader = vertexShader;
-		pipelineStateReference.pixelShader = pixelShader;
-		pipelineStateReference.rtvFormats = rtvFormats;
-		pipelineStateReference.dsvFormat = dsvFormat;
-
-		std::shared_ptr<PipelineStateObject> pipelineStateObject = PipelineStateObject::Resolve(geometryTag, std::move(pipelineStateReference));
-		AddBindable(pipelineStateObject);
-		ShaderManager::GetInstance().AddToUsingPool(pipelineStateObject);
 	}
 
 	SimpleSphere::~SimpleSphere()
