@@ -13,6 +13,7 @@ namespace DiveBomber::DX
 {
     using namespace DEException;
     using namespace BindableObject;
+    namespace fs = std::filesystem;
 
     std::unique_ptr<ShaderManager> ShaderManager::instance;
 
@@ -140,7 +141,14 @@ namespace DiveBomber::DX
         else
         {
             compiledShaderBuffer->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(&bytecodeBlob), &dataPath);
-            const std::wstring builtShaderPath(ProjectDirectoryW L"Asset\\Shader\\Built\\" + shaderName + shaderTypeAbbreviation + L".cso");
+
+            const fs::path builtShaderDirectory(ProjectDirectoryW L"Asset\\Shader\\Built\\");
+            if (!fs::exists(builtShaderDirectory))
+            {
+                fs::create_directories(builtShaderDirectory);
+            }
+
+            const std::wstring builtShaderPath(builtShaderDirectory.c_str() + shaderName + shaderTypeAbbreviation + L".cso");
             D3DWriteBlobToFile(bytecodeBlob.Get(), builtShaderPath.c_str(), TRUE);
         }
 

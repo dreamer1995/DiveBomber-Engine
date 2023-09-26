@@ -48,7 +48,8 @@ namespace DiveBomber::DrawableObject
 		ShaderManager::GetInstance().AddToUsingPool(vertexShader);
 		AddBindable(vertexShader);
 		std::shared_ptr<Shader> pixelShader = Shader::Resolve(L"TestShader", ShaderType::PixelShader);
-		paramsFile = paramsFile.size() > 0 ? paramsFile : pixelShader->LoadShaderBlob();
+		std::wstring paramsFile2 = pixelShader->LoadShaderBlob();
+		paramsFile = paramsFile.size() > 0 ? paramsFile : paramsFile2;
 		ShaderManager::GetInstance().AddToUsingPool(pixelShader);
 		AddBindable(pixelShader);
 

@@ -40,8 +40,6 @@ namespace DiveBomber::BindableObject
 			directory = ProjectDirectoryW L"Asset\\Shader\\";
 			sourceFile = filePath;
 		}
-
-		isDirty = false;
 	}
 
 	wrl::ComPtr<ID3DBlob> Shader::GetBytecode() const noexcept
@@ -107,6 +105,8 @@ namespace DiveBomber::BindableObject
 			HRESULT hr;
 			GFX_THROW_INFO(D3DReadFileToBlob(builtFile.c_str(), &bytecodeBlob));
 		}
+
+		isDirty = false;
 		return paramsFile;
 	}
 
