@@ -7,6 +7,7 @@
 #include "..\..\Exception\GraphicsException.h"
 #include "..\..\Utility\GlobalParameters.h"
 #include "..\DX\ShaderManager.h"
+#include "..\Component\Material.h"
 
 #include <print>
 #include <iostream>
@@ -108,6 +109,15 @@ namespace DiveBomber::BindableObject
 
 		isDirty = false;
 		return paramsFile;
+	}
+
+	void Shader::AddMaterialReference(std::shared_ptr<Component::Material> material)
+	{
+		materialMap.emplace(material->GetName(), material);
+	}
+
+	void Shader::AddMaterialReference(const std::wstring key)
+	{
 	}
 
 	void Shader::Bind() noxnd

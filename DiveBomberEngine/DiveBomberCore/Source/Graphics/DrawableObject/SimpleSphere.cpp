@@ -53,7 +53,7 @@ namespace DiveBomber::DrawableObject
 		ShaderManager::GetInstance().AddToUsingPool(pixelShader);
 		AddBindable(pixelShader);
 
-		std::shared_ptr<RootSignature> rootSignature = RootSignature::Resolve("StandardSRVFullStage");
+		std::shared_ptr<RootSignature> rootSignature = RootSignature::Resolve("StandardFullStageAccess");
 		AddBindable(rootSignature);
 
 		D3D12_RT_FORMAT_ARRAY rtvFormats = {};
@@ -75,7 +75,7 @@ namespace DiveBomber::DrawableObject
 		AddBindable(pipelineStateObject);
 		ShaderManager::GetInstance().AddToUsingPool(pipelineStateObject);
 
-		std::shared_ptr<Material> material = std::make_shared<Material>(name + L"Material", paramsFile);
+		std::shared_ptr<Material> material = std::make_shared<Material>(name + L"Material");
 		materialMap.emplace(material->GetName(), material);
 
 		material->SetTexture(Texture::Resolve(L"earth.dds"), 0u);

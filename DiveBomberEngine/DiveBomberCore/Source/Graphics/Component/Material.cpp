@@ -15,20 +15,16 @@ namespace DiveBomber::Component
 
     Material::Material(const std::wstring inputName)
         :
-        Material(inputName, L"")
-    {
-    }
-
-
-    Material::Material(const std::wstring inputName, const std::wstring paramsFile)
-        :
         name(inputName)
     {
         indexConstantBuffer = std::make_shared<ConstantBuffer<UINT>>("TestSphereIndexConstant", 0u);
-        if (paramsFile.size() > 0)
-        {
-            ParseParamsFile(paramsFile);
-        }
+
+        LoadConfig();
+    }
+
+    void DiveBomber::Component::Material::LoadConfig()
+    {
+
     }
 
     void Material::SetTexture(const std::shared_ptr<Texture> texture, UINT slot) noexcept
