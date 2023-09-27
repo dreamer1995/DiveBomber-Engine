@@ -3,15 +3,19 @@
 #include "..\Graphics.h"
 #include "..\BindableObject\ConstantBuffer.h"
 #include "..\BindableObject\Texture.h"
-#include "..\..\..\ThirdParty\json.hpp"
+#include "..\BindableObject\Shader.h"
+#include "..\..\Utility\GlobalParameters.h"
+#include "..\DX\ShaderManager.h"
 
 #include <iostream>
+#include <fstream>
 
 namespace DiveBomber::Component
 {
     using namespace DEGraphics;
     using namespace BindableObject;
-    using json = nlohmann::json;
+    using namespace DX;
+    namespace fs = std::filesystem;
 
     Material::Material(const std::wstring inputName)
         :
@@ -20,11 +24,55 @@ namespace DiveBomber::Component
         indexConstantBuffer = std::make_shared<ConstantBuffer<UINT>>("TestSphereIndexConstant", 0u);
 
         LoadConfig();
+
+        //LoadShader();
     }
 
     void DiveBomber::Component::Material::LoadConfig()
     {
+        fs::path configFilePath(ProjectDirectoryW L"Asset\\Material\\" + name + L".json");
 
+        if (!fs::exists(configFilePath))
+        {
+            fs::path builtShaderDirectory(ProjectDirectoryW L"Asset\\Material\\");
+            if (!fs::exists(builtShaderDirectory))
+            {
+                fs::create_directories(builtShaderDirectory);
+            }
+            config = CreateDefaultConfig(configFilePath.wstring());
+        }
+        else
+        {
+            std::ifstream configFile(configFilePath);
+            if (!configFile.is_open())
+            {
+                throw std::exception("Unable to open script file");
+            }
+            configFile >> config;
+        }
+    }
+
+    json Material::CreateDefaultConfig(const std::wstring path)
+    {
+        json newConfig;
+        newConfig["ShaderPath"] = "TestShader";
+        newConfig["ShaderStage"] = { "VS","PS" };
+
+        // write prettified JSON to another file
+        std::ofstream o(path);
+        o << std::setw(4) << newConfig << std::endl;
+
+        return newConfig;
+    }
+
+    void Material::LoadShader()
+    {
+        for (auto& shaderStage : config.at("ShaderStage"))
+        {
+            std::shared_ptr<Shader> vertexShader = Shader::Resolve(L"TestShader", shaderStage);
+            std::wstring paramsFile = vertexShader->LoadShaderBlob();
+            ShaderManager::GetInstance().AddToUsingPool(vertexShader);
+        }
     }
 
     void Material::SetTexture(const std::shared_ptr<Texture> texture, UINT slot) noexcept

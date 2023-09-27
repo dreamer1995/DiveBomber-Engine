@@ -3,6 +3,7 @@
 
 #include "..\BindableObject\ConstantBufferInHeap.h"
 #include "..\BindableObject\DynamicConstantBufferInHeap.h"
+#include "..\..\..\ThirdParty\json.hpp"
 
 #include <vector>
 #include <unordered_map>
@@ -14,6 +15,8 @@ namespace DiveBomber::BindableObject
 
 namespace DiveBomber::Component
 {
+	using json = nlohmann::json;
+
 	class Material final
 	{
 	public:
@@ -44,6 +47,8 @@ namespace DiveBomber::Component
 
 		void ParseParamsFile(const std::wstring paramsFile);
 		void LoadConfig();
+		[[nodiscard]] json CreateDefaultConfig(const std::wstring path);
+		void LoadShader();
 	private:
 		std::wstring name;
 		std::shared_ptr<BindableObject::ConstantBuffer<UINT>> indexConstantBuffer;
@@ -51,5 +56,7 @@ namespace DiveBomber::Component
 		UINT numTextureIndices = 0;
 		std::vector<UINT> shaderResourceIndices;
 		std::unordered_map<std::string, std::shared_ptr<BindableObject::DynamicConstantBufferInHeap>> dynamicConstantMap;
+
+		json config;
 	};
 }
