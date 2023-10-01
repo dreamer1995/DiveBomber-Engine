@@ -45,10 +45,12 @@ namespace DiveBomber::Component
 		void SetMaterialParameterScalar(std::string constantName, std::string key, float scalar) const noexcept;
 		void SetMaterialParameterVector(std::string constantName, std::string key, DirectX::XMFLOAT4 vector) const noexcept;
 
-		void ParseParamsFile(const std::wstring paramsFile);
 		void LoadConfig();
-		[[nodiscard]] json CreateDefaultConfig(const std::wstring path);
+		[[nodiscard]] json CreateDefaultConfig();
 		void LoadShader();
+		void UploadConfig(const std::wstring paramsFile);
+		void ParseParamsFile(const std::wstring paramsFile);
+
 	private:
 		std::wstring name;
 		std::shared_ptr<BindableObject::ConstantBuffer<UINT>> indexConstantBuffer;
@@ -58,5 +60,7 @@ namespace DiveBomber::Component
 		std::unordered_map<std::string, std::shared_ptr<BindableObject::DynamicConstantBufferInHeap>> dynamicConstantMap;
 
 		json config;
+		std::filesystem::path configFile;
+		std::filesystem::file_time_type configFileLastSaveTime;
 	};
 }

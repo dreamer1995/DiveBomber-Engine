@@ -2,6 +2,7 @@
 
 "Properties"
 {
+	"Stage":{ 0,4 }
 	"Param":
 	[
 		{"Name":"baseMap", "Type":"Texture", "sRGB":true},

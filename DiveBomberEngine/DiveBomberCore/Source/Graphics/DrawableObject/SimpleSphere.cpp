@@ -44,11 +44,8 @@ namespace DiveBomber::DrawableObject
 		mesh = std::make_shared<Mesh>(vertexBuffer, indexBuffer);
 
 		std::shared_ptr<Shader> vertexShader = Shader::Resolve(L"TestShader", ShaderType::VertexShader);
-		std::wstring paramsFile = vertexShader->LoadShaderBlob();
 		ShaderManager::GetInstance().AddToUsingPool(vertexShader);
 		std::shared_ptr<Shader> pixelShader = Shader::Resolve(L"TestShader", ShaderType::PixelShader);
-		std::wstring paramsFile2 = pixelShader->LoadShaderBlob();
-		paramsFile = paramsFile.size() > 0 ? paramsFile : paramsFile2;
 		ShaderManager::GetInstance().AddToUsingPool(pixelShader);
 
 		std::shared_ptr<RootSignature> rootSignature = RootSignature::Resolve("StandardFullStageAccess");

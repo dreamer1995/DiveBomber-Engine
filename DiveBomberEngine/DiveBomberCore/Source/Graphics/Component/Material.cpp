@@ -23,6 +23,8 @@ namespace DiveBomber::Component
     {
         indexConstantBuffer = std::make_shared<ConstantBuffer<UINT>>("TestSphereIndexConstant", 0u);
 
+        configFile = ProjectDirectoryW L"Asset\\Material\\" + name + L".json";
+
         LoadConfig();
 
         //LoadShader();
@@ -30,37 +32,39 @@ namespace DiveBomber::Component
 
     void DiveBomber::Component::Material::LoadConfig()
     {
-        fs::path configFilePath(ProjectDirectoryW L"Asset\\Material\\" + name + L".json");
-
-        if (!fs::exists(configFilePath))
+        if (!fs::exists(configFile))
         {
             fs::path builtShaderDirectory(ProjectDirectoryW L"Asset\\Material\\");
             if (!fs::exists(builtShaderDirectory))
             {
                 fs::create_directories(builtShaderDirectory);
             }
-            config = CreateDefaultConfig(configFilePath.wstring());
+            config = CreateDefaultConfig();
         }
         else
         {
-            std::ifstream configFile(configFilePath);
-            if (!configFile.is_open())
+            std::ifstream rawFile(configFile);
+            if (!rawFile.is_open())
             {
                 throw std::exception("Unable to open script file");
             }
-            configFile >> config;
+            rawFile >> config;
+
+            configFileLastSaveTime = fs::last_write_time(configFile);
         }
     }
 
-    json Material::CreateDefaultConfig(const std::wstring path)
+    json Material::CreateDefaultConfig()
     {
         json newConfig;
         newConfig["ShaderPath"] = "TestShader";
-        newConfig["ShaderStage"] = { "VS","PS" };
+        newConfig["ShaderStage"] = { 0,4 };
 
         // write prettified JSON to another file
-        std::ofstream o(path);
+        std::ofstream o(configFile);
         o << std::setw(4) << newConfig << std::endl;
+
+        configFileLastSaveTime = fs::last_write_time(configFile);
 
         return newConfig;
     }
@@ -69,9 +73,44 @@ namespace DiveBomber::Component
     {
         for (auto& shaderStage : config.at("ShaderStage"))
         {
-            std::shared_ptr<Shader> vertexShader = Shader::Resolve(L"TestShader", shaderStage);
-            std::wstring paramsFile = vertexShader->LoadShaderBlob();
-            ShaderManager::GetInstance().AddToUsingPool(vertexShader);
+            std::cout << shaderStage << std::endl;
+            std::shared_ptr<Shader> shader = Shader::Resolve(L"TestShader", shaderStage);
+            ShaderManager::GetInstance().AddToUsingPool(shader);
+
+            std::wstring paramsFile;
+            ParseParamsFile(paramsFile);
+
+            fs::file_time_type shaderSourceLastSaveTime = shader->GetSourceFileLastSaveTime();
+            if (shaderSourceLastSaveTime > configFileLastSaveTime)
+            {
+                UploadConfig(paramsFile);
+            }
+        }
+    }
+
+    void Material::UploadConfig(const std::wstring paramsFile)
+    {
+
+    }
+
+    void DiveBomber::Component::Material::ParseParamsFile(const std::wstring paramsFile)
+    {
+        json paramsData;
+        paramsData = json::parse(paramsFile, nullptr, false);
+
+        if (paramsData.is_discarded())
+        {
+            std::cout << "parse json error" << std::endl;
+        }
+
+        for (const auto& param : paramsData.at("Param"))
+        {
+            auto a = param.find("enabled");
+            if (a == param.end())
+            {
+                auto b = 1;
+            }
+            std::cout << param.at("Name") << std::endl;
         }
     }
 
@@ -134,27 +173,6 @@ namespace DiveBomber::Component
             DirectX::XMFLOAT4 b = static_cast<dx::XMFLOAT4&>(a);
             buffer[key] = vector;
             it->second->Update(buffer);
-        }
-    }
-
-    void DiveBomber::Component::Material::ParseParamsFile(const std::wstring paramsFile)
-    {
-        json paramsData;
-        paramsData = json::parse(paramsFile, nullptr, false);
-
-        if (paramsData.is_discarded())
-        {
-            std::cout << "parse json error" << std::endl;
-        }
-
-        for (const auto& param : paramsData.at("Param"))
-        {
-            auto a = param.find("enabled");
-            if (a == param.end())
-            {
-                auto b = 1;
-            }
-            std::cout << param.at("Name") << std::endl;
         }
     }
 }

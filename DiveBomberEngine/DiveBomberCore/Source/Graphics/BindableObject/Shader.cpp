@@ -41,6 +41,8 @@ namespace DiveBomber::BindableObject
 			directory = ProjectDirectoryW L"Asset\\Shader\\";
 			sourceFile = filePath;
 		}
+
+		LoadShader();
 	}
 
 	wrl::ComPtr<ID3DBlob> Shader::GetBytecode() const noexcept
@@ -48,20 +50,9 @@ namespace DiveBomber::BindableObject
 		return bytecodeBlob;
 	}
 
-	std::wstring Shader::RecompileShader()
+	void Shader::RecompileShader()
 	{
-		if (fs::exists(builtFile))
-		{
-			sourceLastSaveTime = fs::last_write_time(sourceFile);
-			builtLastSaveTime = fs::last_write_time(builtFile);
-			if (builtLastSaveTime > sourceLastSaveTime)
-			{
-				return L"";
-			}
-		}
-
 		std::wstring line;
-		std::wstring paramsFile;
 		std::string hlslFile;
 
 		std::wifstream rawFile;
@@ -78,8 +69,8 @@ namespace DiveBomber::BindableObject
 				std::getline(rawFile, line);
 				while (line != L"\"/Properties\"")
 				{
-					paramsFile.append(line);
-					paramsFile.append(L"\n");
+					//paramsFile.append(line);
+					//paramsFile.append(L"\n");
 					std::getline(rawFile, line);
 				}
 			}
@@ -94,13 +85,53 @@ namespace DiveBomber::BindableObject
 			isDirty = true;
 			std::wcout << L"Recompile Shader: " + name + GetShaderTypeAbbreviation() << std::endl;
 		}
+	}
+
+	std::wstring Shader::GetShaderParamsString()
+	{
+		std::wstring line;
+		std::wstring paramsFile;
+
+		std::wifstream rawFile;
+		rawFile.open(sourceFile);
+
+		while (std::getline(rawFile, line)) {
+			if (line == L"\"Properties\"")
+			{
+				std::getline(rawFile, line);
+				while (line != L"\"/Properties\"")
+				{
+					paramsFile.append(line);
+					paramsFile.append(L"\n");
+					std::getline(rawFile, line);
+				}
+				break;
+			}
+		}
+
+		rawFile.close();
 
 		return paramsFile;
 	}
 
-	std::wstring Shader::LoadShaderBlob()
+	void Shader::LoadShader()
 	{
-		std::wstring paramsFile = RecompileShader();
+		bool needRecompile = true;
+		if (fs::exists(builtFile))
+		{
+			sourceLastSaveTime = fs::last_write_time(sourceFile);
+			builtLastSaveTime = fs::last_write_time(builtFile);
+			if (builtLastSaveTime > sourceLastSaveTime)
+			{
+				needRecompile = false;
+			}
+		}
+
+		if (needRecompile)
+		{
+			RecompileShader();
+		}
+
 		if (!isDirty)
 		{
 			HRESULT hr;
@@ -108,7 +139,6 @@ namespace DiveBomber::BindableObject
 		}
 
 		isDirty = false;
-		return paramsFile;
 	}
 
 	void Shader::AddMaterialReference(std::shared_ptr<Component::Material> material)
@@ -118,6 +148,11 @@ namespace DiveBomber::BindableObject
 
 	void Shader::AddMaterialReference(const std::wstring key)
 	{
+	}
+
+	std::filesystem::file_time_type Shader::GetSourceFileLastSaveTime() const noexcept
+	{
+		return sourceLastSaveTime;
 	}
 
 	void Shader::Bind() noxnd

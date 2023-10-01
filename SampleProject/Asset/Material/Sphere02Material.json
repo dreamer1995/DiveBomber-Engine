@@ -1,7 +1,7 @@
 {
     "ShaderPath": "TestShader",
     "ShaderStage": [
-        "VS",
-        "PS"
+        0,
+        4
     ]
 }
