@@ -65,10 +65,7 @@ namespace DiveBomber::Component
 
     void Material::CreateDefaultConfig(fs::path configPath)
     {
-        std::wstring paramString = Shader::GetShaderParamsString(L"TestShader");
-
         config["ShaderName"] = "TestShader";
-        config["ShaderStage"] = { 0,4 };
 
         UploadConfig();
 
@@ -103,7 +100,12 @@ namespace DiveBomber::Component
 
     void Material::UploadConfig()
     {
+        std::wstring paramString = Shader::GetShaderParamsString(L"TestShader");
 
+        json paramsData;
+        paramsData = json::parse(paramString, nullptr, false);
+
+        config[]
     }
 
     void DiveBomber::Component::Material::ParseParamsFile(const std::wstring paramsFile)
