@@ -12,6 +12,8 @@ namespace DiveBomber::Component
 
 namespace DiveBomber::BindableObject
 {
+	namespace fs = std::filesystem;
+
 	enum class ShaderType
 	{
 		VertexShader,
@@ -25,12 +27,12 @@ namespace DiveBomber::BindableObject
 	class Shader final : public Bindable
 	{
 	public:
-		Shader(const std::wstring& inputName, ShaderType inputType);
+		Shader(const std::wstring inputName, ShaderType inputType);
 
 		[[nodiscard]] wrl::ComPtr<ID3DBlob> GetBytecode() const noexcept;
 		void Bind() noxnd override;
-		[[nodiscard]] static std::shared_ptr<Shader> Resolve(const std::wstring& name, ShaderType type);
-		[[nodiscard]] static std::string GenerateUID(const std::wstring& name, ShaderType type);
+		[[nodiscard]] static std::shared_ptr<Shader> Resolve(const std::wstring name, ShaderType type);
+		[[nodiscard]] static std::string GenerateUID(const std::wstring name, ShaderType type);
 		[[nodiscard]] std::string GetUID() const noexcept override;
 
 		[[nodiscard]] bool IsDirty() const noexcept;
@@ -40,20 +42,25 @@ namespace DiveBomber::BindableObject
 
 		void LoadShader();
 		void RecompileShader();
-		std::wstring GetShaderParamsString();
+		[[nodiscard]] static std::wstring GetShaderParamsString(const std::wstring name);
 
 		void AddMaterialReference(std::shared_ptr<Component::Material> material);
 		void AddMaterialReference(const std::wstring key);
 
-		[[nodiscard]] std::filesystem::file_time_type GetSourceFileLastSaveTime() const noexcept;
+		[[nodiscard]] fs::file_time_type GetSourceFileLastSaveTime() const noexcept;
+		[[nodiscard]] static fs::file_time_type GetSourceFileLastSaveTime(const std::wstring name) noexcept;
+
+	private:
+		[[nodiscard]] fs::path FindSourceFilePath() noexcept;
+		[[nodiscard]] static fs::path FindSourceFilePath(const std::wstring name) noexcept;
 
 	private:
 		std::wstring name;
 		std::wstring directory;
-		std::filesystem::path sourceFile;
-		std::filesystem::file_time_type sourceLastSaveTime;
-		std::filesystem::path builtFile;
-		std::filesystem::file_time_type builtLastSaveTime;
+		fs::path sourceFile;
+		fs::file_time_type sourceLastSaveTime;
+		fs::path builtFile;
+		fs::file_time_type builtLastSaveTime;
 		wrl::ComPtr<ID3DBlob> bytecodeBlob;
 		ShaderType type;
 		bool isDirty = false;

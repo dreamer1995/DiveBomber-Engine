@@ -22,25 +22,15 @@ namespace DiveBomber::BindableObject
 	using namespace DX;
 	namespace fs = std::filesystem;
 
-	Shader::Shader(const std::wstring& inputName, ShaderType inputType)
+	Shader::Shader(const std::wstring inputName, ShaderType inputType)
 		:
 		name(inputName),
 		type(inputType)
 	{
 		builtFile = ProjectDirectoryW L"Asset\\Shader\\Built\\" + name + GetShaderTypeAbbreviation() + L".cso";
 
-		fs::path filePath = EngineDirectoryW L"Shader\\" + name + L".hlsl";
-		if (fs::exists(filePath))
-		{
-			directory = EngineDirectoryW L"Shader\\";
-			sourceFile = filePath;
-		}
-		filePath = ProjectDirectoryW L"Asset\\Shader\\" + name + L".hlsl";
-		if (fs::exists(filePath))
-		{
-			directory = ProjectDirectoryW L"Asset\\Shader\\";
-			sourceFile = filePath;
-		}
+		sourceFile = FindSourceFilePath();
+		directory = sourceFile.parent_path();
 
 		LoadShader();
 	}
@@ -87,13 +77,15 @@ namespace DiveBomber::BindableObject
 		}
 	}
 
-	std::wstring Shader::GetShaderParamsString()
+	std::wstring Shader::GetShaderParamsString(const std::wstring name)
 	{
+		fs::path sourceFilePath = FindSourceFilePath(name);
+
 		std::wstring line;
 		std::wstring paramsFile;
 
 		std::wifstream rawFile;
-		rawFile.open(sourceFile);
+		rawFile.open(sourceFilePath);
 
 		while (std::getline(rawFile, line)) {
 			if (line == L"\"Properties\"")
@@ -150,9 +142,37 @@ namespace DiveBomber::BindableObject
 	{
 	}
 
-	std::filesystem::file_time_type Shader::GetSourceFileLastSaveTime() const noexcept
+	fs::file_time_type Shader::GetSourceFileLastSaveTime() const noexcept
 	{
 		return sourceLastSaveTime;
+	}
+
+	fs::file_time_type Shader::GetSourceFileLastSaveTime(const std::wstring name) noexcept
+	{
+		std::wstring sourceFilePath = FindSourceFilePath(name);
+		return fs::last_write_time(sourceFilePath);
+	}
+
+	fs::path Shader::FindSourceFilePath() noexcept
+	{
+		return FindSourceFilePath(name);
+	}
+
+	fs::path Shader::FindSourceFilePath(const std::wstring name) noexcept
+	{
+		fs::path sourceFilePath;
+		fs::path filePath = EngineDirectoryW L"Shader\\" + name + L".hlsl";
+		if (fs::exists(filePath))
+		{
+			sourceFilePath = filePath;
+		}
+		filePath = ProjectDirectoryW L"Asset\\Shader\\" + name + L".hlsl";
+		if (fs::exists(filePath))
+		{
+			sourceFilePath = filePath;
+		}
+
+		return sourceFilePath;
 	}
 
 	void Shader::Bind() noxnd
@@ -160,12 +180,12 @@ namespace DiveBomber::BindableObject
 
 	}
 
-	std::shared_ptr<Shader> Shader::Resolve(const std::wstring& name, ShaderType type)
+	std::shared_ptr<Shader> Shader::Resolve(const std::wstring name, ShaderType type)
 	{
 		return GlobalBindableManager::Resolve<Shader>(name, type);
 	}
 
-	std::string Shader::GenerateUID(const std::wstring& name, ShaderType type)
+	std::string Shader::GenerateUID(const std::wstring name, ShaderType type)
 	{
 		using namespace std::string_literals;
 		return typeid(Shader).name() + "#"s + Utility::ToNarrow(ProjectDirectoryW L"Asset\\Shader\\" + name) + "#"s + std::to_string((int)type);

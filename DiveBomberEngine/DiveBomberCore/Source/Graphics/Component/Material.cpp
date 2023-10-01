@@ -15,7 +15,6 @@ namespace DiveBomber::Component
     using namespace DEGraphics;
     using namespace BindableObject;
     using namespace DX;
-    namespace fs = std::filesystem;
 
     Material::Material(const std::wstring inputName)
         :
@@ -39,7 +38,8 @@ namespace DiveBomber::Component
             {
                 fs::create_directories(builtShaderDirectory);
             }
-            config = CreateDefaultConfig();
+
+            CreateDefaultConfig(configFile);
         }
         else
         {
@@ -51,30 +51,43 @@ namespace DiveBomber::Component
             rawFile >> config;
 
             configFileLastSaveTime = fs::last_write_time(configFile);
+
+            std::wstring shaderName = Utility::ToWide(config.at("ShaderName"));
+            std::wstring paramString = Shader::GetShaderParamsString(shaderName);
+            
+            fs::file_time_type builtLastSaveTime = Shader::GetSourceFileLastSaveTime(shaderName);
+            if (builtLastSaveTime > configFileLastSaveTime)
+            {
+                UploadConfig();
+            }
         }
     }
 
-    json Material::CreateDefaultConfig()
+    void Material::CreateDefaultConfig(fs::path configPath)
     {
-        json newConfig;
-        newConfig["ShaderPath"] = "TestShader";
-        newConfig["ShaderStage"] = { 0,4 };
+        std::wstring paramString = Shader::GetShaderParamsString(L"TestShader");
+
+        config["ShaderName"] = "TestShader";
+        config["ShaderStage"] = { 0,4 };
+
+        UploadConfig();
 
         // write prettified JSON to another file
-        std::ofstream o(configFile);
-        o << std::setw(4) << newConfig << std::endl;
+        std::ofstream o(configPath);
+        o << std::setw(4) << config << std::endl;
 
         configFileLastSaveTime = fs::last_write_time(configFile);
-
-        return newConfig;
     }
 
     void Material::LoadShader()
     {
+        std::wstring shaderName = Utility::ToWide(config.at("ShaderName"));
+
         for (auto& shaderStage : config.at("ShaderStage"))
         {
             std::cout << shaderStage << std::endl;
-            std::shared_ptr<Shader> shader = Shader::Resolve(L"TestShader", shaderStage);
+            
+            std::shared_ptr<Shader> shader = Shader::Resolve(shaderName, shaderStage);
             ShaderManager::GetInstance().AddToUsingPool(shader);
 
             std::wstring paramsFile;
@@ -83,12 +96,12 @@ namespace DiveBomber::Component
             fs::file_time_type shaderSourceLastSaveTime = shader->GetSourceFileLastSaveTime();
             if (shaderSourceLastSaveTime > configFileLastSaveTime)
             {
-                UploadConfig(paramsFile);
+                UploadConfig();
             }
         }
     }
 
-    void Material::UploadConfig(const std::wstring paramsFile)
+    void Material::UploadConfig()
     {
 
     }

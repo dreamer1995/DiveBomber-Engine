@@ -16,6 +16,7 @@ namespace DiveBomber::BindableObject
 namespace DiveBomber::Component
 {
 	using json = nlohmann::json;
+	namespace fs = std::filesystem;
 
 	class Material final
 	{
@@ -46,9 +47,9 @@ namespace DiveBomber::Component
 		void SetMaterialParameterVector(std::string constantName, std::string key, DirectX::XMFLOAT4 vector) const noexcept;
 
 		void LoadConfig();
-		[[nodiscard]] json CreateDefaultConfig();
+		void CreateDefaultConfig(fs::path configPath);
 		void LoadShader();
-		void UploadConfig(const std::wstring paramsFile);
+		void UploadConfig();
 		void ParseParamsFile(const std::wstring paramsFile);
 
 	private:
