@@ -2,13 +2,13 @@
 
 "Properties"
 {
-	"Stage":{ 0,4 }
+	"Stage":[ 0,4 ],
 	"Param":
 	[
 		{"Name":"baseMap", "Type":"Texture", "sRGB":true},
 		{"Name":"rustMap", "Type":"Texture", "sRGB":false},
 
-		{"Name":"baseColor", "Type":"Float3", "sRGB":true}
+		{"Name":"baseColor", "Type":"Color", "sRGB":true, "Default":[1.0, 0.0, 0.0, 1.0]}
 	]
 }
 "/Properties"

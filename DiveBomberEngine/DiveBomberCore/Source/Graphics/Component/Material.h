@@ -49,7 +49,7 @@ namespace DiveBomber::Component
 		void LoadConfig();
 		void CreateDefaultConfig(fs::path configPath);
 		void LoadShader();
-		void UploadConfig();
+		void UploadConfig(const std::wstring shaderName);
 		void ParseParamsFile(const std::wstring paramsFile);
 
 	private:

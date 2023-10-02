@@ -53,12 +53,11 @@ namespace DiveBomber::Component
             configFileLastSaveTime = fs::last_write_time(configFile);
 
             std::wstring shaderName = Utility::ToWide(config.at("ShaderName"));
-            std::wstring paramString = Shader::GetShaderParamsString(shaderName);
             
             fs::file_time_type builtLastSaveTime = Shader::GetSourceFileLastSaveTime(shaderName);
             if (builtLastSaveTime > configFileLastSaveTime)
             {
-                UploadConfig();
+                UploadConfig(shaderName);
             }
         }
     }
@@ -67,7 +66,7 @@ namespace DiveBomber::Component
     {
         config["ShaderName"] = "TestShader";
 
-        UploadConfig();
+        UploadConfig(Utility::ToWide(config.at("ShaderName")));
 
         // write prettified JSON to another file
         std::ofstream o(configPath);
@@ -89,23 +88,71 @@ namespace DiveBomber::Component
 
             std::wstring paramsFile;
             ParseParamsFile(paramsFile);
-
-            fs::file_time_type shaderSourceLastSaveTime = shader->GetSourceFileLastSaveTime();
-            if (shaderSourceLastSaveTime > configFileLastSaveTime)
-            {
-                UploadConfig();
-            }
         }
     }
 
-    void Material::UploadConfig()
+    void Material::UploadConfig(const std::wstring shaderName)
     {
-        std::wstring paramString = Shader::GetShaderParamsString(L"TestShader");
+        std::wstring paramString = Shader::GetShaderParamsString(shaderName);
 
         json paramsData;
         paramsData = json::parse(paramString, nullptr, false);
 
-        config[]
+        if (paramsData.is_discarded())
+        {
+            std::cout << "parse json error" << std::endl;
+        }
+
+        config["Stage"] = paramsData["Stage"];
+
+        for (const auto& param : paramsData["Param"])
+        {
+            json materialData;
+            materialData["Name"] = param["Name"];
+            materialData = param;
+            materialData.erase("Default");
+
+            auto defaultVal = param.find("Default");
+            if (defaultVal != param.end())
+            {
+                if (materialData["Type"] == "Texture")
+                {
+                    if (param["Default"] == "Black")
+                    {
+                        materialData["Value"] = "WhiteTexture";
+                    }
+                    else if (param["Default"] == "White")
+                    {
+                        materialData["Value"] = "WhiteTexture";
+                    }
+                    else if (param["Default"] == "Normal")
+                    {
+                        materialData["Value"] = "WhiteTexture";
+                    }
+                }
+                else
+                {
+                    materialData["Value"] = param["Default"];
+                }
+            }
+            else
+            {
+                if (materialData["Type"] == "Texture")
+                {
+                    materialData["Value"] = "WhiteTexture";
+                }
+                else if (materialData["Type"] == "Float")
+                {
+                    materialData["Value"] = 1.0;
+                }
+                else if (materialData["Type"] == "Color" || materialData["Type"] == "Float4")
+                {
+                    materialData["Value"] = { 1.0f,1.0f,1.0f,1.0f };
+                }
+            }
+
+            config["Param"].emplace_back(materialData);
+        }
     }
 
     void DiveBomber::Component::Material::ParseParamsFile(const std::wstring paramsFile)
@@ -118,7 +165,7 @@ namespace DiveBomber::Component
             std::cout << "parse json error" << std::endl;
         }
 
-        for (const auto& param : paramsData.at("Param"))
+        for (const auto& param : paramsData["Param"])
         {
             auto a = param.find("enabled");
             if (a == param.end())
