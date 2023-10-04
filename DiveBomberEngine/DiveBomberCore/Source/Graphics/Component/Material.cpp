@@ -108,50 +108,70 @@ namespace DiveBomber::Component
         for (const auto& param : paramsData["Param"])
         {
             json materialData;
-            materialData["Name"] = param["Name"];
-            materialData = param;
-            materialData.erase("Default");
 
-            auto defaultVal = param.find("Default");
-            if (defaultVal != param.end())
+            bool existed = false;
+            for (const auto& existedParam : config["Param"])
             {
-                if (materialData["Type"] == "Texture")
+                if (existedParam["Name"] == param["Name"])
                 {
-                    if (param["Default"] == "Black")
+                    existed = true;
+                    materialData = existedParam;
+                    break;
+                }
+            }
+
+            if (existed)
+            {
+                materialData["Name"] = param["Name"];
+                materialData = param;
+                materialData.erase("Default");
+
+                auto defaultVal = param.find("Default");
+                if (defaultVal != param.end())
+                {
+                    if (materialData["Type"] == "Texture")
                     {
-                        materialData["Value"] = "WhiteTexture";
+                        if (param["Default"] == "Black")
+                        {
+                            materialData["Value"] = "WhiteTexture";
+                        }
+                        else if (param["Default"] == "White")
+                        {
+                            materialData["Value"] = "WhiteTexture";
+                        }
+                        else if (param["Default"] == "Normal")
+                        {
+                            materialData["Value"] = "WhiteTexture";
+                        }
                     }
-                    else if (param["Default"] == "White")
+                    else
                     {
-                        materialData["Value"] = "WhiteTexture";
-                    }
-                    else if (param["Default"] == "Normal")
-                    {
-                        materialData["Value"] = "WhiteTexture";
+                        materialData["Value"] = param["Default"];
                     }
                 }
                 else
                 {
-                    materialData["Value"] = param["Default"];
+                    if (materialData["Type"] == "Texture")
+                    {
+                        materialData["Value"] = "WhiteTexture";
+                    }
+                    else if (materialData["Type"] == "Float")
+                    {
+                        materialData["Value"] = 1.0;
+                    }
+                    else if (materialData["Type"] == "Color" || materialData["Type"] == "Float4")
+                    {
+                        materialData["Value"] = { 1.0f,1.0f,1.0f,1.0f };
+                    }
                 }
+
+                config["Param"].emplace_back(materialData);
             }
             else
             {
-                if (materialData["Type"] == "Texture")
-                {
-                    materialData["Value"] = "WhiteTexture";
-                }
-                else if (materialData["Type"] == "Float")
-                {
-                    materialData["Value"] = 1.0;
-                }
-                else if (materialData["Type"] == "Color" || materialData["Type"] == "Float4")
-                {
-                    materialData["Value"] = { 1.0f,1.0f,1.0f,1.0f };
-                }
+                if()
             }
 
-            config["Param"].emplace_back(materialData);
         }
     }
 
