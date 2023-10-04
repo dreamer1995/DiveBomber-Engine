@@ -46,13 +46,13 @@ namespace DiveBomber::Component
 		void SetMaterialParameterScalar(std::string constantName, std::string key, float scalar) const noexcept;
 		void SetMaterialParameterVector(std::string constantName, std::string key, DirectX::XMFLOAT4 vector) const noexcept;
 
-		void LoadConfig();
-		void CreateDefaultConfig(fs::path configPath);
-		void LoadShader();
 		void UploadConfig(const std::wstring shaderName);
-		void ParseParamsFile(const std::wstring paramsFile);
+		void ReloadConfig();
 
 	private:
+		void GetConfig();
+		void CreateDefaultConfig();
+
 		std::wstring name;
 		std::shared_ptr<BindableObject::ConstantBuffer<UINT>> indexConstantBuffer;
 		UINT numConstantIndices = 0;

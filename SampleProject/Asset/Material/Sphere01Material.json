@@ -1,0 +1,32 @@
+{
+    "Param": [
+        {
+            "Name": "baseMap",
+            "Type": "Texture",
+            "Value": "WhiteTexture",
+            "sRGB": true
+        },
+        {
+            "Name": "rustMap",
+            "Type": "Texture",
+            "Value": "GrayTexture",
+            "sRGB": false
+        },
+        {
+            "Name": "baseColor",
+            "Type": "Color",
+            "Value": [
+                1.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "sRGB": true
+        }
+    ],
+    "ShaderName": "TestShader",
+    "Stage": [
+        0,
+        4
+    ]
+}

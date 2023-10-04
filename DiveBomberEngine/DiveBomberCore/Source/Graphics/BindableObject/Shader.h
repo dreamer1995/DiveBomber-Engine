@@ -38,9 +38,6 @@ namespace DiveBomber::BindableObject
 		[[nodiscard]] bool IsDirty() const noexcept;
 		void SetDirty(bool inputIsDirty) noexcept;
 
-		[[nodiscard]] std::wstring GetShaderTypeAbbreviation() const noexcept;
-
-		void LoadShader();
 		void RecompileShader();
 		[[nodiscard]] static std::wstring GetShaderParamsString(const std::wstring name);
 
@@ -53,6 +50,8 @@ namespace DiveBomber::BindableObject
 	private:
 		[[nodiscard]] fs::path FindSourceFilePath() noexcept;
 		[[nodiscard]] static fs::path FindSourceFilePath(const std::wstring name) noexcept;
+		[[nodiscard]] std::wstring GetShaderTypeAbbreviation() const noexcept;
+		void LoadShader();
 
 	private:
 		std::wstring name;

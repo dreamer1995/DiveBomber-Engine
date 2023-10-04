@@ -6,7 +6,7 @@
 	"Param":
 	[
 		{"Name":"baseMap", "Type":"Texture", "sRGB":true},
-		{"Name":"rustMap", "Type":"Texture", "sRGB":false},
+		{"Name":"rustMap", "Type":"Texture", "sRGB":false, "Default":"Gray"},
 
 		{"Name":"baseColor", "Type":"Color", "sRGB":true, "Default":[1.0, 0.0, 0.0, 1.0]}
 	]

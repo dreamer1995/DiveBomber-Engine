@@ -76,11 +76,6 @@ namespace DiveBomber::DrawableObject
 		material->SetTexture(Texture::Resolve(L"earth.dds"), 0u);
 		material->SetTexture(Texture::Resolve(L"rustediron2_basecolor.png"), 1u);
 
-		std::shared_ptr<ConstantTransformBuffer> transformBuffer = std::make_shared<ConstantTransformBuffer>();
-		transformBuffer->InitializeParentReference(*this);
-		AddBindable(transformBuffer);
-		material->SetConstant(transformBuffer->GetTransformBuffer(), 0u);
-
 		{
 			DynamicConstantProcess::RawLayout DCBLayout;
 			DCBLayout.Add<DynamicConstantProcess::Float4>("baseColor");
@@ -98,6 +93,11 @@ namespace DiveBomber::DrawableObject
 			std::shared_ptr<DynamicConstantBufferInHeap> baseMat = std::make_shared<DynamicConstantBufferInHeap>(geometryTag + "BaseMat1", DXBBuffer);
 			material->SetConstant(geometryTag + "BaseMat1", baseMat, 2u);
 		}
+
+		std::shared_ptr<ConstantTransformBuffer> transformBuffer = std::make_shared<ConstantTransformBuffer>();
+		transformBuffer->InitializeParentReference(*this);
+		AddBindable(transformBuffer);
+		material->SetConstant(transformBuffer->GetTransformBuffer(), 0u);
 	}
 
 	SimpleSphere::~SimpleSphere()

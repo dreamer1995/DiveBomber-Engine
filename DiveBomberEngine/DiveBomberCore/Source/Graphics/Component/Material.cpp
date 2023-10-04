@@ -24,12 +24,11 @@ namespace DiveBomber::Component
 
         configFile = ProjectDirectoryW L"Asset\\Material\\" + name + L".json";
 
-        LoadConfig();
-
-        //LoadShader();
+        GetConfig();
+        ReloadConfig();
     }
 
-    void DiveBomber::Component::Material::LoadConfig()
+    void DiveBomber::Component::Material::GetConfig()
     {
         if (!fs::exists(configFile))
         {
@@ -39,7 +38,7 @@ namespace DiveBomber::Component
                 fs::create_directories(builtShaderDirectory);
             }
 
-            CreateDefaultConfig(configFile);
+            CreateDefaultConfig();
         }
         else
         {
@@ -49,10 +48,11 @@ namespace DiveBomber::Component
                 throw std::exception("Unable to open script file");
             }
             rawFile >> config;
+            rawFile.close();
 
             configFileLastSaveTime = fs::last_write_time(configFile);
 
-            std::wstring shaderName = Utility::ToWide(config.at("ShaderName"));
+            std::wstring shaderName = Utility::ToWide(config["ShaderName"]);
             
             fs::file_time_type builtLastSaveTime = Shader::GetSourceFileLastSaveTime(shaderName);
             if (builtLastSaveTime > configFileLastSaveTime)
@@ -62,33 +62,11 @@ namespace DiveBomber::Component
         }
     }
 
-    void Material::CreateDefaultConfig(fs::path configPath)
+    void Material::CreateDefaultConfig()
     {
         config["ShaderName"] = "TestShader";
 
-        UploadConfig(Utility::ToWide(config.at("ShaderName")));
-
-        // write prettified JSON to another file
-        std::ofstream o(configPath);
-        o << std::setw(4) << config << std::endl;
-
-        configFileLastSaveTime = fs::last_write_time(configFile);
-    }
-
-    void Material::LoadShader()
-    {
-        std::wstring shaderName = Utility::ToWide(config.at("ShaderName"));
-
-        for (auto& shaderStage : config.at("ShaderStage"))
-        {
-            std::cout << shaderStage << std::endl;
-            
-            std::shared_ptr<Shader> shader = Shader::Resolve(shaderName, shaderStage);
-            ShaderManager::GetInstance().AddToUsingPool(shader);
-
-            std::wstring paramsFile;
-            ParseParamsFile(paramsFile);
-        }
+        UploadConfig(Utility::ToWide(config["ShaderName"]));
     }
 
     void Material::UploadConfig(const std::wstring shaderName)
@@ -105,6 +83,8 @@ namespace DiveBomber::Component
 
         config["Stage"] = paramsData["Stage"];
 
+        json newConifgParams;
+
         for (const auto& param : paramsData["Param"])
         {
             json materialData;
@@ -114,13 +94,29 @@ namespace DiveBomber::Component
             {
                 if (existedParam["Name"] == param["Name"])
                 {
-                    existed = true;
-                    materialData = existedParam;
+                    if (existedParam["Type"] == param["Type"])
+                    {
+                        materialData = existedParam;
+                        existed = true;
+                    }
                     break;
                 }
             }
 
             if (existed)
+            {
+                json comparedSource = materialData;
+                comparedSource.erase("Value");
+                json comparedDestination = param;
+                comparedDestination.erase("Default");
+                if (comparedSource != comparedDestination)
+                {
+                    comparedSource = comparedDestination;
+                    comparedSource["Value"] = materialData["Value"];
+                    materialData = comparedSource;
+                }
+            }
+            else
             {
                 materialData["Name"] = param["Name"];
                 materialData = param;
@@ -133,7 +129,11 @@ namespace DiveBomber::Component
                     {
                         if (param["Default"] == "Black")
                         {
-                            materialData["Value"] = "WhiteTexture";
+                            materialData["Value"] = "BlackTexture";
+                        }
+                        if (param["Default"] == "Gray")
+                        {
+                            materialData["Value"] = "GrayTexture";
                         }
                         else if (param["Default"] == "White")
                         {
@@ -164,35 +164,31 @@ namespace DiveBomber::Component
                         materialData["Value"] = { 1.0f,1.0f,1.0f,1.0f };
                     }
                 }
-
-                config["Param"].emplace_back(materialData);
-            }
-            else
-            {
-                if()
             }
 
+            newConifgParams.emplace_back(materialData);
         }
+
+        config["Param"] = newConifgParams;
+
+        // write prettified JSON to another file
+        std::ofstream outFile(configFile);
+        outFile << std::setw(4) << config << std::endl;
+        outFile.close();
+
+        configFileLastSaveTime = fs::last_write_time(configFile);
     }
 
-    void DiveBomber::Component::Material::ParseParamsFile(const std::wstring paramsFile)
+    void Material::ReloadConfig()
     {
-        json paramsData;
-        paramsData = json::parse(paramsFile, nullptr, false);
+        std::wstring shaderName = Utility::ToWide(config["ShaderName"]);
 
-        if (paramsData.is_discarded())
+        for (auto& shaderStage : config["Stage"])
         {
-            std::cout << "parse json error" << std::endl;
-        }
+            std::cout << shaderStage << std::endl;
 
-        for (const auto& param : paramsData["Param"])
-        {
-            auto a = param.find("enabled");
-            if (a == param.end())
-            {
-                auto b = 1;
-            }
-            std::cout << param.at("Name") << std::endl;
+            std::shared_ptr<Shader> shader = Shader::Resolve(shaderName, shaderStage);
+            ShaderManager::GetInstance().AddToUsingPool(shader);
         }
     }
 
