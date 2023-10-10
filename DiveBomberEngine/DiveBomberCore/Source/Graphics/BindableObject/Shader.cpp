@@ -206,6 +206,11 @@ namespace DiveBomber::BindableObject
 		isDirty = inputIsDirty;
 	}
 
+	ShaderType Shader::GetShaderType() const noexcept
+	{
+		return type;
+	}
+
 	std::wstring Shader::GetShaderTypeAbbreviation() const noexcept
 	{
 		switch (type)

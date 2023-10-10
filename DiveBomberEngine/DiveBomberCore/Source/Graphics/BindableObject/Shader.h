@@ -38,6 +38,8 @@ namespace DiveBomber::BindableObject
 		[[nodiscard]] bool IsDirty() const noexcept;
 		void SetDirty(bool inputIsDirty) noexcept;
 
+		[[nodiscard]] ShaderType GetShaderType() const noexcept;
+
 		void RecompileShader();
 		[[nodiscard]] static std::wstring GetShaderParamsString(const std::wstring name);
 

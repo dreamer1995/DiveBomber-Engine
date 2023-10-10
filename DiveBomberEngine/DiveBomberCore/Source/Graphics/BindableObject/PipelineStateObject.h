@@ -9,16 +9,6 @@ namespace DiveBomber::BindableObject
 	class Topology;
 	class Shader;
 
-	struct PipelineStateShader
-	{
-		std::shared_ptr<Shader> vertexShader;
-		std::shared_ptr<Shader> hullShader;
-		std::shared_ptr<Shader> domainShader;
-		std::shared_ptr<Shader> geometryShader;
-		std::shared_ptr<Shader> pixelShader;
-		std::shared_ptr<Shader> computeShader;
-	};
-
 	class PipelineStateObject final : public Bindable
 	{
 	public:
@@ -27,7 +17,7 @@ namespace DiveBomber::BindableObject
 			std::shared_ptr<RootSignature> rootSignature;
 			std::shared_ptr<VertexBuffer> vertexBuffer;
 			std::shared_ptr<Topology> topology;
-			PipelineStateShader pipelineStateShader;
+			std::vector<std::shared_ptr<Shader>> shaders;
 			DXGI_FORMAT dsvFormat = DXGI_FORMAT_UNKNOWN;
 			D3D12_RT_FORMAT_ARRAY rtvFormats{};
 		};
@@ -67,14 +57,7 @@ namespace DiveBomber::BindableObject
 
 	private:
 		[[nodiscard]] static std::string GenerateUID_(const std::string& tag);
-		template<typename T>
-		void AssignShader(T& pipelineStateStreamData, ID3DBlob* blob)
-		{
-			if (blob)
-			{
-				pipelineStateStreamData = CD3DX12_SHADER_BYTECODE(blob);
-			}
-		}
+		void AssignShader(PipelineStateStream& pipelineStateStream) noexcept;
 
 	private:
 		std::string tag;
