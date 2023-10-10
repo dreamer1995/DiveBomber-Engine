@@ -61,8 +61,8 @@ namespace DiveBomber::DrawableObject
 		pipelineStateReference.rootSignature = rootSignature;
 		pipelineStateReference.vertexBuffer = vertexBuffer;
 		pipelineStateReference.topology = topology;
-		pipelineStateReference.vertexShader = vertexShader;
-		pipelineStateReference.pixelShader = pixelShader;
+		pipelineStateReference.pipelineStateShader.vertexShader = vertexShader;
+		pipelineStateReference.pipelineStateShader.pixelShader = pixelShader;
 		pipelineStateReference.rtvFormats = rtvFormats;
 		pipelineStateReference.dsvFormat = dsvFormat;
 

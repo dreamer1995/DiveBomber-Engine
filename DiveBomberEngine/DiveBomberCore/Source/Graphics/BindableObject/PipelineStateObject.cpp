@@ -62,9 +62,23 @@ namespace DiveBomber::BindableObject
 
 	bool DiveBomber::BindableObject::PipelineStateObject::IsShaderDirty() noexcept
 	{
-		return 
-			pipelineStateReference.vertexShader->IsDirty() ||
-			pipelineStateReference.pixelShader->IsDirty();
+		bool isShaderDirty;
+		auto checkShaderDirty = [isShaderDirty](std::shared_ptr<Shader> shader) mutable
+			{
+				if (shader)
+				{
+					isShaderDirty |= shader->IsDirty();
+				}
+			};
+
+		checkShaderDirty(pipelineStateReference.pipelineStateShader.vertexShader);
+		checkShaderDirty(pipelineStateReference.pipelineStateShader.hullShader);
+		checkShaderDirty(pipelineStateReference.pipelineStateShader.domainShader);
+		checkShaderDirty(pipelineStateReference.pipelineStateShader.geometryShader);
+		checkShaderDirty(pipelineStateReference.pipelineStateShader.pixelShader);
+		checkShaderDirty(pipelineStateReference.pipelineStateShader.computeShader);
+
+		return isShaderDirty;
 	}
 
 	void DiveBomber::BindableObject::PipelineStateObject::UpdatePipelineState(const PipelineStateReference inputPipelineStateReference)
@@ -84,8 +98,21 @@ namespace DiveBomber::BindableObject
 		pipelineStateStream.pRootSignature = pipelineStateReference.rootSignature->GetRootSignature().Get();
 		pipelineStateStream.InputLayout = { &inputLayout[0], (UINT)inputLayout.size() };
 		pipelineStateStream.PrimitiveTopologyType = pipelineStateReference.topology->GetShaderTopology();
-		pipelineStateStream.VS = CD3DX12_SHADER_BYTECODE(pipelineStateReference.vertexShader->GetBytecode().Get());
-		pipelineStateStream.PS = CD3DX12_SHADER_BYTECODE(pipelineStateReference.pixelShader->GetBytecode().Get());
+
+		std::shared_ptr<Shader> shader;
+		shader = pipelineStateReference.pipelineStateShader.vertexShader;
+		AssignShader<CD3DX12_PIPELINE_STATE_STREAM_VS>(pipelineStateStream.VS, shader ? shader->GetBytecode().Get() : nullptr);
+		shader = pipelineStateReference.pipelineStateShader.hullShader;
+		AssignShader<CD3DX12_PIPELINE_STATE_STREAM_HS>(pipelineStateStream.HS, shader ? shader->GetBytecode().Get() : nullptr);
+		shader = pipelineStateReference.pipelineStateShader.domainShader;
+		AssignShader<CD3DX12_PIPELINE_STATE_STREAM_DS>(pipelineStateStream.DS, shader ? shader->GetBytecode().Get() : nullptr);
+		shader = pipelineStateReference.pipelineStateShader.geometryShader;
+		AssignShader<CD3DX12_PIPELINE_STATE_STREAM_GS>(pipelineStateStream.GS, shader ? shader->GetBytecode().Get() : nullptr);
+		shader = pipelineStateReference.pipelineStateShader.pixelShader;
+		AssignShader<CD3DX12_PIPELINE_STATE_STREAM_PS>(pipelineStateStream.PS, shader ? shader->GetBytecode().Get() : nullptr);
+		shader = pipelineStateReference.pipelineStateShader.computeShader;
+		AssignShader<CD3DX12_PIPELINE_STATE_STREAM_CS>(pipelineStateStream.CS, shader ? shader->GetBytecode().Get() : nullptr);
+
 		pipelineStateStream.DSVFormat = pipelineStateReference.dsvFormat;
 		pipelineStateStream.RTVFormats = pipelineStateReference.rtvFormats;
 

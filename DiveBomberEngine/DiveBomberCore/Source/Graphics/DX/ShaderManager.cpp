@@ -171,6 +171,10 @@ namespace DiveBomber::DX
                 it->second->RecompileShader();
                 it++;
             }
+            else
+            {
+                shaderPool.erase(it);
+            }
         }
     }
 
@@ -183,6 +187,10 @@ namespace DiveBomber::DX
             {
                 it->second->SetDirty(false);
                 it++;
+            }
+            else
+            {
+                shaderPool.erase(it);
             }
         }
     }
