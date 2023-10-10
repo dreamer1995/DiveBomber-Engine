@@ -185,11 +185,18 @@ namespace DiveBomber::Component
 
         for (auto& shaderStage : config["Stage"])
         {
-            std::cout << shaderStage << std::endl;
+            //std::cout << shaderStage << std::endl;
 
             std::shared_ptr<Shader> shader = Shader::Resolve(shaderName, shaderStage);
             ShaderManager::GetInstance().AddToUsingPool(shader);
+
+            shaders.emplace_back(shader);
         }
+    }
+
+    std::vector<std::shared_ptr<BindableObject::Shader>> Material::GetShaders() const noexcept
+    {
+        return shaders;
     }
 
     void Material::SetTexture(const std::shared_ptr<Texture> texture, UINT slot) noexcept

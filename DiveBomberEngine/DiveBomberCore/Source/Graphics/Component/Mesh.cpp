@@ -10,14 +10,15 @@ namespace DiveBomber::Component
     using namespace DEGraphics;
     using namespace BindableObject;
 
-    Mesh::Mesh(std::shared_ptr<VertexBuffer> inputVertexbuffer, std::shared_ptr<IndexBuffer> inputIndexBuffer)
+    Mesh::Mesh(std::wstring inputName, std::shared_ptr<VertexBuffer> inputVertexbuffer, std::shared_ptr<IndexBuffer> inputIndexBuffer)
         :
-        Mesh(inputVertexbuffer, inputIndexBuffer, Topology::Resolve(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE))
+        Mesh(inputName, inputVertexbuffer, inputIndexBuffer, Topology::Resolve(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE))
     {
     }
 
-    Mesh::Mesh(std::shared_ptr<VertexBuffer> inputVertexbuffer, std::shared_ptr<IndexBuffer> inputIndexBuffer, std::shared_ptr<Topology> inputTopology)
+    Mesh::Mesh(std::wstring inputName, std::shared_ptr<VertexBuffer> inputVertexbuffer, std::shared_ptr<IndexBuffer> inputIndexBuffer, std::shared_ptr<Topology> inputTopology)
         :
+        name(inputName),
         vertexBuffer(inputVertexbuffer),
         indexBuffer(inputIndexBuffer),
         topology(inputTopology)
@@ -48,6 +49,11 @@ namespace DiveBomber::Component
     std::shared_ptr<Topology> Mesh::GetTopology() const noexcept
     {
         return topology;
+    }
+
+    std::wstring Mesh::GetName() const noexcept
+    {
+        return name;
     }
 
     void Mesh::Bind() noxnd

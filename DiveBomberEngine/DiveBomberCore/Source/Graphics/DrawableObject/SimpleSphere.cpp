@@ -38,35 +38,9 @@ namespace DiveBomber::DrawableObject
 
 		std::shared_ptr<VertexBuffer> vertexBuffer = VertexBuffer::Resolve(geometryTag, sphere.vertices);
 		std::shared_ptr<IndexBuffer> indexBuffer = IndexBuffer::Resolve(geometryTag, sphere.indices);
-
-		std::shared_ptr<Topology> topology = Topology::Resolve(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
 		
-		mesh = std::make_shared<Mesh>(vertexBuffer, indexBuffer);
-
-		std::shared_ptr<Shader> vertexShader = Shader::Resolve(L"TestShader", ShaderType::VertexShader);
-		ShaderManager::GetInstance().AddToUsingPool(vertexShader);
-		std::shared_ptr<Shader> pixelShader = Shader::Resolve(L"TestShader", ShaderType::PixelShader);
-		ShaderManager::GetInstance().AddToUsingPool(pixelShader);
-
-		std::shared_ptr<RootSignature> rootSignature = RootSignature::Resolve("StandardFullStageAccess");
-		AddBindable(rootSignature);
-
-		D3D12_RT_FORMAT_ARRAY rtvFormats = {};
-		rtvFormats.NumRenderTargets = 1;
-		rtvFormats.RTFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
-
-		auto dsvFormat = DXGI_FORMAT_D32_FLOAT;
-
-		PipelineStateObject::PipelineStateReference pipelineStateReference;
-		pipelineStateReference.rootSignature = rootSignature;
-		pipelineStateReference.vertexBuffer = vertexBuffer;
-		pipelineStateReference.topology = topology;
-		pipelineStateReference.shaders = { vertexShader,pixelShader };
-		pipelineStateReference.rtvFormats = rtvFormats;
-		pipelineStateReference.dsvFormat = dsvFormat;
-
-		std::shared_ptr<PipelineStateObject> pipelineStateObject = PipelineStateObject::Resolve(geometryTag, std::move(pipelineStateReference));
-		AddBindable(pipelineStateObject);
+		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(name, vertexBuffer, indexBuffer);
+		meshMap.emplace(mesh->GetName(), mesh);
 
 		std::shared_ptr<Material> material = std::make_shared<Material>(name + L"Material");
 		materialMap.emplace(material->GetName(), material);
@@ -96,6 +70,24 @@ namespace DiveBomber::DrawableObject
 		transformBuffer->InitializeParentReference(*this);
 		AddBindable(transformBuffer);
 		material->SetConstant(transformBuffer->GetTransformBuffer(), 0u);
+
+		std::shared_ptr<RootSignature> rootSignature = RootSignature::Resolve("StandardFullStageAccess");
+
+		D3D12_RT_FORMAT_ARRAY rtvFormats = {};
+		rtvFormats.NumRenderTargets = 1;
+		rtvFormats.RTFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+
+		auto dsvFormat = DXGI_FORMAT_D32_FLOAT;
+
+		PipelineStateObject::PipelineStateReference pipelineStateReference;
+		pipelineStateReference.rootSignature = rootSignature;
+		pipelineStateReference.mesh = mesh;
+		pipelineStateReference.material = material;
+		pipelineStateReference.rtvFormats = rtvFormats;
+		pipelineStateReference.dsvFormat = dsvFormat;
+
+		std::shared_ptr<PipelineStateObject> pipelineStateObject = PipelineStateObject::Resolve(geometryTag, std::move(pipelineStateReference));
+		PSOMap.emplace(pipelineStateObject->GetUID(), pipelineStateObject);
 	}
 
 	SimpleSphere::~SimpleSphere()
@@ -135,12 +127,10 @@ namespace DiveBomber::DrawableObject
 
 	void SimpleSphere::Bind() const noxnd
 	{
-		mesh->Bind();
 		Drawable::Bind();
-		for (auto& material : materialMap)
+		for (auto& pso : PSOMap)
 		{
-			material.second->Bind();
-			Graphics::GetInstance().GetGraphicsCommandList()->DrawIndexedInstanced(mesh->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
+			pso.second->Bind();
 		}
 	}
 }

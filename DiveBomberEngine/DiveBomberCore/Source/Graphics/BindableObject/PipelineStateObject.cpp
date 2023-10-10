@@ -6,15 +6,19 @@
 #include "..\..\Exception\GraphicsException.h"
 #include "RootSignature.h"
 #include "VertexBuffer.h"
+#include "IndexBuffer.h"
 #include "Topology.h"
 #include "Shader.h"
 #include "..\DX\ShaderManager.h"
+#include "..\Component\Mesh.h"
+#include "..\Component\Material.h"
 
 namespace DiveBomber::BindableObject
 {
 	using namespace DEGraphics;
 	using namespace DEException;
 	using namespace DX;
+	using namespace Component;
 
 	PipelineStateObject::PipelineStateObject(const std::string& inputTag, PipelineStateReference inputPipelineStateReference)
 		:
@@ -36,12 +40,18 @@ namespace DiveBomber::BindableObject
 
 	void PipelineStateObject::Bind() noxnd
 	{
+		pipelineStateReference.mesh->Bind();
+		pipelineStateReference.rootSignature->Bind();
+		pipelineStateReference.material->Bind();
+
 		if (IsShaderDirty())
 		{
 			UpdatePipelineState();
 		}
 
 		GFX_THROW_INFO_ONLY(Graphics::GetInstance().GetGraphicsCommandList()->SetPipelineState(pipelineState.Get()));
+
+		Graphics::GetInstance().GetGraphicsCommandList()->DrawIndexedInstanced(pipelineStateReference.mesh->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
 	}
 
 	std::shared_ptr<PipelineStateObject> PipelineStateObject::Resolve(const std::string& tag, PipelineStateReference pipelineStateReference)
@@ -57,7 +67,7 @@ namespace DiveBomber::BindableObject
 
 	void PipelineStateObject::AssignShader(PipelineStateStream& pipelineStateStream) noexcept
 	{
-		for (std::shared_ptr<Shader>& shader : pipelineStateReference.shaders)
+		for (std::shared_ptr<Shader>& shader : pipelineStateReference.material->GetShaders())
 		{
 			if (shader)
 			{
@@ -94,7 +104,7 @@ namespace DiveBomber::BindableObject
 	bool DiveBomber::BindableObject::PipelineStateObject::IsShaderDirty() noexcept
 	{
 		bool isShaderDirty = false;
-		for (std::shared_ptr<Shader>& shader : pipelineStateReference.shaders)
+		for (std::shared_ptr<Shader>& shader : pipelineStateReference.material->GetShaders())
 		{
 			if (shader)
 			{
@@ -115,13 +125,13 @@ namespace DiveBomber::BindableObject
 	{
 		HRESULT hr;
 
-		std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayout = pipelineStateReference.vertexBuffer->GetLayout().GetD3DLayout();
+		std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayout = pipelineStateReference.mesh->GetVertexBuffer()->GetLayout().GetD3DLayout();
 
 		PipelineStateStream pipelineStateStream;
 
 		pipelineStateStream.pRootSignature = pipelineStateReference.rootSignature->GetRootSignature().Get();
 		pipelineStateStream.InputLayout = { &inputLayout[0], (UINT)inputLayout.size() };
-		pipelineStateStream.PrimitiveTopologyType = pipelineStateReference.topology->GetShaderTopology();
+		pipelineStateStream.PrimitiveTopologyType = pipelineStateReference.mesh->GetTopology()->GetShaderTopology();
 		AssignShader(pipelineStateStream);
 		pipelineStateStream.DSVFormat = pipelineStateReference.dsvFormat;
 		pipelineStateStream.RTVFormats = pipelineStateReference.rtvFormats;

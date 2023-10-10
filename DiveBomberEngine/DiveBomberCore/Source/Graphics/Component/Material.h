@@ -11,6 +11,7 @@
 namespace DiveBomber::BindableObject
 {
 	class Texture;
+	class Shader;
 }
 
 namespace DiveBomber::Component
@@ -49,6 +50,7 @@ namespace DiveBomber::Component
 		void UploadConfig(const std::wstring shaderName);
 		void ReloadConfig();
 
+		[[nodiscard]] std::vector<std::shared_ptr<BindableObject::Shader>> GetShaders() const noexcept;
 	private:
 		void GetConfig();
 		void CreateDefaultConfig();
@@ -63,5 +65,7 @@ namespace DiveBomber::Component
 		json config;
 		std::filesystem::path configFile;
 		std::filesystem::file_time_type configFileLastSaveTime;
+
+		std::vector<std::shared_ptr<BindableObject::Shader>> shaders;
 	};
 }

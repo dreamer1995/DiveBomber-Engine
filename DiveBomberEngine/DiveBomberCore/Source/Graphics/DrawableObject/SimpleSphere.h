@@ -7,6 +7,7 @@ namespace DiveBomber::BindableObject
 {
 	class Bindable;
 	class IndexBuffer;
+	class PipelineStateObject;
 }
 
 namespace DiveBomber::Component
@@ -34,7 +35,8 @@ namespace DiveBomber::DrawableObject
 		float pitch{ 0.0f };
 		float yaw{ 0.0f };
 		float roll{ 0.0f };
-		std::shared_ptr<Component::Mesh> mesh;
+		std::unordered_map<std::wstring, std::shared_ptr<Component::Mesh>> meshMap;
 		std::unordered_map<std::wstring, std::shared_ptr<Component::Material>> materialMap;
+		std::unordered_map<std::string, std::shared_ptr<BindableObject::PipelineStateObject>> PSOMap;
 	};
 }

@@ -2,6 +2,12 @@
 #include "Bindable.h"
 #include "..\GraphicsHeader.h"
 
+namespace DiveBomber::Component
+{
+	class Mesh;
+	class Material;
+}
+
 namespace DiveBomber::BindableObject
 {
 	class RootSignature;
@@ -15,9 +21,8 @@ namespace DiveBomber::BindableObject
 		struct PipelineStateReference
 		{
 			std::shared_ptr<RootSignature> rootSignature;
-			std::shared_ptr<VertexBuffer> vertexBuffer;
-			std::shared_ptr<Topology> topology;
-			std::vector<std::shared_ptr<Shader>> shaders;
+			std::shared_ptr<Component::Mesh> mesh;
+			std::shared_ptr<Component::Material> material;
 			DXGI_FORMAT dsvFormat = DXGI_FORMAT_UNKNOWN;
 			D3D12_RT_FORMAT_ARRAY rtvFormats{};
 		};
