@@ -2,6 +2,7 @@
 
 #include "..\Graphics\Graphics.h"
 #include "..\Graphics\DX\CommandQueue.h"
+#include "..\Graphics\DX\ShaderManager.h"
 #include "..\Graphics\DrawableObject\SimpleSphere.h"
 #include "..\Graphics\Component\Camera.h"
 #include "..\Graphics\RenderPipeline\RenderPipelineGraph.h"
@@ -47,6 +48,7 @@ namespace DiveBomber::DEScene
 		{
 			drawableObject.second->Bind();
 		}
+		ShaderManager::GetInstance().ResetAllShaderDirtyState();
 	}
 
 	std::shared_ptr<Camera> Scene::GetMainCamera() const noexcept

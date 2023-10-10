@@ -152,6 +152,7 @@
     <ClInclude Include="Source\Graphics\BindableObject\Texture.h" />
     <ClInclude Include="Source\Graphics\Component\Material.h" />
     <ClInclude Include="Source\Graphics\Component\Mesh.h" />
+    <ClInclude Include="Source\Utility\DEJson.h" />
     <ClInclude Include="Source\Graphics\DrawableObject\Model.h" />
     <ClInclude Include="Source\Graphics\DEDirextX.h" />
     <ClInclude Include="Source\Graphics\DrawableObject\Drawable.h" />

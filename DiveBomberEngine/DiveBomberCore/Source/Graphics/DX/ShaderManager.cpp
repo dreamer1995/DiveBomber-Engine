@@ -114,7 +114,7 @@ namespace DiveBomber::DX
 
         // Load the shader source file to a blob.
         wrl::ComPtr<IDxcBlobEncoding> sourceBlob;
-        GFX_THROW_INFO(utils->CreateBlob(hlslFile.c_str(), hlslFile.size(), DXC_CP_ACP, &sourceBlob));
+        GFX_THROW_INFO(utils->CreateBlob(hlslFile.c_str(), (UINT)hlslFile.size(), DXC_CP_ACP, &sourceBlob));
 
         const DxcBuffer sourceBuffer = {
             .Ptr = sourceBlob->GetBufferPointer(),
@@ -158,65 +158,31 @@ namespace DiveBomber::DX
     void ShaderManager::AddToUsingPool(std::shared_ptr<BindableObject::Shader> shader) noexcept
     {
         std::lock_guard<std::mutex> lock(shaderManagerMutex);
-        shaderPool.emplace(shader->GetUID(), shader);
-    }
-
-    void ShaderManager::AddToUsingPool(std::shared_ptr<BindableObject::PipelineStateObject> PSO) noexcept
-    {
-        std::lock_guard<std::mutex> lock(shaderManagerMutex);
-        pipelineStateObjectPool.emplace(PSO->GetUID(), PSO);
+        shaderPool[shader->GetUID()] = shader;
     }
 
     void ShaderManager::ReCompileShader()
     {
+        auto it = shaderPool.begin();
+        while (it != shaderPool.end())
         {
-            auto it = shaderPool.begin();
-            while (it != shaderPool.end())
+            if (it->second)
             {
-                if (it->second)
-                {
-                    it->second->RecompileShader();
-                    it++;
-                }
-                else
-                {
-                    shaderPool.erase(it);
-                }
+                it->second->RecompileShader();
+                it++;
             }
         }
-        
+    }
+
+    void ShaderManager::ResetAllShaderDirtyState() noexcept
+    {
+        auto it = shaderPool.begin();
+        while (it != shaderPool.end())
         {
-            auto it = pipelineStateObjectPool.begin();
-            while (it != pipelineStateObjectPool.end())
+            if (it->second)
             {
-                if (it->second)
-                {
-                    if (it->second->IsShaderDirty())
-                    {
-                        it->second->UpdatePipelineState();
-                    }
-                    it++;
-                }
-                else
-                {
-                    pipelineStateObjectPool.erase(it);
-                }
-            }
-        }
-        
-        {
-            auto it = shaderPool.begin();
-            while (it != shaderPool.end())
-            {
-                if (it->second)
-                {
-                    it->second->SetDirty(false);
-                    it++;
-                }
-                else
-                {
-                    shaderPool.erase(it);
-                }
+                it->second->SetDirty(false);
+                it++;
             }
         }
     }
@@ -227,15 +193,6 @@ namespace DiveBomber::DX
         if (it != shaderPool.end())
         {
             shaderPool.erase(it);
-        }
-    }
-
-    void ShaderManager::DeletePipelineStateObjectInUsingPool(const std::string key) noexcept
-    {
-        auto it = pipelineStateObjectPool.find(key);
-        if (it != pipelineStateObjectPool.end())
-        {
-            pipelineStateObjectPool.erase(it);
         }
     }
 

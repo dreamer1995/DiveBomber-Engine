@@ -3,7 +3,7 @@
 
 #include "..\BindableObject\ConstantBufferInHeap.h"
 #include "..\BindableObject\DynamicConstantBufferInHeap.h"
-#include "..\..\..\ThirdParty\json.hpp"
+#include "..\..\Utility\DEJson.h"
 
 #include <vector>
 #include <unordered_map>

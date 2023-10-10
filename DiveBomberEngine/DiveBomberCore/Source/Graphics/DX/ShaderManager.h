@@ -26,10 +26,9 @@ namespace DiveBomber::DX
 
 		[[nodiscard]] wrl::ComPtr<ID3DBlob> Compile(const std::string& hlslFile, const std::wstring shaderDirectory, const std::wstring shaderName, BindableObject::ShaderType shaderType);
 		void AddToUsingPool(std::shared_ptr<BindableObject::Shader> shader) noexcept;
-		void AddToUsingPool(std::shared_ptr<BindableObject::PipelineStateObject> PSO) noexcept;
 		void ReCompileShader();
+		void ResetAllShaderDirtyState() noexcept;
 		void DeleteShaderInUsingPool(const std::string key) noexcept;
-		void DeletePipelineStateObjectInUsingPool(const std::string key) noexcept;
 
 		[[nodiscard]] static ShaderManager& GetInstance();
 		static void Destructor() noexcept;
@@ -43,7 +42,6 @@ namespace DiveBomber::DX
 		wrl::ComPtr<IDxcIncludeHandler> includeHandler;
 
 		std::unordered_map<std::string, std::shared_ptr<BindableObject::Shader>> shaderPool;
-		std::unordered_map<std::string, std::shared_ptr<BindableObject::PipelineStateObject>> pipelineStateObjectPool;
 
 		std::mutex shaderManagerMutex;
 

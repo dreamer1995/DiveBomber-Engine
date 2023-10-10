@@ -1,0 +1,10 @@
+#pragma once
+#pragma warning(disable:26800)
+#pragma warning(disable:26819)
+#pragma warning(disable:28020)
+#pragma warning(disable:26495)
+#include "..\..\ThirdParty\json.hpp"
+#pragma warning(default:26800)
+#pragma warning(default:26819)
+#pragma warning(default:28020)
+#pragma warning(default:26495)

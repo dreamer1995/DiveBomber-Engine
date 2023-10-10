@@ -68,7 +68,6 @@ namespace DiveBomber::DrawableObject
 
 		std::shared_ptr<PipelineStateObject> pipelineStateObject = PipelineStateObject::Resolve(geometryTag, std::move(pipelineStateReference));
 		AddBindable(pipelineStateObject);
-		ShaderManager::GetInstance().AddToUsingPool(pipelineStateObject);
 
 		std::shared_ptr<Material> material = std::make_shared<Material>(name + L"Material");
 		materialMap.emplace(material->GetName(), material);

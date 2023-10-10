@@ -127,6 +127,7 @@
     <ClInclude Include="Source\Graphics\BindableObject\DynamicConstantBuffer.h" />
     <ClInclude Include="Source\Graphics\BindableObject\DynamicConstantBufferInHeap.h" />
     <ClInclude Include="ThirdParty\json.hpp" />
+    <ClInclude Include="Source\Utility\DEJson.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

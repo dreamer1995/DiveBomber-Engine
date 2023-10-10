@@ -36,6 +36,11 @@ namespace DiveBomber::BindableObject
 
 	void PipelineStateObject::Bind() noxnd
 	{
+		if (IsShaderDirty())
+		{
+			UpdatePipelineState();
+		}
+
 		GFX_THROW_INFO_ONLY(Graphics::GetInstance().GetGraphicsCommandList()->SetPipelineState(pipelineState.Get()));
 	}
 
