@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <any>
 
 namespace DiveBomber::Component
 {
@@ -69,6 +70,78 @@ namespace DiveBomber::Component
         UploadConfig(Utility::ToWide(config["ShaderName"]));
     }
 
+    int Material::ParamTypeStringToEnum(std::string string) noexcept
+    {
+        if (string == "Float")
+        {
+            return (int)ShaderParamType::SPT_Float;
+        }
+        else if (string == "Float4")
+        {
+            return (int)ShaderParamType::SPT_Float4;
+        }
+        else if (string == "Color")
+        {
+            return (int)ShaderParamType::SPT_Color;
+        }
+        else if (string == "Texture")
+        {
+            return (int)ShaderParamType::SPT_Texture;
+        }
+        else
+        {
+            std::cout << "Unknow parameter type " + string + " in shader!" << std::endl;
+            return -1;
+        }
+    }
+
+    int Material::ShaderStageStringToEnum(std::string string) noexcept
+    {
+        if (string == "VS")
+        {
+            return (int)ShaderType::VertexShader;
+        }
+        else if (string == "HS")
+        {
+            return (int)ShaderType::HullShader;
+        }
+        else if (string == "DS")
+        {
+            return (int)ShaderType::DomainShader;
+        }
+        else if (string == "GS")
+        {
+            return (int)ShaderType::VertexShader;
+        }
+        else if (string == "PS")
+        {
+            return (int)ShaderType::PixelShader;
+        }
+        else if (string == "CS")
+        {
+            return (int)ShaderType::ComputeShader;
+        }
+        else
+        {
+            std::cout << "Unknow shader stage: " + string + "!" << std::endl;
+            return -1;
+        }
+    }
+
+    int Material::ParamTypeToDynamicConstantType(ShaderParamType type) noexcept
+    {
+        switch (type)
+        {
+        case ShaderParamType::SPT_Float:
+            return DynamicConstantProcess::Float;
+        case ShaderParamType::SPT_Color:
+        case ShaderParamType::SPT_Float4:
+            return DynamicConstantProcess::Float4;
+        case ShaderParamType::SPT_Bool:
+            return DynamicConstantProcess::Bool;
+        }
+    }
+
     void Material::UploadConfig(const std::wstring shaderName)
     {
         std::wstring paramString = Shader::GetShaderParamsString(shaderName);
@@ -79,6 +152,16 @@ namespace DiveBomber::Component
         if (paramsData.is_discarded())
         {
             std::cout << "parse json error" << std::endl;
+        }
+
+        for (int i = 0; i < paramsData["Param"].size(); i++)
+        {
+            paramsData["Param"][i]["Type"] = ParamTypeStringToEnum(paramsData["Param"][i]["Type"]);
+        }
+        
+        for (int i = 0; i < paramsData["Stage"].size(); i++)
+        {
+            paramsData["Stage"][i] = ShaderStageStringToEnum(paramsData["Stage"][i]);
         }
 
         config["Stage"] = paramsData["Stage"];
@@ -125,23 +208,23 @@ namespace DiveBomber::Component
                 auto defaultVal = param.find("Default");
                 if (defaultVal != param.end())
                 {
-                    if (materialData["Type"] == "Texture")
+                    if (materialData["Type"] == ShaderParamType::SPT_Texture)
                     {
                         if (param["Default"] == "Black")
                         {
-                            materialData["Value"] = "BlackTexture";
+                            materialData["Value"] = "black.dds";
                         }
                         if (param["Default"] == "Gray")
                         {
-                            materialData["Value"] = "GrayTexture";
+                            materialData["Value"] = "gray.dds";
                         }
                         else if (param["Default"] == "White")
                         {
-                            materialData["Value"] = "WhiteTexture";
+                            materialData["Value"] = "white.dds";
                         }
                         else if (param["Default"] == "Normal")
                         {
-                            materialData["Value"] = "WhiteTexture";
+                            materialData["Value"] = "normal.dds";
                         }
                     }
                     else
@@ -151,15 +234,15 @@ namespace DiveBomber::Component
                 }
                 else
                 {
-                    if (materialData["Type"] == "Texture")
+                    if (materialData["Type"] == ShaderParamType::SPT_Texture)
                     {
-                        materialData["Value"] = "WhiteTexture";
+                        materialData["Value"] = "white.dds";
                     }
-                    else if (materialData["Type"] == "Float")
+                    else if (materialData["Type"] == ShaderParamType::SPT_Float)
                     {
                         materialData["Value"] = 1.0;
                     }
-                    else if (materialData["Type"] == "Color" || materialData["Type"] == "Float4")
+                    else if (materialData["Type"] == ShaderParamType::SPT_Color || materialData["Type"] == ShaderParamType::SPT_Float4)
                     {
                         materialData["Value"] = { 1.0f,1.0f,1.0f,1.0f };
                     }
@@ -192,11 +275,58 @@ namespace DiveBomber::Component
 
             shaders.emplace_back(shader);
         }
+
+        DynamicConstantProcess::RawLayout DCBLayout;
+        for (auto& param : config["Param"])
+        {
+            if (param["Type"] == ShaderParamType::SPT_Texture)
+            {
+                SetTexture(Texture::Resolve(Utility::ToWide(param["Value"])));
+            }
+            else if(param["Type"] == ShaderParamType::SPT_Float)
+            {
+                DCBLayout.Add<DynamicConstantProcess::Float>(param["Name"]);
+            }
+            else if (param["Type"] == ShaderParamType::SPT_Float4 || param["Type"] == ShaderParamType::SPT_Color)
+            {
+                DCBLayout.Add<DynamicConstantProcess::Float4>(param["Name"]);
+            }
+            else if (param["Type"] == ShaderParamType::SPT_Bool)
+            {
+                DCBLayout.Add<DynamicConstantProcess::Bool>(param["Name"]);
+            }
+        }
+
+        DynamicConstantProcess::Buffer DXBBuffer = DynamicConstantProcess::Buffer(std::move(DCBLayout));
+        for (auto& param : config["Param"])
+        {
+            if (param["Type"] == ShaderParamType::SPT_Float)
+            {
+                DXBBuffer[param["Name"]] = param["Value"].get<float>();
+            }
+            else if (param["Type"] == ShaderParamType::SPT_Float4 || param["Type"] == ShaderParamType::SPT_Color)
+            {
+                dx::XMFLOAT4 float4 = { param["Value"][0],param["Value"][1],param["Value"][2],param["Value"][3] };
+                DXBBuffer[param["Name"]] = float4;
+            }
+            else if (param["Type"] == ShaderParamType::SPT_Bool)
+            {
+                DXBBuffer[param["Name"]] = param["Value"].get<bool>();
+            }
+        }
+
+        std::shared_ptr<DynamicConstantBufferInHeap> baseMat = std::make_shared<DynamicConstantBufferInHeap>(Utility::ToNarrow(name), DXBBuffer);
+        SetConstant(Utility::ToNarrow(name), baseMat, 1u);
     }
 
     std::vector<std::shared_ptr<BindableObject::Shader>> Material::GetShaders() const noexcept
     {
         return shaders;
+    }
+
+    void Material::SetTexture(const std::shared_ptr<Texture> texture) noexcept
+    {
+        SetTexture(texture, numTextureIndices);
     }
 
     void Material::SetTexture(const std::shared_ptr<Texture> texture, UINT slot) noexcept
@@ -211,6 +341,11 @@ namespace DiveBomber::Component
 
         UINT index = (numConstantIndices + slot);
         shaderResourceIndices[index] = texture->GetSRVDescriptorHeapOffset();
+    }
+
+    void Material::SetConstant(const std::string constantName, const std::shared_ptr<DynamicConstantBufferInHeap> constant) noexcept
+    {
+        SetConstant(constantName, constant, numConstantIndices);
     }
 
     void Material::SetConstant(const std::string constantName, const std::shared_ptr<DynamicConstantBufferInHeap> constant, UINT slot) noexcept

@@ -45,31 +45,10 @@ namespace DiveBomber::DrawableObject
 		std::shared_ptr<Material> material = std::make_shared<Material>(name + L"Material");
 		materialMap.emplace(material->GetName(), material);
 
-		material->SetTexture(Texture::Resolve(L"earth.dds"), 0u);
-		material->SetTexture(Texture::Resolve(L"rustediron2_basecolor.png"), 1u);
-
-		{
-			DynamicConstantProcess::RawLayout DCBLayout;
-			DCBLayout.Add<DynamicConstantProcess::Float4>("baseColor");
-			auto DXBBuffer = DynamicConstantProcess::Buffer(std::move(DCBLayout));
-			DXBBuffer["baseColor"] = dx::XMFLOAT4{ 1.0f,0.0f,0.0f,0.0f };
-			std::shared_ptr<DynamicConstantBufferInHeap> baseMat = std::make_shared<DynamicConstantBufferInHeap>(geometryTag + "BaseMat0", DXBBuffer);
-			material->SetConstant(geometryTag + "BaseMat0", baseMat, 1u);
-		}
-
-		{
-			DynamicConstantProcess::RawLayout DCBLayout;
-			DCBLayout.Add<DynamicConstantProcess::Float4>("baseColor");
-			auto DXBBuffer = DynamicConstantProcess::Buffer(std::move(DCBLayout));
-			DXBBuffer["baseColor"] = dx::XMFLOAT4{ 0.0f,1.0f,0.0f,0.0f };
-			std::shared_ptr<DynamicConstantBufferInHeap> baseMat = std::make_shared<DynamicConstantBufferInHeap>(geometryTag + "BaseMat1", DXBBuffer);
-			material->SetConstant(geometryTag + "BaseMat1", baseMat, 2u);
-		}
-
 		std::shared_ptr<ConstantTransformBuffer> transformBuffer = std::make_shared<ConstantTransformBuffer>();
 		transformBuffer->InitializeParentReference(*this);
 		AddBindable(transformBuffer);
-		material->SetConstant(transformBuffer->GetTransformBuffer(), 0u);
+		material->SetConstant(transformBuffer->GetTransformBuffer());
 
 		std::shared_ptr<RootSignature> rootSignature = RootSignature::Resolve("StandardFullStageAccess");
 

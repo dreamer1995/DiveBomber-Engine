@@ -2,19 +2,19 @@
     "Param": [
         {
             "Name": "baseMap",
-            "Type": "Texture",
-            "Value": "WhiteTexture",
+            "Type": 4,
+            "Value": "white.dds",
             "sRGB": true
         },
         {
             "Name": "rustMap",
-            "Type": "Texture",
-            "Value": "GrayTexture",
+            "Type": 4,
+            "Value": "gray.dds",
             "sRGB": false
         },
         {
             "Name": "baseColor",
-            "Type": "Color",
+            "Type": 3,
             "Value": [
                 1.0,
                 0.0,

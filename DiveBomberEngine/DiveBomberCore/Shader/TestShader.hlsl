@@ -2,7 +2,7 @@
 
 "Properties"
 {
-	"Stage":[ 0,4 ],
+	"Stage":[ "VS","PS" ],
 	"Param":
 	[
 		{"Name":"baseMap", "Type":"Texture", "sRGB":true},
@@ -66,7 +66,7 @@ ProcessData VSMain(VSIn In)
 {
 	ProcessData Out;
 
-	ConstantBuffer<ModelViewProjection> ModelViewProjectionCB = ResourceDescriptorHeap[NonUniformResourceIndex(IndexConstantCB.transform0Index)];
+	ConstantBuffer<ModelViewProjection> ModelViewProjectionCB = ResourceDescriptorHeap[NonUniformResourceIndex(IndexConstantCB.transform2Index)];
 	
     Out.hPos = mul(float4(In.pos, 1.0f), ModelViewProjectionCB.matrix_MVP);
     Out.uv = In.uv;
@@ -76,8 +76,8 @@ ProcessData VSMain(VSIn In)
 
 float4 PSMain(ProcessData In) : SV_Target
 {
-	ConstantBuffer<BaseShadingParams> BaseShadingParamsCB0 = ResourceDescriptorHeap[NonUniformResourceIndex(IndexConstantCB.transform1Index)];
-	ConstantBuffer<BaseShadingParams> BaseShadingParamsCB1 = ResourceDescriptorHeap[NonUniformResourceIndex(IndexConstantCB.transform2Index)];
+	ConstantBuffer<BaseShadingParams> BaseShadingParamsCB0 = ResourceDescriptorHeap[NonUniformResourceIndex(IndexConstantCB.transform0Index)];
+	ConstantBuffer<BaseShadingParams> BaseShadingParamsCB1 = ResourceDescriptorHeap[NonUniformResourceIndex(IndexConstantCB.transform1Index)];
 	
 	Texture2D<float4> baseMap = ResourceDescriptorHeap[NonUniformResourceIndex(IndexConstantCB.texure0Index)];
 	Texture2D<float4> rustMap = ResourceDescriptorHeap[NonUniformResourceIndex(IndexConstantCB.texure1Index)];
@@ -88,7 +88,8 @@ float4 PSMain(ProcessData In) : SV_Target
 	baseColor.rgb = pow(baseColor.rgb, 2.2f);
 	rustColor.rgb = pow(rustColor.rgb, 2.2f);
 	
-	float4 color = lerp(baseColor, rustColor, rustColor.g) * (BaseShadingParamsCB0.baseColor/* + BaseShadingParamsCB1.baseColor*/);
+	float4 color = baseColor;
+	//float4 color = lerp(baseColor, rustColor, rustColor.g) * (BaseShadingParamsCB0.baseColor/* + BaseShadingParamsCB1.baseColor*/);
 	
 	color.rgb = pow(color.rgb, 1 / 2.2f);
 	
