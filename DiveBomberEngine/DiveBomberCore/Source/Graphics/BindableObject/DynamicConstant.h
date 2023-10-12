@@ -418,6 +418,8 @@ namespace DiveBomber::BindableObject::DynamicConstantProcess
 		// have to be careful with this one...
 		// the buffer that has once been pilfered must not be used :x
 		Buffer( Buffer&& ) noexcept;
+		// DiveBomber Engine: for some reason, dynamic layout will change, so buffer should be assigned to new
+		Buffer& operator=(const Buffer& buf) noexcept;
 		// how you begin indexing into buffer (root is always Struct)
 		ElementRef operator[]( const std::string& key ) noxnd;
 		// if Buffer is const, you only get to index into the buffer with a read-only proxy

@@ -72,7 +72,15 @@ namespace DiveBomber::BindableObject
 
 		virtual void Update(const DynamicConstantProcess::Buffer& buffer)
 		{
-			dynamicBuffer.CopyFrom(buffer);
+			// this will cost less? or more???
+			if (&dynamicBuffer.GetRootLayoutElement() == &buffer.GetRootLayoutElement())
+			{
+				dynamicBuffer.CopyFrom(buffer);
+			}
+			else
+			{
+				dynamicBuffer = buffer;
+			}
 
 			size_t dataSize = dynamicBuffer.GetSizeInBytes();
 			// Create an committed resource for the upload.

@@ -33,6 +33,17 @@
                 1.0
             ],
             "sRGB": true
+        },
+        {
+            "Name": "baseColor3",
+            "Type": 3,
+            "Value": [
+                0.0,
+                1.0,
+                0.0,
+                1.0
+            ],
+            "sRGB": true
         }
     ],
     "ShaderName": "TestShader",

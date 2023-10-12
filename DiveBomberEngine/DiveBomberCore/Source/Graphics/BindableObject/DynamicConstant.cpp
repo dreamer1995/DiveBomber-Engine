@@ -386,6 +386,12 @@ namespace DiveBomber::BindableObject::DynamicConstantProcess
 		pLayoutRoot( std::move( buf.pLayoutRoot ) ),
 		bytes( std::move( buf.bytes ) )
 	{}
+	Buffer& Buffer::operator=(const Buffer & buf) noexcept
+	{
+		pLayoutRoot = buf.pLayoutRoot;
+		bytes = buf.bytes;
+		return *this;
+	}
 	ElementRef Buffer::operator[]( const std::string& key ) noxnd
 	{
 		return { &(*pLayoutRoot)[key],bytes.data(),0u };

@@ -315,8 +315,17 @@ namespace DiveBomber::Component
             }
         }
 
-        std::shared_ptr<DynamicConstantBufferInHeap> baseMat = std::make_shared<DynamicConstantBufferInHeap>(Utility::ToNarrow(name), DXBBuffer);
-        SetConstant(Utility::ToNarrow(name), baseMat);
+        auto matExsists = dynamicConstantMap.find(Utility::ToNarrow(name));
+
+        if (matExsists != dynamicConstantMap.end() && matExsists->second != nullptr)
+        {
+            dynamicConstantMap[Utility::ToNarrow(name)]->Update(DXBBuffer);
+        }
+        else
+        {
+            std::shared_ptr<DynamicConstantBufferInHeap> baseMat = std::make_shared<DynamicConstantBufferInHeap>(Utility::ToNarrow(name), DXBBuffer);
+            SetConstant(Utility::ToNarrow(name), baseMat);
+        }
     }
 
     std::vector<std::shared_ptr<BindableObject::Shader>> Material::GetShaders() const noexcept
@@ -382,7 +391,7 @@ namespace DiveBomber::Component
             std::wstring shaderName = Utility::ToWide(config["ShaderName"]);
 
             UploadConfig(shaderName);
-            //ReloadConfig();
+            ReloadConfig();
         }
 
         indexConstantBuffer->Update(shaderResourceIndices.data(), shaderResourceIndices.size() * sizeof(UINT));
