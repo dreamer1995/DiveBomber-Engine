@@ -68,4 +68,9 @@ namespace DiveBomber::DEScene
 			return nullptr;
 		}
 	}
+
+	std::multimap<std::wstring, std::shared_ptr<DrawableObject::Drawable>> Scene::GetSceneObjects() const noexcept
+	{
+		return drawableObjects;
+	}
 }

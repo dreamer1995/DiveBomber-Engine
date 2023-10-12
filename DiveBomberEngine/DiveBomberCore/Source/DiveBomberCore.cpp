@@ -344,6 +344,26 @@ namespace DiveBomber
 					Sleep(100);
 					ShaderManager::GetInstance().ReCompileShader();
 				}
+
+				if (command == L"refresh material")
+				{
+					auto objectsMap = currentScene->GetSceneObjects();
+					for (auto& objectPair : objectsMap)
+					{
+						auto sphere = std::dynamic_pointer_cast<SimpleSphere>(objectPair.second);
+						if (sphere)
+						{
+							auto materialMap = sphere->GetMaterials();
+							for (auto& materialPair : materialMap)
+							{
+								materialPair.second->GetConfig();
+								materialPair.second->ReloadConfig();
+							}
+						}
+					}
+
+					std::cout << "Refreshed all materials!" << std::endl;
+				}
 			}
 
 			command.clear();

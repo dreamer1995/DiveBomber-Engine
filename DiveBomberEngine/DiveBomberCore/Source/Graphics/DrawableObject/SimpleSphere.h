@@ -30,6 +30,7 @@ namespace DiveBomber::DrawableObject
 		void SetRotation(DirectX::XMFLOAT3 inputRotation = { 0.0f,0.0f,0.0f }) noexcept;
 		[[nodiscard]] DirectX::XMMATRIX GetTransformXM() const noexcept override;
 		[[nodiscard]] std::shared_ptr<Component::Material> GetMaterialByName(std::wstring name) const noexcept;
+		[[nodiscard]] std::unordered_map<std::wstring, std::shared_ptr<Component::Material>> GetMaterials() const noexcept;
 	private:
 		DirectX::XMFLOAT3 position{ 0.0f,0.0f,0.0f };
 		float pitch{ 0.0f };

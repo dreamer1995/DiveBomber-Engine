@@ -28,6 +28,7 @@ namespace DiveBomber::BindableObject
 		[[nodiscard]] static std::shared_ptr<Texture> Resolve(const std::wstring& name);
 		[[nodiscard]] static std::shared_ptr<Texture> Resolve(const std::wstring& name,
 			TextureDescription textureDesc);
+		std::wstring GetName() const noexcept;
 		template<typename...Ignore>
 		[[nodiscard]] static std::string GenerateUID(const std::wstring& name, Ignore&&...ignore)
 		{

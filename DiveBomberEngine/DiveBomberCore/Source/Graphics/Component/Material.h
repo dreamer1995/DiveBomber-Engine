@@ -32,8 +32,8 @@ namespace DiveBomber::Component
 	{
 	public:
 		Material(const std::wstring inputName);
-		void SetTexture(const std::shared_ptr<BindableObject::Texture> texture) noexcept;
-		void SetTexture(const std::shared_ptr<BindableObject::Texture> texture, UINT slot) noexcept;
+		void SetTexture(const std::string textureName, const std::shared_ptr<BindableObject::Texture> texture) noexcept;
+		void SetTexture(const std::string textureName, const std::shared_ptr<BindableObject::Texture> texture, UINT slot) noexcept;
 
 		template<typename C>
 		void SetConstant(const std::shared_ptr<BindableObject::ConstantBufferInHeap<C>> constant) noexcept
@@ -63,13 +63,13 @@ namespace DiveBomber::Component
 		void SetMaterialParameterScalar(std::string constantName, std::string key, float scalar) const noexcept;
 		void SetMaterialParameterVector(std::string constantName, std::string key, DirectX::XMFLOAT4 vector) const noexcept;
 
+		void GetConfig();
 		void UploadConfig(const std::wstring shaderName);
 		void ReloadConfig();
 
 		[[nodiscard]] std::vector<std::shared_ptr<BindableObject::Shader>> GetShaders() const noexcept;
 		[[nodiscard]] bool IsShaderDirty() noexcept;
 	private:
-		void GetConfig();
 		void CreateDefaultConfig();
 		[[nodiscard]] int ParamTypeStringToEnum(std::string string) noexcept;
 		[[nodiscard]] int ShaderStageStringToEnum(std::string string) noexcept;
@@ -81,6 +81,8 @@ namespace DiveBomber::Component
 		UINT numTextureIndices = 0;
 		std::vector<UINT> shaderResourceIndices;
 		std::unordered_map<std::string, std::shared_ptr<BindableObject::DynamicConstantBufferInHeap>> dynamicConstantMap;
+		std::unordered_map<std::string, std::shared_ptr<BindableObject::Texture>> textureMap;
+		std::unordered_map<std::string, UINT> textureSlotMap;
 
 		json config;
 		std::filesystem::path configFile;

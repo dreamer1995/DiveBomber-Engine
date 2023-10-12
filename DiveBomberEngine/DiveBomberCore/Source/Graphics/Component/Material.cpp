@@ -6,6 +6,7 @@
 #include "..\BindableObject\Shader.h"
 #include "..\..\Utility\GlobalParameters.h"
 #include "..\DX\ShaderManager.h"
+#include "..\DX\CommandQueue.h"
 
 #include <iostream>
 #include <fstream>
@@ -139,6 +140,9 @@ namespace DiveBomber::Component
             return DynamicConstantProcess::Float4;
         case ShaderParamType::SPT_Bool:
             return DynamicConstantProcess::Bool;
+        default:
+            std::cout << "Unknow shader param type: " + std::to_string((int)type) + "!" << std::endl;
+            return -1;
         }
     }
 
@@ -281,7 +285,24 @@ namespace DiveBomber::Component
         {
             if (param["Type"] == ShaderParamType::SPT_Texture)
             {
-                SetTexture(Texture::Resolve(Utility::ToWide(param["Value"])));
+                auto matExsists = textureMap.find(param["Name"]);
+
+                if (matExsists != textureMap.end() && matExsists->second != nullptr)
+                {
+                    if (Utility::ToNarrow(matExsists->second->GetName()) != param["Value"])
+                    {
+                        SetTexture(param["Name"], Texture::Resolve(Utility::ToWide(param["Value"])), textureSlotMap[param["Name"]]);
+
+                        //not a good idea, should be re-considered
+                        std::shared_ptr<CommandQueue> commandQueue = Graphics::GetInstance().GetCommandQueue(D3D12_COMMAND_LIST_TYPE_COPY);
+                        uint64_t fenceValue = Graphics::GetInstance().ExecuteCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
+                        commandQueue->WaitForFenceValue(fenceValue);
+                    }
+                }
+                else
+                {
+                    SetTexture(param["Name"], Texture::Resolve(Utility::ToWide(param["Value"])));
+                }
             }
             else if(param["Type"] == ShaderParamType::SPT_Float)
             {
@@ -347,12 +368,12 @@ namespace DiveBomber::Component
         return isShaderDirty;
     }
 
-    void Material::SetTexture(const std::shared_ptr<Texture> texture) noexcept
+    void Material::SetTexture(const std::string textureName, const std::shared_ptr<Texture> texture) noexcept
     {
-        SetTexture(texture, numTextureIndices);
+        SetTexture(textureName, texture, numTextureIndices);
     }
 
-    void Material::SetTexture(const std::shared_ptr<Texture> texture, UINT slot) noexcept
+    void Material::SetTexture(const std::string textureName, const std::shared_ptr<Texture> texture, UINT slot) noexcept
     {
         if (slot >= numTextureIndices)
         {
@@ -364,6 +385,8 @@ namespace DiveBomber::Component
 
         UINT index = (numConstantIndices + slot);
         shaderResourceIndices[index] = texture->GetSRVDescriptorHeapOffset();
+        textureMap[textureName] = texture;
+        textureSlotMap[textureName] = slot;
     }
 
     void Material::SetConstant(const std::string constantName, const std::shared_ptr<DynamicConstantBufferInHeap> constant) noexcept

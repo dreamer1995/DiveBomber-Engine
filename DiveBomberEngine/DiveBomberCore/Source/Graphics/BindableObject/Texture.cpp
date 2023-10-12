@@ -199,6 +199,11 @@ namespace DiveBomber::BindableObject
 		return GlobalBindableManager::Resolve<Texture>(name, textureDesc);
 	}
 
+	std::wstring Texture::GetName() const noexcept
+	{
+		return name;
+	}
+
 	std::string Texture::GenerateUID_(const std::wstring& name)
 	{
 		using namespace std::string_literals;

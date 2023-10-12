@@ -9,8 +9,7 @@
 		{"Name":"rustMap", "Type":"Texture", "sRGB":false, "Default":"Gray"},
 
 		{"Name":"baseColor", "Type":"Color", "sRGB":true, "Default":[1.0, 0.0, 0.0, 1.0]},
-		{"Name":"baseColor2", "Type":"Color", "sRGB":true, "Default":[0.0, 1.0, 0.0, 1.0]},
-		{"Name":"baseColor3", "Type":"Color", "sRGB":true, "Default":[0.0, 1.0, 0.0, 1.0]}
+		{"Name":"baseColor2", "Type":"Color", "sRGB":true, "Default":[0.0, 1.0, 0.0, 1.0]}
 	]
 }
 "/Properties"
@@ -44,7 +43,6 @@ struct BaseShadingParams
 {
 	float4 baseColor;
 	float4 baseColor2;
-	float4 baseColor3;
 };
 
 struct VSIn
@@ -90,7 +88,7 @@ float4 PSMain(ProcessData In) : SV_Target
 	baseColor.rgb = pow(baseColor.rgb, 2.2f);
 	rustColor.rgb = pow(rustColor.rgb, 2.2f);
 	
-	float4 color = lerp(baseColor, rustColor, rustColor.g) * (baseShadingParamsCB0.baseColor + baseShadingParamsCB0.baseColor2) * baseShadingParamsCB0.baseColor3;
+	float4 color = lerp(baseColor, rustColor, rustColor.g) * (baseShadingParamsCB0.baseColor + baseShadingParamsCB0.baseColor2);
 	
 	color.rgb = pow(color.rgb, 1 / 2.2f);
 	

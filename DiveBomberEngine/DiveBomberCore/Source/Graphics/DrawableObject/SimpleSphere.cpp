@@ -104,6 +104,11 @@ namespace DiveBomber::DrawableObject
 		}
 	}
 
+	std::unordered_map<std::wstring, std::shared_ptr<Component::Material>> SimpleSphere::GetMaterials() const noexcept
+	{
+		return materialMap;
+	}
+
 	void SimpleSphere::Bind() const noxnd
 	{
 		Drawable::Bind();
