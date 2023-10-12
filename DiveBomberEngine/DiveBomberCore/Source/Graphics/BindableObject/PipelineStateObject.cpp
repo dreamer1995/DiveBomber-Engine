@@ -44,7 +44,7 @@ namespace DiveBomber::BindableObject
 		pipelineStateReference.rootSignature->Bind();
 		pipelineStateReference.material->Bind();
 
-		if (IsShaderDirty())
+		if (pipelineStateReference.material->IsShaderDirty())
 		{
 			UpdatePipelineState();
 		}
@@ -99,20 +99,6 @@ namespace DiveBomber::BindableObject
 	std::string PipelineStateObject::GetUID() const noexcept
 	{
 		return GenerateUID(tag);
-	}
-
-	bool DiveBomber::BindableObject::PipelineStateObject::IsShaderDirty() noexcept
-	{
-		bool isShaderDirty = false;
-		for (std::shared_ptr<Shader>& shader : pipelineStateReference.material->GetShaders())
-		{
-			if (shader)
-			{
-				isShaderDirty |= shader->IsDirty();
-			}
-		}
-
-		return isShaderDirty;
 	}
 
 	void DiveBomber::BindableObject::PipelineStateObject::UpdatePipelineState(const PipelineStateReference inputPipelineStateReference)

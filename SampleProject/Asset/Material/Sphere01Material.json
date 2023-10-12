@@ -9,7 +9,7 @@
         {
             "Name": "rustMap",
             "Type": 4,
-            "Value": "gray.dds",
+            "Value": "black.dds",
             "sRGB": false
         },
         {
@@ -17,6 +17,17 @@
             "Type": 3,
             "Value": [
                 1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "sRGB": true
+        },
+        {
+            "Name": "baseColor2",
+            "Type": 3,
+            "Value": [
+                0.0,
                 0.0,
                 0.0,
                 1.0

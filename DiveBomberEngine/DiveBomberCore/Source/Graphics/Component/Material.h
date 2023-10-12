@@ -67,6 +67,7 @@ namespace DiveBomber::Component
 		void ReloadConfig();
 
 		[[nodiscard]] std::vector<std::shared_ptr<BindableObject::Shader>> GetShaders() const noexcept;
+		[[nodiscard]] bool IsShaderDirty() noexcept;
 	private:
 		void GetConfig();
 		void CreateDefaultConfig();

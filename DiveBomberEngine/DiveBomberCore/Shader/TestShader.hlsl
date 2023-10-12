@@ -8,16 +8,16 @@
 		{"Name":"baseMap", "Type":"Texture", "sRGB":true},
 		{"Name":"rustMap", "Type":"Texture", "sRGB":false, "Default":"Gray"},
 
-		{"Name":"baseColor", "Type":"Color", "sRGB":true, "Default":[1.0, 0.0, 0.0, 1.0]}
+		{"Name":"baseColor", "Type":"Color", "sRGB":true, "Default":[1.0, 0.0, 0.0, 1.0]},
+		{"Name":"baseColor2", "Type":"Color", "sRGB":true, "Default":[0.0, 1.0, 0.0, 1.0]}
 	]
 }
 "/Properties"
 
 struct IndexConstant
 {
-	uint transform0Index;
-	uint transform1Index;
-	uint transform2Index;
+	uint constant0Index;
+	uint constant1Index;
 	uint texure0Index;
 	uint texure1Index;
 };
@@ -42,6 +42,7 @@ struct ModelViewProjection
 struct BaseShadingParams
 {
 	float4 baseColor;
+	float4 baseColor2;
 };
 
 struct VSIn
@@ -66,7 +67,7 @@ ProcessData VSMain(VSIn In)
 {
 	ProcessData Out;
 
-	ConstantBuffer<ModelViewProjection> ModelViewProjectionCB = ResourceDescriptorHeap[NonUniformResourceIndex(IndexConstantCB.transform2Index)];
+	ConstantBuffer<ModelViewProjection> ModelViewProjectionCB = ResourceDescriptorHeap[NonUniformResourceIndex(IndexConstantCB.constant1Index)];
 	
     Out.hPos = mul(float4(In.pos, 1.0f), ModelViewProjectionCB.matrix_MVP);
     Out.uv = In.uv;
@@ -76,8 +77,7 @@ ProcessData VSMain(VSIn In)
 
 float4 PSMain(ProcessData In) : SV_Target
 {
-	ConstantBuffer<BaseShadingParams> BaseShadingParamsCB0 = ResourceDescriptorHeap[NonUniformResourceIndex(IndexConstantCB.transform0Index)];
-	ConstantBuffer<BaseShadingParams> BaseShadingParamsCB1 = ResourceDescriptorHeap[NonUniformResourceIndex(IndexConstantCB.transform1Index)];
+	ConstantBuffer<BaseShadingParams> baseShadingParamsCB0 = ResourceDescriptorHeap[NonUniformResourceIndex(IndexConstantCB.constant0Index)];
 	
 	Texture2D<float4> baseMap = ResourceDescriptorHeap[NonUniformResourceIndex(IndexConstantCB.texure0Index)];
 	Texture2D<float4> rustMap = ResourceDescriptorHeap[NonUniformResourceIndex(IndexConstantCB.texure1Index)];
@@ -88,8 +88,7 @@ float4 PSMain(ProcessData In) : SV_Target
 	baseColor.rgb = pow(baseColor.rgb, 2.2f);
 	rustColor.rgb = pow(rustColor.rgb, 2.2f);
 	
-	float4 color = baseColor;
-	//float4 color = lerp(baseColor, rustColor, rustColor.g) * (BaseShadingParamsCB0.baseColor/* + BaseShadingParamsCB1.baseColor*/);
+	float4 color = lerp(baseColor, rustColor, rustColor.g) * (baseShadingParamsCB0.baseColor + baseShadingParamsCB0.baseColor2);
 	
 	color.rgb = pow(color.rgb, 1 / 2.2f);
 	

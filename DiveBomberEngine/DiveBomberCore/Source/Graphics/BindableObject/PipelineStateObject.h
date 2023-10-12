@@ -40,7 +40,6 @@ namespace DiveBomber::BindableObject
 			return GenerateUID_(tag);
 		}
 		[[nodiscard]] std::string GetUID() const noexcept override;
-		[[nodiscard]] bool IsShaderDirty() noexcept;
 		void UpdatePipelineState(const PipelineStateReference inputPipelineStateReference);
 		void UpdatePipelineState();
 
