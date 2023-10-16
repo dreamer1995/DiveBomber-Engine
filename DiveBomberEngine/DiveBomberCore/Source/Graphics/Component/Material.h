@@ -53,8 +53,8 @@ namespace DiveBomber::Component
 			shaderResourceIndices[slot] = constant->GetCBVDescriptorHeapOffset();
 		}
 
-		void SetConstant(const std::string constantName, const std::shared_ptr<BindableObject::DynamicConstantBufferInHeap> constant) noexcept;
-		void SetConstant(const std::string constantName, const std::shared_ptr<BindableObject::DynamicConstantBufferInHeap> constant, UINT slot) noexcept;
+		void SetConstant(const std::string constantName, const std::shared_ptr<BindableObject::DynamicBufferInHeap> constant) noexcept;
+		void SetConstant(const std::string constantName, const std::shared_ptr<BindableObject::DynamicBufferInHeap> constant, UINT slot) noexcept;
 
 		void Bind() noxnd;
 
@@ -80,7 +80,7 @@ namespace DiveBomber::Component
 		UINT numConstantIndices = 0;
 		UINT numTextureIndices = 0;
 		std::vector<UINT> shaderResourceIndices;
-		std::unordered_map<std::string, std::shared_ptr<BindableObject::DynamicConstantBufferInHeap>> dynamicConstantMap;
+		std::unordered_map<std::string, std::shared_ptr<BindableObject::DynamicBufferInHeap>> dynamicConstantMap;
 		std::unordered_map<std::string, std::shared_ptr<BindableObject::Texture>> textureMap;
 		std::unordered_map<std::string, UINT> textureSlotMap;
 

@@ -144,9 +144,11 @@
     <ClInclude Include="Source\Graphics\BindableObject\ConstantBufferInHeap.h" />
     <ClInclude Include="Source\Graphics\BindableObject\ConstantTransformBuffer.h" />
     <ClInclude Include="Source\Graphics\BindableObject\DepthStencil.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\DynamicBufferInHeap.h" />
     <ClInclude Include="Source\Graphics\BindableObject\DynamicConstant.h" />
     <ClInclude Include="Source\Graphics\BindableObject\DynamicConstantBuffer.h" />
     <ClInclude Include="Source\Graphics\BindableObject\DynamicConstantBufferInHeap.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\DynamicStructuredBufferInHeap.h" />
     <ClInclude Include="Source\Graphics\BindableObject\GlobalBindableManager.h" />
     <ClInclude Include="Source\Graphics\BindableObject\PipelineStateObject.h" />
     <ClInclude Include="Source\Graphics\BindableObject\Texture.h" />

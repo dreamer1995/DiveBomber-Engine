@@ -58,7 +58,7 @@ namespace DiveBomber::Component
 
     void Mesh::Bind() noxnd
     {
-        vertexBuffer->Bind();
+        //vertexBuffer->Bind();
         indexBuffer->Bind();
         topology->Bind();
     }

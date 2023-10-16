@@ -100,7 +100,7 @@ namespace DiveBomber::BindableObject
 				D3D12_SUBRESOURCE_DATA subresourceData = {};
 				subresourceData.pData = dynamicBuffer.GetData();
 				subresourceData.RowPitch = bufferSize;
-				subresourceData.SlicePitch = subresourceData.RowPitch;
+				subresourceData.SlicePitch = dynamicBuffer.GetRootLayoutElement().GetSizeInBytes();
 
 				commandList->AddTransitionBarrier(constantBuffer, D3D12_RESOURCE_STATE_COPY_DEST, true);
 

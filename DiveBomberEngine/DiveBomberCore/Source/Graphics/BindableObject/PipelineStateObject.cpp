@@ -116,7 +116,7 @@ namespace DiveBomber::BindableObject
 		PipelineStateStream pipelineStateStream;
 
 		pipelineStateStream.pRootSignature = pipelineStateReference.rootSignature->GetRootSignature().Get();
-		pipelineStateStream.InputLayout = { &inputLayout[0], (UINT)inputLayout.size() };
+		//pipelineStateStream.InputLayout = { &inputLayout[0], (UINT)inputLayout.size() };
 		pipelineStateStream.PrimitiveTopologyType = pipelineStateReference.mesh->GetTopology()->GetShaderTopology();
 		AssignShader(pipelineStateStream);
 		pipelineStateStream.DSVFormat = pipelineStateReference.dsvFormat;

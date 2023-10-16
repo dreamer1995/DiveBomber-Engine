@@ -61,7 +61,7 @@ namespace DiveBomber::BindableObject
 			D3D12_SUBRESOURCE_DATA subresourceData = {};
 			subresourceData.pData = vbuf.GetData();
 			subresourceData.RowPitch = bufferSize;
-			subresourceData.SlicePitch = subresourceData.RowPitch;
+			subresourceData.SlicePitch = vbuf.GetLayout().Size();
 
 			std::shared_ptr<CommandList> copyCommandList = Graphics::GetInstance().GetCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
 

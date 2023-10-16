@@ -18,6 +18,7 @@ struct IndexConstant
 {
 	uint constant0Index;
 	uint constant1Index;
+	uint constant2Index;
 	uint texure0Index;
 	uint texure1Index;
 };
@@ -54,6 +55,12 @@ struct VSIn
     float2 uv : Texcoord;
 };
 
+struct VSInNew
+{
+	float4 pos;
+	float4 uv;
+};
+
 struct ProcessData
 {
     float2 uv	: Texcoord;
@@ -63,14 +70,15 @@ struct ProcessData
 ConstantBuffer<IndexConstant> IndexConstantCB : register(b0);
 SamplerState samp : register(s0);
 
-ProcessData VSMain(VSIn In)
+ProcessData VSMain(uint vertexID : SV_VertexID)
 {
 	ProcessData Out;
 
 	ConstantBuffer<ModelViewProjection> ModelViewProjectionCB = ResourceDescriptorHeap[NonUniformResourceIndex(IndexConstantCB.constant1Index)];
+	StructuredBuffer<VSInNew> VSInNew0 = ResourceDescriptorHeap[NonUniformResourceIndex(IndexConstantCB.constant2Index)];
 	
-    Out.hPos = mul(float4(In.pos, 1.0f), ModelViewProjectionCB.matrix_MVP);
-    Out.uv = In.uv;
+	Out.hPos = mul(float4(VSInNew0[vertexID].pos.xyz, 1.0f), ModelViewProjectionCB.matrix_MVP);
+	Out.uv = VSInNew0[vertexID].uv.xy;
 
     return Out;
 }

@@ -389,12 +389,12 @@ namespace DiveBomber::Component
         textureSlotMap[textureName] = slot;
     }
 
-    void Material::SetConstant(const std::string constantName, const std::shared_ptr<DynamicConstantBufferInHeap> constant) noexcept
+    void Material::SetConstant(const std::string constantName, const std::shared_ptr<DynamicBufferInHeap> constant) noexcept
     {
         SetConstant(constantName, constant, numConstantIndices);
     }
 
-    void Material::SetConstant(const std::string constantName, const std::shared_ptr<DynamicConstantBufferInHeap> constant, UINT slot) noexcept
+    void Material::SetConstant(const std::string constantName, const std::shared_ptr<DynamicBufferInHeap> constant, UINT slot) noexcept
     {
         if (slot >= numConstantIndices)
         {

@@ -4,6 +4,7 @@
 #include "..\BindableObject\BindableObjectCommon.h"
 #include "..\BindableObject\Geometry\Sphere.h"
 #include "..\BindableObject\DynamicConstantBufferInHeap.h"
+#include "..\BindableObject\DynamicStructuredBufferInHeap.h"
 #include "..\Component\Mesh.h"
 #include "..\Component\Material.h"
 #include "..\DX\CommandQueue.h"
@@ -31,13 +32,51 @@ namespace DiveBomber::DrawableObject
 		vl.Append(VertexLayout::Binormal);
 		vl.Append(VertexLayout::Texture2D);
 
+		using namespace std::string_literals;
+		DynamicConstantProcess::RawLayout DCBLayout;
+		DCBLayout.Add<DynamicConstantProcess::Array>("VertexData");
+		DCBLayout["VertexData"].Set<DynamicConstantProcess::Struct>(8);
+
+		DCBLayout["VertexData"].T().Add<DynamicConstantProcess::Float3>("Position"s);
+		DCBLayout["VertexData"].T().Add<DynamicConstantProcess::Float2>("Texture2D"s);
+
+		DynamicConstantProcess::Buffer DXBBuffer = DynamicConstantProcess::Buffer(std::move(DCBLayout));
+
+		DXBBuffer["VertexData"][0]["Position"s] = dx::XMFLOAT3{ -1.0f, -1.0f, -1.0f };
+		DXBBuffer["VertexData"][1]["Position"s] = dx::XMFLOAT3{ -1.0f, 1.0f, -1.0f };
+		DXBBuffer["VertexData"][2]["Position"s] = dx::XMFLOAT3{ 1.0f,  1.0f, -1.0f };
+		DXBBuffer["VertexData"][3]["Position"s] = dx::XMFLOAT3{ 1.0f, -1.0f, -1.0f };
+		DXBBuffer["VertexData"][4]["Position"s] = dx::XMFLOAT3{ -1.0f, -1.0f,  1.0f };
+		DXBBuffer["VertexData"][5]["Position"s] = dx::XMFLOAT3{ -1.0f,  1.0f,  1.0f };
+		DXBBuffer["VertexData"][6]["Position"s] = dx::XMFLOAT3{ 1.0f,  1.0f,  1.0f };
+		DXBBuffer["VertexData"][7]["Position"s] = dx::XMFLOAT3{ 1.0f, -1.0f,  1.0f };
+
+		DXBBuffer["VertexData"][0]["Texture2D"s] = dx::XMFLOAT2{ 0.f, 0.f };
+		DXBBuffer["VertexData"][1]["Texture2D"s] = dx::XMFLOAT2{ 0.f, 1.f };
+		DXBBuffer["VertexData"][2]["Texture2D"s] = dx::XMFLOAT2{ 1.f, 1.f };
+		DXBBuffer["VertexData"][3]["Texture2D"s] = dx::XMFLOAT2{ 1.f, 0.f };
+		DXBBuffer["VertexData"][4]["Texture2D"s] = dx::XMFLOAT2{ 0.f, 1.f };
+		DXBBuffer["VertexData"][5]["Texture2D"s] = dx::XMFLOAT2{ 0.f, 0.f };
+		DXBBuffer["VertexData"][6]["Texture2D"s] = dx::XMFLOAT2{ 1.f, 0.f };
+		DXBBuffer["VertexData"][7]["Texture2D"s] = dx::XMFLOAT2{ 1.f, 1.f };
+
+		std::vector<unsigned short> indices = 
+		{
+				0, 1, 2, 0, 2, 3,
+				4, 6, 5, 4, 7, 6,
+				4, 5, 1, 4, 1, 0,
+				3, 2, 6, 3, 6, 7,
+				1, 5, 6, 1, 6, 2,
+				4, 0, 3, 4, 3, 7
+		};
+
 		IndexedTriangleList sphere = Sphere::MakeNormalUVed(vl, true);
 		sphere.Transform(dx::XMMatrixScaling(1, 1, 1));
 
 		const std::string geometryTag = Utility::ToNarrow(name);
 
 		std::shared_ptr<VertexBuffer> vertexBuffer = VertexBuffer::Resolve(geometryTag, sphere.vertices);
-		std::shared_ptr<IndexBuffer> indexBuffer = IndexBuffer::Resolve(geometryTag, sphere.indices);
+		std::shared_ptr<IndexBuffer> indexBuffer = IndexBuffer::Resolve(geometryTag, indices);
 		
 		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(name, vertexBuffer, indexBuffer);
 		meshMap.emplace(mesh->GetName(), mesh);
@@ -49,6 +88,9 @@ namespace DiveBomber::DrawableObject
 		transformBuffer->InitializeParentReference(*this);
 		AddBindable(transformBuffer);
 		material->SetConstant(transformBuffer->GetTransformBuffer());
+
+		std::shared_ptr<DynamicStructuredBufferInHeap> baseMat = std::make_shared<DynamicStructuredBufferInHeap>(Utility::ToNarrow(name), DXBBuffer);
+		material->SetConstant(Utility::ToNarrow(name) + "VertexData", baseMat);
 
 		std::shared_ptr<RootSignature> rootSignature = RootSignature::Resolve("StandardFullStageAccess");
 
