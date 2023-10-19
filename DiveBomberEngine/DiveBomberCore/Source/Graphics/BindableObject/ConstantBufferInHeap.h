@@ -1,5 +1,5 @@
 #pragma once
-#include "ConstantBuffer.h"
+#include "BufferInHeap.h"
 
 #include "..\DX\DescriptorAllocator.h"
 #include "..\DX\DescriptorAllocation.h"
@@ -7,29 +7,26 @@
 namespace DiveBomber::BindableObject
 {
 	template<typename C>
-	class ConstantBufferInHeap final : public ConstantBuffer<C>
+	class ConstantBufferInHeap final : public BufferInHeap<C>
 	{
 	public:
 		ConstantBufferInHeap(const std::string& inputTag)
 			:
-			ConstantBuffer<C>(inputTag, 999u)
+			BufferInHeap<C>(inputTag)
 		{
-			descriptorAllocation = DEGraphics::Graphics::GetInstance().GetDescriptorAllocator()->Allocate(1u);
 		}
 
 		ConstantBufferInHeap(const std::string& inputTag, const C& constantData)
 			:
-			ConstantBuffer<C>(inputTag, &constantData, sizeof(constantData), 999u)
+			BufferInHeap<C>(inputTag, &constantData)
 		{
-			descriptorAllocation = DEGraphics::Graphics::GetInstance().GetDescriptorAllocator()->Allocate(1u);
 			UpdateCBV();
 		}
 
 		ConstantBufferInHeap(const std::string& inputTag, const C* constantData, size_t inputDataSize)
 			:
-			ConstantBuffer<C>(inputTag, constantData, inputDataSize, 999u)
+			BufferInHeap<C>(inputTag, constantData, inputDataSize)
 		{
-			descriptorAllocation = DEGraphics::Graphics::GetInstance().GetDescriptorAllocator()->Allocate(1u);
 			UpdateCBV();
 		}
 
@@ -47,22 +44,14 @@ namespace DiveBomber::BindableObject
 			ConstantBuffer<C>::Update(constantData, dataSize);
 			UpdateCBV();
 		}
-
-		[[nodiscard]] UINT GetCBVDescriptorHeapOffset()
-		{
-			return descriptorAllocation->GetBaseOffset();
-		}
 	private:
 		void UpdateCBV()
 		{
 			D3D12_CONSTANT_BUFFER_VIEW_DESC constantBufferViewDesc;
 			constantBufferViewDesc.BufferLocation = ConstantBuffer<C>::constantBuffer->GetGPUVirtualAddress();
-			constantBufferViewDesc.SizeInBytes = Utility::AlignUp((UINT)ConstantBuffer<C>::bufferSize, D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT);
+			constantBufferViewDesc.SizeInBytes = Utility::AlignUp(ConstantBuffer<C>::bufferSize, D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT);
 
-			DEGraphics::Graphics::GetInstance().GetDevice()->CreateConstantBufferView(&constantBufferViewDesc, descriptorAllocation->GetCPUDescriptorHandle());
+			DEGraphics::Graphics::GetInstance().GetDevice()->CreateConstantBufferView(&constantBufferViewDesc, BufferInHeap<C>::descriptorAllocation->GetCPUDescriptorHandle());
 		}
-
-	private:
-		std::shared_ptr<DX::DescriptorAllocation> descriptorAllocation;
 	};
 }

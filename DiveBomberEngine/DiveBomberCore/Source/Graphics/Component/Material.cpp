@@ -22,7 +22,8 @@ namespace DiveBomber::Component
         :
         name(inputName)
     {
-        indexConstantBuffer = std::make_shared<ConstantBuffer<UINT>>("TestSphereIndexConstant", 0u);
+        using namespace std::string_literals;
+        indexConstantBuffer = std::make_shared<ConstantBuffer<UINT>>(Utility::ToNarrow(name) + "#"s + "IndexConstant", 1u);
 
         configFile = ProjectDirectoryW L"Asset\\Material\\" + name + L".json";
 
@@ -387,6 +388,8 @@ namespace DiveBomber::Component
         shaderResourceIndices[index] = texture->GetSRVDescriptorHeapOffset();
         textureMap[textureName] = texture;
         textureSlotMap[textureName] = slot;
+
+        indexConstantBuffer->Update(shaderResourceIndices.data(), shaderResourceIndices.size() * sizeof(UINT));
     }
 
     void Material::SetConstant(const std::string constantName, const std::shared_ptr<DynamicBufferInHeap> constant) noexcept
@@ -405,6 +408,8 @@ namespace DiveBomber::Component
         }
         shaderResourceIndices[slot] = constant->GetCBVDescriptorHeapOffset();
         dynamicConstantMap[constantName] = constant;
+
+        indexConstantBuffer->Update(shaderResourceIndices.data(), shaderResourceIndices.size() * sizeof(UINT));
     }
 
     void Material::Bind() noxnd
@@ -417,7 +422,6 @@ namespace DiveBomber::Component
             ReloadConfig();
         }
 
-        indexConstantBuffer->Update(shaderResourceIndices.data(), shaderResourceIndices.size() * sizeof(UINT));
         indexConstantBuffer->Bind();
     }
 

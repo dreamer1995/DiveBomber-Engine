@@ -21,7 +21,6 @@
     <ClCompile Include="Source\WinMain.cpp" />
     <ClCompile Include="Source\Graphics\BindableObject\Vertex.cpp" />
     <ClCompile Include="Source\Utility\Color.h" />
-    <ClCompile Include="Source\Graphics\BindableObject\VertexBuffer.cpp" />
     <ClCompile Include="Source\Graphics\BindableObject\IndexBuffer.cpp" />
     <ClCompile Include="Source\Graphics\DX\CommandList.cpp" />
     <ClCompile Include="Source\Graphics\BindableObject\Shader.cpp" />
@@ -53,6 +52,7 @@
     <ClCompile Include="Source\Graphics\DX\ShaderManager.cpp" />
     <ClCompile Include="Source\Graphics\BindableObject\DynamicConstant.cpp" />
     <ClCompile Include="Source\Graphics\BindableObject\GlobalBindableManager.cpp" />
+    <ClCompile Include="Source\Graphics\BindableObject\VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Utility\Common.h" />
@@ -78,11 +78,7 @@
     <ClInclude Include="Config\SystemConfig.h" />
     <ClInclude Include="Source\Graphics\BindableObject\Vertex.h" />
     <ClInclude Include="Source\Graphics\BindableObject\Bindable.h" />
-    <ClInclude Include="Source\Graphics\BindableObject\VertexBuffer.h" />
-    <ClInclude Include="Source\Graphics\BindableObject\Geometry\Cube.h" />
     <ClInclude Include="Source\Graphics\BindableObject\Geometry\IndexedTriangleList.h" />
-    <ClInclude Include="Source\Graphics\BindableObject\Geometry\MiscShape.h" />
-    <ClInclude Include="Source\Graphics\BindableObject\Geometry\Plane.h" />
     <ClInclude Include="Source\Graphics\BindableObject\Geometry\Sphere.h" />
     <ClInclude Include="Source\Utility\DEMath.h" />
     <ClInclude Include="Source\Graphics\BindableObject\IndexBuffer.h" />
@@ -130,6 +126,9 @@
     <ClInclude Include="Source\Utility\DEJson.h" />
     <ClInclude Include="Source\Graphics\BindableObject\DynamicStructuredBufferInHeap.h" />
     <ClInclude Include="Source\Graphics\BindableObject\DynamicBufferInHeap.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\StructuredBufferInHeap.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\BufferInHeap.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\VertexBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

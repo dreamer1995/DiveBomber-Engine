@@ -89,6 +89,7 @@
     <ClCompile Include="Source\Graphics\BindableObject\GlobalBindableManager.cpp" />
     <ClCompile Include="Source\Graphics\BindableObject\PipelineStateObject.cpp" />
     <ClCompile Include="Source\Graphics\BindableObject\Texture.cpp" />
+    <ClCompile Include="Source\Graphics\BindableObject\VertexBuffer.cpp" />
     <ClCompile Include="Source\Graphics\Component\Camera.cpp" />
     <ClCompile Include="Source\Graphics\Component\Material.cpp" />
     <ClCompile Include="Source\Graphics\Component\Mesh.cpp" />
@@ -133,13 +134,13 @@
     <ClCompile Include="ThirdParty\WindowsMessageMap.cpp" />
     <ClCompile Include="Source\WinMain.cpp" />
     <ClCompile Include="Source\Graphics\BindableObject\Vertex.cpp" />
-    <ClCompile Include="Source\Graphics\BindableObject\VertexBuffer.cpp" />
     <ClCompile Include="Source\Graphics\BindableObject\Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Exception\GraphicsExceptionEX.h" />
     <ClInclude Include="Source\Graphics\BindableObject\BindableTarget.h" />
     <ClInclude Include="Source\Graphics\BindableObject\BindableObjectCommon.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\BufferInHeap.h" />
     <ClInclude Include="Source\Graphics\BindableObject\ConstantBuffer.h" />
     <ClInclude Include="Source\Graphics\BindableObject\ConstantBufferInHeap.h" />
     <ClInclude Include="Source\Graphics\BindableObject\ConstantTransformBuffer.h" />
@@ -151,7 +152,9 @@
     <ClInclude Include="Source\Graphics\BindableObject\DynamicStructuredBufferInHeap.h" />
     <ClInclude Include="Source\Graphics\BindableObject\GlobalBindableManager.h" />
     <ClInclude Include="Source\Graphics\BindableObject\PipelineStateObject.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\StructuredBufferInHeap.h" />
     <ClInclude Include="Source\Graphics\BindableObject\Texture.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\VertexBuffer.h" />
     <ClInclude Include="Source\Graphics\Component\Material.h" />
     <ClInclude Include="Source\Graphics\Component\Mesh.h" />
     <ClInclude Include="Source\Utility\DEJson.h" />
@@ -176,10 +179,7 @@
     <ClInclude Include="Source\Graphics\BindableObject\RenderTarget.h" />
     <ClInclude Include="Source\Graphics\BindableObject\Topology.h" />
     <ClInclude Include="Source\Graphics\DX\CommandList.h" />
-    <ClInclude Include="Source\Graphics\BindableObject\Geometry\Cube.h" />
     <ClInclude Include="Source\Graphics\BindableObject\Geometry\IndexedTriangleList.h" />
-    <ClInclude Include="Source\Graphics\BindableObject\Geometry\MiscShape.h" />
-    <ClInclude Include="Source\Graphics\BindableObject\Geometry\Plane.h" />
     <ClInclude Include="Source\Graphics\BindableObject\Geometry\Sphere.h" />
     <ClInclude Include="Source\Graphics\BindableObject\Bindable.h" />
     <ClInclude Include="Source\Graphics\BindableObject\IndexBuffer.h" />
@@ -209,7 +209,6 @@
     <ClInclude Include="ThirdParty\WindowsMessageMap.h" />
     <ClInclude Include="Source\Graphics\DEWrl.h" />
     <ClInclude Include="Source\Graphics\BindableObject\Vertex.h" />
-    <ClInclude Include="Source\Graphics\BindableObject\VertexBuffer.h" />
     <ClInclude Include="Source\Graphics\BindableObject\Shader.h" />
     <ClInclude Include="ThirdParty\ThreadSafeQueue.h" />
   </ItemGroup>

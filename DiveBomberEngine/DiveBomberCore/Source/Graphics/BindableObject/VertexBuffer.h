@@ -21,11 +21,11 @@ namespace DiveBomber::BindableObject
 			return GenerateUID_(tag);
 		}
 		[[nodiscard]] std::string GetUID() const noexcept override;
+		wrl::ComPtr<ID3D12Resource> vertexBuffer;
 	private:
 		[[nodiscard]] static std::string GenerateUID_(const std::string& tag);
 		std::string tag;
 		UINT stride;
-		wrl::ComPtr<ID3D12Resource> vertexBuffer;
 		VertexProcess::VertexLayout layout;
 		D3D12_VERTEX_BUFFER_VIEW vertexBufferView;
 	};

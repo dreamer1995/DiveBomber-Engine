@@ -433,6 +433,8 @@ namespace DiveBomber::BindableObject::DynamicConstantProcess
 		void CopyFrom( const Buffer& ) noxnd;
 		// return another sptr to the layout root
 		std::shared_ptr<LayoutElement> ShareLayoutRoot() const noexcept;
+		// DiveBomber Engine: compute element count when root structure is array
+		size_t GetElementCount() const noexcept;
 	private:
 		std::shared_ptr<LayoutElement> pLayoutRoot;
 		std::vector<char> bytes;

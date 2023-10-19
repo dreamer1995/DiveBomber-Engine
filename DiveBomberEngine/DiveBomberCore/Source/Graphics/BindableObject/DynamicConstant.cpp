@@ -421,4 +421,8 @@ namespace DiveBomber::BindableObject::DynamicConstantProcess
 	{
 		return pLayoutRoot;
 	}
+	size_t Buffer::GetElementCount() const noexcept
+	{
+		return GetSizeInBytes() / GetRootLayoutElement().GetSizeInBytes();
+	}
 }

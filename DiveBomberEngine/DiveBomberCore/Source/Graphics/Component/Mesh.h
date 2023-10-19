@@ -1,11 +1,18 @@
 #pragma once
 #include "..\GraphicsHeader.h"
+#include "..\BindableObject\Vertex.h"
+#include "..\BindableObject\ConstantBufferInHeap.h"
+#include "..\BindableObject\StructuredBufferInHeap.h"
 
 namespace DiveBomber::BindableObject
 {
-	class VertexBuffer;
 	class IndexBuffer;
 	class Topology;
+}
+
+namespace DiveBomber::BindableObject::VertexProcess
+{
+	class VertexData;
 }
 
 namespace DiveBomber::Component
@@ -14,15 +21,15 @@ namespace DiveBomber::Component
 	{
 	public:
 		Mesh(std::wstring inputName,
-			std::shared_ptr<BindableObject::VertexBuffer> inputVertexbuffer, std::shared_ptr<BindableObject::IndexBuffer> inputIndexBuffer);
+			BindableObject::VertexProcess::VertexData& inputVertexbuffer, std::shared_ptr<BindableObject::IndexBuffer> inputIndexBuffer);
 		Mesh(std::wstring inputName,
-			std::shared_ptr<BindableObject::VertexBuffer> inputVertexbuffer, std::shared_ptr<BindableObject::IndexBuffer> inputIndexBuffer,
+			BindableObject::VertexProcess::VertexData& inputVertexbuffer, std::shared_ptr<BindableObject::IndexBuffer> inputIndexBuffer,
 			std::shared_ptr<BindableObject::Topology> inputTopology);
 
-		void SetMesh(std::shared_ptr<BindableObject::VertexBuffer> inputVertexbuffer,
+		void SetMesh(BindableObject::VertexProcess::VertexData& inputVertexbuffer,
 			std::shared_ptr<BindableObject::IndexBuffer> inputIndexBuffer) noexcept;
 		void SetTopology(std::shared_ptr<BindableObject::Topology> inputTopology) noexcept;
-		[[nodiscard]] std::shared_ptr<BindableObject::VertexBuffer> GetVertexBuffer() const noexcept;
+		[[nodiscard]] BindableObject::VertexProcess::VertexData& GetVertexData() noexcept;
 		[[nodiscard]] std::shared_ptr<BindableObject::IndexBuffer> GetIndexBuffer() const noexcept;
 		[[nodiscard]] std::shared_ptr<BindableObject::Topology> GetTopology() const noexcept;
 		[[nodiscard]] std::wstring GetName() const noexcept;
@@ -30,8 +37,11 @@ namespace DiveBomber::Component
 		void Bind() noxnd;
 	private:
 		std::wstring name;
-		std::shared_ptr<BindableObject::VertexBuffer> vertexBuffer;
+		BindableObject::VertexProcess::VertexData vertexData;
 		std::shared_ptr<BindableObject::IndexBuffer> indexBuffer;
 		std::shared_ptr<BindableObject::Topology> topology;
+
+		std::shared_ptr<BindableObject::ConstantBuffer<UINT>> vertexDataConstantBuffer;
+		std::shared_ptr<BindableObject::StructuredBufferInHeap<char>> vertexBuffer;
 	};
 }

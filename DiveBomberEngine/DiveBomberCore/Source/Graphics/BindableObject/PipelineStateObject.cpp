@@ -5,7 +5,6 @@
 #include "GlobalBindableManager.h"
 #include "..\..\Exception\GraphicsException.h"
 #include "RootSignature.h"
-#include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include "Topology.h"
 #include "Shader.h"
@@ -40,8 +39,8 @@ namespace DiveBomber::BindableObject
 
 	void PipelineStateObject::Bind() noxnd
 	{
-		pipelineStateReference.mesh->Bind();
 		pipelineStateReference.rootSignature->Bind();
+		pipelineStateReference.mesh->Bind();
 		pipelineStateReference.material->Bind();
 
 		if (pipelineStateReference.material->IsShaderDirty())
@@ -111,7 +110,7 @@ namespace DiveBomber::BindableObject
 	{
 		HRESULT hr;
 
-		std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayout = pipelineStateReference.mesh->GetVertexBuffer()->GetLayout().GetD3DLayout();
+		//std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayout = pipelineStateReference.mesh->GetVertexBuffer()->GetLayout().GetD3DLayout();
 
 		PipelineStateStream pipelineStateStream;
 

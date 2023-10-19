@@ -51,6 +51,8 @@ namespace DiveBomber::Component
 				numConstantIndices = slot + 1;
 			}
 			shaderResourceIndices[slot] = constant->GetCBVDescriptorHeapOffset();
+
+			indexConstantBuffer->Update(shaderResourceIndices.data(), shaderResourceIndices.size() * sizeof(UINT));
 		}
 
 		void SetConstant(const std::string constantName, const std::shared_ptr<BindableObject::DynamicBufferInHeap> constant) noexcept;

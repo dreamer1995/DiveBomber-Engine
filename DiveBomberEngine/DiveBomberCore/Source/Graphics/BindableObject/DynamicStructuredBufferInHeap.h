@@ -7,24 +7,27 @@ namespace DiveBomber::BindableObject
 	{
 	public:
 		DynamicStructuredBufferInHeap(const std::string& inputTag,
-			const DynamicConstantProcess::CookedLayout& inputLayout)
+			const DynamicConstantProcess::CookedLayout& inputLayout, size_t inputNumElements = 1)
 			:
-			DynamicBufferInHeap(inputTag, inputLayout)
+			DynamicBufferInHeap(inputTag, inputLayout),
+			numElements(inputNumElements)
 		{
 		}
 
 		DynamicStructuredBufferInHeap(const std::string& inputTag,
-			const DynamicConstantProcess::Buffer& inputBuffer)
+			const DynamicConstantProcess::Buffer& inputBuffer, size_t inputNumElements = 1)
 			:
-			DynamicBufferInHeap(inputTag, inputBuffer)
+			DynamicBufferInHeap(inputTag, inputBuffer),
+			numElements(inputNumElements)
 		{
 			UpdateCBV();
 		}
 
 		DynamicStructuredBufferInHeap(const std::string& inputTag,
-			const DynamicConstantProcess::LayoutElement& inputLayout, const DynamicConstantProcess::Buffer& inputBuffer)
+			const DynamicConstantProcess::LayoutElement& inputLayout, const DynamicConstantProcess::Buffer& inputBuffer, size_t inputNumElements = 1)
 			:
-			DynamicBufferInHeap(inputTag, inputLayout, inputBuffer)
+			DynamicBufferInHeap(inputTag, inputLayout, inputBuffer),
+			numElements(inputNumElements)
 		{
 			UpdateCBV();
 		}
@@ -39,6 +42,10 @@ namespace DiveBomber::BindableObject
 			UpdateCBV();
 		}
 
+		void SetNumElements(size_t size)
+		{
+			numElements = size;
+		}
 	private:
 		void UpdateCBV()
 		{
@@ -46,16 +53,19 @@ namespace DiveBomber::BindableObject
 			{
 				.Format = DXGI_FORMAT_UNKNOWN,
 				.ViewDimension = D3D12_SRV_DIMENSION_BUFFER,
-				.Shader4ComponentMapping = D3D12_ENCODE_SHADER_4_COMPONENT_MAPPING(0,1,2,3) ,
+				.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING,
 				.Buffer =
 					{
 						.FirstElement = 0u,
-						.NumElements = static_cast<UINT>(dynamicBuffer.GetSizeInBytes()) / static_cast<UINT>(dynamicBuffer.GetRootLayoutElement().GetSizeInBytes()),
-						.StructureByteStride = static_cast<UINT>(dynamicBuffer.GetRootLayoutElement().GetSizeInBytes()),
+						.NumElements = (UINT)numElements,
+						.StructureByteStride = static_cast<UINT>(dynamicBuffer.GetSizeInBytes()) / (UINT)numElements,
 					},
 			};
 
 			DEGraphics::Graphics::GetInstance().GetDevice()->CreateShaderResourceView(constantBuffer.Get(), &srvDesc, descriptorAllocation->GetCPUDescriptorHandle());
 		}
+
+	private:
+		size_t numElements;
 	};
 }

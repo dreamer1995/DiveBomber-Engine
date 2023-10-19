@@ -14,13 +14,17 @@
 }
 "/Properties"
 
-struct IndexConstant
+struct MaterialIndex
 {
 	uint constant0Index;
 	uint constant1Index;
-	uint constant2Index;
 	uint texure0Index;
 	uint texure1Index;
+};
+
+struct VertexDataIndex
+{
+	uint vertexDataIndex;
 };
 
 struct ModelViewProjection
@@ -48,17 +52,11 @@ struct BaseShadingParams
 
 struct VSIn
 {
-    float3 pos : Position;
-    float3 n : Normal;
-    float3 t : Tangent;
-    float3 b : Binormal;
-    float2 uv : Texcoord;
-};
-
-struct VSInNew
-{
-	float4 pos;
-	float4 uv;
+    float3 pos;
+    float3 n;
+    float3 t;
+    float3 b;
+    float2 uv;
 };
 
 struct ProcessData
@@ -67,28 +65,29 @@ struct ProcessData
     float4 hPos : SV_Position;
 };
 
-ConstantBuffer<IndexConstant> IndexConstantCB : register(b0);
+ConstantBuffer<VertexDataIndex> VertexDataIndexCB : register(b0);
+ConstantBuffer<MaterialIndex> MaterialIndexCB : register(b1);
 SamplerState samp : register(s0);
 
 ProcessData VSMain(uint vertexID : SV_VertexID)
 {
 	ProcessData Out;
 
-	ConstantBuffer<ModelViewProjection> ModelViewProjectionCB = ResourceDescriptorHeap[NonUniformResourceIndex(IndexConstantCB.constant1Index)];
-	StructuredBuffer<VSInNew> VSInNew0 = ResourceDescriptorHeap[NonUniformResourceIndex(IndexConstantCB.constant2Index)];
+	ConstantBuffer<ModelViewProjection> ModelViewProjectionCB = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.constant1Index)];
+	StructuredBuffer<VSIn> VSIn = ResourceDescriptorHeap[NonUniformResourceIndex(VertexDataIndexCB.vertexDataIndex)];
 	
-	Out.hPos = mul(float4(VSInNew0[vertexID].pos.xyz, 1.0f), ModelViewProjectionCB.matrix_MVP);
-	Out.uv = VSInNew0[vertexID].uv.xy;
+	Out.hPos = mul(float4(VSIn[vertexID].pos, 1.0f), ModelViewProjectionCB.matrix_MVP);
+	Out.uv = VSIn[vertexID].uv;
 
     return Out;
 }
 
 float4 PSMain(ProcessData In) : SV_Target
 {
-	ConstantBuffer<BaseShadingParams> baseShadingParamsCB0 = ResourceDescriptorHeap[NonUniformResourceIndex(IndexConstantCB.constant0Index)];
+	ConstantBuffer<BaseShadingParams> baseShadingParamsCB0 = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.constant0Index)];
 	
-	Texture2D<float4> baseMap = ResourceDescriptorHeap[NonUniformResourceIndex(IndexConstantCB.texure0Index)];
-	Texture2D<float4> rustMap = ResourceDescriptorHeap[NonUniformResourceIndex(IndexConstantCB.texure1Index)];
+	Texture2D<float4> baseMap = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.texure0Index)];
+	Texture2D<float4> rustMap = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.texure1Index)];
 	
 	float4 baseColor = baseMap.Sample(samp, In.uv);
 	float4 rustColor = rustMap.Sample(samp, In.uv);
