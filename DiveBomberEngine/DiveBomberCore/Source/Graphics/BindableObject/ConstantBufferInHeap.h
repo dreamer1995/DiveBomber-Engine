@@ -49,7 +49,7 @@ namespace DiveBomber::BindableObject
 		{
 			D3D12_CONSTANT_BUFFER_VIEW_DESC constantBufferViewDesc;
 			constantBufferViewDesc.BufferLocation = ConstantBuffer<C>::constantBuffer->GetGPUVirtualAddress();
-			constantBufferViewDesc.SizeInBytes = Utility::AlignUp(ConstantBuffer<C>::bufferSize, D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT);
+			constantBufferViewDesc.SizeInBytes = Utility::AlignUp((UINT)ConstantBuffer<C>::bufferSize, D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT);
 
 			DEGraphics::Graphics::GetInstance().GetDevice()->CreateConstantBufferView(&constantBufferViewDesc, BufferInHeap<C>::descriptorAllocation->GetCPUDescriptorHandle());
 		}
