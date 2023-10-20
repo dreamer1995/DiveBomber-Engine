@@ -89,7 +89,6 @@
     <ClCompile Include="Source\Graphics\BindableObject\GlobalBindableManager.cpp" />
     <ClCompile Include="Source\Graphics\BindableObject\PipelineStateObject.cpp" />
     <ClCompile Include="Source\Graphics\BindableObject\Texture.cpp" />
-    <ClCompile Include="Source\Graphics\BindableObject\VertexBuffer.cpp" />
     <ClCompile Include="Source\Graphics\Component\Camera.cpp" />
     <ClCompile Include="Source\Graphics\Component\Material.cpp" />
     <ClCompile Include="Source\Graphics\Component\Mesh.cpp" />
@@ -154,7 +153,6 @@
     <ClInclude Include="Source\Graphics\BindableObject\PipelineStateObject.h" />
     <ClInclude Include="Source\Graphics\BindableObject\StructuredBufferInHeap.h" />
     <ClInclude Include="Source\Graphics\BindableObject\Texture.h" />
-    <ClInclude Include="Source\Graphics\BindableObject\VertexBuffer.h" />
     <ClInclude Include="Source\Graphics\Component\Material.h" />
     <ClInclude Include="Source\Graphics\Component\Mesh.h" />
     <ClInclude Include="Source\Utility\DEJson.h" />

@@ -47,6 +47,7 @@ namespace DiveBomber::DEGraphics
 		void DrawInstanced(UINT vertexCount, UINT instanceCount) noxnd;
 		void Dispatch(const UINT x, const UINT y, UINT const group) noxnd;
 		void SetCamera(const std::shared_ptr<Component::Camera> camera) noexcept;
+		[[nodiscard]] std::shared_ptr<Component::Camera> GetCamera() const noexcept;
 		[[nodiscard]] DirectX::XMMATRIX GetCameraMatrix() const noexcept;
 		[[nodiscard]] DirectX::XMMATRIX GetProjetionMatrix() const noexcept;
 		[[nodiscard]] float GetFOV() const noexcept;

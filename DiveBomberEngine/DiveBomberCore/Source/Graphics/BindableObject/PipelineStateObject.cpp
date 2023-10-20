@@ -8,7 +8,9 @@
 #include "IndexBuffer.h"
 #include "Topology.h"
 #include "Shader.h"
+#include "ConstantTransformBuffer.h"
 #include "..\DX\ShaderManager.h"
+#include "..\Component\Camera.h"
 #include "..\Component\Mesh.h"
 #include "..\Component\Material.h"
 
@@ -40,7 +42,9 @@ namespace DiveBomber::BindableObject
 	void PipelineStateObject::Bind() noxnd
 	{
 		pipelineStateReference.rootSignature->Bind();
+		Graphics::GetInstance().GetCamera()->Bind();
 		pipelineStateReference.mesh->Bind();
+		pipelineStateReference.tansformsConstantBuffer->Bind();
 		pipelineStateReference.material->Bind();
 
 		if (pipelineStateReference.material->IsShaderDirty())

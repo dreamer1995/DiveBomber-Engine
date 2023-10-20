@@ -3,6 +3,8 @@
 #include "..\Graphics.h"
 #include "..\BindableObject\IndexBuffer.h"
 #include "..\BindableObject\Topology.h"
+#include "..\BindableObject\ConstantBufferInHeap.h"
+#include "..\BindableObject\StructuredBufferInHeap.h"
 
 namespace DiveBomber::Component
 {
@@ -23,7 +25,7 @@ namespace DiveBomber::Component
         topology(inputTopology)
     {
         using namespace std::string_literals;
-        vertexDataConstantBuffer = std::make_shared<ConstantBuffer<UINT>>(Utility::ToNarrow(name) + "#"s + "MeshConstant", 0u);
+        vertexDataConstantBuffer = std::make_shared<ConstantBuffer<UINT>>(Utility::ToNarrow(name) + "#"s + "MeshConstant", 2u);
         vertexBuffer = std::make_shared<StructuredBufferInHeap<char>>(Utility::ToNarrow(name) +"#"s + "VertexData", vertexData.Size());
         vertexBuffer->Update(vertexData.GetData(), vertexData.SizeBytes());
         vertexDataConstantBuffer->Update(vertexBuffer->GetCBVDescriptorHeapOffset());

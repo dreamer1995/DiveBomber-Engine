@@ -1,13 +1,15 @@
 #pragma once
 #include "..\GraphicsHeader.h"
 #include "..\BindableObject\Vertex.h"
-#include "..\BindableObject\ConstantBufferInHeap.h"
-#include "..\BindableObject\StructuredBufferInHeap.h"
 
 namespace DiveBomber::BindableObject
 {
 	class IndexBuffer;
 	class Topology;
+	template<typename C>
+	class ConstantBuffer;
+	template<typename C>
+	class StructuredBufferInHeap;
 }
 
 namespace DiveBomber::BindableObject::VertexProcess

@@ -1,12 +1,14 @@
 #include "Camera.h"
 
 #include "..\Graphics.h"
+#include "..\BindableObject\ConstantBuffer.h"
 //#include "imgui/imgui.h"
 
 namespace DiveBomber::Component
 {
 	using namespace DEGraphics;
 	using namespace Utility;
+	using namespace BindableObject;
 	namespace dx = DirectX;
 
 	Camera::Camera(std::string inputName, CameraAttributes attributes, bool inputTethered) noexcept
@@ -20,6 +22,8 @@ namespace DiveBomber::Component
 		//pCbuf(gfx, 1u),
 	{
 		projection = std::make_unique<Projection>(attributes.projectionAttributes);
+		using namespace std::string_literals;
+		transformConstantBuffer = std::make_shared<ConstantBuffer<Transforms>>(name + "#"s + "CamTransform", 0u);
 
 		if (tethered)
 		{
@@ -237,6 +241,16 @@ namespace DiveBomber::Component
 		yaw_ = rotation.y;
 	}
 
+	void Camera::CalculateTransformMatrices() noexcept
+	{
+		transforms.matrix_V = DirectX::XMMatrixTranspose(GetMatrix());
+		transforms.matrix_P = DirectX::XMMatrixTranspose(GetProjection());
+		transforms.matrix_VP = transforms.matrix_P * transforms.matrix_V;
+		transforms.matrix_I_V = DirectX::XMMatrixInverse(nullptr, transforms.matrix_V);
+		transforms.matrix_I_P = DirectX::XMMatrixInverse(nullptr, transforms.matrix_P);
+		transforms.matrix_I_VP = DirectX::XMMatrixInverse(nullptr, transforms.matrix_VP);
+	}
+
 	void Camera::RotateAround(const float dx, const float dy, const DirectX::XMFLOAT3 centralPoint) noexcept
 	{
 		using namespace DirectX;
@@ -266,10 +280,10 @@ namespace DiveBomber::Component
 		}
 	}
 
-	void Camera::Bind() const noexcept
+	void Camera::Bind() noxnd
 	{
-		using namespace dx;
-		const dx::XMVECTOR forwardBaseVector = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+		//using namespace dx;
+		//const dx::XMVECTOR forwardBaseVector = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 		// apply the camera rotations to a base vector
 		//dx::XMFLOAT3 lookVector;
 		//XMStoreFloat3(&lookVector, XMVector3Transform(forwardBaseVector,
@@ -287,6 +301,10 @@ namespace DiveBomber::Component
 		//pCbuf.Update(gfx, cbData);
 		//pCbuf.Bind(gfx);
 		//const_cast<Camera*>(this)->proj.UpdateScreenResolution(gfx);
+
+		CalculateTransformMatrices();
+		transformConstantBuffer->Update(transforms);
+		transformConstantBuffer->Bind();
 	}
 
 	void Camera::SetRotation(const float pitch, const float yaw) noexcept
@@ -354,5 +372,10 @@ namespace DiveBomber::Component
 	void Camera::ResizeAspectRatio(const UINT width, const UINT height) noexcept
 	{
 		projection->ResizeAspectRatio(width, height);
+	}
+
+	Camera::Transforms Camera::GetTransforms() const noexcept
+	{
+		return transforms;
 	}
 }

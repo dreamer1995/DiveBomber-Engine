@@ -23,10 +23,21 @@ namespace DiveBomber::Component
 			Projection::ProjectionAttributes projectionAttributes;
 		};
 
+		struct Transforms
+		{
+			DirectX::XMMATRIX matrix_V;
+			DirectX::XMMATRIX matrix_P;
+			DirectX::XMMATRIX matrix_VP;
+			DirectX::XMMATRIX matrix_I_V;
+			DirectX::XMMATRIX matrix_I_P;
+			DirectX::XMMATRIX matrix_I_VP;
+		};
+
 	public:
 		Camera(std::string inputName, CameraAttributes attributes, bool inputTethered = false) noexcept;
 		Camera(std::string inputName, bool tethered = false) noexcept;
 		void BindToGraphics(std::shared_ptr<Camera> camera) const;
+
 		[[nodiscard]] DirectX::XMMATRIX GetMatrix() const noexcept;
 		[[nodiscard]] DirectX::XMMATRIX GetProjection() const noexcept;
 		[[nodiscard]] DirectX::XMMATRIX GetProjection(UINT renderTargetWidth, UINT renderTargetHeight) const noexcept;
@@ -43,13 +54,14 @@ namespace DiveBomber::Component
 
 		void LookZero(const DirectX::XMFLOAT3 inputPos) noexcept;
 		void RotateAround(const float dx, const float dy, const DirectX::XMFLOAT3 centralPoint) noexcept;
-		void Bind() const noexcept;
+		void Bind() noxnd;
 		void SetRotation(const float pitch, const float yaw) noexcept;
 		void ProjectScreenToWorldExpansionBasis(DirectX::XMFLOAT4& vWBasisX, DirectX::XMFLOAT4& vWBasisY, DirectX::XMFLOAT4& vWBasisZ,
 			DirectX::XMFLOAT2& UVToViewA, DirectX::XMFLOAT2& UVToViewB) const noxnd;
 		void SetOffsetPixels(const float offsetX, const float offsetY) noxnd;
 		void ResizeAspectRatio() noexcept;
 		void ResizeAspectRatio(const UINT width, const UINT height) noexcept;
+		[[nodiscard]] Transforms GetTransforms() const noexcept;
 
 	private:
 		struct CameraCBuf
@@ -66,6 +78,7 @@ namespace DiveBomber::Component
 
 	private:
 		void KeepLookFront(const DirectX::XMFLOAT3 inputPos) noexcept;
+		void CalculateTransformMatrices() noexcept;
 
 	private:
 		float yaw_;
@@ -81,5 +94,8 @@ namespace DiveBomber::Component
 		bool enableFrustumIndicator = false;
 		std::unique_ptr<Projection> projection;
 		//CameraIndicator indicator;
+
+		std::shared_ptr<BindableObject::ConstantBuffer<Transforms>> transformConstantBuffer;
+		Transforms transforms;
 	};
 }

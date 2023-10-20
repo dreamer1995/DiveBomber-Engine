@@ -246,6 +246,11 @@ namespace DiveBomber::DEGraphics
 		renderCamera = camera;
 	}
 
+	std::shared_ptr<Camera> Graphics::GetCamera() const noexcept
+	{
+		return renderCamera;
+	}
+
 	DirectX::XMMATRIX Graphics::GetCameraMatrix() const noexcept
 	{
 		return renderCamera->GetMatrix();

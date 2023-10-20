@@ -52,7 +52,6 @@
     <ClCompile Include="Source\Graphics\DX\ShaderManager.cpp" />
     <ClCompile Include="Source\Graphics\BindableObject\DynamicConstant.cpp" />
     <ClCompile Include="Source\Graphics\BindableObject\GlobalBindableManager.cpp" />
-    <ClCompile Include="Source\Graphics\BindableObject\VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Utility\Common.h" />
@@ -128,7 +127,6 @@
     <ClInclude Include="Source\Graphics\BindableObject\DynamicBufferInHeap.h" />
     <ClInclude Include="Source\Graphics\BindableObject\StructuredBufferInHeap.h" />
     <ClInclude Include="Source\Graphics\BindableObject\BufferInHeap.h" />
-    <ClInclude Include="Source\Graphics\BindableObject\VertexBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -4,6 +4,7 @@
 #include "..\BindableObject\ConstantBuffer.h"
 #include "..\BindableObject\Texture.h"
 #include "..\BindableObject\Shader.h"
+#include "..\BindableObject\DynamicConstantBufferInHeap.h"
 #include "..\..\Utility\GlobalParameters.h"
 #include "..\DX\ShaderManager.h"
 #include "..\DX\CommandQueue.h"
@@ -23,7 +24,7 @@ namespace DiveBomber::Component
         name(inputName)
     {
         using namespace std::string_literals;
-        indexConstantBuffer = std::make_shared<ConstantBuffer<UINT>>(Utility::ToNarrow(name) + "#"s + "IndexConstant", 1u);
+        indexConstantBuffer = std::make_shared<ConstantBuffer<UINT>>(Utility::ToNarrow(name) + "#"s + "IndexConstant", 4u);
 
         configFile = ProjectDirectoryW L"Asset\\Material\\" + name + L".json";
 
@@ -389,7 +390,7 @@ namespace DiveBomber::Component
         textureMap[textureName] = texture;
         textureSlotMap[textureName] = slot;
 
-        indexConstantBuffer->Update(shaderResourceIndices.data(), shaderResourceIndices.size() * sizeof(UINT));
+        indexDirty = true;
     }
 
     void Material::SetConstant(const std::string constantName, const std::shared_ptr<DynamicBufferInHeap> constant) noexcept
@@ -409,7 +410,7 @@ namespace DiveBomber::Component
         shaderResourceIndices[slot] = constant->GetCBVDescriptorHeapOffset();
         dynamicConstantMap[constantName] = constant;
 
-        indexConstantBuffer->Update(shaderResourceIndices.data(), shaderResourceIndices.size() * sizeof(UINT));
+        indexDirty = true;
     }
 
     void Material::Bind() noxnd
@@ -422,6 +423,11 @@ namespace DiveBomber::Component
             ReloadConfig();
         }
 
+        if (indexDirty)
+        {
+            indexConstantBuffer->Update(shaderResourceIndices.data(), shaderResourceIndices.size() * sizeof(UINT));
+            indexDirty = false;
+        }
         indexConstantBuffer->Bind();
     }
 

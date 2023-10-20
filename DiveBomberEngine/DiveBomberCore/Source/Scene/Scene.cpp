@@ -3,6 +3,7 @@
 #include "..\Graphics\Graphics.h"
 #include "..\Graphics\DX\CommandQueue.h"
 #include "..\Graphics\DX\ShaderManager.h"
+#include "..\Graphics\BindableObject\RootSignature.h"
 #include "..\Graphics\DrawableObject\SimpleSphere.h"
 #include "..\Graphics\Component\Camera.h"
 #include "..\Graphics\RenderPipeline\RenderPipelineGraph.h"
@@ -10,6 +11,7 @@
 namespace DiveBomber::DEScene
 {
 	using namespace DEGraphics;
+	using namespace BindableObject;
 	using namespace DrawableObject;
 	using namespace Component;
 	using namespace DX;
@@ -27,11 +29,11 @@ namespace DiveBomber::DEScene
 	{
 		mainRenderPipeline = std::make_unique<RenderPipelineGraph>();
 
-		std::shared_ptr<CommandQueue> commandQueue = Graphics::GetInstance().GetCommandQueue(D3D12_COMMAND_LIST_TYPE_COPY);
 		drawableObjects.emplace(L"Sphere01", std::make_shared<SimpleSphere>(L"Sphere01"));
 		auto another = std::make_shared<SimpleSphere>(L"Sphere02");
 		another->SetPos({ 2.0f,0,0 });
 		drawableObjects.emplace(another->GetName(), another);
+		std::shared_ptr<CommandQueue> commandQueue = Graphics::GetInstance().GetCommandQueue(D3D12_COMMAND_LIST_TYPE_COPY);
 		uint64_t fenceValue = Graphics::GetInstance().ExecuteCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
 		commandQueue->WaitForFenceValue(fenceValue);
 

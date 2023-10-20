@@ -3,14 +3,12 @@
 #include "..\Graphics.h"
 #include "..\BindableObject\BindableObjectCommon.h"
 #include "..\BindableObject\Geometry\Sphere.h"
-#include "..\BindableObject\DynamicConstantBufferInHeap.h"
 #include "..\Component\Mesh.h"
 #include "..\Component\Material.h"
 #include "..\DX\CommandQueue.h"
 #include "..\DX\DescriptorAllocator.h"
 #include "..\DX\DescriptorAllocation.h"
 #include "..\DX\ShaderManager.h"
-#include "..\BindableObject\VertexBuffer.h"
 
 namespace DiveBomber::DrawableObject
 {
@@ -37,10 +35,8 @@ namespace DiveBomber::DrawableObject
 
 		const std::string geometryTag = Utility::ToNarrow(name);
 
-		std::shared_ptr<VertexBuffer> vertexBuffer = VertexBuffer::Resolve(geometryTag, sphere.vertices);
+		//std::shared_ptr<VertexBuffer> vertexBuffer = VertexBuffer::Resolve(geometryTag, sphere.vertices);
 		std::shared_ptr<IndexBuffer> indexBuffer = IndexBuffer::Resolve(geometryTag, sphere.indices);
-
-		Graphics::GetInstance().GetCommandList()->TrackResource(vertexBuffer->vertexBuffer);
 		
 		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(name, sphere.vertices, indexBuffer);
 		meshMap.emplace(mesh->GetName(), mesh);
@@ -48,10 +44,8 @@ namespace DiveBomber::DrawableObject
 		std::shared_ptr<Material> material = std::make_shared<Material>(name + L"Material");
 		materialMap.emplace(material->GetName(), material);
 
-		std::shared_ptr<ConstantTransformBuffer> transformBuffer = std::make_shared<ConstantTransformBuffer>();
+		std::shared_ptr<ConstantTransformBuffer> transformBuffer = std::make_shared<ConstantTransformBuffer>(name + L"Transforms");
 		transformBuffer->InitializeParentReference(*this);
-		AddBindable(transformBuffer);
-		material->SetConstant(transformBuffer->GetTransformBuffer());
 
 		std::shared_ptr<RootSignature> rootSignature = RootSignature::Resolve("StandardFullStageAccess");
 
@@ -64,6 +58,7 @@ namespace DiveBomber::DrawableObject
 		PipelineStateObject::PipelineStateReference pipelineStateReference;
 		pipelineStateReference.rootSignature = rootSignature;
 		pipelineStateReference.mesh = mesh;
+		pipelineStateReference.tansformsConstantBuffer = transformBuffer;
 		pipelineStateReference.material = material;
 		pipelineStateReference.rtvFormats = rtvFormats;
 		pipelineStateReference.dsvFormat = dsvFormat;
