@@ -1,10 +1,9 @@
 #include "Material.h"
 
 #include "..\Graphics.h"
-#include "..\BindableObject\ConstantBuffer.h"
+#include "..\BindableObject\ShaderBuffer\DynamicConstantBufferInHeap.h"
 #include "..\BindableObject\Texture.h"
 #include "..\BindableObject\Shader.h"
-#include "..\BindableObject\DynamicConstantBufferInHeap.h"
 #include "..\..\Utility\GlobalParameters.h"
 #include "..\DX\ShaderManager.h"
 #include "..\DX\CommandQueue.h"
@@ -393,12 +392,12 @@ namespace DiveBomber::Component
         indexDirty = true;
     }
 
-    void Material::SetConstant(const std::string constantName, const std::shared_ptr<DynamicBufferInHeap> constant) noexcept
+    void Material::SetConstant(const std::string constantName, const std::shared_ptr<DynamicConstantBufferInHeap> constant) noexcept
     {
         SetConstant(constantName, constant, numConstantIndices);
     }
 
-    void Material::SetConstant(const std::string constantName, const std::shared_ptr<DynamicBufferInHeap> constant, UINT slot) noexcept
+    void Material::SetConstant(const std::string constantName, const std::shared_ptr<DynamicConstantBufferInHeap> constant, UINT slot) noexcept
     {
         if (slot >= numConstantIndices)
         {

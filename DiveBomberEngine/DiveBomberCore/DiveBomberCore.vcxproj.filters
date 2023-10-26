@@ -50,7 +50,7 @@
     <ClCompile Include="Source\Graphics\DrawableObject\Model.cpp" />
     <ClCompile Include="Source\Graphics\Component\Material.cpp" />
     <ClCompile Include="Source\Graphics\DX\ShaderManager.cpp" />
-    <ClCompile Include="Source\Graphics\BindableObject\DynamicConstant.cpp" />
+    <ClCompile Include="Source\Graphics\BindableObject\ShaderBuffer\DynamicConstant.cpp" />
     <ClCompile Include="Source\Graphics\BindableObject\GlobalBindableManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -93,7 +93,6 @@
     <ClInclude Include="Source\Graphics\BindableObject\BindableTarget.h" />
     <ClInclude Include="Source\Graphics\DX\Viewport.h" />
     <ClInclude Include="Source\Graphics\DX\ScissorRects.h" />
-    <ClInclude Include="Source\Graphics\BindableObject\ConstantBuffer.h" />
     <ClInclude Include="Source\Graphics\Component\Camera.h" />
     <ClInclude Include="Source\Graphics\Component\Projection.h" />
     <ClInclude Include="Source\Graphics\BindableObject\ConstantTransformBuffer.h" />
@@ -115,18 +114,20 @@
     <ClInclude Include="Source\Graphics\Component\Mesh.h" />
     <ClInclude Include="Source\Graphics\DrawableObject\Model.h" />
     <ClInclude Include="Source\Graphics\Component\Material.h" />
-    <ClInclude Include="Source\Graphics\BindableObject\ConstantBufferInHeap.h" />
     <ClInclude Include="Source\Graphics\DX\ShaderManager.h" />
     <ClInclude Include="Source\Graphics\BindableObject\GlobalBindableManager.h" />
-    <ClInclude Include="Source\Graphics\BindableObject\DynamicConstant.h" />
-    <ClInclude Include="Source\Graphics\BindableObject\DynamicConstantBuffer.h" />
-    <ClInclude Include="Source\Graphics\BindableObject\DynamicConstantBufferInHeap.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\ShaderBuffer\DynamicConstant.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\ShaderBuffer\DynamicConstantBuffer.h" />
     <ClInclude Include="ThirdParty\json.hpp" />
     <ClInclude Include="Source\Utility\DEJson.h" />
-    <ClInclude Include="Source\Graphics\BindableObject\DynamicStructuredBufferInHeap.h" />
-    <ClInclude Include="Source\Graphics\BindableObject\DynamicBufferInHeap.h" />
-    <ClInclude Include="Source\Graphics\BindableObject\StructuredBufferInHeap.h" />
-    <ClInclude Include="Source\Graphics\BindableObject\BufferInHeap.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\ShaderBuffer\DynamicStructuredBufferInHeap.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\ShaderBuffer\DynamicConstantBufferInHeap.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\ShaderBuffer\StructuredBufferInHeap.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\ShaderBuffer\ConstantBufferInHeap.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\Geometry\Cube.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\Geometry\Plane.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\Geometry\MiscShape.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\ShaderBuffer\ConstantBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

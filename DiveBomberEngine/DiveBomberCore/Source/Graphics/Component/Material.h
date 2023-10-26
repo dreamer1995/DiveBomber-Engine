@@ -1,7 +1,7 @@
 #pragma once
 #include "..\GraphicsHeader.h"
 
-#include "..\BindableObject\ConstantBufferInHeap.h"
+#include "..\BindableObject\ShaderBuffer\ConstantBufferInHeap.h"
 #include "..\..\Utility\DEJson.h"
 
 #include <vector>
@@ -11,7 +11,7 @@ namespace DiveBomber::BindableObject
 {
 	class Texture;
 	class Shader;
-	class DynamicBufferInHeap;
+	class DynamicConstantBufferInHeap;
 }
 
 namespace DiveBomber::Component
@@ -55,8 +55,8 @@ namespace DiveBomber::Component
 			indexDirty = true;
 		}
 
-		void SetConstant(const std::string constantName, const std::shared_ptr<BindableObject::DynamicBufferInHeap> constant) noexcept;
-		void SetConstant(const std::string constantName, const std::shared_ptr<BindableObject::DynamicBufferInHeap> constant, UINT slot) noexcept;
+		void SetConstant(const std::string constantName, const std::shared_ptr<BindableObject::DynamicConstantBufferInHeap> constant) noexcept;
+		void SetConstant(const std::string constantName, const std::shared_ptr<BindableObject::DynamicConstantBufferInHeap> constant, UINT slot) noexcept;
 
 		void Bind() noxnd;
 
@@ -83,7 +83,7 @@ namespace DiveBomber::Component
 		UINT numTextureIndices = 0;
 		std::vector<UINT> shaderResourceIndices;
 		bool indexDirty = false;
-		std::unordered_map<std::string, std::shared_ptr<BindableObject::DynamicBufferInHeap>> dynamicConstantMap;
+		std::unordered_map<std::string, std::shared_ptr<BindableObject::DynamicConstantBufferInHeap>> dynamicConstantMap;
 		std::unordered_map<std::string, std::shared_ptr<BindableObject::Texture>> textureMap;
 		std::unordered_map<std::string, UINT> textureSlotMap;
 

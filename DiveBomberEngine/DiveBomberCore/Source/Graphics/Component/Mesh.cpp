@@ -3,8 +3,8 @@
 #include "..\Graphics.h"
 #include "..\BindableObject\IndexBuffer.h"
 #include "..\BindableObject\Topology.h"
-#include "..\BindableObject\ConstantBufferInHeap.h"
-#include "..\BindableObject\StructuredBufferInHeap.h"
+#include "..\BindableObject\ShaderBuffer\ConstantBuffer.h"
+#include "..\BindableObject\ShaderBuffer\StructuredBufferInHeap.h"
 
 namespace DiveBomber::Component
 {

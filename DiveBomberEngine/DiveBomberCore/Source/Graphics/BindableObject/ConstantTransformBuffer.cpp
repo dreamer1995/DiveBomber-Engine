@@ -1,6 +1,6 @@
 #include "ConstantTransformBuffer.h"
 
-#include "ConstantBuffer.h"
+#include "ShaderBuffer\ConstantBuffer.h"
 #include "..\DrawableObject\Drawable.h"
 #include "..\Component\Camera.h"
 

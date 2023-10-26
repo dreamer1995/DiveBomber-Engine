@@ -1,36 +1,32 @@
 #pragma once
-#include "BufferInHeap.h"
-
-#include "..\DX\DescriptorAllocator.h"
-#include "..\DX\DescriptorAllocation.h"
+#include "ConstantBufferInHeap.h"
 
 namespace DiveBomber::BindableObject
 {
 	template<typename C>
-	class StructuredBufferInHeap final : public BufferInHeap<C>
+	class StructuredBufferInHeap final : public ConstantBufferInHeap<C>
 	{
 	public:
 		StructuredBufferInHeap(const std::string& inputTag, size_t inputNumElements = 1)
 			:
-			BufferInHeap<C>(inputTag),
+			ConstantBufferInHeap<C>(inputTag),
 			numElements(inputNumElements)
 		{
 		}
 
 		StructuredBufferInHeap(const std::string& inputTag, const C& constantData, size_t inputNumElements = 1)
 			:
-			BufferInHeap<C>(inputTag, &constantData),
-			numElements(inputNumElements)
+			StructuredBufferInHeap<C>(inputTag, &constantData, sizeof(constantData) * inputNumElements)
 		{
-			UpdateCBV();
 		}
 
 		StructuredBufferInHeap(const std::string& inputTag, const C* constantData, size_t inputDataSize, size_t inputNumElements = 1)
 			:
-			BufferInHeap<C>(inputTag, constantData, inputDataSize),
+			ConstantBufferInHeap<C>(inputTag),
 			numElements(inputNumElements)
 		{
-			UpdateCBV();
+			// place to set data
+			Update(constantData, inputDataSize);
 		}
 
 		void Bind() noxnd override
@@ -68,7 +64,7 @@ namespace DiveBomber::BindableObject
 					},
 			};
 
-			DEGraphics::Graphics::GetInstance().GetDevice()->CreateShaderResourceView(ConstantBuffer<C>::constantBuffer.Get(), &srvDesc, BufferInHeap<C>::descriptorAllocation->GetCPUDescriptorHandle());
+			DEGraphics::Graphics::GetInstance().GetDevice()->CreateShaderResourceView(ConstantBuffer<C>::constantBuffer.Get(), &srvDesc, ConstantBufferInHeap<C>::descriptorAllocation->GetCPUDescriptorHandle());
 		}
 
 	private:

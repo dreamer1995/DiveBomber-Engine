@@ -1,32 +1,29 @@
 #pragma once
-#include "DynamicBufferInHeap.h"
+#include "DynamicConstantBufferInHeap.h"
 
 namespace DiveBomber::BindableObject
 {
-	class DynamicStructuredBufferInHeap final : public DynamicBufferInHeap
+	class DynamicStructuredBufferInHeap final : public DynamicConstantBufferInHeap
 	{
 	public:
 		DynamicStructuredBufferInHeap(const std::string& inputTag,
 			const DynamicConstantProcess::CookedLayout& inputLayout, size_t inputNumElements = 1)
 			:
-			DynamicBufferInHeap(inputTag, inputLayout),
-			numElements(inputNumElements)
+			DynamicConstantBufferInHeap(inputTag, inputLayout)
 		{
 		}
 
 		DynamicStructuredBufferInHeap(const std::string& inputTag,
 			const DynamicConstantProcess::Buffer& inputBuffer, size_t inputNumElements = 1)
 			:
-			DynamicBufferInHeap(inputTag, inputBuffer),
-			numElements(inputNumElements)
+			DynamicStructuredBufferInHeap(inputTag, inputBuffer.GetRootLayoutElement(), inputBuffer, inputNumElements)
 		{
-			UpdateCBV();
 		}
 
 		DynamicStructuredBufferInHeap(const std::string& inputTag,
 			const DynamicConstantProcess::LayoutElement& inputLayout, const DynamicConstantProcess::Buffer& inputBuffer, size_t inputNumElements = 1)
 			:
-			DynamicBufferInHeap(inputTag, inputLayout, inputBuffer),
+			DynamicConstantBufferInHeap(inputTag, inputLayout, inputBuffer, false),
 			numElements(inputNumElements)
 		{
 			UpdateCBV();
@@ -58,7 +55,7 @@ namespace DiveBomber::BindableObject
 					{
 						.FirstElement = 0u,
 						.NumElements = (UINT)numElements,
-						.StructureByteStride = static_cast<UINT>(dynamicBuffer.GetSizeInBytes()) / (UINT)numElements,
+						.StructureByteStride = static_cast<UINT>(dynamicBuffer.GetRootLayoutElement().GetSizeInBytes()),
 					},
 			};
 

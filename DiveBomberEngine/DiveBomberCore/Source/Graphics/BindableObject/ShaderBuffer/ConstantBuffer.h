@@ -1,12 +1,12 @@
 #pragma once
-#include "Bindable.h"
-#include "..\..\DiveBomberCore.h"
-#include "..\Graphics.h"
-#include "GlobalBindableManager.h"
-#include "..\..\Exception\GraphicsExceptionEX.h"
-#include "..\DX\CommandList.h"
-#include "..\DX\ResourceStateTracker.h"
-#include "..\DX\UploadBuffer.h"
+#include "..\Bindable.h"
+#include "..\..\..\DiveBomberCore.h"
+#include "..\..\Graphics.h"
+#include "..\GlobalBindableManager.h"
+#include "..\..\..\Exception\GraphicsExceptionEX.h"
+#include "..\..\DX\CommandList.h"
+#include "..\..\DX\ResourceStateTracker.h"
+#include "..\..\DX\UploadBuffer.h"
 
 namespace DiveBomber::BindableObject
 {
@@ -98,7 +98,7 @@ namespace DiveBomber::BindableObject
 				D3D12_SUBRESOURCE_DATA subresourceData = {};
 				subresourceData.pData = constantData;
 				subresourceData.RowPitch = bufferSize;
-				subresourceData.SlicePitch = subresourceData.RowPitch;
+				subresourceData.SlicePitch = 1u;
 
 				commandList->AddTransitionBarrier(constantBuffer, D3D12_RESOURCE_STATE_COPY_DEST, true);
 
@@ -126,7 +126,7 @@ namespace DiveBomber::BindableObject
 		}
 
 		[[nodiscard]] static std::shared_ptr<ConstantBuffer> Resolve(const std::string& tag,
-			const C* constantData, size_t dataSize, const UINT slot)
+			const C* constantData, size_t dataSize, const UINT slot = 999u)
 		{
 			return GlobalBindableManager::Resolve<ConstantBuffer>(tag, constantData, dataSize, slot);
 		}
