@@ -16,22 +16,13 @@ namespace DiveBomber::BindableObject
 	RenderTarget::RenderTarget(wrl::ComPtr<ID3D12Resource> inputBuffer,
 		std::shared_ptr<DescriptorAllocator> inputDescriptorAllocator)
 		:
-		renderTargetBuffer(inputBuffer),
 		descriptorAllocator(inputDescriptorAllocator),
 		rtvDescriptorAllocation(descriptorAllocator->Allocate(1u)),
 		rtvCPUHandle(rtvDescriptorAllocation->GetCPUDescriptorHandle()),
 		optimizedClearValue(),
 		rsv()
 	{
-		D3D12_RESOURCE_DESC textureDesc;
-		textureDesc = renderTargetBuffer->GetDesc();
-		width = (UINT)textureDesc.Width;
-		height = (UINT)textureDesc.Height;
-		mipLevels = textureDesc.MipLevels;
-		format = textureDesc.Format;
-
-		Graphics::GetInstance().GetDevice()->CreateRenderTargetView(renderTargetBuffer.Get(), nullptr, rtvCPUHandle);
-		ResourceStateTracker::AddGlobalResourceState(renderTargetBuffer, D3D12_RESOURCE_STATE_COMMON);
+		Resize(inputBuffer);
 	}
 
 	RenderTarget::RenderTarget(UINT inputWidth, UINT inputHeight,
