@@ -62,13 +62,11 @@ namespace DiveBomber::DEGraphics
 		directCommandQueue = std::make_unique<CommandQueue>(D3D12_COMMAND_LIST_TYPE_DIRECT);
 		computeCommandQueue = std::make_unique<CommandQueue>(D3D12_COMMAND_LIST_TYPE_COMPUTE);
 		copyCommandQueue = std::make_unique<CommandQueue>(D3D12_COMMAND_LIST_TYPE_COPY);
-		swapChain = std::make_unique<SwapChain>(hWnd, directCommandQueue->GetCommandQueue());
-		swapChain->UpdateBackBuffer(rtvDescriptorHeap);
+		swapChain = std::make_unique<SwapChain>(hWnd, directCommandQueue->GetCommandQueue(), rtvDescriptorHeap);
 		viewport = std::make_unique<Viewport>();
 		scissorRects = std::make_unique<ScissorRects>();
 
-		std::shared_ptr<DescriptorAllocation> dsvHandle = dsvDescriptorHeap->Allocate(1u);
-		mainDS = std::make_shared<DepthStencil>(width, height, std::move(dsvHandle), 0u);
+		mainDS = std::make_shared<DepthStencil>(width, height, dsvDescriptorHeap);
 	}
 
 	void Graphics::BeginFrame()
@@ -139,7 +137,7 @@ namespace DiveBomber::DEGraphics
 			frameFenceValues[i] = frameFenceValues[swapChain->GetSwapChain()->GetCurrentBackBufferIndex()];
 		}
 
-		swapChain->ResetSizeBackBuffer(width, height, rtvDescriptorHeap);
+		swapChain->ResetSizeBackBuffer(width, height);
 
 		mainDS->Resize(width, height);
 

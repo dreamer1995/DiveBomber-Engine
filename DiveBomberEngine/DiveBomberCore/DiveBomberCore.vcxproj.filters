@@ -52,6 +52,7 @@
     <ClCompile Include="Source\Graphics\DX\ShaderManager.cpp" />
     <ClCompile Include="Source\Graphics\BindableObject\ShaderBuffer\DynamicConstant.cpp" />
     <ClCompile Include="Source\Graphics\BindableObject\GlobalBindableManager.cpp" />
+    <ClCompile Include="Source\Graphics\BindableObject\RenderTargetAsShaderResourceView.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Utility\Common.h" />
@@ -128,6 +129,7 @@
     <ClInclude Include="Source\Graphics\BindableObject\Geometry\Plane.h" />
     <ClInclude Include="Source\Graphics\BindableObject\Geometry\MiscShape.h" />
     <ClInclude Include="Source\Graphics\BindableObject\ShaderBuffer\ConstantBuffer.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\RenderTargetAsShaderResourceView.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -5,6 +5,7 @@
 
 namespace DiveBomber::DX
 {
+	class DescriptorAllocator;
 	class DescriptorAllocation;
 }
 
@@ -26,32 +27,33 @@ namespace DiveBomber::BindableObject
 		//};
 	public:
 		RenderTarget(wrl::ComPtr<ID3D12Resource> inputBuffer,
-			std::shared_ptr<DX::DescriptorAllocation> inputDescriptorAllocation, UINT inputDepth = 0);
+			std::shared_ptr<DX::DescriptorAllocator> inputDescriptorAllocator);
 		RenderTarget(UINT inputWidth, UINT inputHeight,
-			std::shared_ptr<DX::DescriptorAllocation> inputDescriptorAllocation, DXGI_FORMAT inputFormat = DXGI_FORMAT_B8G8R8A8_UNORM,
-			UINT inputMipLevels = 0, UINT inputDepth = 0);
-		//RenderTarget(DEGraphics::Graphics& gfx, UINT inputWidth, UINT inputHeight, D3D12_DESCRIPTOR_HEAP_TYPE inputType,
-		//	DXGI_FORMAT inputFormat = DXGI_FORMAT_B8G8R8A8_UNORM, UINT inputDepth = 0);
+			std::shared_ptr<DX::DescriptorAllocator> inputDescriptorAllocator,
+			DXGI_FORMAT inputFormat = DXGI_FORMAT_B8G8R8A8_UNORM, UINT inputMipLevels = 0);
 
 		~RenderTarget();
 
-		void Bind() noxnd override;
+		virtual void Bind() noxnd override;
 		void BindTarget() noxnd override;
 		void BindTarget(std::shared_ptr<BindableTarget> depthStencil) noxnd override;
 		[[nodiscard]] wrl::ComPtr<ID3D12Resource> GetRenderTargetBuffer() const noexcept;
-		[[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetDescriptorHandle() const noexcept;
-		void Resize(const UINT inputWidth, const UINT inputHeight, const UINT inputDepth = 0);
+		[[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetRTVCPUDescriptorHandle() const noexcept;
+		virtual void Resize(const UINT inputWidth, const UINT inputHeight);
+		void Resize(wrl::ComPtr<ID3D12Resource> newbuffer);
+		void ReleaseBuffer();
 
-	private:
+	protected:
 		UINT width;
 		UINT height;
-		UINT depth;
 		DXGI_FORMAT format;
 		UINT mipLevels;
 		wrl::ComPtr<ID3D12Resource> renderTargetBuffer;
 
-		std::shared_ptr<DX::DescriptorAllocation> descriptorAllocation;
-		D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle;
+		std::shared_ptr<DX::DescriptorAllocator> descriptorAllocator;
+
+		std::shared_ptr<DX::DescriptorAllocation> rtvDescriptorAllocation;
+		D3D12_CPU_DESCRIPTOR_HANDLE rtvCPUHandle;
 		D3D12_CLEAR_VALUE optimizedClearValue;
 		D3D12_RENDER_TARGET_VIEW_DESC rsv;
 	};

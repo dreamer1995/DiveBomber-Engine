@@ -3,7 +3,6 @@
 #include "..\BindableObject\RenderTarget.h"
 #include "..\..\Exception\GraphicsException.h"
 #include "DescriptorAllocator.h"
-#include "DescriptorAllocation.h"
 
 namespace DiveBomber::DX
 {
@@ -11,7 +10,10 @@ namespace DiveBomber::DX
     using namespace DX;
     using namespace BindableObject;
 
-    SwapChain::SwapChain(const HWND hWnd, const wrl::ComPtr<ID3D12CommandQueue> commandQueue)
+    SwapChain::SwapChain(const HWND hWnd, const wrl::ComPtr<ID3D12CommandQueue> commandQueue,
+        std::shared_ptr<DX::DescriptorAllocator> inputDescriptorAllocator)
+        :
+        descriptorAllocator(inputDescriptorAllocator)
     {
         wrl::ComPtr<IDXGIFactory4> dxgiFactory4;
         UINT createFactoryFlags = 0;
@@ -50,6 +52,8 @@ namespace DiveBomber::DX
         GFX_THROW_INFO(dxgiFactory4->MakeWindowAssociation(hWnd, DXGI_MWA_NO_ALT_ENTER));
 
         GFX_THROW_INFO(swapChain1.As(&swapChain));
+
+        UpdateBackBuffer();
     }
 
     bool SwapChain::CheckTearingSupport()
@@ -83,20 +87,22 @@ namespace DiveBomber::DX
         return swapChain;
     }
 
-    void SwapChain::UpdateBackBuffer(std::shared_ptr<DescriptorAllocator> descriptorAllocator)
+    void SwapChain::UpdateBackBuffer()
     {
-        if(!rtvDescHeaps)
-            rtvDescHeaps = descriptorAllocator->Allocate(SwapChainBufferCount);
-
         for (int i = 0; i < SwapChainBufferCount; ++i)
         {
             wrl::ComPtr<ID3D12Resource> backBuffer;
             HRESULT hr;
             GFX_THROW_INFO(swapChain->GetBuffer(i, IID_PPV_ARGS(&backBuffer)));
 
-            std::shared_ptr<RenderTarget> renderTarget;
-            renderTarget = std::make_shared<RenderTarget>(backBuffer, rtvDescHeaps, i);
-            backBuffers[i] = renderTarget;
+            if (backBuffers[i] == nullptr)
+            {
+                backBuffers[i] = std::make_shared<RenderTarget>(backBuffer, descriptorAllocator);
+            }
+            else
+            {
+                backBuffers[i]->Resize(backBuffer);
+            }
         }
     }
 
@@ -116,12 +122,15 @@ namespace DiveBomber::DX
     {
         for (int i = 0; i < SwapChainBufferCount; ++i)
         {
-            backBuffers[i].reset();
+            backBuffers[i]->ReleaseBuffer();
+            //wrl::ComPtr<ID3D12Resource> backBuffer;
+            //HRESULT hr;
+            //GFX_THROW_INFO(swapChain->GetBuffer(i, IID_PPV_ARGS(&backBuffer)));
+            //backBuffer.Reset();
         }
     }
 
-    void SwapChain::ResetSizeBackBuffer(const uint32_t inputWidth, const uint32_t inputHeight,
-        std::shared_ptr<DescriptorAllocator> descriptorAllocator)
+    void SwapChain::ResetSizeBackBuffer(const uint32_t inputWidth, const uint32_t inputHeight)
     {
         // Any references to the back buffers must be released
 		// before the swap chain can be resized.
@@ -137,17 +146,17 @@ namespace DiveBomber::DX
         GFX_THROW_INFO(GetSwapChain()->ResizeBuffers(SwapChainBufferCount, width, height,
             swapChainDesc.BufferDesc.Format, swapChainDesc.Flags));
 
-        UpdateBackBuffer(descriptorAllocator);
+        UpdateBackBuffer();
     }
 
     D3D12_CPU_DESCRIPTOR_HANDLE SwapChain::GetBackBufferDescriptorHandle() const noexcept
     {
         const int currentIndex = swapChain->GetCurrentBackBufferIndex();
-        return backBuffers[currentIndex]->GetDescriptorHandle();
+        return GetBackBufferDescriptorHandle(currentIndex);
     }
 
     D3D12_CPU_DESCRIPTOR_HANDLE SwapChain::GetBackBufferDescriptorHandle(int i) const noexcept
     {
-        return backBuffers[i]->GetDescriptorHandle();
+        return backBuffers[i]->GetRTVCPUDescriptorHandle();
     }
 }

@@ -85,6 +85,7 @@
   <ItemGroup>
     <ClCompile Include="Source\Graphics\BindableObject\ConstantTransformBuffer.cpp" />
     <ClCompile Include="Source\Graphics\BindableObject\DepthStencil.cpp" />
+    <ClCompile Include="Source\Graphics\BindableObject\RenderTargetAsShaderResourceView.cpp" />
     <ClCompile Include="Source\Graphics\BindableObject\ShaderBuffer\DynamicConstant.cpp" />
     <ClCompile Include="Source\Graphics\BindableObject\GlobalBindableManager.cpp" />
     <ClCompile Include="Source\Graphics\BindableObject\PipelineStateObject.cpp" />
@@ -139,6 +140,7 @@
     <ClInclude Include="Source\Exception\GraphicsExceptionEX.h" />
     <ClInclude Include="Source\Graphics\BindableObject\BindableTarget.h" />
     <ClInclude Include="Source\Graphics\BindableObject\BindableObjectCommon.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\RenderTargetAsShaderResourceView.h" />
     <ClInclude Include="Source\Graphics\BindableObject\ShaderBuffer\ConstantBuffer.h" />
     <ClInclude Include="Source\Graphics\BindableObject\ShaderBuffer\ConstantBufferInHeap.h" />
     <ClInclude Include="Source\Graphics\BindableObject\ConstantTransformBuffer.h" />

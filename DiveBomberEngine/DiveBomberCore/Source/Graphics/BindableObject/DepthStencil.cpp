@@ -3,6 +3,7 @@
 #include "RenderTarget.h"
 #include "..\Graphics.h"
 #include "..\..\Exception\GraphicsException.h"
+#include "..\DX\DescriptorAllocator.h"
 #include "..\DX\DescriptorAllocation.h"
 
 namespace DiveBomber::BindableObject
@@ -12,10 +13,11 @@ namespace DiveBomber::BindableObject
 	using namespace DX;
 
 	DepthStencil::DepthStencil(UINT inputWidth, UINT inputHeight,
-		std::shared_ptr<DescriptorAllocation> inputDescriptorAllocation, UINT inputDepth)
+		std::shared_ptr<DescriptorAllocator> inputDescriptorAllocator)
 		:
-		descriptorAllocation(inputDescriptorAllocation),
-		cpuHandle(inputDescriptorAllocation->GetCPUDescriptorHandle(inputDepth)),
+		descriptorAllocator(inputDescriptorAllocator),
+		descriptorAllocation(descriptorAllocator->Allocate(1u)),
+		dsvCPUHandle(descriptorAllocation->GetCPUDescriptorHandle()),
 		optimizedClearValue(),
 		dsv()
 	{
@@ -30,7 +32,7 @@ namespace DiveBomber::BindableObject
 		dsv.Texture2D.MipSlice = 0u;
 		dsv.Flags = D3D12_DSV_FLAG_NONE;
 
-		Resize(inputWidth, inputHeight, inputDepth);
+		Resize(inputWidth, inputHeight);
 	}
 
 	void DepthStencil::Bind() noxnd
@@ -40,13 +42,13 @@ namespace DiveBomber::BindableObject
 
 	void DepthStencil::BindTarget() noxnd
 	{
-		Graphics::GetInstance().GetGraphicsCommandList()->OMSetRenderTargets(0, nullptr, FALSE, &cpuHandle);
+		Graphics::GetInstance().GetGraphicsCommandList()->OMSetRenderTargets(0, nullptr, FALSE, &dsvCPUHandle);
 	}
 
 	void DepthStencil::BindTarget(std::shared_ptr<BindableTarget> renderTarget) noxnd
 	{
-		D3D12_CPU_DESCRIPTOR_HANDLE RTDescHeapHandle = std::dynamic_pointer_cast<RenderTarget>(renderTarget)->GetDescriptorHandle();
-		Graphics::GetInstance().GetGraphicsCommandList()->OMSetRenderTargets(1, &RTDescHeapHandle, FALSE, &cpuHandle);
+		D3D12_CPU_DESCRIPTOR_HANDLE RTDescHeapHandle = std::dynamic_pointer_cast<RenderTarget>(renderTarget)->GetRTVCPUDescriptorHandle();
+		Graphics::GetInstance().GetGraphicsCommandList()->OMSetRenderTargets(1, &RTDescHeapHandle, FALSE, &dsvCPUHandle);
 	}
 
 	wrl::ComPtr<ID3D12Resource> DepthStencil::GetDepthStencilBuffer() const noexcept
@@ -54,9 +56,9 @@ namespace DiveBomber::BindableObject
 		return depthStencilBuffer;
 	}
 
-	D3D12_CPU_DESCRIPTOR_HANDLE DepthStencil::GetDescriptorHandle() const noexcept
+	D3D12_CPU_DESCRIPTOR_HANDLE DepthStencil::GetDSVCPUDescriptorHandle() const noexcept
 	{
-		return cpuHandle;
+		return dsvCPUHandle;
 	}
 
 	void DepthStencil::ClearDepth(FLOAT clearDepth) const noexcept
@@ -66,14 +68,13 @@ namespace DiveBomber::BindableObject
 
 	void DepthStencil::ClearDepth(wrl::ComPtr<ID3D12GraphicsCommandList7> commandList, FLOAT clearDepth) const noexcept
 	{
-		commandList->ClearDepthStencilView(GetDescriptorHandle(), D3D12_CLEAR_FLAG_DEPTH, clearDepth, 0, 0, nullptr);
+		commandList->ClearDepthStencilView(GetDSVCPUDescriptorHandle(), D3D12_CLEAR_FLAG_DEPTH, clearDepth, 0, 0, nullptr);
 	}
 
-	void DepthStencil::Resize(const UINT inputWidth, const UINT inputHeight, const UINT inputDepth)
+	void DepthStencil::Resize(const UINT inputWidth, const UINT inputHeight)
 	{
 		width = std::max(1u, inputWidth);
 		height = std::max(1u, inputHeight);
-		depth = std::max(1u, inputDepth);
 
 		HRESULT hr;
 
@@ -93,6 +94,6 @@ namespace DiveBomber::BindableObject
 		));
 
 		device->CreateDepthStencilView(depthStencilBuffer.Get(), &dsv,
-			cpuHandle);
+			dsvCPUHandle);
 	}
 }
