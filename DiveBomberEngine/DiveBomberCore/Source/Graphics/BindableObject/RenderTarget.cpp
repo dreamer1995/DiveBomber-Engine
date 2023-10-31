@@ -14,10 +14,10 @@ namespace DiveBomber::BindableObject
 	using namespace DX;
 
 	RenderTarget::RenderTarget(wrl::ComPtr<ID3D12Resource> inputBuffer,
-		std::shared_ptr<DescriptorAllocator> inputDescriptorAllocator)
+		std::shared_ptr<DescriptorAllocator> inputRTVDescriptorAllocator)
 		:
-		descriptorAllocator(inputDescriptorAllocator),
-		rtvDescriptorAllocation(descriptorAllocator->Allocate(1u)),
+		rtvDescriptorAllocator(inputRTVDescriptorAllocator),
+		rtvDescriptorAllocation(rtvDescriptorAllocator->Allocate(1u)),
 		rtvCPUHandle(rtvDescriptorAllocation->GetCPUDescriptorHandle()),
 		optimizedClearValue(),
 		rsv()
@@ -26,11 +26,11 @@ namespace DiveBomber::BindableObject
 	}
 
 	RenderTarget::RenderTarget(UINT inputWidth, UINT inputHeight,
-		std::shared_ptr<DX::DescriptorAllocator> inputDescriptorAllocator,
+		std::shared_ptr<DX::DescriptorAllocator> inputRTVDescriptorAllocator,
 		DXGI_FORMAT inputFormat, UINT inputMipLevels)
 		: 
-		descriptorAllocator(inputDescriptorAllocator),
-		rtvDescriptorAllocation(descriptorAllocator->Allocate(1u)),
+		rtvDescriptorAllocator(inputRTVDescriptorAllocator),
+		rtvDescriptorAllocation(rtvDescriptorAllocator->Allocate(1u)),
 		rtvCPUHandle(rtvDescriptorAllocation->GetCPUDescriptorHandle()),
 		mipLevels(inputMipLevels),
 		format(inputFormat)
@@ -87,7 +87,7 @@ namespace DiveBomber::BindableObject
 
 		auto heapProp = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
 		auto resDes = CD3DX12_RESOURCE_DESC::Tex2D(format, width, height,
-			1, 0, 1, 0, D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL);
+			1, 0, 1, 0, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET);
 
 		auto device = Graphics::GetInstance().GetDevice();
 

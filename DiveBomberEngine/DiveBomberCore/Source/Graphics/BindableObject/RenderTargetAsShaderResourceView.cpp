@@ -12,11 +12,13 @@ namespace DiveBomber::BindableObject
 	using namespace DX;
 
 	RenderTargetAsShaderResourceView::RenderTargetAsShaderResourceView(UINT inputWidth, UINT inputHeight,
-		std::shared_ptr<DX::DescriptorAllocator> inputDescriptorAllocator,
+		std::shared_ptr<DX::DescriptorAllocator> inputRTVDescriptorAllocator,
+		std::shared_ptr<DX::DescriptorAllocator> inputSRVDescriptorAllocator,
 		DXGI_FORMAT inputFormat, UINT inputMipLevels)
 		:
-		RenderTarget(inputWidth, inputHeight, inputDescriptorAllocator, inputFormat, inputMipLevels),
-		srvDescriptorAllocation(inputDescriptorAllocator->Allocate(1u)),
+		RenderTarget(inputWidth, inputHeight, inputRTVDescriptorAllocator, inputFormat, inputMipLevels),
+		srvDescriptorAllocator(inputSRVDescriptorAllocator),
+		srvDescriptorAllocation(srvDescriptorAllocator->Allocate(1u)),
 		srvCPUHandle(srvDescriptorAllocation->GetCPUDescriptorHandle()),
 		srv()
 	{

@@ -27,9 +27,9 @@ namespace DiveBomber::BindableObject
 		//};
 	public:
 		RenderTarget(wrl::ComPtr<ID3D12Resource> inputBuffer,
-			std::shared_ptr<DX::DescriptorAllocator> inputDescriptorAllocator);
+			std::shared_ptr<DX::DescriptorAllocator> inputRTVDescriptorAllocator);
 		RenderTarget(UINT inputWidth, UINT inputHeight,
-			std::shared_ptr<DX::DescriptorAllocator> inputDescriptorAllocator,
+			std::shared_ptr<DX::DescriptorAllocator> inputRTVDescriptorAllocator,
 			DXGI_FORMAT inputFormat = DXGI_FORMAT_B8G8R8A8_UNORM, UINT inputMipLevels = 0);
 
 		~RenderTarget();
@@ -50,10 +50,10 @@ namespace DiveBomber::BindableObject
 		UINT mipLevels;
 		wrl::ComPtr<ID3D12Resource> renderTargetBuffer;
 
-		std::shared_ptr<DX::DescriptorAllocator> descriptorAllocator;
-
+		std::shared_ptr<DX::DescriptorAllocator> rtvDescriptorAllocator;
 		std::shared_ptr<DX::DescriptorAllocation> rtvDescriptorAllocation;
 		D3D12_CPU_DESCRIPTOR_HANDLE rtvCPUHandle;
+
 		D3D12_CLEAR_VALUE optimizedClearValue;
 		D3D12_RENDER_TARGET_VIEW_DESC rsv;
 	};
