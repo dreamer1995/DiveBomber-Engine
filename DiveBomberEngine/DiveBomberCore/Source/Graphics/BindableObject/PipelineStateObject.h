@@ -14,7 +14,6 @@ namespace DiveBomber::BindableObject
 	class VertexBuffer;
 	class Topology;
 	class Shader;
-	class ConstantTransformBuffer;
 
 	class PipelineStateObject final : public Bindable
 	{
@@ -23,7 +22,6 @@ namespace DiveBomber::BindableObject
 		{
 			std::shared_ptr<RootSignature> rootSignature;
 			std::shared_ptr<Component::Mesh> mesh;
-			std::shared_ptr<ConstantTransformBuffer> tansformsConstantBuffer;
 			std::shared_ptr<Component::Material> material;
 			DXGI_FORMAT dsvFormat = DXGI_FORMAT_UNKNOWN;
 			D3D12_RT_FORMAT_ARRAY rtvFormats{};

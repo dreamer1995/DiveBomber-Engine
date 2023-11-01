@@ -54,6 +54,7 @@
     <ClCompile Include="Source\Graphics\BindableObject\GlobalBindableManager.cpp" />
     <ClCompile Include="Source\Graphics\BindableObject\RenderTargetAsShaderResourceView.cpp" />
     <ClCompile Include="Source\Graphics\BindableObject\UnorderedAccessBuffer.cpp" />
+    <ClCompile Include="Source\Graphics\DrawableObject\FullScreenPlane.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Utility\Common.h" />
@@ -132,6 +133,7 @@
     <ClInclude Include="Source\Graphics\BindableObject\ShaderBuffer\ConstantBuffer.h" />
     <ClInclude Include="Source\Graphics\BindableObject\RenderTargetAsShaderResourceView.h" />
     <ClInclude Include="Source\Graphics\BindableObject\UnorderedAccessBuffer.h" />
+    <ClInclude Include="Source\Graphics\DrawableObject\FullScreenPlane.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

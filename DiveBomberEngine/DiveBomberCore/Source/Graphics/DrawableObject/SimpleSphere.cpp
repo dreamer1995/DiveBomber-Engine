@@ -44,10 +44,12 @@ namespace DiveBomber::DrawableObject
 		std::shared_ptr<Material> material = std::make_shared<Material>(name + L"Material");
 		materialMap.emplace(material->GetName(), material);
 
+		std::shared_ptr<RootSignature> rootSignature = RootSignature::Resolve("StandardFullStageAccess");
+		AddBindable(rootSignature);
+
 		std::shared_ptr<ConstantTransformBuffer> transformBuffer = std::make_shared<ConstantTransformBuffer>(name + L"Transforms");
 		transformBuffer->InitializeParentReference(*this);
-
-		std::shared_ptr<RootSignature> rootSignature = RootSignature::Resolve("StandardFullStageAccess");
+		AddBindable(transformBuffer);
 
 		D3D12_RT_FORMAT_ARRAY rtvFormats = {};
 		rtvFormats.NumRenderTargets = 1;
@@ -58,7 +60,6 @@ namespace DiveBomber::DrawableObject
 		PipelineStateObject::PipelineStateReference pipelineStateReference;
 		pipelineStateReference.rootSignature = rootSignature;
 		pipelineStateReference.mesh = mesh;
-		pipelineStateReference.tansformsConstantBuffer = transformBuffer;
 		pipelineStateReference.material = material;
 		pipelineStateReference.rtvFormats = rtvFormats;
 		pipelineStateReference.dsvFormat = dsvFormat;

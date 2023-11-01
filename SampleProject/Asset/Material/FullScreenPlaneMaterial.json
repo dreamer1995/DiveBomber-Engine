@@ -1,0 +1,20 @@
+{
+    "Param": [
+        {
+            "Name": "baseColor",
+            "Type": 3,
+            "Value": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "sRGB": true
+        }
+    ],
+    "ShaderName": "FullScreen",
+    "Stage": [
+        0,
+        4
+    ]
+}

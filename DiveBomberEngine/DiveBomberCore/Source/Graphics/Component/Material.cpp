@@ -67,7 +67,7 @@ namespace DiveBomber::Component
 
     void Material::CreateDefaultConfig()
     {
-        config["ShaderName"] = "TestShader";
+        config["ShaderName"] = "Default";
 
         UploadConfig(Utility::ToWide(config["ShaderName"]));
     }

@@ -3,7 +3,6 @@
 #include "..\Graphics\Graphics.h"
 #include "..\Graphics\DX\CommandQueue.h"
 #include "..\Graphics\DX\ShaderManager.h"
-#include "..\Graphics\BindableObject\RootSignature.h"
 #include "..\Graphics\DrawableObject\SimpleSphere.h"
 #include "..\Graphics\Component\Camera.h"
 #include "..\Graphics\RenderPipeline\RenderPipelineGraph.h"
@@ -34,6 +33,7 @@ namespace DiveBomber::DEScene
 		another->SetPos({ 2.0f,0,0 });
 		drawableObjects.emplace(another->GetName(), another);
 		std::shared_ptr<CommandQueue> commandQueue = Graphics::GetInstance().GetCommandQueue(D3D12_COMMAND_LIST_TYPE_COPY);
+		
 		uint64_t fenceValue = Graphics::GetInstance().ExecuteCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
 		commandQueue->WaitForFenceValue(fenceValue);
 
@@ -45,11 +45,13 @@ namespace DiveBomber::DEScene
 
 	void Scene::Render() noxnd
 	{
-		mainRenderPipeline->Bind();
 		for (auto& drawableObject : drawableObjects)
 		{
-			drawableObject.second->Bind();
+			mainRenderPipeline->SetRenderQueue(drawableObject.second);
 		}
+
+		mainRenderPipeline->Bind();
+
 		ShaderManager::GetInstance().ResetAllShaderDirtyState();
 	}
 

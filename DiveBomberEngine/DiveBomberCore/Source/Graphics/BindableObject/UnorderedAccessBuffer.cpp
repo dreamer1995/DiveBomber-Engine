@@ -13,18 +13,16 @@ namespace DiveBomber::BindableObject
 	using namespace DX;
 
 	UnorderedAccessBuffer::UnorderedAccessBuffer(UINT inputWidth, UINT inputHeight,
-		std::shared_ptr<DX::DescriptorAllocator> inputUAVDescriptorAllocator,
-		std::shared_ptr<DX::DescriptorAllocator> inputSRVDescriptorAllocator,
+		std::shared_ptr<DX::DescriptorAllocator> inputDescriptorAllocator,
 		DXGI_FORMAT inputFormat, UINT inputMipLevels)
 		:
 		width(inputWidth),
 		height(inputHeight),
-		uavDescriptorAllocator(inputUAVDescriptorAllocator),
-		uavDescriptorAllocation(uavDescriptorAllocator->Allocate(1u)),
+		descriptorAllocator(inputDescriptorAllocator),
+		uavDescriptorAllocation(descriptorAllocator->Allocate(1u)),
 		uavCPUHandle(uavDescriptorAllocation->GetCPUDescriptorHandle()),
 		uav(),
-		srvDescriptorAllocator(inputSRVDescriptorAllocator),
-		srvDescriptorAllocation(srvDescriptorAllocator->Allocate(1u)),
+		srvDescriptorAllocation(descriptorAllocator->Allocate(1u)),
 		srvCPUHandle(srvDescriptorAllocation->GetCPUDescriptorHandle()),
 		srv(),
 		mipLevels(inputMipLevels),
@@ -49,7 +47,16 @@ namespace DiveBomber::BindableObject
 
 	void UnorderedAccessBuffer::Bind() noxnd
 	{
+	}
+
+	void UnorderedAccessBuffer::BindAsUAV() noxnd
+	{
 		ResourceStateTracker::AddGlobalResourceState(unorderedAccessBuffer, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+	}
+
+	void UnorderedAccessBuffer::BindAsSRV() noxnd
+	{
+		ResourceStateTracker::AddGlobalResourceState(unorderedAccessBuffer, D3D12_RESOURCE_STATE_COMMON);
 	}
 
 	wrl::ComPtr<ID3D12Resource> UnorderedAccessBuffer::GetUnorderedAccessBuffer() const noexcept
@@ -84,7 +91,7 @@ namespace DiveBomber::BindableObject
 			&heapProp,
 			D3D12_HEAP_FLAG_NONE,
 			&resDes,
-			D3D12_RESOURCE_STATE_UNORDERED_ACCESS,
+			D3D12_RESOURCE_STATE_COMMON,
 			nullptr,
 			IID_PPV_ARGS(&unorderedAccessBuffer)
 		));
