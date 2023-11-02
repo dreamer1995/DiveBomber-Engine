@@ -20,6 +20,7 @@ namespace DiveBomber::BindableObject
 		rtvDescriptorAllocation(rtvDescriptorAllocator->Allocate(1u)),
 		rtvCPUHandle(rtvDescriptorAllocation->GetCPUDescriptorHandle()),
 		optimizedClearValue(),
+		//for partial view someday
 		rsv()
 	{
 		Resize(inputBuffer);
