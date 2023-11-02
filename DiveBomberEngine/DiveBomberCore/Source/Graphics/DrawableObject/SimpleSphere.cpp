@@ -53,7 +53,7 @@ namespace DiveBomber::DrawableObject
 
 		D3D12_RT_FORMAT_ARRAY rtvFormats = {};
 		rtvFormats.NumRenderTargets = 1;
-		rtvFormats.RTFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		rtvFormats.RTFormats[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 
 		auto dsvFormat = DXGI_FORMAT_D32_FLOAT;
 

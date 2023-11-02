@@ -12,6 +12,7 @@ namespace DiveBomber::BindableObject
 	class Texture;
 	class Shader;
 	class DynamicConstantBufferInHeap;
+	class RenderTargetAsShaderResourceView;
 }
 
 namespace DiveBomber::Component
@@ -34,6 +35,9 @@ namespace DiveBomber::Component
 		Material(const std::wstring inputName);
 		void SetTexture(const std::string textureName, const std::shared_ptr<BindableObject::Texture> texture) noexcept;
 		void SetTexture(const std::string textureName, const std::shared_ptr<BindableObject::Texture> texture, UINT slot) noexcept;
+
+		void SetTexture(const std::string textureName, const std::shared_ptr<BindableObject::RenderTargetAsShaderResourceView> texture) noexcept;
+		void SetTexture(const std::string textureName, const std::shared_ptr<BindableObject::RenderTargetAsShaderResourceView> texture, UINT slot) noexcept;
 
 		template<typename C>
 		void SetConstant(const std::shared_ptr<BindableObject::ConstantBufferInHeap<C>> constant) noexcept

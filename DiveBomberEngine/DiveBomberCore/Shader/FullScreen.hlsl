@@ -13,6 +13,7 @@
 struct MaterialIndex
 {
 	uint constant0Index;
+	uint texture0Index;
 };
 
 struct VertexDataIndex
@@ -66,7 +67,9 @@ ProcessData VSMain(uint vertexID : SV_VertexID)
 
 float4 PSMain(ProcessData In) : SV_Target
 {
-	ConstantBuffer<BaseShadingParams> baseShadingParamsCB0 = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.constant0Index)];
+	Texture2D<float4> mainRT = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.texture0Index)];
 	
-	return float4(1,0,0,1);
+	float4 col = mainRT.Sample(samp, In.uv);
+	
+	return col * float4(1, 0, 0, 1);
 }

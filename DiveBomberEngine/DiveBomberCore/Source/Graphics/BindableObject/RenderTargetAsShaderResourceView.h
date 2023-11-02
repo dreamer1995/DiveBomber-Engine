@@ -17,6 +17,7 @@ namespace DiveBomber::BindableObject
 		virtual void Bind() noxnd override;
 		[[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetSRVCPUDescriptorHandle() const noexcept;
 		void Resize(const UINT inputWidth, const UINT inputHeight);
+		[[nodiscard]] UINT GetSRVDescriptorHeapOffset() const noexcept;
 
 	private:
 		std::shared_ptr<DX::DescriptorAllocator> srvDescriptorAllocator;

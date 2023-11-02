@@ -4,6 +4,7 @@
 #include "..\BindableObject\ShaderBuffer\DynamicConstantBufferInHeap.h"
 #include "..\BindableObject\Texture.h"
 #include "..\BindableObject\Shader.h"
+#include "..\BindableObject\RenderTargetAsShaderResourceView.h"
 #include "..\..\Utility\GlobalParameters.h"
 #include "..\DX\ShaderManager.h"
 #include "..\DX\CommandQueue.h"
@@ -388,6 +389,29 @@ namespace DiveBomber::Component
         shaderResourceIndices[index] = texture->GetSRVDescriptorHeapOffset();
         textureMap[textureName] = texture;
         textureSlotMap[textureName] = slot;
+
+        indexDirty = true;
+    }
+
+    void Material::SetTexture(const std::string textureName, const std::shared_ptr<RenderTargetAsShaderResourceView> texture) noexcept
+    {
+        SetTexture(textureName, texture, numTextureIndices);
+    }
+
+    void Material::SetTexture(const std::string textureName, const std::shared_ptr<RenderTargetAsShaderResourceView> texture, UINT slot) noexcept
+    {
+        if (slot >= numTextureIndices)
+        {
+            UINT needInsert = slot - numTextureIndices + 1;
+            std::vector<UINT>::iterator it = shaderResourceIndices.end();
+            shaderResourceIndices.insert(it, needInsert, 0u);
+            numTextureIndices = slot + 1;
+        }
+
+        UINT index = (numConstantIndices + slot);
+        shaderResourceIndices[index] = texture->GetSRVDescriptorHeapOffset();
+        //textureMap[textureName] = texture;
+        //textureSlotMap[textureName] = slot;
 
         indexDirty = true;
     }

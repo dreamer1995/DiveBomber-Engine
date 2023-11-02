@@ -43,6 +43,7 @@ namespace DiveBomber::BindableObject
 		rsv.Format = format;
 		rsv.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
 		rsv.Texture2D.MipSlice = mipLevels;
+		rsv.Texture2D.PlaneSlice = 0;
 
 		Resize(inputWidth, inputHeight);
 	}
@@ -59,11 +60,15 @@ namespace DiveBomber::BindableObject
 
 	void RenderTarget::BindTarget() noxnd
 	{
+		ResourceStateTracker::AddGlobalResourceState(renderTargetBuffer, D3D12_RESOURCE_STATE_COMMON);
+
 		Graphics::GetInstance().GetGraphicsCommandList()->OMSetRenderTargets(1, &rtvCPUHandle, FALSE, nullptr);
 	}
 
 	void RenderTarget::BindTarget(std::shared_ptr<BindableTarget> depthStencil) noxnd
 	{
+		ResourceStateTracker::AddGlobalResourceState(renderTargetBuffer, D3D12_RESOURCE_STATE_COMMON);
+
 		D3D12_CPU_DESCRIPTOR_HANDLE depthDescHeapHandle = std::dynamic_pointer_cast<DepthStencil>(depthStencil)->GetDSVCPUDescriptorHandle();
 		Graphics::GetInstance().GetGraphicsCommandList()->OMSetRenderTargets(1, &rtvCPUHandle, FALSE, &depthDescHeapHandle);
 	}
@@ -86,6 +91,7 @@ namespace DiveBomber::BindableObject
 		HRESULT hr;
 
 		auto heapProp = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
+
 		auto resDes = CD3DX12_RESOURCE_DESC::Tex2D(format, width, height,
 			1, 0, 1, 0, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET);
 
@@ -102,7 +108,6 @@ namespace DiveBomber::BindableObject
 
 		device->CreateRenderTargetView(renderTargetBuffer.Get(), &rsv,
 			rtvCPUHandle);
-		ResourceStateTracker::AddGlobalResourceState(renderTargetBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET);
 	}
 
 	void RenderTarget::Resize(wrl::ComPtr<ID3D12Resource> newbuffer)
@@ -117,7 +122,6 @@ namespace DiveBomber::BindableObject
 		format = textureDesc.Format;
 
 		Graphics::GetInstance().GetDevice()->CreateRenderTargetView(renderTargetBuffer.Get(), nullptr, rtvCPUHandle);
-		ResourceStateTracker::AddGlobalResourceState(renderTargetBuffer, D3D12_RESOURCE_STATE_COMMON);
 	}
 
 	void DiveBomber::BindableObject::RenderTarget::ReleaseBuffer()

@@ -26,8 +26,9 @@ namespace DiveBomber::RenderPipeline
 			Graphics::GetInstance().GetWidth(), Graphics::GetInstance().GetHeight(),
 			Graphics::GetInstance().GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_RTV),
 			Graphics::GetInstance().GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV),
-			DXGI_FORMAT_B8G8R8A8_UNORM
+			DXGI_FORMAT_R32G32B32A32_FLOAT
 			);
+		fullScreenPlane->SetTexture("MainRT", HDRTarget);
 	}
 
 	RenderPipelineGraph::~RenderPipelineGraph()
@@ -43,7 +44,7 @@ namespace DiveBomber::RenderPipeline
 	{
 		Graphics::GetInstance().BindShaderDescriptorHeaps();
 
-		Graphics::GetInstance().GetCurrentBackBuffer()->BindTarget(HDRTarget);
+		HDRTarget->BindTarget(Graphics::GetInstance().GetMainDS());
 		FLOAT clearColor[] = ClearMainRTColor;
 		Graphics::GetInstance().GetGraphicsCommandList()->ClearRenderTargetView(HDRTarget->GetRTVCPUDescriptorHandle(), clearColor, 0, nullptr);
 
@@ -52,7 +53,10 @@ namespace DiveBomber::RenderPipeline
 			drawableObject->Bind();
 		}
 
-		Graphics::GetInstance().GetCurrentBackBuffer()->BindTarget(Graphics::GetInstance().GetMainDS());
+		Graphics::GetInstance().GetCurrentBackBuffer()->BindTarget();
+		HDRTarget->Bind();
 		fullScreenPlane->Bind();
+
+		drawableObjects.clear();
 	}
 }

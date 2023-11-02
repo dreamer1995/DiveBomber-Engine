@@ -47,7 +47,7 @@ namespace DiveBomber::DrawableObject
 		rtvFormats.NumRenderTargets = 1;
 		rtvFormats.RTFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
 
-		auto dsvFormat = DXGI_FORMAT_D32_FLOAT;
+		auto dsvFormat = DXGI_FORMAT_UNKNOWN;
 
 		PipelineStateObject::PipelineStateReference pipelineStateReference;
 		pipelineStateReference.rootSignature = rootSignature;
@@ -67,6 +67,11 @@ namespace DiveBomber::DrawableObject
 	dx::XMMATRIX FullScreenPlane::GetTransformXM() const noexcept
 	{
 		return DirectX::XMMATRIX();
+	}
+
+	void FullScreenPlane::SetTexture(const std::string textureName, const std::shared_ptr<BindableObject::RenderTargetAsShaderResourceView> texture)
+	{
+		material->SetTexture(textureName, texture);
 	}
 
 	void FullScreenPlane::Bind() const noxnd
