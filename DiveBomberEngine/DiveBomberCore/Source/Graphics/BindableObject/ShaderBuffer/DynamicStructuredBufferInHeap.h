@@ -9,7 +9,8 @@ namespace DiveBomber::BindableObject
 		DynamicStructuredBufferInHeap(const std::string& inputTag,
 			const DynamicConstantProcess::CookedLayout& inputLayout, size_t inputNumElements = 1)
 			:
-			DynamicConstantBufferInHeap(inputTag, inputLayout)
+			DynamicConstantBufferInHeap(inputTag, inputLayout),
+			numElements(inputNumElements)
 		{
 		}
 

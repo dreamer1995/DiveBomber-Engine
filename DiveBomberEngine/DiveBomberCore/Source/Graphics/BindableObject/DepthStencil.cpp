@@ -18,19 +18,12 @@ namespace DiveBomber::BindableObject
 		descriptorAllocator(inputDescriptorAllocator),
 		descriptorAllocation(descriptorAllocator->Allocate(1u)),
 		dsvCPUHandle(descriptorAllocation->GetCPUDescriptorHandle()),
-		optimizedClearValue(),
-		dsv()
+		optimizedClearValue()
 	{
 		// Resize screen dependent resources.
 		// Create a depth buffer.
 		optimizedClearValue.Format = DXGI_FORMAT_D32_FLOAT;
 		optimizedClearValue.DepthStencil = { 1.0f, 0 };
-
-		// Update the depth-stencil view.
-		dsv.Format = DXGI_FORMAT_D32_FLOAT;
-		dsv.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
-		dsv.Texture2D.MipSlice = 0u;
-		dsv.Flags = D3D12_DSV_FLAG_NONE;
 
 		Resize(inputWidth, inputHeight);
 	}

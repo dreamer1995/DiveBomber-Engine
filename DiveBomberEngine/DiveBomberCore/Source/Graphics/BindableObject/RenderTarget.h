@@ -44,8 +44,8 @@ namespace DiveBomber::BindableObject
 		void ReleaseBuffer();
 
 	protected:
-		UINT width;
-		UINT height;
+		UINT width = 1u;
+		UINT height = 1u;
 		DXGI_FORMAT format;
 		UINT mipLevels;
 		wrl::ComPtr<ID3D12Resource> renderTargetBuffer;

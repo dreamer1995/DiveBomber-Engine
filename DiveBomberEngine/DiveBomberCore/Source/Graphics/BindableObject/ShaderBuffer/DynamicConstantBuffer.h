@@ -41,7 +41,7 @@ namespace DiveBomber::BindableObject
 			DX::ResourceStateTracker::RemoveGlobalResourceState(constantBuffer);
 		}
 
-		virtual void Update(const DynamicConstantProcess::Buffer& buffer)
+		virtual void Update(const DynamicConstantProcess::Buffer& buffer) override
 		{
 			// this will cost less? or more???
 			if (&dynamicBuffer.GetRootLayoutElement() == &buffer.GetRootLayoutElement())
