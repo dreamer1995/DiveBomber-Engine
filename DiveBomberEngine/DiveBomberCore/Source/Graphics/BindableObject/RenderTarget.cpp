@@ -27,25 +27,23 @@ namespace DiveBomber::BindableObject
 
 	RenderTarget::RenderTarget(UINT inputWidth, UINT inputHeight,
 		std::shared_ptr<DX::DescriptorAllocator> inputRTVDescriptorAllocator,
-		DXGI_FORMAT inputFormat, UINT inputMipLevels)
+		DXGI_FORMAT inputFormat, UINT inputMipLevels, bool updateRT)
 		: 
 		rtvDescriptorAllocator(inputRTVDescriptorAllocator),
 		rtvDescriptorAllocation(rtvDescriptorAllocator->Allocate(1u)),
 		rtvCPUHandle(rtvDescriptorAllocation->GetCPUDescriptorHandle()),
 		mipLevels(inputMipLevels),
-		format(inputFormat)
+		format(inputFormat),
+		rsv()
 	{
 		// Resize screen dependent resources.
 		// Create a render target buffer.
 		optimizedClearValue.Format = format;
 
-		// Update the depth-stencil view.
-		rsv.Format = format;
-		rsv.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
-		rsv.Texture2D.MipSlice = mipLevels;
-		rsv.Texture2D.PlaneSlice = 0;
-
-		Resize(inputWidth, inputHeight);
+		if (updateRT)
+		{
+			Resize(inputWidth, inputHeight);
+		}
 	}
 
 	RenderTarget::~RenderTarget()
@@ -106,8 +104,7 @@ namespace DiveBomber::BindableObject
 			IID_PPV_ARGS(&renderTargetBuffer)
 		));
 
-		device->CreateRenderTargetView(renderTargetBuffer.Get(), &rsv,
-			rtvCPUHandle);
+		device->CreateRenderTargetView(renderTargetBuffer.Get(), nullptr, rtvCPUHandle);
 	}
 
 	void RenderTarget::Resize(wrl::ComPtr<ID3D12Resource> newbuffer)

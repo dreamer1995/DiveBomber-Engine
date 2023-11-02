@@ -17,13 +17,13 @@ namespace DiveBomber::BindableObject
 		std::shared_ptr<DX::DescriptorAllocator> inputSRVDescriptorAllocator,
 		DXGI_FORMAT inputFormat, UINT inputMipLevels)
 		:
-		RenderTarget(inputWidth, inputHeight, inputRTVDescriptorAllocator, inputFormat, inputMipLevels),
+		RenderTarget(inputWidth, inputHeight, inputRTVDescriptorAllocator, inputFormat, inputMipLevels, false),
 		srvDescriptorAllocator(inputSRVDescriptorAllocator),
 		srvDescriptorAllocation(srvDescriptorAllocator->Allocate(1u)),
 		srvCPUHandle(srvDescriptorAllocation->GetCPUDescriptorHandle()),
 		srv()
 	{
-
+		Resize(inputWidth, inputHeight);
 	}
 
 	RenderTargetAsShaderResourceView::~RenderTargetAsShaderResourceView()
@@ -49,27 +49,8 @@ namespace DiveBomber::BindableObject
 	{
 		RenderTarget::Resize(inputWidth, inputHeight);
 
-		width = std::max(1u, inputWidth);
-		height = std::max(1u, inputHeight);
-
-		HRESULT hr;
-
-		auto heapProp = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
-
-		auto resDes = CD3DX12_RESOURCE_DESC::Tex2D(format, width, height,
-			1, 0, 1, 0, D3D12_RESOURCE_FLAG_NONE);
-
 		auto device = Graphics::GetInstance().GetDevice();
 
-		GFX_THROW_INFO(device->CreateCommittedResource(
-			&heapProp,
-			D3D12_HEAP_FLAG_NONE,
-			&resDes,
-			D3D12_RESOURCE_STATE_COMMON,
-			&optimizedClearValue,
-			IID_PPV_ARGS(&renderTargetBuffer)
-		));
-
-		device->CreateShaderResourceView(renderTargetBuffer.Get(), &srv, srvCPUHandle);
+		device->CreateShaderResourceView(renderTargetBuffer.Get(), nullptr, srvCPUHandle);
 	}
 }

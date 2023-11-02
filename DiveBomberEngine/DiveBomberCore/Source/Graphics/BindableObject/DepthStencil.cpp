@@ -93,7 +93,6 @@ namespace DiveBomber::BindableObject
 			IID_PPV_ARGS(&depthStencilBuffer)
 		));
 
-		device->CreateDepthStencilView(depthStencilBuffer.Get(), &dsv,
-			dsvCPUHandle);
+		device->CreateDepthStencilView(depthStencilBuffer.Get(), &dsv, dsvCPUHandle);
 	}
 }
