@@ -157,6 +157,7 @@
     <ClInclude Include="Source\Graphics\BindableObject\GlobalBindableManager.h" />
     <ClInclude Include="Source\Graphics\BindableObject\PipelineStateObject.h" />
     <ClInclude Include="Source\Graphics\BindableObject\ShaderBuffer\StructuredBufferInHeap.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\BindableShaderInput.h" />
     <ClInclude Include="Source\Graphics\BindableObject\Texture.h" />
     <ClInclude Include="Source\Graphics\BindableObject\UnorderedAccessBuffer.h" />
     <ClInclude Include="Source\Graphics\Component\Material.h" />

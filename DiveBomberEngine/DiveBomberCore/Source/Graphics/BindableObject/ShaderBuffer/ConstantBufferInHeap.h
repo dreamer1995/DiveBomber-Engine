@@ -1,5 +1,6 @@
 #pragma once
 #include "ConstantBuffer.h"
+#include "..\BindableShaderInput.h"
 
 #include "..\..\DX\DescriptorAllocator.h"
 #include "..\..\DX\DescriptorAllocation.h"
@@ -7,7 +8,7 @@
 namespace DiveBomber::BindableObject
 {
 	template<typename C>
-	class ConstantBufferInHeap : public ConstantBuffer<C>
+	class ConstantBufferInHeap : public ConstantBuffer<C>, public BindableShaderInput
 	{
 	public:
 		ConstantBufferInHeap(const std::string& inputTag)
@@ -50,7 +51,7 @@ namespace DiveBomber::BindableObject
 			}
 		}
 
-		[[nodiscard]] UINT GetCBVDescriptorHeapOffset()
+		[[nodiscard]] UINT GetSRVDescriptorHeapOffset() const noexcept override
 		{
 			return descriptorAllocation->GetBaseOffset();
 		}

@@ -1,9 +1,10 @@
 #pragma once
 #include "RenderTarget.h"
+#include "BindableShaderInput.h"
 
 namespace DiveBomber::BindableObject
 {
-	class RenderTargetAsShaderResourceView final: public RenderTarget
+	class RenderTargetAsShaderResourceView final: public RenderTarget, public BindableShaderInput
 	{
 	public:
 		RenderTargetAsShaderResourceView(UINT inputWidth, UINT inputHeight,
@@ -17,7 +18,7 @@ namespace DiveBomber::BindableObject
 		virtual void Bind() noxnd override;
 		[[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetSRVCPUDescriptorHandle() const noexcept;
 		virtual void Resize(const UINT inputWidth, const UINT inputHeight) override;
-		[[nodiscard]] UINT GetSRVDescriptorHeapOffset() const noexcept;
+		[[nodiscard]] UINT GetSRVDescriptorHeapOffset() const noexcept override;
 
 	private:
 		std::shared_ptr<DX::DescriptorAllocator> srvDescriptorAllocator;

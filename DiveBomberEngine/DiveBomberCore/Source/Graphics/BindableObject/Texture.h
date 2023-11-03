@@ -1,5 +1,6 @@
 #pragma once
 #include "Bindable.h"
+#include "BindableShaderInput.h"
 #include "..\GraphicsHeader.h"
 
 namespace DiveBomber::DX
@@ -9,7 +10,7 @@ namespace DiveBomber::DX
 
 namespace DiveBomber::BindableObject
 {
-	class Texture final: public Bindable
+	class Texture final: public Bindable, public BindableShaderInput
 	{
 	public:
 		struct TextureDescription
@@ -22,7 +23,7 @@ namespace DiveBomber::BindableObject
 		Texture(const std::wstring& inputName, TextureDescription inputTextureDesc);
 		~Texture();
 
-		[[nodiscard]] UINT GetSRVDescriptorHeapOffset() const noexcept;
+		[[nodiscard]] UINT GetSRVDescriptorHeapOffset() const noexcept override;
 		
 		void Bind() noxnd override;
 		[[nodiscard]] static std::shared_ptr<Texture> Resolve(const std::wstring& name);

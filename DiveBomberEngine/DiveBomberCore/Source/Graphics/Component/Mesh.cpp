@@ -28,7 +28,7 @@ namespace DiveBomber::Component
         vertexDataConstantBuffer = std::make_shared<ConstantBuffer<UINT>>(Utility::ToNarrow(name) + "#"s + "MeshConstant", 2u);
         vertexBuffer = std::make_shared<StructuredBufferInHeap<char>>(Utility::ToNarrow(name) +"#"s + "VertexData", vertexData.Size());
         vertexBuffer->Update(vertexData.GetData(), vertexData.SizeBytes());
-        vertexDataConstantBuffer->Update(vertexBuffer->GetCBVDescriptorHeapOffset());
+        vertexDataConstantBuffer->Update(vertexBuffer->GetSRVDescriptorHeapOffset());
     }
 
     void Mesh::SetMesh(BindableObject::VertexProcess::VertexData& inputVertexbuffer, std::shared_ptr<IndexBuffer> inputIndexBuffer) noexcept
@@ -38,7 +38,7 @@ namespace DiveBomber::Component
 
         vertexBuffer->Update(vertexData.GetData(), vertexData.SizeBytes());
         vertexBuffer->SetNumElements(vertexData.Size());
-        vertexDataConstantBuffer->Update(vertexBuffer->GetCBVDescriptorHeapOffset());
+        vertexDataConstantBuffer->Update(vertexBuffer->GetSRVDescriptorHeapOffset());
     }
 
     void Mesh::SetTopology(std::shared_ptr<Topology> inputTopology) noexcept

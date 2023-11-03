@@ -134,6 +134,7 @@
     <ClInclude Include="Source\Graphics\BindableObject\RenderTargetAsShaderResourceView.h" />
     <ClInclude Include="Source\Graphics\BindableObject\UnorderedAccessBuffer.h" />
     <ClInclude Include="Source\Graphics\DrawableObject\FullScreenPlane.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\BindableShaderInput.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

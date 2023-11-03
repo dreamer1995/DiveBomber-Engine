@@ -69,9 +69,9 @@ namespace DiveBomber::DrawableObject
 		return DirectX::XMMATRIX();
 	}
 
-	void FullScreenPlane::SetTexture(const std::string textureName, const std::shared_ptr<BindableObject::RenderTargetAsShaderResourceView> texture)
+	void FullScreenPlane::SetTexture(const std::shared_ptr<BindableShaderInput> texture)
 	{
-		material->SetTexture(textureName, texture);
+		material->SetTexture(texture);
 	}
 
 	void FullScreenPlane::Bind() const noxnd

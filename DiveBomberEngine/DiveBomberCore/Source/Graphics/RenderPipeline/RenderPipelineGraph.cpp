@@ -28,7 +28,7 @@ namespace DiveBomber::RenderPipeline
 			Graphics::GetInstance().GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV),
 			DXGI_FORMAT_R32G32B32A32_FLOAT
 			);
-		fullScreenPlane->SetTexture("MainRT", HDRTarget);
+		fullScreenPlane->SetTexture(HDRTarget);
 	}
 
 	RenderPipelineGraph::~RenderPipelineGraph()
