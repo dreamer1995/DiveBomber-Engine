@@ -1,6 +1,7 @@
 #pragma once
 #include "Bindable.h"
-#include "BindableTarget.h"
+#include "BindableShaderInput.h"
+
 #include "..\GraphicsHeader.h"
 
 namespace DiveBomber::DX
@@ -11,7 +12,7 @@ namespace DiveBomber::DX
 
 namespace DiveBomber::BindableObject
 {
-	class UnorderedAccessBuffer final : public Bindable
+	class UnorderedAccessBuffer final : public Bindable, public BindableShaderInput
 	{
 	public:
 		UnorderedAccessBuffer(UINT inputWidth, UINT inputHeight,
@@ -30,6 +31,7 @@ namespace DiveBomber::BindableObject
 		[[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetSRVCPUDescriptorHandle() const noexcept;
 		virtual void Resize(const UINT inputWidth, const UINT inputHeight);
 
+		UINT GetSRVDescriptorHeapOffset() const noexcept override;
 	private:
 		UINT width;
 		UINT height;

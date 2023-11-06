@@ -282,23 +282,30 @@ namespace DiveBomber::Component
         }
 
         DynamicConstantProcess::RawLayout DCBLayout;
+        UINT textureCounter = 0;
         for (auto& param : config["Param"])
         {
             if (param["Type"] == ShaderParamType::SPT_Texture)
             {
                 auto matExsists = textureMap.find(param["Name"]);
 
-                if (matExsists != textureMap.end() && matExsists->second != nullptr)
+                if (matExsists != textureMap.end() && matExsists->second.first != nullptr)
                 {
-                    if (Utility::ToNarrow(matExsists->second->GetName()) != param["Value"])
+                    if (Utility::ToNarrow(matExsists->second.first->GetName()) != param["Value"])
                     {
-                        SetTexture(param["Name"].get<std::string>(), Texture::Resolve(Utility::ToWide(param["Value"])), textureSlotMap[param["Name"]]);
+                        SetTexture(param["Name"].get<std::string>(), Texture::Resolve(Utility::ToWide(param["Value"])), textureCounter);
+                    }
+                    else if(textureCounter != matExsists->second.second)
+                    {
+                        matExsists->second.second = textureCounter;
+                        SetTexture(param["Name"].get<std::string>(), Texture::Resolve(Utility::ToWide(param["Value"])), textureCounter);
                     }
                 }
                 else
                 {
-                    SetTexture(param["Name"], Texture::Resolve(Utility::ToWide(param["Value"])));
+                    SetTexture(param["Name"], Texture::Resolve(Utility::ToWide(param["Value"])), textureCounter);
                 }
+                textureCounter++;
             }
             else if(param["Type"] == ShaderParamType::SPT_Float)
             {
@@ -312,11 +319,6 @@ namespace DiveBomber::Component
             {
                 DCBLayout.Add<DynamicConstantProcess::Bool>(param["Name"]);
             }
-
-            //not a good idea, should be re-considered
-            std::shared_ptr<CommandQueue> commandQueue = Graphics::GetInstance().GetCommandQueue(D3D12_COMMAND_LIST_TYPE_COPY);
-            uint64_t fenceValue = Graphics::GetInstance().ExecuteCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
-            commandQueue->WaitForFenceValue(fenceValue);
         }
 
         DynamicConstantProcess::Buffer DXBBuffer = DynamicConstantProcess::Buffer(std::move(DCBLayout));
@@ -376,8 +378,7 @@ namespace DiveBomber::Component
 
     void Material::SetTexture(const std::string textureName, const std::shared_ptr<BindableShaderInput> texture, UINT slot) noexcept
     {
-        textureMap[textureName] = std::dynamic_pointer_cast<Texture>(texture);
-        textureSlotMap[textureName] = slot;
+        textureMap[textureName] = { std::dynamic_pointer_cast<Texture>(texture),slot };
         SetTexture(texture, slot);
     }
 
@@ -440,6 +441,11 @@ namespace DiveBomber::Component
 
             UploadConfig(shaderName);
             ReloadConfig();
+
+            //not a good idea, should be re-considered
+            std::shared_ptr<CommandQueue> commandQueue = Graphics::GetInstance().GetCommandQueue(D3D12_COMMAND_LIST_TYPE_COPY);
+            uint64_t fenceValue = Graphics::GetInstance().ExecuteCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
+            commandQueue->WaitForFenceValue(fenceValue);
         }
 
         if (indexDirty)

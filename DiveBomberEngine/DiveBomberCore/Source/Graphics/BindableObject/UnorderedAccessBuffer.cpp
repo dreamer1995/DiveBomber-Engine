@@ -28,15 +28,6 @@ namespace DiveBomber::BindableObject
 		mipLevels(inputMipLevels),
 		format(inputFormat)
 	{
-		srv.Format = format;
-		srv.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-		srv.Texture2D.MipLevels = mipLevels;
-		srv.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-
-		uav.Format = format;
-		uav.ViewDimension = D3D12_UAV_DIMENSION_TEXTURE2D;
-		uav.Texture2D.MipSlice = mipLevels;
-
 		Resize(inputWidth, inputHeight);
 	}
 
@@ -72,6 +63,11 @@ namespace DiveBomber::BindableObject
 	D3D12_CPU_DESCRIPTOR_HANDLE UnorderedAccessBuffer::GetSRVCPUDescriptorHandle() const noexcept
 	{
 		return srvCPUHandle;
+	}
+
+	UINT UnorderedAccessBuffer::GetSRVDescriptorHeapOffset() const noexcept
+	{
+		return srvDescriptorAllocation->GetBaseOffset();
 	}
 
 	void UnorderedAccessBuffer::Resize(const UINT inputWidth, const UINT inputHeight)

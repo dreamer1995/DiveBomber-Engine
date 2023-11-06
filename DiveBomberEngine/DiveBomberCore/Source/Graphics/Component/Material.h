@@ -71,8 +71,7 @@ namespace DiveBomber::Component
 		std::vector<UINT> shaderResourceIndices;
 		bool indexDirty = false;
 		std::unordered_map<std::string, std::shared_ptr<BindableObject::DynamicConstantBufferInHeap>> dynamicConstantMap;
-		std::unordered_map<std::string, std::shared_ptr<BindableObject::Texture>> textureMap;
-		std::unordered_map<std::string, UINT> textureSlotMap;
+		std::unordered_map<std::string, std::pair<std::shared_ptr<BindableObject::Texture>, UINT>> textureMap;
 
 		json config;
 		std::filesystem::path configFile;
