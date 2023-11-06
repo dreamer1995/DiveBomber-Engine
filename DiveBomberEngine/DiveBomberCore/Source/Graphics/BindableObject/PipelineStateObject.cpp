@@ -9,7 +9,6 @@
 #include "Topology.h"
 #include "Shader.h"
 #include "..\DX\ShaderManager.h"
-#include "..\Component\Camera.h"
 #include "..\Component\Mesh.h"
 #include "..\Component\Material.h"
 
@@ -40,18 +39,7 @@ namespace DiveBomber::BindableObject
 
 	void PipelineStateObject::Bind() noxnd
 	{
-		Graphics::GetInstance().GetCamera()->Bind();
-		pipelineStateReference.mesh->Bind();
-		pipelineStateReference.material->Bind();
-
-		if (pipelineStateReference.material->IsShaderDirty())
-		{
-			UpdatePipelineState();
-		}
-
 		GFX_THROW_INFO_ONLY(Graphics::GetInstance().GetGraphicsCommandList()->SetPipelineState(pipelineState.Get()));
-
-		Graphics::GetInstance().GetGraphicsCommandList()->DrawIndexedInstanced(pipelineStateReference.mesh->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
 	}
 
 	std::shared_ptr<PipelineStateObject> PipelineStateObject::Resolve(const std::string& tag, PipelineStateReference pipelineStateReference)

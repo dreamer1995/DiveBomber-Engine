@@ -37,19 +37,18 @@ namespace DiveBomber::DrawableObject
 
 		//std::shared_ptr<VertexBuffer> vertexBuffer = VertexBuffer::Resolve(geometryTag, sphere.vertices);
 		std::shared_ptr<IndexBuffer> indexBuffer = IndexBuffer::Resolve(geometryTag, sphere.indices);
-		
+
 		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(name, sphere.vertices, indexBuffer);
 		meshMap.emplace(mesh->GetName(), mesh);
 
 		std::shared_ptr<Material> material = std::make_shared<Material>(name + L"Material");
 		materialMap.emplace(material->GetName(), material);
 
-		std::shared_ptr<RootSignature> rootSignature = RootSignature::Resolve("StandardFullStageAccess");
-		AddBindable(rootSignature);
-
 		std::shared_ptr<ConstantTransformBuffer> transformBuffer = std::make_shared<ConstantTransformBuffer>(name + L"Transforms");
 		transformBuffer->InitializeParentReference(*this);
 		AddBindable(transformBuffer);
+
+		std::shared_ptr<RootSignature> rootSignature = RootSignature::Resolve("StandardFullStageAccess");
 
 		D3D12_RT_FORMAT_ARRAY rtvFormats = {};
 		rtvFormats.NumRenderTargets = 1;
@@ -65,7 +64,7 @@ namespace DiveBomber::DrawableObject
 		pipelineStateReference.dsvFormat = dsvFormat;
 
 		std::shared_ptr<PipelineStateObject> pipelineStateObject = PipelineStateObject::Resolve(geometryTag, std::move(pipelineStateReference));
-		PSOMap.emplace(pipelineStateObject->GetUID(), pipelineStateObject);
+		AddBindable(pipelineStateObject);
 	}
 
 	SimpleSphere::~SimpleSphere()
@@ -110,10 +109,11 @@ namespace DiveBomber::DrawableObject
 
 	void SimpleSphere::Bind() const noxnd
 	{
+		meshMap.begin()->second->Bind();
+		materialMap.begin()->second->Bind();
+
 		Drawable::Bind();
-		for (auto& pso : PSOMap)
-		{
-			pso.second->Bind();
-		}
+
+		Graphics::GetInstance().GetGraphicsCommandList()->DrawIndexedInstanced(meshMap.begin()->second->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
 	}
 }

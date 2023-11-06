@@ -32,5 +32,6 @@ namespace DiveBomber::DrawableObject
 
 	private:
 		std::shared_ptr<Component::Material> material;
+		std::shared_ptr<Component::Mesh> mesh;
 	};
 }

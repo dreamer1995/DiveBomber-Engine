@@ -38,6 +38,5 @@ namespace DiveBomber::DrawableObject
 		float roll{ 0.0f };
 		std::unordered_map<std::wstring, std::shared_ptr<Component::Mesh>> meshMap;
 		std::unordered_map<std::wstring, std::shared_ptr<Component::Material>> materialMap;
-		std::unordered_map<std::string, std::shared_ptr<BindableObject::PipelineStateObject>> PSOMap;
 	};
 }

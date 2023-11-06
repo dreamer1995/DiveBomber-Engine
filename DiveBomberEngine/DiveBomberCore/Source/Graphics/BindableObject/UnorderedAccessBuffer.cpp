@@ -33,7 +33,7 @@ namespace DiveBomber::BindableObject
 
 	UnorderedAccessBuffer::~UnorderedAccessBuffer()
 	{
-		ResourceStateTracker::RemoveGlobalResourceState(unorderedAccessBuffer);
+		ResourceStateTracker::RemoveGlobalResourceState(uavBuffer);
 	}
 
 	void UnorderedAccessBuffer::Bind() noxnd
@@ -42,17 +42,17 @@ namespace DiveBomber::BindableObject
 
 	void UnorderedAccessBuffer::BindAsUAV() noxnd
 	{
-		ResourceStateTracker::AddGlobalResourceState(unorderedAccessBuffer, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+		ResourceStateTracker::AddGlobalResourceState(uavBuffer, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
 	}
 
 	void UnorderedAccessBuffer::BindAsSRV() noxnd
 	{
-		ResourceStateTracker::AddGlobalResourceState(unorderedAccessBuffer, D3D12_RESOURCE_STATE_COMMON);
+		ResourceStateTracker::AddGlobalResourceState(uavBuffer, D3D12_RESOURCE_STATE_COMMON);
 	}
 
 	wrl::ComPtr<ID3D12Resource> UnorderedAccessBuffer::GetUnorderedAccessBuffer() const noexcept
 	{
-		return unorderedAccessBuffer;
+		return uavBuffer;
 	}
 
 	D3D12_CPU_DESCRIPTOR_HANDLE UnorderedAccessBuffer::GetUAVCPUDescriptorHandle() const noexcept
@@ -77,11 +77,12 @@ namespace DiveBomber::BindableObject
 
 		HRESULT hr;
 
-		auto heapProp = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
-		auto resDes = CD3DX12_RESOURCE_DESC::Tex2D(format, width, height,
-			1, 0, 1, 0, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET | D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS);
-
 		auto device = Graphics::GetInstance().GetDevice();
+
+		auto heapProp = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
+
+		auto resDes = CD3DX12_RESOURCE_DESC::Tex2D(format, width, height,
+			1, 0, 1, 0, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS);
 
 		GFX_THROW_INFO(device->CreateCommittedResource(
 			&heapProp,
@@ -89,11 +90,11 @@ namespace DiveBomber::BindableObject
 			&resDes,
 			D3D12_RESOURCE_STATE_COMMON,
 			nullptr,
-			IID_PPV_ARGS(&unorderedAccessBuffer)
+			IID_PPV_ARGS(&uavBuffer)
 		));
 
-		device->CreateUnorderedAccessView(unorderedAccessBuffer.Get(), nullptr, &uav, uavCPUHandle);
+		device->CreateUnorderedAccessView(uavBuffer.Get(), nullptr, nullptr, uavCPUHandle);
 
-		device->CreateShaderResourceView(unorderedAccessBuffer.Get(), &srv, srvCPUHandle);
+		device->CreateShaderResourceView(uavBuffer.Get(), nullptr, srvCPUHandle);
 	}
 }

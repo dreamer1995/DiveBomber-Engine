@@ -36,12 +36,11 @@ namespace DiveBomber::DrawableObject
 
 		std::shared_ptr<IndexBuffer> indexBuffer = IndexBuffer::Resolve(geometryTag, { 0,1,2,1,3,2 });
 		
-		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(name, bufFull, indexBuffer);
+		mesh = std::make_shared<Mesh>(name, bufFull, indexBuffer);
 
 		material = std::make_shared<Material>(name + L"Material");
 
 		std::shared_ptr<RootSignature> rootSignature = RootSignature::Resolve("StandardFullStageAccess");
-		AddBindable(rootSignature);
 
 		D3D12_RT_FORMAT_ARRAY rtvFormats = {};
 		rtvFormats.NumRenderTargets = 1;
@@ -76,7 +75,11 @@ namespace DiveBomber::DrawableObject
 
 	void FullScreenPlane::Bind() const noxnd
 	{
-		Drawable::Bind();
+		mesh->Bind();
 		material->Bind();
+
+		Drawable::Bind();
+
+		Graphics::GetInstance().GetGraphicsCommandList()->DrawIndexedInstanced(mesh->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
 	}
 }

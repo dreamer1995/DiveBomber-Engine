@@ -7,6 +7,8 @@
 namespace DiveBomber::BindableObject
 {
 	class RenderTargetAsShaderResourceView;
+	class UnorderedAccessBuffer;
+	class RootSignature;
 }
 
 namespace DiveBomber::DrawableObject
@@ -31,5 +33,7 @@ namespace DiveBomber::RenderPipeline
 
 		std::shared_ptr<DrawableObject::FullScreenPlane> fullScreenPlane;
 		std::shared_ptr<BindableObject::RenderTargetAsShaderResourceView> HDRTarget;
+		std::shared_ptr<BindableObject::UnorderedAccessBuffer> UAVTarget;
+		std::shared_ptr<BindableObject::RootSignature> rootSignature;
 	};
 }

@@ -37,7 +37,7 @@ namespace DiveBomber::BindableObject
 		UINT height;
 		DXGI_FORMAT format;
 		UINT mipLevels;
-		wrl::ComPtr<ID3D12Resource> unorderedAccessBuffer;
+		wrl::ComPtr<ID3D12Resource> uavBuffer;
 
 		std::shared_ptr<DX::DescriptorAllocator> descriptorAllocator;
 
