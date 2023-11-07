@@ -118,6 +118,7 @@ namespace DiveBomber::BindableObject
 		void Bind() noxnd override
 		{
 			DEGraphics::Graphics::GetInstance().GetGraphicsCommandList()->SetGraphicsRootConstantBufferView(slot, constantBuffer->GetGPUVirtualAddress());
+			DEGraphics::Graphics::GetInstance().GetGraphicsCommandList()->SetComputeRootConstantBufferView(slot, constantBuffer->GetGPUVirtualAddress());
 		}
 
 		[[nodiscard]] wrl::ComPtr<ID3D12Resource> GetConstantBuffer() noexcept

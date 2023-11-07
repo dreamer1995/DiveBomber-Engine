@@ -5,6 +5,7 @@
 #include "..\DX\DescriptorAllocator.h"
 #include "..\DX\DescriptorAllocation.h"
 #include "..\DX\ResourceStateTracker.h"
+#include "..\DX\CommandList.h"
 
 namespace DiveBomber::BindableObject
 {
@@ -32,7 +33,7 @@ namespace DiveBomber::BindableObject
 
 	void RenderTargetAsShaderResourceView::Bind() noxnd
 	{
-		ResourceStateTracker::AddGlobalResourceState(renderTargetBuffer, D3D12_RESOURCE_STATE_COMMON);
+		Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(renderTargetBuffer, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE, true);
 	}
 
 	D3D12_CPU_DESCRIPTOR_HANDLE RenderTargetAsShaderResourceView::GetSRVCPUDescriptorHandle() const noexcept

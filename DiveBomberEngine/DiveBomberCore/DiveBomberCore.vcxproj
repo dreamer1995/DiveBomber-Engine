@@ -91,6 +91,7 @@
     <ClCompile Include="Source\Graphics\BindableObject\PipelineStateObject.cpp" />
     <ClCompile Include="Source\Graphics\BindableObject\Texture.cpp" />
     <ClCompile Include="Source\Graphics\BindableObject\UnorderedAccessBuffer.cpp" />
+    <ClCompile Include="Source\Graphics\BindableObject\UnorderedAccessBufferAsShaderResourceView.cpp" />
     <ClCompile Include="Source\Graphics\Component\Camera.cpp" />
     <ClCompile Include="Source\Graphics\Component\Material.cpp" />
     <ClCompile Include="Source\Graphics\Component\Mesh.cpp" />
@@ -98,6 +99,7 @@
     <ClCompile Include="Source\Graphics\DrawableObject\Model.cpp" />
     <ClCompile Include="Source\Graphics\DrawableObject\Drawable.cpp" />
     <ClCompile Include="Source\Graphics\DrawableObject\SimpleSphere.cpp" />
+    <ClCompile Include="Source\Graphics\DrawableObject\UAVPass.cpp" />
     <ClCompile Include="Source\Graphics\DX\DescriptorAllocation.cpp" />
     <ClCompile Include="Source\Graphics\DX\DescriptorAllocator.cpp" />
     <ClCompile Include="Source\Graphics\DX\DescriptorAllocatorPage.cpp" />
@@ -160,9 +162,11 @@
     <ClInclude Include="Source\Graphics\BindableObject\BindableShaderInput.h" />
     <ClInclude Include="Source\Graphics\BindableObject\Texture.h" />
     <ClInclude Include="Source\Graphics\BindableObject\UnorderedAccessBuffer.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\UnorderedAccessBufferAsShaderResourceView.h" />
     <ClInclude Include="Source\Graphics\Component\Material.h" />
     <ClInclude Include="Source\Graphics\Component\Mesh.h" />
     <ClInclude Include="Source\Graphics\DrawableObject\FullScreenPlane.h" />
+    <ClInclude Include="Source\Graphics\DrawableObject\UAVPass.h" />
     <ClInclude Include="Source\Utility\DEJson.h" />
     <ClInclude Include="Source\Graphics\DrawableObject\Model.h" />
     <ClInclude Include="Source\Graphics\DEDirextX.h" />

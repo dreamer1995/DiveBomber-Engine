@@ -8,9 +8,10 @@
 #include "..\BindableObject\RootSignature.h"
 
 #include "..\BindableObject\RenderTargetAsShaderResourceView.h"
-#include "..\BindableObject\UnorderedAccessBuffer.h"
+#include "..\BindableObject\UnorderedAccessBufferAsShaderResourceView.h"
 
 #include "..\DrawableObject\FullScreenPlane.h"
+#include "..\DrawableObject\UAVPass.h"
 
 #include <iostream>
 
@@ -24,7 +25,6 @@ namespace DiveBomber::RenderPipeline
 
 	RenderPipelineGraph::RenderPipelineGraph()
 	{
-		fullScreenPlane = std::make_shared<FullScreenPlane>(L"FullScreenPlane");
 
 		HDRTarget = std::make_shared<RenderTargetAsShaderResourceView>(
 			Graphics::GetInstance().GetWidth(), Graphics::GetInstance().GetHeight(),
@@ -33,13 +33,19 @@ namespace DiveBomber::RenderPipeline
 			DXGI_FORMAT_R32G32B32A32_FLOAT
 			);
 
-		UAVTarget = std::make_shared<UnorderedAccessBuffer>(
+
+		uavPass = std::make_shared<UAVPass>(L"PostProcessPass");
+		UAVTarget = std::make_shared<UnorderedAccessBufferAsShaderResourceView>(
 			Graphics::GetInstance().GetWidth(), Graphics::GetInstance().GetHeight(),
 			Graphics::GetInstance().GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV),
 			DXGI_FORMAT_B8G8R8A8_UNORM
 		);
+		uavPass->SetTexture(HDRTarget);
+		auto _UAVTarget = UAVTarget->GetUAVPointer();
+		uavPass->SetTexture(_UAVTarget);
 
-		fullScreenPlane->SetTexture(HDRTarget);
+		fullScreenPlane = std::make_shared<FullScreenPlane>(L"FullScreenPlane");
+		fullScreenPlane->SetTexture(UAVTarget);
 
 		rootSignature = RootSignature::Resolve("StandardFullStageAccess");
 	}
@@ -55,22 +61,27 @@ namespace DiveBomber::RenderPipeline
 
 	void RenderPipelineGraph::Bind() noxnd
 	{
-
 		Graphics::GetInstance().BindShaderDescriptorHeaps();
 		rootSignature->Bind();
+
+		Graphics::GetInstance().GetCamera()->Bind();
 
 		HDRTarget->BindTarget(Graphics::GetInstance().GetMainDS());
 		FLOAT clearColor[] = ClearMainRTColor;
 		Graphics::GetInstance().GetGraphicsCommandList()->ClearRenderTargetView(HDRTarget->GetRTVCPUDescriptorHandle(), clearColor, 0, nullptr);
 
-		Graphics::GetInstance().GetCamera()->Bind();
 		for (auto& drawableObject : drawableObjects)
 		{
 			drawableObject->Bind();
 		}
 
-		Graphics::GetInstance().GetCurrentBackBuffer()->BindTarget();
 		HDRTarget->Bind();
+		UAVTarget->GetUAVPointer()->Bind();
+		uavPass->Bind();
+
+		//rootSignature->Bind();
+		Graphics::GetInstance().GetCurrentBackBuffer()->BindTarget();
+		UAVTarget->Bind();
 		fullScreenPlane->Bind();
 
 		drawableObjects.clear();

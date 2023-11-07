@@ -55,6 +55,8 @@
     <ClCompile Include="Source\Graphics\BindableObject\RenderTargetAsShaderResourceView.cpp" />
     <ClCompile Include="Source\Graphics\BindableObject\UnorderedAccessBuffer.cpp" />
     <ClCompile Include="Source\Graphics\DrawableObject\FullScreenPlane.cpp" />
+    <ClCompile Include="Source\Graphics\DrawableObject\UAVPass.cpp" />
+    <ClCompile Include="Source\Graphics\BindableObject\UnorderedAccessBufferAsShaderResourceView.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Utility\Common.h" />
@@ -135,6 +137,8 @@
     <ClInclude Include="Source\Graphics\BindableObject\UnorderedAccessBuffer.h" />
     <ClInclude Include="Source\Graphics\DrawableObject\FullScreenPlane.h" />
     <ClInclude Include="Source\Graphics\BindableObject\BindableShaderInput.h" />
+    <ClInclude Include="Source\Graphics\DrawableObject\UAVPass.h" />
+    <ClInclude Include="Source\Graphics\BindableObject\UnorderedAccessBufferAsShaderResourceView.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

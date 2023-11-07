@@ -3,33 +3,30 @@
 
 namespace DiveBomber::BindableObject
 {
-	class Bindable;
-	class IndexBuffer;
 	class PipelineStateObject;
 	class BindableShaderInput;
 }
 
 namespace DiveBomber::Component
 {
-	class Mesh;
 	class Material;
 }
 
 namespace DiveBomber::DrawableObject
 {
-	class FullScreenPlane final : public Drawable
+	class UAVPass final
 	{
 	public:
-		FullScreenPlane(const std::wstring inputName = L"FullScreenPlane");
-		~FullScreenPlane();
+		UAVPass(const std::wstring inputName = L"FullScreenPlane");
+		~UAVPass();
 
-		void Bind() const noxnd override;
-		[[nodiscard]] DirectX::XMMATRIX GetTransformXM() const noexcept override;
+		void Bind() const noxnd;
 
 		void SetTexture(const std::shared_ptr<BindableObject::BindableShaderInput> texture);
 
 	private:
+		std::wstring name;
 		std::shared_ptr<Component::Material> material;
-		std::shared_ptr<Component::Mesh> mesh;
+		std::shared_ptr<BindableObject::PipelineStateObject> pso;
 	};
 }

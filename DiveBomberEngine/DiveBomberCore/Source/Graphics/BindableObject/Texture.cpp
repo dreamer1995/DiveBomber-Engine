@@ -162,7 +162,7 @@ namespace DiveBomber::BindableObject
 			copyCommandList->TrackResource(textureUploadBuffer);
 		}
 
-		Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(textureBuffer, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, true);
+		Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(textureBuffer, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE, true);
 
 		const D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{
 				.Format = texDesc.Format,

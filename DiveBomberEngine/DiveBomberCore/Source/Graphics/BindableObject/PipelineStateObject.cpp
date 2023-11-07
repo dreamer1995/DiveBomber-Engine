@@ -39,6 +39,11 @@ namespace DiveBomber::BindableObject
 
 	void PipelineStateObject::Bind() noxnd
 	{
+		if (pipelineStateReference.material->IsShaderDirty())
+		{
+			UpdatePipelineState();
+		}
+
 		GFX_THROW_INFO_ONLY(Graphics::GetInstance().GetGraphicsCommandList()->SetPipelineState(pipelineState.Get()));
 	}
 
@@ -105,7 +110,7 @@ namespace DiveBomber::BindableObject
 
 		pipelineStateStream.pRootSignature = pipelineStateReference.rootSignature->GetRootSignature().Get();
 		//pipelineStateStream.InputLayout = { &inputLayout[0], (UINT)inputLayout.size() };
-		pipelineStateStream.PrimitiveTopologyType = pipelineStateReference.mesh->GetTopology()->GetShaderTopology();
+		pipelineStateStream.PrimitiveTopologyType = pipelineStateReference.mesh ? pipelineStateReference.mesh->GetTopology()->GetShaderTopology() : D3D12_PRIMITIVE_TOPOLOGY_TYPE_UNDEFINED;
 		AssignShader(pipelineStateStream);
 		pipelineStateStream.DSVFormat = pipelineStateReference.dsvFormat;
 		pipelineStateStream.RTVFormats = pipelineStateReference.rtvFormats;

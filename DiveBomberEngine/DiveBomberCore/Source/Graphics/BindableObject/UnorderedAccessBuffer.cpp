@@ -5,6 +5,7 @@
 #include "..\DX\DescriptorAllocator.h"
 #include "..\DX\DescriptorAllocation.h"
 #include "..\DX\ResourceStateTracker.h"
+#include "..\DX\CommandList.h"
 
 namespace DiveBomber::BindableObject
 {
@@ -19,12 +20,9 @@ namespace DiveBomber::BindableObject
 		width(inputWidth),
 		height(inputHeight),
 		descriptorAllocator(inputDescriptorAllocator),
-		uavDescriptorAllocation(descriptorAllocator->Allocate(1u)),
-		uavCPUHandle(uavDescriptorAllocation->GetCPUDescriptorHandle()),
+		descriptorAllocation(descriptorAllocator->Allocate(1u)),
+		cpuHandle(descriptorAllocation->GetCPUDescriptorHandle()),
 		uav(),
-		srvDescriptorAllocation(descriptorAllocator->Allocate(1u)),
-		srvCPUHandle(srvDescriptorAllocation->GetCPUDescriptorHandle()),
-		srv(),
 		mipLevels(inputMipLevels),
 		format(inputFormat)
 	{
@@ -38,16 +36,7 @@ namespace DiveBomber::BindableObject
 
 	void UnorderedAccessBuffer::Bind() noxnd
 	{
-	}
-
-	void UnorderedAccessBuffer::BindAsUAV() noxnd
-	{
-		ResourceStateTracker::AddGlobalResourceState(uavBuffer, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
-	}
-
-	void UnorderedAccessBuffer::BindAsSRV() noxnd
-	{
-		ResourceStateTracker::AddGlobalResourceState(uavBuffer, D3D12_RESOURCE_STATE_COMMON);
+		Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(uavBuffer, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, true);
 	}
 
 	wrl::ComPtr<ID3D12Resource> UnorderedAccessBuffer::GetUnorderedAccessBuffer() const noexcept
@@ -57,17 +46,12 @@ namespace DiveBomber::BindableObject
 
 	D3D12_CPU_DESCRIPTOR_HANDLE UnorderedAccessBuffer::GetUAVCPUDescriptorHandle() const noexcept
 	{
-		return uavCPUHandle;
-	}
-
-	D3D12_CPU_DESCRIPTOR_HANDLE UnorderedAccessBuffer::GetSRVCPUDescriptorHandle() const noexcept
-	{
-		return srvCPUHandle;
+		return cpuHandle;
 	}
 
 	UINT UnorderedAccessBuffer::GetSRVDescriptorHeapOffset() const noexcept
 	{
-		return srvDescriptorAllocation->GetBaseOffset();
+		return descriptorAllocation->GetBaseOffset();
 	}
 
 	void UnorderedAccessBuffer::Resize(const UINT inputWidth, const UINT inputHeight)
@@ -88,13 +72,12 @@ namespace DiveBomber::BindableObject
 			&heapProp,
 			D3D12_HEAP_FLAG_NONE,
 			&resDes,
-			D3D12_RESOURCE_STATE_COMMON,
+			D3D12_RESOURCE_STATE_UNORDERED_ACCESS,
 			nullptr,
 			IID_PPV_ARGS(&uavBuffer)
 		));
+		ResourceStateTracker::AddGlobalResourceState(uavBuffer, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
 
-		device->CreateUnorderedAccessView(uavBuffer.Get(), nullptr, nullptr, uavCPUHandle);
-
-		device->CreateShaderResourceView(uavBuffer.Get(), nullptr, srvCPUHandle);
+		device->CreateUnorderedAccessView(uavBuffer.Get(), nullptr, nullptr, cpuHandle);
 	}
 }

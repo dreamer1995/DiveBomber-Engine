@@ -6,6 +6,7 @@
 #include "..\DX\DescriptorAllocator.h"
 #include "..\DX\DescriptorAllocation.h"
 #include "..\DX\ResourceStateTracker.h"
+#include "..\DX\CommandList.h"
 
 namespace DiveBomber::BindableObject
 {
@@ -59,14 +60,14 @@ namespace DiveBomber::BindableObject
 
 	void RenderTarget::BindTarget() noxnd
 	{
-		ResourceStateTracker::AddGlobalResourceState(renderTargetBuffer, D3D12_RESOURCE_STATE_COMMON);
+		Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(renderTargetBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET, true);
 
 		Graphics::GetInstance().GetGraphicsCommandList()->OMSetRenderTargets(1, &rtvCPUHandle, FALSE, nullptr);
 	}
 
 	void RenderTarget::BindTarget(std::shared_ptr<BindableTarget> depthStencil) noxnd
 	{
-		ResourceStateTracker::AddGlobalResourceState(renderTargetBuffer, D3D12_RESOURCE_STATE_COMMON);
+		Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(renderTargetBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET, true);
 
 		D3D12_CPU_DESCRIPTOR_HANDLE depthDescHeapHandle = std::dynamic_pointer_cast<DepthStencil>(depthStencil)->GetDSVCPUDescriptorHandle();
 		Graphics::GetInstance().GetGraphicsCommandList()->OMSetRenderTargets(1, &rtvCPUHandle, FALSE, &depthDescHeapHandle);
@@ -100,17 +101,27 @@ namespace DiveBomber::BindableObject
 			&heapProp,
 			D3D12_HEAP_FLAG_NONE,
 			&resDes,
-			D3D12_RESOURCE_STATE_RENDER_TARGET,
+			D3D12_RESOURCE_STATE_COMMON,
 			&optimizedClearValue,
 			IID_PPV_ARGS(&renderTargetBuffer)
 		));
+
+		ResourceStateTracker::AddGlobalResourceState(renderTargetBuffer, D3D12_RESOURCE_STATE_COMMON);
 
 		device->CreateRenderTargetView(renderTargetBuffer.Get(), nullptr, rtvCPUHandle);
 	}
 
 	void RenderTarget::Resize(wrl::ComPtr<ID3D12Resource> newbuffer)
 	{
+		//renderTargetBuffer address changed
+		if (renderTargetBuffer)
+		{
+			ResourceStateTracker::RemoveGlobalResourceState(renderTargetBuffer);
+		}
+
 		renderTargetBuffer = newbuffer;
+
+		ResourceStateTracker::AddGlobalResourceState(renderTargetBuffer, D3D12_RESOURCE_STATE_COMMON);
 
 		D3D12_RESOURCE_DESC textureDesc;
 		textureDesc = renderTargetBuffer->GetDesc();
