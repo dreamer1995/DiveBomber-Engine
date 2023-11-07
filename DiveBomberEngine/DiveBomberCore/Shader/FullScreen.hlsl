@@ -71,5 +71,5 @@ float4 PSMain(ProcessData In) : SV_Target
 	
 	float4 col = mainRT.Sample(samp, In.uv);
 	
-	return col * float4(1, 1, 0, 1);
+	return col;
 }

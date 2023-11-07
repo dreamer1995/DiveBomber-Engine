@@ -28,6 +28,7 @@ namespace DiveBomber::DX
 		void TrackResource(wrl::ComPtr<ID3D12Object> object) noexcept;
 		void ReleaseTrackedObjects() noexcept;
 		std::shared_ptr<UploadBufferAllocation> AllocateDynamicUploadBuffer(const size_t size, const size_t alignment);
+		void CopyResource(wrl::ComPtr<ID3D12Resource> dstRes, wrl::ComPtr<ID3D12Resource> srcRes);
 	private:
 		D3D12_COMMAND_LIST_TYPE type;
 		wrl::ComPtr<ID3D12CommandAllocator> commandAllocator;

@@ -30,7 +30,7 @@ namespace DiveBomber::BindableObject
 			std::shared_ptr<DX::DescriptorAllocator> inputRTVDescriptorAllocator);
 		RenderTarget(UINT inputWidth, UINT inputHeight,
 			std::shared_ptr<DX::DescriptorAllocator> inputRTVDescriptorAllocator,
-			DXGI_FORMAT inputFormat = DXGI_FORMAT_B8G8R8A8_UNORM, UINT inputMipLevels = 0, bool updateRT = true);
+			DXGI_FORMAT inputFormat = DXGI_FORMAT_R8G8B8A8_UNORM, UINT inputMipLevels = 0, bool updateRT = true);
 
 		~RenderTarget();
 

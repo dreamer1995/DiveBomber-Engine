@@ -127,4 +127,14 @@ namespace DiveBomber::DX
 	{
 		return uploadBuffer->Allocate(size, alignment);
 	}
+
+	void CommandList::CopyResource(wrl::ComPtr<ID3D12Resource> dstRes, wrl::ComPtr<ID3D12Resource> srcRes)
+	{
+		AddTransitionBarrier(dstRes, D3D12_RESOURCE_STATE_COPY_DEST);
+		AddTransitionBarrier(srcRes, D3D12_RESOURCE_STATE_COPY_SOURCE);
+
+		ExecuteResourceBarriers();
+
+		commandList->CopyResource(dstRes.Get(), srcRes.Get());
+	}
 }

@@ -14,7 +14,6 @@ namespace DiveBomber::BindableObject
 namespace DiveBomber::DrawableObject
 {
 	class Drawable;
-	class FullScreenPlane;
 	class UAVPass;
 }
 
@@ -32,7 +31,6 @@ namespace DiveBomber::RenderPipeline
 	private:
 		std::vector<std::shared_ptr<DrawableObject::Drawable>> drawableObjects;
 
-		std::shared_ptr<DrawableObject::FullScreenPlane> fullScreenPlane;
 		std::shared_ptr<DrawableObject::UAVPass> uavPass;
 		std::shared_ptr<BindableObject::RenderTargetAsShaderResourceView> HDRTarget;
 		std::shared_ptr<BindableObject::UnorderedAccessBufferAsShaderResourceView> UAVTarget;

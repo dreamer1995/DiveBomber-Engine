@@ -5,7 +5,7 @@
 	"Stage":[ "CS" ],
 	"Param":
 	[
-		{"Name":"baseColor", "Type":"Color", "sRGB":true}
+		{"Name":"baseColor", "Type":"Color", "sRGB":true, "Default":[1.0, 0.0, 1.0, 1.0]}
 	]
 }
 "/Properties"
@@ -50,10 +50,11 @@ void CSMain(ComputeShaderInput In)
 {
 	Texture2D<float4> mainRT = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.texture0Index)];
 	RWTexture2D<float4> outRT = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.texture1Index)];
+	ConstantBuffer<BaseShadingParams> baseShadingParams = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.constant0Index)];
 	
 	float2 uv = (In.DispatchThreadID.xy + 0.5) / float2(1280, 720);
 	
-	float4 col = mainRT.Sample(samp, uv);
+	float4 col = mainRT.Sample(samp, uv) * baseShadingParams.baseColor;
 		
 	outRT[In.DispatchThreadID.xy] = col;
 }

@@ -17,7 +17,7 @@ namespace DiveBomber::BindableObject
 	public:
 		UnorderedAccessBufferAsShaderResourceView(UINT inputWidth, UINT inputHeight,
 			std::shared_ptr<DX::DescriptorAllocator> inputDescriptorAllocator,
-			DXGI_FORMAT inputFormat = DXGI_FORMAT_B8G8R8A8_UNORM, UINT inputMipLevels = 0);
+			DXGI_FORMAT inputFormat = DXGI_FORMAT_R8G8B8A8_UNORM, UINT inputMipLevels = 0);
 
 		~UnorderedAccessBufferAsShaderResourceView();
 

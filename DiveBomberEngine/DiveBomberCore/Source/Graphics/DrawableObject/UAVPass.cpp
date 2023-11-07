@@ -19,17 +19,9 @@ namespace DiveBomber::DrawableObject
 
 		std::shared_ptr<RootSignature> rootSignature = RootSignature::Resolve("StandardFullStageAccess");
 
-		D3D12_RT_FORMAT_ARRAY rtvFormats = {};
-		rtvFormats.NumRenderTargets = 1;
-		rtvFormats.RTFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
-
-		auto dsvFormat = DXGI_FORMAT_UNKNOWN;
-
 		PipelineStateObject::PipelineStateReference pipelineStateReference;
 		pipelineStateReference.rootSignature = rootSignature;
 		pipelineStateReference.material = material;
-		pipelineStateReference.rtvFormats = rtvFormats;
-		pipelineStateReference.dsvFormat = dsvFormat;
 
 		pso = PipelineStateObject::Resolve(Utility::ToNarrow(name), std::move(pipelineStateReference));
 	}

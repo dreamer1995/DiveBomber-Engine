@@ -66,7 +66,7 @@ namespace DiveBomber::BindableObject
 		auto heapProp = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
 
 		auto resDes = CD3DX12_RESOURCE_DESC::Tex2D(format, width, height,
-			1, 0, 1, 0, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS);
+			1, 1, 1, 0, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS);
 
 		GFX_THROW_INFO(device->CreateCommittedResource(
 			&heapProp,

@@ -2,6 +2,7 @@
 
 #include "..\Graphics.h"
 #include "..\DX\ShaderManager.h"
+#include "..\DX\Commandlist.h"
 #include "..\Component\Camera.h"
 #include "..\BindableObject\RenderTarget.h"
 #include "..\BindableObject\DepthStencil.h"
@@ -10,7 +11,6 @@
 #include "..\BindableObject\RenderTargetAsShaderResourceView.h"
 #include "..\BindableObject\UnorderedAccessBufferAsShaderResourceView.h"
 
-#include "..\DrawableObject\FullScreenPlane.h"
 #include "..\DrawableObject\UAVPass.h"
 
 #include <iostream>
@@ -38,14 +38,10 @@ namespace DiveBomber::RenderPipeline
 		UAVTarget = std::make_shared<UnorderedAccessBufferAsShaderResourceView>(
 			Graphics::GetInstance().GetWidth(), Graphics::GetInstance().GetHeight(),
 			Graphics::GetInstance().GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV),
-			DXGI_FORMAT_B8G8R8A8_UNORM
+			DXGI_FORMAT_R8G8B8A8_UNORM
 		);
 		uavPass->SetTexture(HDRTarget);
-		auto _UAVTarget = UAVTarget->GetUAVPointer();
-		uavPass->SetTexture(_UAVTarget);
-
-		fullScreenPlane = std::make_shared<FullScreenPlane>(L"FullScreenPlane");
-		fullScreenPlane->SetTexture(UAVTarget);
+		uavPass->SetTexture(UAVTarget->GetUAVPointer());
 
 		rootSignature = RootSignature::Resolve("StandardFullStageAccess");
 	}
@@ -79,10 +75,7 @@ namespace DiveBomber::RenderPipeline
 		UAVTarget->GetUAVPointer()->Bind();
 		uavPass->Bind();
 
-		//rootSignature->Bind();
-		Graphics::GetInstance().GetCurrentBackBuffer()->BindTarget();
-		UAVTarget->Bind();
-		fullScreenPlane->Bind();
+		Graphics::GetInstance().GetCommandList()->CopyResource(Graphics::GetInstance().GetCurrentBackBuffer()->GetRenderTargetBuffer(), UAVTarget->GetUAVPointer()->GetUnorderedAccessBuffer());
 
 		drawableObjects.clear();
 
