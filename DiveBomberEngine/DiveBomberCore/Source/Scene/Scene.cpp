@@ -2,15 +2,15 @@
 
 #include "..\Graphics\Graphics.h"
 #include "..\Graphics\DX\CommandQueue.h"
-#include "..\Graphics\DrawableObject\SimpleSphere.h"
+#include "..\Graphics\Object\SimpleSphere.h"
 #include "..\Graphics\Component\Camera.h"
 #include "..\Graphics\RenderPipeline\RenderPipelineGraph.h"
 
 namespace DiveBomber::DEScene
 {
 	using namespace DEGraphics;
-	using namespace BindableObject;
-	using namespace DrawableObject;
+	using namespace DEResource;
+	using namespace DEObject;
 	using namespace Component;
 	using namespace DX;
 	using namespace RenderPipeline;
@@ -38,7 +38,7 @@ namespace DiveBomber::DEScene
 
 		Camera::CameraAttributes cameraAttr;
 		cameraAttr.position.z = -6.0f;
-		mainCamera = std::make_shared<Camera>("Main Camera", cameraAttr, false);
+		mainCamera = std::make_shared<Camera>(L"Main Camera", cameraAttr, false);
 		mainCamera->BindToGraphics(mainCamera);
 	}
 
@@ -70,7 +70,7 @@ namespace DiveBomber::DEScene
 		}
 	}
 
-	std::multimap<std::wstring, std::shared_ptr<DrawableObject::Drawable>> Scene::GetSceneObjects() const noexcept
+	std::multimap<std::wstring, std::shared_ptr<DEObject::Drawable>> Scene::GetSceneObjects() const noexcept
 	{
 		return drawableObjects;
 	}

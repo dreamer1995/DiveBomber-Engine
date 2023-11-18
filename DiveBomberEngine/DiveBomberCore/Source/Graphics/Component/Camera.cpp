@@ -1,17 +1,17 @@
 #include "Camera.h"
 
 #include "..\Graphics.h"
-#include "..\BindableObject\ShaderBuffer\ConstantBuffer.h"
+#include "..\Resource\Bindable\ConstantBufferInRootSignature.h"
 //#include "imgui/imgui.h"
 
 namespace DiveBomber::Component
 {
 	using namespace DEGraphics;
 	using namespace Utility;
-	using namespace BindableObject;
+	using namespace DEResource;
 	namespace dx = DirectX;
 
-	Camera::Camera(std::string inputName, CameraAttributes attributes, bool inputTethered) noexcept
+	Camera::Camera(std::wstring inputName, CameraAttributes attributes, bool inputTethered) noexcept
 		:
 		name(std::move(inputName)),
 		homePos(attributes.position),
@@ -23,7 +23,7 @@ namespace DiveBomber::Component
 	{
 		projection = std::make_unique<Projection>(attributes.projectionAttributes);
 		using namespace std::string_literals;
-		transformConstantBuffer = std::make_shared<ConstantBuffer<Transforms>>(name + "#"s + "CamTransform", 0u);
+		transformConstantBuffer = std::make_shared<ConstantBufferInRootSignature<Transforms>>(name + L"#"s + L"CamTransform", 0u);
 
 		if (tethered)
 		{
@@ -178,7 +178,7 @@ namespace DiveBomber::Component
 		//proj.SetPos(pos);
 	}
 
-	const std::string& Camera::GetName() const noexcept
+	const std::wstring& Camera::GetName() const noexcept
 	{
 		return name;
 	}

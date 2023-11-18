@@ -1,7 +1,6 @@
 #include "DescriptorAllocatorPage.h"
 
-#include "..\Graphics.h"
-#include "..\..\Exception\GraphicsException.h"
+#include "..\GraphicsSource.h"
 #include "DescriptorAllocation.h"
 
 namespace DiveBomber::DX

@@ -1,14 +1,14 @@
 #include "Graphics.h"
 
 #include "Component\Camera.h"
-#include "BindableObject\DepthStencil.h"
+#include "Resource\DepthStencil.h"
 #include "..\Exception\GraphicsException.h"
 #include "DX\GPUAdapter.h"
 #include "DX\DXDevice.h"
 #include "DX\CommandQueue.h"
 #include "DX\SwapChain.h"
-#include "DX\Viewport.h"
-#include "DX\ScissorRects.h"
+#include "Resource\Bindable\Viewport.h"
+#include "Resource\Bindable\ScissorRects.h"
 #include "DX\CommandLIst.h"
 #include "DX\DescriptorAllocator.h"
 #include "DX\DescriptorAllocation.h"
@@ -22,7 +22,7 @@ namespace DiveBomber::DEGraphics
 {
 	using namespace DX;
 	using namespace DEException;
-	using namespace BindableObject;
+	using namespace DEResource;
 	using namespace Component;
 
 	std::unique_ptr<Graphics> Graphics::instance;
@@ -63,8 +63,8 @@ namespace DiveBomber::DEGraphics
 		computeCommandQueue = std::make_unique<CommandQueue>(D3D12_COMMAND_LIST_TYPE_COMPUTE);
 		copyCommandQueue = std::make_unique<CommandQueue>(D3D12_COMMAND_LIST_TYPE_COPY);
 		swapChain = std::make_unique<SwapChain>(hWnd, directCommandQueue->GetCommandQueue(), rtvDescriptorHeap);
-		viewport = std::make_unique<Viewport>();
-		scissorRects = std::make_unique<ScissorRects>();
+		viewport = std::make_unique<Viewport>(L"MainViewPort");
+		scissorRects = std::make_unique<ScissorRects>(L"InfinityRect");
 
 		mainDS = std::make_shared<DepthStencil>(width, height, dsvDescriptorHeap);
 	}
@@ -88,8 +88,8 @@ namespace DiveBomber::DEGraphics
 			mainDS->ClearDepth(commandList);
 		}
 
-		viewport->Bind(commandList);
-		scissorRects->Bind(commandList);
+		viewport->Bind();
+		scissorRects->Bind();
 	}
 
 	void Graphics::EndFrame()

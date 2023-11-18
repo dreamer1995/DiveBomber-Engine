@@ -1,7 +1,6 @@
 #include "CommandList.h"
 
-#include "..\..\Exception\GraphicsException.h"
-#include "..\Graphics.h"
+#include "..\GraphicsSource.h"
 #include "UploadBuffer.h"
 #include "ResourceStateTracker.h"
 

@@ -9,10 +9,10 @@
 #include "Graphics\Component\Camera.h"
 #include "Utility\GlobalParameters.h"
 #include "Scene\Scene.h"
-#include "Graphics\BindableObject\GlobalBindableManager.h"
+#include "Graphics\DX\GlobalResourceManager.h"
 #include "Graphics\DX\ShaderManager.h"
 
-#include "Graphics\DrawableObject\SimpleSphere.h"
+#include "Graphics\Object\SimpleSphere.h"
 #include "Graphics\Component\Material.h"
 
 #include <iostream>
@@ -24,9 +24,9 @@ namespace DiveBomber
 	using namespace DEConsole;
 	using namespace Utility;
 	using namespace Hardware;
-	using namespace BindableObject;
+	using namespace DEResource;
 	using namespace DEScene;
-	using namespace DrawableObject;
+	using namespace DEObject;
 	using namespace DX;
 	using namespace Component;
 
@@ -58,7 +58,7 @@ namespace DiveBomber
 				threadTasks.pop();
 			}
 		}
-		GlobalBindableManager::Destructor();
+		GlobalResourceManager::Destructor();
 		ShaderManager::Destructor();
 		Graphics::Destructor();
 	}

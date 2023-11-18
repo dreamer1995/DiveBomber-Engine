@@ -4,14 +4,14 @@
 #include <memory>
 #include <vector>
 
-namespace DiveBomber::BindableObject
+namespace DiveBomber::DEResource
 {
 	class RenderTargetAsShaderResourceView;
 	class UnorderedAccessBufferAsShaderResourceView;
 	class RootSignature;
 }
 
-namespace DiveBomber::DrawableObject
+namespace DiveBomber::DEObject
 {
 	class Drawable;
 	class UAVPass;
@@ -27,13 +27,13 @@ namespace DiveBomber::RenderPipeline
 
 		void Bind() noxnd;
 
-		void SetRenderQueue(std::shared_ptr<DrawableObject::Drawable> inputObject);
+		void SetRenderQueue(std::shared_ptr<DEObject::Drawable> inputObject);
 	private:
-		std::vector<std::shared_ptr<DrawableObject::Drawable>> drawableObjects;
+		std::vector<std::shared_ptr<DEObject::Drawable>> drawableObjects;
 
-		std::shared_ptr<DrawableObject::UAVPass> uavPass;
-		std::shared_ptr<BindableObject::RenderTargetAsShaderResourceView> HDRTarget;
-		std::shared_ptr<BindableObject::UnorderedAccessBufferAsShaderResourceView> UAVTarget;
-		std::shared_ptr<BindableObject::RootSignature> rootSignature;
+		std::shared_ptr<DEObject::UAVPass> uavPass;
+		std::shared_ptr<DEResource::RenderTargetAsShaderResourceView> HDRTarget;
+		std::shared_ptr<DEResource::UnorderedAccessBufferAsShaderResourceView> UAVTarget;
+		std::shared_ptr<DEResource::RootSignature> rootSignature;
 	};
 }

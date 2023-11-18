@@ -2,8 +2,8 @@
 
 #include "..\..\Exception\GraphicsException.h"
 #include "..\..\Utility\GlobalParameters.h"
-#include "..\BindableObject\Shader.h"
-#include "..\BindableObject\PipelineStateObject.h"
+#include "..\Resource\Shader.h"
+#include "..\Resource\Bindable\PipelineStateObject.h"
 
 #include <iostream>
 #include <d3dcompiler.h>
@@ -12,7 +12,7 @@
 namespace DiveBomber::DX
 {
     using namespace DEException;
-    using namespace BindableObject;
+    using namespace DEResource;
     namespace fs = std::filesystem;
 
     std::unique_ptr<ShaderManager> ShaderManager::instance;
@@ -28,7 +28,7 @@ namespace DiveBomber::DX
         }
     }
 
-    wrl::ComPtr<ID3DBlob> ShaderManager::Compile(const std::string& hlslFile, const std::wstring shaderDirectory, const std::wstring shaderName, BindableObject::ShaderType shaderType)
+    wrl::ComPtr<ID3DBlob> ShaderManager::Compile(const std::string& hlslFile, const std::wstring shaderDirectory, const std::wstring shaderName, DEResource::ShaderType shaderType)
     {
         // Setup compilation arguments.
         const std::wstring shaderTypeAbbreviation = [=]()
@@ -155,7 +155,7 @@ namespace DiveBomber::DX
         return bytecodeBlob;
     }
 
-    void ShaderManager::AddToUsingPool(std::shared_ptr<BindableObject::Shader> shader) noexcept
+    void ShaderManager::AddToUsingPool(std::shared_ptr<DEResource::Shader> shader) noexcept
     {
         std::lock_guard<std::mutex> lock(shaderManagerMutex);
         shaderPool[shader->GetUID()] = shader;

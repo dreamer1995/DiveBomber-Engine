@@ -1,7 +1,6 @@
 #include "UploadBuffer.h"
 
-#include "..\Graphics.h"
-#include "..\..\Exception\GraphicsException.h"
+#include "..\GraphicsSource.h"
 
 namespace DiveBomber::DX
 {

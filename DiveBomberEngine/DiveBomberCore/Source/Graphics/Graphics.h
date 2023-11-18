@@ -8,8 +8,6 @@ namespace DiveBomber::DX
 	class DXDevice;
 	class CommandQueue;
 	class SwapChain;
-	class Viewport;
-	class ScissorRects;
 	class CommandList;
 	class DescriptorAllocator;
 }
@@ -19,11 +17,12 @@ namespace DiveBomber::Component
 	class Camera;
 }
 
-namespace DiveBomber::BindableObject
+namespace DiveBomber::DEResource
 {
 	class RenderTarget;
 	class DepthStencil;
-	class Bindable;
+	class Viewport;
+	class ScissorRects;
 }
 
 namespace DiveBomber
@@ -73,8 +72,8 @@ namespace DiveBomber::DEGraphics
 		[[nodiscard]] wrl::ComPtr<ID3D12Device10> GetDevice() const noexcept;
 		[[nodiscard]] std::shared_ptr<DX::CommandList> GetCommandList(const D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT) noexcept;
 		[[nodiscard]] wrl::ComPtr<ID3D12GraphicsCommandList7> GetGraphicsCommandList(const D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT) noexcept;
-		[[nodiscard]] std::shared_ptr<BindableObject::RenderTarget> GetCurrentBackBuffer() const noexcept;
-		[[nodiscard]] std::shared_ptr<BindableObject::DepthStencil> GetMainDS() const noexcept;
+		[[nodiscard]] std::shared_ptr<DEResource::RenderTarget> GetCurrentBackBuffer() const noexcept;
+		[[nodiscard]] std::shared_ptr<DEResource::DepthStencil> GetMainDS() const noexcept;
 		uint64_t ExecuteCommandList(const D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT);
 		uint64_t ExecuteCommandList(std::shared_ptr<DX::CommandList> commandList, const D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT);
 		uint64_t ExecuteCommandLists(std::vector<std::shared_ptr<DX::CommandList>> commandLists, const D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT);
@@ -96,8 +95,6 @@ namespace DiveBomber::DEGraphics
 		std::shared_ptr<DX::CommandQueue> computeCommandQueue;
 		std::shared_ptr<DX::CommandQueue> copyCommandQueue;
 		std::unique_ptr<DX::SwapChain> swapChain;
-		std::unique_ptr<DX::Viewport> viewport;
-		std::unique_ptr<DX::ScissorRects> scissorRects;
 
 		HANDLE fenceEvent = 0;
 		uint64_t frameFenceValues[SwapChainBufferCount] = {};
@@ -113,7 +110,9 @@ namespace DiveBomber::DEGraphics
 
 		std::shared_ptr<Component::Camera> renderCamera;
 
-		std::shared_ptr<BindableObject::DepthStencil> mainDS;
+		std::shared_ptr<DEResource::DepthStencil> mainDS;
+		std::unique_ptr<DEResource::Viewport> viewport;
+		std::unique_ptr<DEResource::ScissorRects> scissorRects;
 
 		static std::unique_ptr<Graphics> instance;
 

@@ -5,10 +5,10 @@
 #include <DirectXMath.h>
 #include <string>
 
-namespace DiveBomber::BindableObject
+namespace DiveBomber::DEResource
 {
 	template<typename C>
-	class ConstantBuffer;
+	class ConstantBufferInRootSignature;
 }
 
 namespace DiveBomber::Component
@@ -34,8 +34,8 @@ namespace DiveBomber::Component
 		};
 
 	public:
-		Camera(std::string inputName, CameraAttributes attributes, bool inputTethered = false) noexcept;
-		Camera(std::string inputName, bool tethered = false) noexcept;
+		Camera(std::wstring inputName, CameraAttributes attributes, bool inputTethered = false) noexcept;
+		Camera(std::wstring inputName, bool tethered = false) noexcept;
 		void BindToGraphics(std::shared_ptr<Camera> camera) const;
 
 		[[nodiscard]] DirectX::XMMATRIX GetMatrix() const noexcept;
@@ -48,7 +48,7 @@ namespace DiveBomber::Component
 		void Translate(const DirectX::XMFLOAT3 translation) noexcept;
 		[[nodiscard]] DirectX::XMFLOAT3 GetPos() const noexcept;
 		void SetPos(const DirectX::XMFLOAT3& inputPos) noexcept;
-		[[nodiscard]] const std::string& GetName() const noexcept;
+		[[nodiscard]] const std::wstring& GetName() const noexcept;
 		//void LinkTechniques(Rgph::RenderGraph& rg);
 		//void Submit(size_t channel) const;
 
@@ -82,7 +82,7 @@ namespace DiveBomber::Component
 
 	private:
 		float yaw_;
-		std::string name;
+		std::wstring name;
 		bool tethered;
 		DirectX::XMFLOAT3 homePos;
 		DirectX::XMFLOAT3 homeRot;
@@ -95,7 +95,7 @@ namespace DiveBomber::Component
 		std::unique_ptr<Projection> projection;
 		//CameraIndicator indicator;
 
-		std::shared_ptr<BindableObject::ConstantBuffer<Transforms>> transformConstantBuffer;
+		std::shared_ptr<DEResource::ConstantBufferInRootSignature<Transforms>> transformConstantBuffer;
 		Transforms transforms;
 	};
 }

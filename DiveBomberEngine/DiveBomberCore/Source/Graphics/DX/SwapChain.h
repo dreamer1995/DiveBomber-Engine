@@ -1,7 +1,7 @@
 #pragma once
 #include "..\GraphicsHeader.h"
 
-namespace DiveBomber::BindableObject
+namespace DiveBomber::DEResource
 {
 	class RenderTarget;
 }
@@ -20,7 +20,7 @@ namespace DiveBomber::DX
 			std::shared_ptr<DX::DescriptorAllocator> inputDescriptorAllocator);
 		[[nodiscard]] bool CheckTearingSupport();
 		[[nodiscard]] wrl::ComPtr<IDXGISwapChain4> GetSwapChain() noexcept;
-		[[nodiscard]] std::shared_ptr<BindableObject::RenderTarget> GetCurrentBackBuffer() noexcept;
+		[[nodiscard]] std::shared_ptr<DEResource::RenderTarget> GetCurrentBackBuffer() noexcept;
 		[[nodiscard]] wrl::ComPtr<ID3D12Resource> GetBackBuffer(const int i) noexcept;
 		void ResetBackBuffer() noexcept;
 		void ResetSizeBackBuffer(const uint32_t inputWidth, const uint32_t inputHeight);
@@ -33,7 +33,7 @@ namespace DiveBomber::DX
 	private:
 		wrl::ComPtr<IDXGISwapChain4> swapChain;
 		//wrl::ComPtr<ID3D12Resource> backBuffers[SwapChainBufferCount];
-		std::shared_ptr<BindableObject::RenderTarget> backBuffers[SwapChainBufferCount];
+		std::shared_ptr<DEResource::RenderTarget> backBuffers[SwapChainBufferCount];
 		std::shared_ptr<DX::DescriptorAllocator> descriptorAllocator;
 	};
 }

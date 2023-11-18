@@ -1,12 +1,13 @@
 #include "Material.h"
 
-#include "..\Graphics.h"
-#include "..\BindableObject\ShaderBuffer\DynamicConstantBufferInHeap.h"
-#include "..\BindableObject\Texture.h"
-#include "..\BindableObject\Shader.h"
+#include "..\Resource\Shader.h"
+#include "..\Resource\Bindable\ConstantBufferInRootSignature.h"
+#include "..\Resource\ShaderInputable\DynamicConstantBufferInHeap.h"
+#include "..\Resource\ShaderInputable\Texture.h"
 #include "..\..\Utility\GlobalParameters.h"
 #include "..\DX\ShaderManager.h"
 #include "..\DX\CommandQueue.h"
+#include "..\DX\GlobalResourceManager.h"
 
 #include <iostream>
 #include <fstream>
@@ -15,7 +16,7 @@
 namespace DiveBomber::Component
 {
     using namespace DEGraphics;
-    using namespace BindableObject;
+    using namespace DEResource;
     using namespace DX;
 
     Material::Material(const std::wstring inputName)
@@ -23,7 +24,7 @@ namespace DiveBomber::Component
         name(inputName)
     {
         using namespace std::string_literals;
-        indexConstantBuffer = std::make_shared<ConstantBuffer<UINT>>(Utility::ToNarrow(name) + "#"s + "IndexConstant", 4u);
+        indexConstantBuffer = std::make_shared<ConstantBufferInRootSignature<UINT>>(name + L"#"s + L"IndexConstant", 4u);
 
         configFile = ProjectDirectoryW L"Asset\\Material\\" + name + L".json";
 
@@ -293,12 +294,12 @@ namespace DiveBomber::Component
                 {
                     if (Utility::ToNarrow(matExsists->second.first->GetName()) != param["Value"])
                     {
-                        SetTexture(param["Name"].get<std::string>(), Texture::Resolve(Utility::ToWide(param["Value"])), textureCounter);
+                        SetTexture(param["Name"].get<std::string>(), GlobalResourceManager::Resolve<Texture>(Utility::ToWide(param["Value"])), textureCounter);
                     }
                     else if(textureCounter != matExsists->second.second)
                     {
                         matExsists->second.second = textureCounter;
-                        SetTexture(param["Name"].get<std::string>(), Texture::Resolve(Utility::ToWide(param["Value"])), textureCounter);
+                        SetTexture(param["Name"].get<std::string>(), GlobalResourceManager::Resolve<Texture>(Utility::ToWide(param["Value"])), textureCounter);
                     }
                 }
                 else
@@ -347,12 +348,12 @@ namespace DiveBomber::Component
         }
         else
         {
-            std::shared_ptr<DynamicConstantBufferInHeap> baseMat = std::make_shared<DynamicConstantBufferInHeap>(Utility::ToNarrow(name), DXBBuffer);
+            std::shared_ptr<DynamicConstantBufferInHeap> baseMat = std::make_shared<DynamicConstantBufferInHeap>(name, DXBBuffer);
             SetConstant(Utility::ToNarrow(name), baseMat);
         }
     }
 
-    std::vector<std::shared_ptr<BindableObject::Shader>> Material::GetShaders() const noexcept
+    std::vector<std::shared_ptr<DEResource::Shader>> Material::GetShaders() const noexcept
     {
         return shaders;
     }
@@ -371,23 +372,23 @@ namespace DiveBomber::Component
         return isShaderDirty;
     }
 
-    void Material::SetTexture(const std::string textureName, const std::shared_ptr<BindableShaderInput> texture) noexcept
+    void Material::SetTexture(const std::string textureName, const std::shared_ptr<ShaderInputable> texture) noexcept
     {
         SetTexture(textureName, texture, numTextureIndices);
     }
 
-    void Material::SetTexture(const std::string textureName, const std::shared_ptr<BindableShaderInput> texture, UINT slot) noexcept
+    void Material::SetTexture(const std::string textureName, const std::shared_ptr<ShaderInputable> texture, UINT slot) noexcept
     {
         textureMap[textureName] = { std::dynamic_pointer_cast<Texture>(texture),slot };
         SetTexture(texture, slot);
     }
 
-    void Material::SetTexture(const std::shared_ptr<BindableShaderInput> texture) noexcept
+    void Material::SetTexture(const std::shared_ptr<ShaderInputable> texture) noexcept
     {
         SetTexture(texture, numTextureIndices);
     }
 
-    void Material::SetTexture(const std::shared_ptr<BindableShaderInput> texture, UINT slot) noexcept
+    void Material::SetTexture(const std::shared_ptr<ShaderInputable> texture, UINT slot) noexcept
     {
         if (slot >= numTextureIndices)
         {
@@ -403,23 +404,23 @@ namespace DiveBomber::Component
         indexDirty = true;
     }
 
-    void Material::SetConstant(const std::string constantName, const std::shared_ptr<BindableShaderInput> constant) noexcept
+    void Material::SetConstant(const std::string constantName, const std::shared_ptr<ShaderInputable> constant) noexcept
     {
         SetConstant(constantName, constant, numConstantIndices);
     }
 
-    void Material::SetConstant(const std::string constantName, const std::shared_ptr<BindableShaderInput> constant, UINT slot) noexcept
+    void Material::SetConstant(const std::string constantName, const std::shared_ptr<ShaderInputable> constant, UINT slot) noexcept
     {
         dynamicConstantMap[constantName] = std::dynamic_pointer_cast<DynamicConstantBufferInHeap>(constant);
         SetConstant(constant, slot);
     }
 
-    void Material::SetConstant(const std::shared_ptr<BindableShaderInput> constant) noexcept
+    void Material::SetConstant(const std::shared_ptr<ShaderInputable> constant) noexcept
     {
         
     }
 
-    void Material::SetConstant(const std::shared_ptr<BindableShaderInput> constant, UINT slot) noexcept
+    void Material::SetConstant(const std::shared_ptr<ShaderInputable> constant, UINT slot) noexcept
     {
         if (slot >= numConstantIndices)
         {

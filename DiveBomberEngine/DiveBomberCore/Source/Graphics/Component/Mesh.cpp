@@ -1,23 +1,26 @@
 #include "Mesh.h"
 
 #include "..\Graphics.h"
-#include "..\BindableObject\IndexBuffer.h"
-#include "..\BindableObject\Topology.h"
-#include "..\BindableObject\ShaderBuffer\ConstantBuffer.h"
-#include "..\BindableObject\ShaderBuffer\StructuredBufferInHeap.h"
+#include "..\Resource\Bindable\IndexBuffer.h"
+#include "..\Resource\Bindable\Topology.h"
+#include "..\Resource\Bindable\ConstantBufferInRootSignature.h"
+#include "..\Resource\ShaderInputable\StructuredBufferInHeap.h"
+#include "..\DX\GlobalResourceManager.h"
 
 namespace DiveBomber::Component
 {
     using namespace DEGraphics;
-    using namespace BindableObject;
+    using namespace DEResource;
+    using namespace DEResource::VertexProcess;
+    using namespace DX;
 
-    Mesh::Mesh(std::wstring inputName, BindableObject::VertexProcess::VertexData& inputVertexbuffer, std::shared_ptr<IndexBuffer> inputIndexBuffer)
+    Mesh::Mesh(std::wstring inputName, VertexData& inputVertexbuffer, std::shared_ptr<IndexBuffer> inputIndexBuffer)
         :
-        Mesh(inputName, inputVertexbuffer, inputIndexBuffer, Topology::Resolve(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE))
+        Mesh(inputName, inputVertexbuffer, inputIndexBuffer, GlobalResourceManager::Resolve<Topology>(L"IndexedTriangle", D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE))
     {
     }
 
-    Mesh::Mesh(std::wstring inputName, BindableObject::VertexProcess::VertexData& inputVertexbuffer, std::shared_ptr<IndexBuffer> inputIndexBuffer, std::shared_ptr<Topology> inputTopology)
+    Mesh::Mesh(std::wstring inputName, VertexData& inputVertexbuffer, std::shared_ptr<IndexBuffer> inputIndexBuffer, std::shared_ptr<Topology> inputTopology)
         :
         name(inputName),
         vertexData(inputVertexbuffer),
@@ -25,20 +28,20 @@ namespace DiveBomber::Component
         topology(inputTopology)
     {
         using namespace std::string_literals;
-        vertexDataConstantBuffer = std::make_shared<ConstantBuffer<UINT>>(Utility::ToNarrow(name) + "#"s + "MeshConstant", 2u);
-        vertexBuffer = std::make_shared<StructuredBufferInHeap<char>>(Utility::ToNarrow(name) +"#"s + "VertexData", vertexData.Size());
+        vertexDataIndexCB = std::make_shared<ConstantBufferInRootSignature<UINT>>(name + L"#"s + L"MeshConstant", 2u);
+        vertexBuffer = std::make_shared<StructuredBufferInHeap<char>>(name +L"#"s + L"VertexData", vertexData.Size());
         vertexBuffer->Update(vertexData.GetData(), vertexData.SizeBytes());
-        vertexDataConstantBuffer->Update(vertexBuffer->GetSRVDescriptorHeapOffset());
+        vertexDataIndexCB->Update(vertexBuffer->GetSRVDescriptorHeapOffset());
     }
 
-    void Mesh::SetMesh(BindableObject::VertexProcess::VertexData& inputVertexbuffer, std::shared_ptr<IndexBuffer> inputIndexBuffer) noexcept
+    void Mesh::SetMesh(VertexData& inputVertexbuffer, std::shared_ptr<IndexBuffer> inputIndexBuffer) noexcept
     {
         vertexData = inputVertexbuffer;
         indexBuffer = inputIndexBuffer;
 
         vertexBuffer->Update(vertexData.GetData(), vertexData.SizeBytes());
         vertexBuffer->SetNumElements(vertexData.Size());
-        vertexDataConstantBuffer->Update(vertexBuffer->GetSRVDescriptorHeapOffset());
+        vertexDataIndexCB->Update(vertexBuffer->GetSRVDescriptorHeapOffset());
     }
 
     void Mesh::SetTopology(std::shared_ptr<Topology> inputTopology) noexcept
@@ -46,7 +49,7 @@ namespace DiveBomber::Component
         topology = inputTopology;
     }
 
-    BindableObject::VertexProcess::VertexData& Mesh::GetVertexData() noexcept
+    DEResource::VertexProcess::VertexData& Mesh::GetVertexData() noexcept
     {
         return vertexData;
     }
@@ -68,7 +71,7 @@ namespace DiveBomber::Component
 
     void Mesh::Bind() noxnd
     {
-        vertexDataConstantBuffer->Bind();
+        vertexDataIndexCB->Bind();
         indexBuffer->Bind();
         topology->Bind();
     }

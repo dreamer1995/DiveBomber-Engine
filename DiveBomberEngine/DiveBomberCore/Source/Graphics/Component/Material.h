@@ -6,15 +6,15 @@
 #include <vector>
 #include <unordered_map>
 
-namespace DiveBomber::BindableObject
+namespace DiveBomber::DEResource
 {
 	class Texture;
 	class Shader;
 	template<typename C>
-	class ConstantBuffer;
+	class ConstantBufferInRootSignature;
 	class DynamicConstantBufferInHeap;
 	class RenderTargetAsShaderResourceView;
-	class BindableShaderInput;
+	class ShaderInputable;
 }
 
 namespace DiveBomber::Component
@@ -35,15 +35,15 @@ namespace DiveBomber::Component
 	{
 	public:
 		Material(const std::wstring inputName);
-		void SetTexture(const std::shared_ptr<BindableObject::BindableShaderInput> texture) noexcept;
-		void SetTexture(const std::shared_ptr<BindableObject::BindableShaderInput> texture, UINT slot) noexcept;
-		void SetTexture(const std::string textureName, const std::shared_ptr<BindableObject::BindableShaderInput> texture) noexcept;
-		void SetTexture(const std::string textureName, const std::shared_ptr<BindableObject::BindableShaderInput> texture, UINT slot) noexcept;
+		void SetTexture(const std::shared_ptr<DEResource::ShaderInputable> texture) noexcept;
+		void SetTexture(const std::shared_ptr<DEResource::ShaderInputable> texture, UINT slot) noexcept;
+		void SetTexture(const std::string textureName, const std::shared_ptr<DEResource::ShaderInputable> texture) noexcept;
+		void SetTexture(const std::string textureName, const std::shared_ptr<DEResource::ShaderInputable> texture, UINT slot) noexcept;
 
-		void SetConstant(const std::shared_ptr<BindableObject::BindableShaderInput> constant) noexcept;
-		void SetConstant(const std::shared_ptr<BindableObject::BindableShaderInput> constant, UINT slot) noexcept;
-		void SetConstant(const std::string constantName, const std::shared_ptr<BindableObject::BindableShaderInput> constant) noexcept;
-		void SetConstant(const std::string constantName, const std::shared_ptr<BindableObject::BindableShaderInput> constant, UINT slot) noexcept;
+		void SetConstant(const std::shared_ptr<DEResource::ShaderInputable> constant) noexcept;
+		void SetConstant(const std::shared_ptr<DEResource::ShaderInputable> constant, UINT slot) noexcept;
+		void SetConstant(const std::string constantName, const std::shared_ptr<DEResource::ShaderInputable> constant) noexcept;
+		void SetConstant(const std::string constantName, const std::shared_ptr<DEResource::ShaderInputable> constant, UINT slot) noexcept;
 
 		void Bind() noxnd;
 
@@ -56,7 +56,7 @@ namespace DiveBomber::Component
 		void UploadConfig(const std::wstring shaderName);
 		void ReloadConfig();
 
-		[[nodiscard]] std::vector<std::shared_ptr<BindableObject::Shader>> GetShaders() const noexcept;
+		[[nodiscard]] std::vector<std::shared_ptr<DEResource::Shader>> GetShaders() const noexcept;
 		[[nodiscard]] bool IsShaderDirty() noexcept;
 	private:
 		void CreateDefaultConfig();
@@ -65,18 +65,18 @@ namespace DiveBomber::Component
 		[[nodiscard]] int ParamTypeToDynamicConstantType(ShaderParamType type) noexcept;
 
 		std::wstring name;
-		std::shared_ptr<BindableObject::ConstantBuffer<UINT>> indexConstantBuffer;
+		std::shared_ptr<DEResource::ConstantBufferInRootSignature<UINT>> indexConstantBuffer;
 		UINT numConstantIndices = 0;
 		UINT numTextureIndices = 0;
 		std::vector<UINT> shaderResourceIndices;
 		bool indexDirty = false;
-		std::unordered_map<std::string, std::shared_ptr<BindableObject::DynamicConstantBufferInHeap>> dynamicConstantMap;
-		std::unordered_map<std::string, std::pair<std::shared_ptr<BindableObject::Texture>, UINT>> textureMap;
+		std::unordered_map<std::string, std::shared_ptr<DEResource::DynamicConstantBufferInHeap>> dynamicConstantMap;
+		std::unordered_map<std::string, std::pair<std::shared_ptr<DEResource::Texture>, UINT>> textureMap;
 
 		json config;
 		std::filesystem::path configFile;
 		std::filesystem::file_time_type configFileLastSaveTime;
 
-		std::vector<std::shared_ptr<BindableObject::Shader>> shaders;
+		std::vector<std::shared_ptr<DEResource::Shader>> shaders;
 	};
 }

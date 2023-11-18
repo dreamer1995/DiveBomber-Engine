@@ -25,14 +25,10 @@ namespace DiveBomber::DEScene
 	class Scene;
 }
 
-namespace DiveBomber::BindableObject
-{
-	class GlobalBindableManager;
-}
-
 namespace DiveBomber::DX
 {
 	class ShaderManager;
+	class GlobalResourceManager;
 }
 
 namespace DiveBomber

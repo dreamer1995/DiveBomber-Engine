@@ -3,15 +3,16 @@
 #include "..\Graphics.h"
 #include "..\DX\ShaderManager.h"
 #include "..\DX\Commandlist.h"
+#include "..\DX\GlobalResourceManager.h"
 #include "..\Component\Camera.h"
-#include "..\BindableObject\RenderTarget.h"
-#include "..\BindableObject\DepthStencil.h"
-#include "..\BindableObject\RootSignature.h"
+#include "..\Resource\RenderTarget.h"
+#include "..\Resource\DepthStencil.h"
+#include "..\Resource\Bindable\RootSignature.h"
 
-#include "..\BindableObject\RenderTargetAsShaderResourceView.h"
-#include "..\BindableObject\UnorderedAccessBufferAsShaderResourceView.h"
+#include "..\Resource\ShaderInputable\RenderTargetAsShaderResourceView.h"
+#include "..\Resource\ShaderInputable\UnorderedAccessBufferAsShaderResourceView.h"
 
-#include "..\DrawableObject\UAVPass.h"
+#include "..\Object\UAVPass.h"
 
 #include <iostream>
 
@@ -20,8 +21,8 @@ namespace DiveBomber::RenderPipeline
 	using namespace DX;
 	using namespace DEGraphics;
 	using namespace Component;
-	using namespace BindableObject;
-	using namespace DrawableObject;
+	using namespace DEResource;
+	using namespace DEObject;
 
 	RenderPipelineGraph::RenderPipelineGraph()
 	{
@@ -43,14 +44,14 @@ namespace DiveBomber::RenderPipeline
 		uavPass->SetTexture(HDRTarget);
 		uavPass->SetTexture(UAVTarget->GetUAVPointer());
 
-		rootSignature = RootSignature::Resolve("StandardFullStageAccess");
+		rootSignature = GlobalResourceManager::Resolve<RootSignature>(L"StandardFullStageAccess");
 	}
 
 	RenderPipelineGraph::~RenderPipelineGraph()
 	{
 	}
 
-	void RenderPipelineGraph::SetRenderQueue(std::shared_ptr<DrawableObject::Drawable> inputObject)
+	void RenderPipelineGraph::SetRenderQueue(std::shared_ptr<DEObject::Drawable> inputObject)
 	{
 		drawableObjects.emplace_back(inputObject);
 	}
@@ -71,9 +72,9 @@ namespace DiveBomber::RenderPipeline
 			drawableObject->Bind();
 		}
 
-		HDRTarget->Bind();
-		UAVTarget->GetUAVPointer()->Bind();
-		uavPass->Bind();
+		HDRTarget->BindAsShaderResource();
+		UAVTarget->GetUAVPointer()->BindAsTarget();
+		uavPass->Execute();
 
 		Graphics::GetInstance().GetCommandList()->CopyResource(Graphics::GetInstance().GetCurrentBackBuffer()->GetRenderTargetBuffer(), UAVTarget->GetUAVPointer()->GetUnorderedAccessBuffer());
 
