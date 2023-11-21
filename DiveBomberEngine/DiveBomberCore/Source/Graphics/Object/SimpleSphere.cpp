@@ -111,7 +111,7 @@ namespace DiveBomber::DEObject
 		meshMap.begin()->second->Bind();
 		materialMap.begin()->second->Bind();
 
-		Drawable::Bind();
+		Object::Bind();
 
 		Graphics::GetInstance().GetGraphicsCommandList()->DrawIndexedInstanced(meshMap.begin()->second->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
 	}

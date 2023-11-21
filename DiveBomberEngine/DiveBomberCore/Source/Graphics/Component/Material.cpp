@@ -19,9 +19,10 @@ namespace DiveBomber::Component
     using namespace DEResource;
     using namespace DX;
 
-    Material::Material(const std::wstring inputName)
+    Material::Material(const std::wstring inputName, const std::wstring inputDefaultShaderName)
         :
-        name(inputName)
+        name(inputName),
+        defaultShaderName(inputDefaultShaderName)
     {
         using namespace std::string_literals;
         indexConstantBuffer = std::make_shared<ConstantBufferInRootSignature<UINT>>(name + L"#"s + L"IndexConstant", 4u);
@@ -68,9 +69,9 @@ namespace DiveBomber::Component
 
     void Material::CreateDefaultConfig()
     {
-        config["ShaderName"] = "Default";
+        config["ShaderName"] = Utility::ToNarrow(defaultShaderName);
 
-        UploadConfig(Utility::ToWide(config["ShaderName"]));
+        UploadConfig(defaultShaderName);
     }
 
     int Material::ParamTypeStringToEnum(std::string string) noexcept

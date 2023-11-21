@@ -4,29 +4,28 @@
 #include "..\DX\ShaderManager.h"
 #include "..\DX\Commandlist.h"
 #include "..\DX\GlobalResourceManager.h"
-#include "..\Component\Camera.h"
-#include "..\Resource\RenderTarget.h"
-#include "..\Resource\DepthStencil.h"
 #include "..\Resource\Bindable\RootSignature.h"
 
 #include "..\Resource\ShaderInputable\RenderTargetAsShaderResourceView.h"
 #include "..\Resource\ShaderInputable\UnorderedAccessBufferAsShaderResourceView.h"
 
+#include "Pass\OpaqueGBufferPass.h"
+#include "Pass\FinalPostProcessPass.h"
+
+#include "..\Object\Object.h"
 #include "..\Object\UAVPass.h"
 
 #include <iostream>
 
 namespace DiveBomber::RenderPipeline
 {
-	using namespace DX;
 	using namespace DEGraphics;
-	using namespace Component;
+	using namespace DX;
 	using namespace DEResource;
 	using namespace DEObject;
 
 	RenderPipelineGraph::RenderPipelineGraph()
 	{
-
 		HDRTarget = std::make_shared<RenderTargetAsShaderResourceView>(
 			Graphics::GetInstance().GetWidth(), Graphics::GetInstance().GetHeight(),
 			Graphics::GetInstance().GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_RTV),
@@ -34,15 +33,16 @@ namespace DiveBomber::RenderPipeline
 			DXGI_FORMAT_R32G32B32A32_FLOAT
 			);
 
-
-		uavPass = std::make_shared<UAVPass>(L"PostProcessPass");
+		std::vector<std::shared_ptr<Pass>> lastPasses;
+		opaqueGBufferPass = std::make_shared<OpaqueGBufferPass>(lastPasses, HDRTarget, Graphics::GetInstance().GetMainDS());
+		
 		UAVTarget = std::make_shared<UnorderedAccessBufferAsShaderResourceView>(
 			Graphics::GetInstance().GetWidth(), Graphics::GetInstance().GetHeight(),
 			Graphics::GetInstance().GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV),
-			DXGI_FORMAT_R8G8B8A8_UNORM
-		);
-		uavPass->SetTexture(HDRTarget);
-		uavPass->SetTexture(UAVTarget->GetUAVPointer());
+			DXGI_FORMAT_R8G8B8A8_UNORM);
+
+		lastPasses = { opaqueGBufferPass };
+		finalPostProcessPass = std::make_shared<FinalPostProcessPass>(lastPasses, UAVTarget->GetUAVPointer());
 
 		rootSignature = GlobalResourceManager::Resolve<RootSignature>(L"StandardFullStageAccess");
 	}
@@ -51,34 +51,44 @@ namespace DiveBomber::RenderPipeline
 	{
 	}
 
-	void RenderPipelineGraph::SetRenderQueue(std::shared_ptr<DEObject::Drawable> inputObject)
+	void RenderPipelineGraph::SetRenderQueue(std::shared_ptr<Object> inputObject)
 	{
-		drawableObjects.emplace_back(inputObject);
+		opaqueGBufferPass->SubmitObject(inputObject);
 	}
 
-	void RenderPipelineGraph::Bind() noxnd
+	void RenderPipelineGraph::AddPass(std::shared_ptr<Pass> pass)
+	{
+		passes.emplace_back(pass);
+	}
+
+	void RenderPipelineGraph::SetRenderPasses() noxnd
+	{
+		AddPass(opaqueGBufferPass);
+
+		HDRTarget->BindAsShaderResource();
+
+		finalPostProcessPass->SetTexture(HDRTarget, 0u);
+		finalPostProcessPass->SetTexture(UAVTarget->GetUAVPointer(), 1u);
+		AddPass(finalPostProcessPass);
+	}
+
+	void RenderPipelineGraph::Render() noxnd
 	{
 		Graphics::GetInstance().BindShaderDescriptorHeaps();
 		rootSignature->Bind();
 
-		Graphics::GetInstance().GetCamera()->Bind();
+		SetRenderPasses();
 
-		HDRTarget->BindTarget(Graphics::GetInstance().GetMainDS());
-		FLOAT clearColor[] = ClearMainRTColor;
-		Graphics::GetInstance().GetGraphicsCommandList()->ClearRenderTargetView(HDRTarget->GetRTVCPUDescriptorHandle(), clearColor, 0, nullptr);
-
-		for (auto& drawableObject : drawableObjects)
+		for (std::shared_ptr<Pass>& pass : passes)
 		{
-			drawableObject->Bind();
+			pass->Execute();
 		}
 
-		HDRTarget->BindAsShaderResource();
-		UAVTarget->GetUAVPointer()->BindAsTarget();
-		uavPass->Execute();
+		Graphics::GetInstance().GetCommandList()->CopyResource(
+			Graphics::GetInstance().GetCurrentBackBuffer()->GetRenderTargetBuffer(),
+			UAVTarget->GetUAVPointer()->GetUnorderedAccessBuffer());
 
-		Graphics::GetInstance().GetCommandList()->CopyResource(Graphics::GetInstance().GetCurrentBackBuffer()->GetRenderTargetBuffer(), UAVTarget->GetUAVPointer()->GetUnorderedAccessBuffer());
-
-		drawableObjects.clear();
+		passes.clear();
 
 		ShaderManager::GetInstance().ResetAllShaderDirtyState();
 	}

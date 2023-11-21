@@ -13,12 +13,12 @@ namespace DiveBomber::DEResource
 
 namespace DiveBomber::DEObject
 {
-	class Drawable
+	class Object
 	{
 	public:
-		Drawable() = default;
-		Drawable(const std::wstring inputName);
-		virtual ~Drawable();
+		Object() = default;
+		Object(const std::wstring inputName);
+		virtual ~Object();
 
 		[[nodiscard]] virtual DirectX::XMMATRIX GetTransformXM() const noexcept = 0;
 

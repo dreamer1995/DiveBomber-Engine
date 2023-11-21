@@ -6,7 +6,7 @@
 
 namespace DiveBomber::DEObject
 {
-	class Drawable;
+	class Object;
 }
 
 namespace DiveBomber::DEResource
@@ -38,11 +38,11 @@ namespace DiveBomber::DEResource
 		void Bind() noxnd override;
 		[[nodiscard]] Transforms GetTransformMatrices() const noexcept;
 		[[nodiscard]] Transforms CalculateTransformMatrices() noxnd;
-		void InitializeParentReference(const DEObject::Drawable& inputParent) noexcept;
+		void InitializeParentReference(const DEObject::Object& inputParent) noexcept;
 		std::shared_ptr<ConstantBufferInRootSignature<Transforms>> GetTransformBuffer() const noexcept;
 	private:
 		Transforms transforms;
 		std::shared_ptr<ConstantBufferInRootSignature<Transforms>> transformCBuffer;
-		const DEObject::Drawable* parent = nullptr;
+		const DEObject::Object* parent = nullptr;
 	};
 }

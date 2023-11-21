@@ -34,7 +34,7 @@ namespace DiveBomber::Component
 	class Material final
 	{
 	public:
-		Material(const std::wstring inputName);
+		Material(const std::wstring inputName, const std::wstring inputDefaultShaderName = L"Default");
 		void SetTexture(const std::shared_ptr<DEResource::ShaderInputable> texture) noexcept;
 		void SetTexture(const std::shared_ptr<DEResource::ShaderInputable> texture, UINT slot) noexcept;
 		void SetTexture(const std::string textureName, const std::shared_ptr<DEResource::ShaderInputable> texture) noexcept;
@@ -78,5 +78,7 @@ namespace DiveBomber::Component
 		std::filesystem::file_time_type configFileLastSaveTime;
 
 		std::vector<std::shared_ptr<DEResource::Shader>> shaders;
+
+		std::wstring defaultShaderName;
 	};
 }

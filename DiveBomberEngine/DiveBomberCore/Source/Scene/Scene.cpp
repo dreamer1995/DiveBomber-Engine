@@ -49,7 +49,7 @@ namespace DiveBomber::DEScene
 			mainRenderPipeline->SetRenderQueue(drawableObject.second);
 		}
 
-		mainRenderPipeline->Bind();
+		mainRenderPipeline->Render();
 	}
 
 	std::shared_ptr<Camera> Scene::GetMainCamera() const noexcept
@@ -57,7 +57,7 @@ namespace DiveBomber::DEScene
 		return mainCamera;
 	}
 
-	std::shared_ptr<Drawable> Scene::FindSceneObjectByName(std::wstring name) const noexcept
+	std::shared_ptr<Object> Scene::FindSceneObjectByName(std::wstring name) const noexcept
 	{
 		auto returnObject = drawableObjects.find(name);
 		if (returnObject != drawableObjects.end())
@@ -70,7 +70,7 @@ namespace DiveBomber::DEScene
 		}
 	}
 
-	std::multimap<std::wstring, std::shared_ptr<DEObject::Drawable>> Scene::GetSceneObjects() const noexcept
+	std::multimap<std::wstring, std::shared_ptr<Object>> Scene::GetSceneObjects() const noexcept
 	{
 		return drawableObjects;
 	}

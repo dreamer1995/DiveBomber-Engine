@@ -1,7 +1,7 @@
 #include "ConstantTransformBuffer.h"
 
 #include "ConstantBufferInRootSignature.h"
-#include "..\..\Object\Drawable.h"
+#include "..\..\Object\Object.h"
 #include "..\..\Component\Camera.h"
 
 namespace DiveBomber::DEResource
@@ -30,7 +30,7 @@ namespace DiveBomber::DEResource
 		return transforms;
 	}
 
-	void ConstantTransformBuffer::InitializeParentReference(const Drawable& inputParent) noexcept
+	void ConstantTransformBuffer::InitializeParentReference(const Object& inputParent) noexcept
 	{
 		parent = &inputParent;
 	}

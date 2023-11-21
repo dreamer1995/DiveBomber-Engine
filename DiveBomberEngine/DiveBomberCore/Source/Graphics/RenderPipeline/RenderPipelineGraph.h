@@ -13,27 +13,38 @@ namespace DiveBomber::DEResource
 
 namespace DiveBomber::DEObject
 {
-	class Drawable;
+	class Object;
 	class UAVPass;
 }
 
 namespace DiveBomber::RenderPipeline
 {
+	class Pass;
+	class OpaqueGBufferPass;
+	class FinalPostProcessPass;
+
 	class RenderPipelineGraph
 	{
 	public:
 		RenderPipelineGraph();
 		~RenderPipelineGraph();
 
-		void Bind() noxnd;
+		void Render() noxnd;
 
-		void SetRenderQueue(std::shared_ptr<DEObject::Drawable> inputObject);
-	private:
-		std::vector<std::shared_ptr<DEObject::Drawable>> drawableObjects;
+		void SetRenderPasses() noxnd;
+
+		void SetRenderQueue(std::shared_ptr<DEObject::Object> inputObject);
+
+		void AddPass(std::shared_ptr<Pass> pass);
 
 		std::shared_ptr<DEObject::UAVPass> uavPass;
 		std::shared_ptr<DEResource::RenderTargetAsShaderResourceView> HDRTarget;
 		std::shared_ptr<DEResource::UnorderedAccessBufferAsShaderResourceView> UAVTarget;
 		std::shared_ptr<DEResource::RootSignature> rootSignature;
+
+		std::shared_ptr<OpaqueGBufferPass> opaqueGBufferPass;
+		std::shared_ptr<FinalPostProcessPass> finalPostProcessPass;
+
+		std::vector<std::shared_ptr<Pass>> passes;
 	};
 }

@@ -1,5 +1,5 @@
 #pragma once
-#include "Drawable.h"
+#include "Object.h"
 
 #include <unordered_map>
 
@@ -18,7 +18,7 @@ namespace DiveBomber::Component
 
 namespace DiveBomber::DEObject
 {
-	class SimpleSphere final : public Drawable
+	class SimpleSphere final : public Object
 	{
 	public:
 		SimpleSphere(const std::wstring inputName = L"Sphere");

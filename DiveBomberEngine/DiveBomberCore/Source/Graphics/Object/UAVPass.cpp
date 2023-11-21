@@ -32,9 +32,9 @@ namespace DiveBomber::DEObject
 	{
 	}
 
-	void UAVPass::SetTexture(const std::shared_ptr<ShaderInputable> texture)
+	void UAVPass::SetTexture(const std::shared_ptr<ShaderInputable> texture, const UINT slot)
 	{
-		material->SetTexture(texture);
+		material->SetTexture(texture, slot);
 	}
 
 	void UAVPass::Execute() const noxnd

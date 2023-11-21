@@ -1,5 +1,9 @@
 #pragma once
-#include "Drawable.h"
+#include "..\..\Window\DEWindows.h"
+#include "..\..\Utility\Common.h"
+
+#include <string>
+#include <memory>
 
 namespace DiveBomber::DEResource
 {
@@ -22,7 +26,7 @@ namespace DiveBomber::DEObject
 
 		void Execute() const noxnd;
 
-		void SetTexture(const std::shared_ptr<DEResource::ShaderInputable> texture);
+		void SetTexture(const std::shared_ptr<DEResource::ShaderInputable> texture, const UINT slot);
 
 	private:
 		std::wstring name;

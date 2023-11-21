@@ -1,9 +1,9 @@
 #pragma once
-#include "Drawable.h"
+#include "Object.h"
 
 namespace DiveBomber::DEObject
 {
-	class Model final : public Drawable
+	class Model final : public Object
 	{
 	public:
 		Model();

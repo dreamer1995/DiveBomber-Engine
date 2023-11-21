@@ -37,7 +37,7 @@
     <ClCompile Include="Source\Graphics\DX\ShaderManager.cpp" />
     <ClCompile Include="Source\Graphics\DX\GlobalResourceManager.cpp" />
     <ClCompile Include="Source\Graphics\Geometry\Vertex.cpp" />
-    <ClCompile Include="Source\Graphics\Object\Drawable.cpp" />
+    <ClCompile Include="Source\Graphics\Object\Object.cpp" />
     <ClCompile Include="Source\Graphics\Object\FullScreenPlane.cpp" />
     <ClCompile Include="Source\Graphics\Object\Model.cpp" />
     <ClCompile Include="Source\Graphics\Object\SimpleSphere.cpp" />
@@ -57,6 +57,11 @@
     <ClCompile Include="Source\Graphics\Resource\ShaderInputable\UnorderedAccessBuffer.cpp" />
     <ClCompile Include="Source\Graphics\Resource\ShaderInputable\UnorderedAccessBufferAsShaderResourceView.cpp" />
     <ClCompile Include="Source\Graphics\Resource\DynamicConstant.cpp" />
+    <ClCompile Include="Source\Graphics\RenderPipeline\Pass\OpaqueGBufferPass.cpp" />
+    <ClCompile Include="Source\Graphics\RenderPipeline\Pass\RenderPass.cpp" />
+    <ClCompile Include="Source\Graphics\RenderPipeline\Pass\ComputePass.cpp" />
+    <ClCompile Include="Source\Graphics\RenderPipeline\Pass\FinalPostProcessPass.cpp" />
+    <ClCompile Include="Source\Graphics\RenderPipeline\Pass\Pass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Utility\Common.h" />
@@ -109,7 +114,7 @@
     <ClInclude Include="Source\Graphics\Geometry\Plane.h" />
     <ClInclude Include="Source\Graphics\Geometry\Sphere.h" />
     <ClInclude Include="Source\Graphics\Geometry\Vertex.h" />
-    <ClInclude Include="Source\Graphics\Object\Drawable.h" />
+    <ClInclude Include="Source\Graphics\Object\Object.h" />
     <ClInclude Include="Source\Graphics\Object\FullScreenPlane.h" />
     <ClInclude Include="Source\Graphics\Object\Model.h" />
     <ClInclude Include="Source\Graphics\Object\SimpleSphere.h" />
@@ -141,6 +146,11 @@
     <ClInclude Include="Source\Graphics\Resource\ConstantBuffer.h" />
     <ClInclude Include="Source\Graphics\Resource\Bindable\DynamicConstantBufferInRootSignature.h" />
     <ClInclude Include="Source\Graphics\Resource\Bindable\ConstantBufferInRootSignature.h" />
+    <ClInclude Include="Source\Graphics\RenderPipeline\Pass\OpaqueGBufferPass.h" />
+    <ClInclude Include="Source\Graphics\RenderPipeline\Pass\RenderPass.h" />
+    <ClInclude Include="Source\Graphics\RenderPipeline\Pass\Pass.h" />
+    <ClInclude Include="Source\Graphics\RenderPipeline\Pass\ComputePass.h" />
+    <ClInclude Include="Source\Graphics\RenderPipeline\Pass\FinalPostProcessPass.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

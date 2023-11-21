@@ -78,7 +78,7 @@ namespace DiveBomber::DEObject
 		mesh->Bind();
 		material->Bind();
 
-		Drawable::Bind();
+		Object::Bind();
 
 		Graphics::GetInstance().GetGraphicsCommandList()->DrawIndexedInstanced(mesh->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
 	}

@@ -1,4 +1,4 @@
-#include "Drawable.h"
+#include "Object.h"
 
 #include "..\Graphics.h"
 #include "..\Resource\Bindable\Bindable.h"
@@ -7,17 +7,17 @@ namespace DiveBomber::DEObject
 {
 	using namespace DEGraphics;
 
-	Drawable::Drawable(const std::wstring inputName)
+	Object::Object(const std::wstring inputName)
 		:
 		name(inputName)
 	{
 	}
 
-	Drawable::~Drawable()
+	Object::~Object()
 	{
 	}
 
-	void Drawable::Bind() const noxnd
+	void Object::Bind() const noxnd
 	{
 		for (auto& bindableObject : bindableObjects)
 		{
@@ -25,12 +25,12 @@ namespace DiveBomber::DEObject
 		}
 	}
 
-	void Drawable::AddBindable(std::shared_ptr<DEResource::Bindable> bindableObject) noexcept
+	void Object::AddBindable(std::shared_ptr<DEResource::Bindable> bindableObject) noexcept
 	{
 		bindableObjects.emplace_back(bindableObject);
 	}
 
-	std::wstring Drawable::GetName() const noexcept
+	std::wstring Object::GetName() const noexcept
 	{
 		return name;
 	}

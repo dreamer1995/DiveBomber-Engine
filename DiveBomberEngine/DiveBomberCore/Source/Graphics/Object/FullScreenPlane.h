@@ -1,5 +1,5 @@
 #pragma once
-#include "Drawable.h"
+#include "Object.h"
 
 namespace DiveBomber::DEResource
 {
@@ -17,7 +17,7 @@ namespace DiveBomber::Component
 
 namespace DiveBomber::DEObject
 {
-	class FullScreenPlane final : public Drawable
+	class FullScreenPlane final : public Object
 	{
 	public:
 		FullScreenPlane(const std::wstring inputName = L"FullScreenPlane");
