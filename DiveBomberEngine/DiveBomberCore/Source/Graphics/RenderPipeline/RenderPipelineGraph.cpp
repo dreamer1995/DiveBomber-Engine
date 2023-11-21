@@ -13,7 +13,6 @@
 #include "Pass\FinalPostProcessPass.h"
 
 #include "..\Object\Object.h"
-#include "..\Object\UAVPass.h"
 
 #include <iostream>
 

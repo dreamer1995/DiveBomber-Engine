@@ -56,7 +56,5 @@ namespace DiveBomber::RenderPipeline
 			(UINT)uavdesc.Width / 8,
 			(UINT)uavdesc.Height / 8,
 			1u);
-
-
 	}
 }

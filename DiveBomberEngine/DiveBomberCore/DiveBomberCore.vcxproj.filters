@@ -38,10 +38,9 @@
     <ClCompile Include="Source\Graphics\DX\GlobalResourceManager.cpp" />
     <ClCompile Include="Source\Graphics\Geometry\Vertex.cpp" />
     <ClCompile Include="Source\Graphics\Object\Object.cpp" />
-    <ClCompile Include="Source\Graphics\Object\FullScreenPlane.cpp" />
+    <ClCompile Include="Source\Graphics\RenderPipeline\Pass\FullScreenPlane.cpp" />
     <ClCompile Include="Source\Graphics\Object\Model.cpp" />
     <ClCompile Include="Source\Graphics\Object\SimpleSphere.cpp" />
-    <ClCompile Include="Source\Graphics\Object\UAVPass.cpp" />
     <ClCompile Include="Source\Graphics\Resource\Bindable\ConstantTransformBuffer.cpp" />
     <ClCompile Include="Source\Graphics\Resource\DepthStencil.cpp" />
     <ClCompile Include="Source\Graphics\Resource\Bindable\IndexBuffer.cpp" />
@@ -115,10 +114,9 @@
     <ClInclude Include="Source\Graphics\Geometry\Sphere.h" />
     <ClInclude Include="Source\Graphics\Geometry\Vertex.h" />
     <ClInclude Include="Source\Graphics\Object\Object.h" />
-    <ClInclude Include="Source\Graphics\Object\FullScreenPlane.h" />
+    <ClInclude Include="Source\Graphics\RenderPipeline\Pass\FullScreenPlane.h" />
     <ClInclude Include="Source\Graphics\Object\Model.h" />
     <ClInclude Include="Source\Graphics\Object\SimpleSphere.h" />
-    <ClInclude Include="Source\Graphics\Object\UAVPass.h" />
     <ClInclude Include="Source\Graphics\Resource\Bindable\Bindable.h" />
     <ClInclude Include="Source\Graphics\Resource\Bindable\ConstantTransformBuffer.h" />
     <ClInclude Include="Source\Graphics\Resource\DepthStencil.h" />

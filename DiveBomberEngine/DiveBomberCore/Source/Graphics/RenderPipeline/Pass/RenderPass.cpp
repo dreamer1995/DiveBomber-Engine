@@ -2,6 +2,7 @@
 #include "..\..\Graphics.h"
 #include "..\..\Resource\RenderTarget.h"
 #include "..\..\Resource\DepthStencil.h"
+#include "..\..\Object\Object.h"
 
 namespace DiveBomber::DEResource
 {
@@ -12,6 +13,7 @@ namespace DiveBomber::RenderPipeline
 {
 	using namespace DEGraphics;
 	using namespace DEResource;
+	using namespace DEObject;
 
 	RenderPass::RenderPass(std::vector<std::shared_ptr<Pass>> inputPasses,
 		std::shared_ptr<DEResource::RenderTarget> inputRenderTarget,
@@ -33,6 +35,11 @@ namespace DiveBomber::RenderPipeline
 		depthStencil = inputDepthStencil;
 	}
 
+	void RenderPass::SubmitObject(std::shared_ptr<DEObject::Object> object) noexcept
+	{
+		objects.emplace_back(object);
+	}
+
 	void RenderPass::Execute() noxnd
 	{
 		if (depthStencil != nullptr)
@@ -46,5 +53,12 @@ namespace DiveBomber::RenderPipeline
 
 		FLOAT clearColor[] = ClearMainRTColor;
 		Graphics::GetInstance().GetGraphicsCommandList()->ClearRenderTargetView(renderTarget->GetRTVCPUDescriptorHandle(), clearColor, 0, nullptr);
+		
+		for (std::shared_ptr<DEObject::Object>& object : objects)
+		{
+			object->Bind();
+		}
+
+		objects.clear();
 	}
 }
