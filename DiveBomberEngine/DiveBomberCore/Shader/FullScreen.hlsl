@@ -68,8 +68,9 @@ ProcessData VSMain(uint vertexID : SV_VertexID)
 float4 PSMain(ProcessData In) : SV_Target
 {
 	Texture2D<float4> mainRT = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.texture0Index)];
+	ConstantBuffer<BaseShadingParams> baseShadingParams = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.constant0Index)];
 	
-	float4 col = mainRT.Sample(samp, In.uv);
+	float4 col = mainRT.Sample(samp, In.uv) * baseShadingParams.baseColor;
 	
 	return col;
 }

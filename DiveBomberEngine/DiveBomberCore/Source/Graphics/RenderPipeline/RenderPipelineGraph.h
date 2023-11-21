@@ -14,7 +14,6 @@ namespace DiveBomber::DEResource
 namespace DiveBomber::DEObject
 {
 	class Object;
-	class UAVPass;
 }
 
 namespace DiveBomber::RenderPipeline
@@ -37,7 +36,6 @@ namespace DiveBomber::RenderPipeline
 
 		void AddPass(std::shared_ptr<Pass> pass);
 
-		std::shared_ptr<DEObject::UAVPass> uavPass;
 		std::shared_ptr<DEResource::RenderTargetAsShaderResourceView> HDRTarget;
 		std::shared_ptr<DEResource::UnorderedAccessBufferAsShaderResourceView> UAVTarget;
 		std::shared_ptr<DEResource::RootSignature> rootSignature;

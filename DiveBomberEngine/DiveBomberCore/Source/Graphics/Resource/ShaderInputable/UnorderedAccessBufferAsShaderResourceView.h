@@ -21,7 +21,7 @@ namespace DiveBomber::DEResource
 
 		~UnorderedAccessBufferAsShaderResourceView();
 
-		void BindAsShaderResource() noxnd;
+		void BindAsShaderResource() noxnd override;
 		[[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetSRVCPUDescriptorHandle() const noexcept;
 		void Resize(const UINT inputWidth, const UINT inputHeight);
 
