@@ -65,8 +65,6 @@ namespace DiveBomber::RenderPipeline
 	{
 		AddPass(opaqueGBufferPass);
 
-		HDRTarget->BindAsShaderResource();
-
 		finalPostProcessPass->SetTexture(HDRTarget, 0u);
 		finalPostProcessPass->SetTexture(UAVTarget->GetUAVPointer(), 1u);
 		AddPass(finalPostProcessPass);

@@ -37,11 +37,13 @@ namespace DiveBomber::RenderPipeline
 
 		for (auto& inputTexture : inputTexturesMap)
 		{
+			inputTexture.second->BindAsShaderResource();
 			material->SetTexture(inputTexture.second, inputTexture.first);
 		}
 
 		for (auto& inputConstant : inputConstantsMap)
 		{
+			inputConstant.second->BindAsShaderResource();
 			material->SetConstant(inputConstant.second, inputConstant.first);
 		}
 
@@ -54,5 +56,7 @@ namespace DiveBomber::RenderPipeline
 			(UINT)uavdesc.Width / 8,
 			(UINT)uavdesc.Height / 8,
 			1u);
+
+
 	}
 }

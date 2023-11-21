@@ -10,5 +10,9 @@ namespace DiveBomber::DEResource
 		virtual ~ShaderInputable() = default;
 
 		[[nodiscard]] virtual UINT GetSRVDescriptorHeapOffset() const noexcept = 0;
+
+		[[nodiscard]] virtual void BindAsShaderResource() noxnd
+		{
+		}
 	};
 }
