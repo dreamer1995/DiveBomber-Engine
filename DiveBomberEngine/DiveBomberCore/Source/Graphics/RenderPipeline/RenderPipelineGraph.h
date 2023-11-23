@@ -32,8 +32,6 @@ namespace DiveBomber::RenderPipeline
 
 		void SubmitObject(std::shared_ptr<DEObject::Object> inputObject);
 
-		void AddPass(std::shared_ptr<Pass> pass);
-
 		std::shared_ptr<DEResource::RenderTargetAsShaderResourceView> HDRTarget;
 		std::shared_ptr<DEResource::UnorderedAccessBufferAsShaderResourceView> finalTarget;
 		std::shared_ptr<DEResource::RootSignature> rootSignature;
