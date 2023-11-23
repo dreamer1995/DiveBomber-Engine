@@ -15,9 +15,10 @@ namespace DiveBomber::RenderPipeline
 	using namespace DEResource;
 	using namespace DEObject;
 
-	RenderPass::RenderPass(std::shared_ptr<DEResource::RenderTarget> inputRenderTarget,
+	RenderPass::RenderPass(std::string inputName, std::shared_ptr<DEResource::RenderTarget> inputRenderTarget,
 		std::shared_ptr<DEResource::DepthStencil> inputDepthStencil)
 		:
+		Pass(inputName),
 		renderTarget(inputRenderTarget),
 		depthStencil(inputDepthStencil)
 	{

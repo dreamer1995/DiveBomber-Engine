@@ -3,47 +3,34 @@
 
 #include <memory>
 #include <vector>
-
-namespace DiveBomber::DEResource
-{
-	class RenderTargetAsShaderResourceView;
-	class UnorderedAccessBufferAsShaderResourceView;
-	class RootSignature;
-}
-
-namespace DiveBomber::DEObject
-{
-	class Object;
-}
+#include <unordered_map>
+#include <unordered_set>
 
 namespace DiveBomber::RenderPipeline
 {
 	class Pass;
-	class OpaqueGBufferPass;
-	class FinalPostProcessPass;
 
 	class RenderPipelineGraph
 	{
 	public:
-		RenderPipelineGraph();
-		~RenderPipelineGraph();
+		RenderPipelineGraph(std::string inputName);
+		virtual ~RenderPipelineGraph() = default;
 
-		void Render() noxnd;
+		virtual void Render() noxnd = 0;
 
-		void SubmitObject(std::shared_ptr<DEObject::Object> inputObject);
+	protected:
+		virtual void SetRenderPasses() noxnd = 0;
+		virtual void PostRender() noxnd;
+		void BuildRenderPath(const std::shared_ptr<Pass> finalPass) noexcept;
+		void RecursivePassesTree(const std::unordered_set<std::shared_ptr<Pass>> inputNode) noexcept;
+		void LinkPass(const std::shared_ptr<Pass> beforePass, const std::unordered_set<std::shared_ptr<Pass>> afterPasses) noexcept;
+		void LinkPass(const std::shared_ptr<Pass> beforePass, const std::shared_ptr<Pass> afterPass) noexcept;
+		void AddLinkPass(const std::shared_ptr<Pass> beforePass, const std::shared_ptr<Pass> afterPass) noexcept;
 
-		std::shared_ptr<DEResource::RenderTargetAsShaderResourceView> HDRTarget;
-		std::shared_ptr<DEResource::UnorderedAccessBufferAsShaderResourceView> finalTarget;
-		std::shared_ptr<DEResource::RootSignature> rootSignature;
+	protected:
+		std::string name;
 
-		std::shared_ptr<OpaqueGBufferPass> opaqueGBufferPass;
-		std::shared_ptr<FinalPostProcessPass> finalPostProcessPass;
-
+		std::unordered_map<std::shared_ptr<Pass>, std::unordered_set<std::shared_ptr<Pass>>> passesTree;
 		std::vector<std::shared_ptr<Pass>> renderPath;
-
-	private:
-		void SetRenderPasses() noxnd;
-		void BuildRenderPath() noexcept;
-		void RecursivePassesTree(const std::shared_ptr<Pass> inputNode) noexcept;
 	};
 }

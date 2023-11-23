@@ -1,78 +1,33 @@
 #include "RenderPipelineGraph.h"
 
-#include "..\Graphics.h"
 #include "..\DX\ShaderManager.h"
-#include "..\DX\Commandlist.h"
-#include "..\DX\GlobalResourceManager.h"
-#include "..\Resource\Bindable\RootSignature.h"
-
-#include "..\Resource\ShaderInputable\RenderTargetAsShaderResourceView.h"
-#include "..\Resource\ShaderInputable\UnorderedAccessBufferAsShaderResourceView.h"
-
-#include "Pass\OpaqueGBufferPass.h"
-#include "Pass\FinalPostProcessPass.h"
-
-#include "..\Object\Object.h"
-
-#include <iostream>
 
 namespace DiveBomber::RenderPipeline
 {
-	using namespace DEGraphics;
 	using namespace DX;
-	using namespace DEResource;
-	using namespace DEObject;
 
-	RenderPipelineGraph::RenderPipelineGraph()
-	{
-		HDRTarget = std::make_shared<RenderTargetAsShaderResourceView>(
-			Graphics::GetInstance().GetWidth(), Graphics::GetInstance().GetHeight(),
-			Graphics::GetInstance().GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_RTV),
-			Graphics::GetInstance().GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV),
-			DXGI_FORMAT_R32G32B32A32_FLOAT
-			);
-
-		std::vector<std::shared_ptr<Pass>> lastPasses;
-		opaqueGBufferPass = std::make_shared<OpaqueGBufferPass>(HDRTarget, Graphics::GetInstance().GetMainDS());
-		
-		finalTarget = std::make_shared<UnorderedAccessBufferAsShaderResourceView>(
-			Graphics::GetInstance().GetWidth(), Graphics::GetInstance().GetHeight(),
-			Graphics::GetInstance().GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV),
-			DXGI_FORMAT_R8G8B8A8_UNORM);
-
-		lastPasses = { opaqueGBufferPass };
-		finalPostProcessPass = std::make_shared<FinalPostProcessPass>(finalTarget->GetUAVPointer());
-
-		rootSignature = GlobalResourceManager::Resolve<RootSignature>(L"StandardFullStageAccess");
-	}
-
-	RenderPipelineGraph::~RenderPipelineGraph()
+	RenderPipelineGraph::RenderPipelineGraph(std::string inputName)
+		:
+		name(inputName)
 	{
 	}
 
-	void RenderPipelineGraph::SubmitObject(std::shared_ptr<Object> inputObject)
+	void RenderPipelineGraph::PostRender() noxnd
 	{
-		opaqueGBufferPass->SubmitObject(inputObject);
+		renderPath.clear();
+		ShaderManager::GetInstance().ResetAllShaderDirtyState();
 	}
 
-	void RenderPipelineGraph::SetRenderPasses() noxnd
+	void RenderPipelineGraph::BuildRenderPath(const std::shared_ptr<Pass> finalPass) noexcept
 	{
-		finalPostProcessPass->SetTexture(HDRTarget, 0u);
-		finalPostProcessPass->SetTexture(finalTarget->GetUAVPointer(), 1u);
-		finalPostProcessPass->AddPreviousPass(opaqueGBufferPass);
+		renderPath.emplace_back(finalPass);
+		RecursivePassesTree(passesTree[finalPass]);
+		passesTree.clear();
 	}
 
-	void RenderPipelineGraph::BuildRenderPath() noexcept
+	void RenderPipelineGraph::RecursivePassesTree(const std::unordered_set<std::shared_ptr<Pass>> inputNode) noexcept
 	{
-		std::vector<std::shared_ptr<Pass>> currentPasses = finalPostProcessPass->GetPreviousPass();
-		renderPath.emplace_back(finalPostProcessPass);
-		RecursivePassesTree(finalPostProcessPass);
-	}
-
-	void RenderPipelineGraph::RecursivePassesTree(const std::shared_ptr<Pass> inputNode) noexcept
-	{
-		std::vector<std::shared_ptr<Pass>> currentPasses = inputNode->GetPreviousPass();
-		for (std::shared_ptr<Pass>& currentPass : currentPasses)
+		for (const std::shared_ptr<Pass>& currentPass : inputNode)
 		{
 			auto iterator = std::find(renderPath.begin(), renderPath.end(), currentPass);
 			if (iterator != renderPath.end())
@@ -80,30 +35,22 @@ namespace DiveBomber::RenderPipeline
 				renderPath.erase(iterator);
 			}
 			renderPath.emplace_back(currentPass);
-			RecursivePassesTree(currentPass);
+			RecursivePassesTree(passesTree[currentPass]);
 		}
 	}
 
-	void RenderPipelineGraph::Render() noxnd
+	void RenderPipelineGraph::LinkPass(const std::shared_ptr<Pass> beforePass, const std::unordered_set<std::shared_ptr<Pass>> afterPasses) noexcept
 	{
-		Graphics::GetInstance().BindShaderDescriptorHeaps();
-		rootSignature->Bind();
+		passesTree[beforePass] = afterPasses;
+	}
 
-		SetRenderPasses();
-		BuildRenderPath();
+	void RenderPipelineGraph::LinkPass(const std::shared_ptr<Pass> beforePass, const std::shared_ptr<Pass> afterPass) noexcept
+	{
+		passesTree[beforePass] = { afterPass };
+	}
 
-		for (int i = (int)renderPath.size() - 1; i > -1; i--)
-		{
-			renderPath[i]->Execute();
-			renderPath[i]->ClearPreviousPass();
-		}
-
-		Graphics::GetInstance().GetCommandList()->CopyResource(
-			Graphics::GetInstance().GetCurrentBackBuffer()->GetRenderTargetBuffer(),
-			finalTarget->GetUAVPointer()->GetUnorderedAccessBuffer());
-
-		renderPath.clear();
-
-		ShaderManager::GetInstance().ResetAllShaderDirtyState();
+	void RenderPipelineGraph::AddLinkPass(const std::shared_ptr<Pass> beforePass, const std::shared_ptr<Pass> afterPass) noexcept
+	{
+		passesTree[beforePass].emplace(afterPass);
 	}
 }

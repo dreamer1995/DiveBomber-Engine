@@ -4,7 +4,7 @@
 #include "..\Graphics\DX\CommandQueue.h"
 #include "..\Graphics\Object\SimpleSphere.h"
 #include "..\Graphics\Component\Camera.h"
-#include "..\Graphics\RenderPipeline\RenderPipelineGraph.h"
+#include "..\Graphics\RenderPipeline\DeferredRenderPipeLine.h"
 
 namespace DiveBomber::DEScene
 {
@@ -25,7 +25,7 @@ namespace DiveBomber::DEScene
 
 	void Scene::LoadSceneFromFile(const std::wstring name) noexcept
 	{
-		mainRenderPipeline = std::make_unique<RenderPipelineGraph>();
+		mainRenderPipeline = std::make_unique<DeferredRenderPipeLine>();
 
 		drawableObjects.emplace(L"Sphere01", std::make_shared<SimpleSphere>(L"Sphere01"));
 		auto another = std::make_shared<SimpleSphere>(L"Sphere02");

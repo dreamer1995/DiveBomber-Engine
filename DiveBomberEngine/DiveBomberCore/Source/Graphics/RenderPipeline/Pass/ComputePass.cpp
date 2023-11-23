@@ -6,8 +6,9 @@ namespace DiveBomber::RenderPipeline
 {
 	using namespace DEResource;
 
-	ComputePass::ComputePass(std::shared_ptr<UnorderedAccessBuffer> inputTarget)
+	ComputePass::ComputePass(std::string inputName, std::shared_ptr<UnorderedAccessBuffer> inputTarget)
 		:
+		Pass(inputName),
 		uavTarget(inputTarget)
 	{
 	}

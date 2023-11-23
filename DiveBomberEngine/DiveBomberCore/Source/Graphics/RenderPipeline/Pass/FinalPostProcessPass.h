@@ -16,7 +16,7 @@ namespace DiveBomber::Component
 
 namespace DiveBomber::RenderPipeline
 {
-	class FinalPostProcessPass : public ComputePass
+	class FinalPostProcessPass final : public ComputePass
 	{
 	public:
 		FinalPostProcessPass(std::shared_ptr<DEResource::UnorderedAccessBuffer> inputTarget);

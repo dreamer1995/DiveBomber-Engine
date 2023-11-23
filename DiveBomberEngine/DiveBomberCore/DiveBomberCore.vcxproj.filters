@@ -61,6 +61,7 @@
     <ClCompile Include="Source\Graphics\RenderPipeline\Pass\ComputePass.cpp" />
     <ClCompile Include="Source\Graphics\RenderPipeline\Pass\FinalPostProcessPass.cpp" />
     <ClCompile Include="Source\Graphics\RenderPipeline\Pass\Pass.cpp" />
+    <ClCompile Include="Source\Graphics\RenderPipeline\DeferredRenderPipeLine.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Utility\Common.h" />
@@ -149,6 +150,7 @@
     <ClInclude Include="Source\Graphics\RenderPipeline\Pass\Pass.h" />
     <ClInclude Include="Source\Graphics\RenderPipeline\Pass\ComputePass.h" />
     <ClInclude Include="Source\Graphics\RenderPipeline\Pass\FinalPostProcessPass.h" />
+    <ClInclude Include="Source\Graphics\RenderPipeline\DeferredRenderPipeLine.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

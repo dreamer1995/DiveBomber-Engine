@@ -5,6 +5,7 @@
 #include <memory>
 #include <vector>
 #include <unordered_map>
+#include <unordered_set>
 
 namespace DiveBomber::DEResource
 {
@@ -13,22 +14,29 @@ namespace DiveBomber::DEResource
 
 namespace DiveBomber::RenderPipeline
 {
-	class Pass
+	class Pass : public std::enable_shared_from_this<Pass>
 	{
 	public:
+		Pass(std::string inputName);
+
 		virtual ~Pass() = default;
 
 		virtual void Execute() noxnd = 0;
-		[[nodiscard]] std::vector<std::shared_ptr<Pass>> GetPreviousPass() noexcept;
-		void SetPreviousPass(const std::vector<std::shared_ptr<Pass>> inputPasses) noexcept;
-		void AddPreviousPass(const std::shared_ptr<Pass> inputPass) noexcept;
-		void ClearPreviousPass() noexcept;
 
 		void SetTexture(const std::shared_ptr<DEResource::ShaderInputable> inputResource, UINT slot) noexcept;
 		void SetConstant(const std::shared_ptr<DEResource::ShaderInputable> inputResource, UINT slot) noexcept;
 
+		[[nodiscard]] std::string GetName() const noexcept;
+
+		std::shared_ptr<Pass> LinkPass(std::unordered_map<std::shared_ptr<Pass>, std::unordered_set<std::shared_ptr<Pass>>>& passesTree,
+			const std::unordered_set<std::shared_ptr<Pass>> afterPasses) noexcept;
+		std::shared_ptr<Pass> LinkPass(std::unordered_map<std::shared_ptr<Pass>, std::unordered_set<std::shared_ptr<Pass>>>& passesTree,
+			const std::shared_ptr<Pass> afterPass) noexcept;
+		std::shared_ptr<Pass> AddLinkPass(std::unordered_map<std::shared_ptr<Pass>, std::unordered_set<std::shared_ptr<Pass>>>& passesTree,
+			const std::shared_ptr<Pass> afterPass) noexcept;
 	protected:
-		std::vector<std::shared_ptr<Pass>> prevPasses;
+		std::string name;
+
 		std::unordered_map<UINT, std::shared_ptr<DEResource::ShaderInputable>> inputTexturesMap;
 		std::unordered_map<UINT, std::shared_ptr<DEResource::ShaderInputable>> inputConstantsMap;
 	};

@@ -17,7 +17,7 @@ namespace DiveBomber::RenderPipeline
 
 	FinalPostProcessPass::FinalPostProcessPass(std::shared_ptr<UnorderedAccessBuffer> inputTarget)
 		:
-		ComputePass(inputTarget)
+		ComputePass("FinalPostProcessPass", inputTarget)
 	{
 		material = std::make_shared<Material>(L"FinalPostProcessMaterial", L"PostProcess");
 

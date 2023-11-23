@@ -17,7 +17,7 @@ namespace DiveBomber::Component
 
 namespace DiveBomber::RenderPipeline
 {
-	class RenderPipelineGraph;
+	class DeferredRenderPipeLine;
 }
 
 namespace DiveBomber::DEScene
@@ -35,7 +35,7 @@ namespace DiveBomber::DEScene
 		[[nodiscard]] std::multimap<std::wstring, std::shared_ptr<DEObject::Object>> GetSceneObjects() const noexcept;
 	private:
 		const std::wstring name;
-		std::unique_ptr<RenderPipeline::RenderPipelineGraph> mainRenderPipeline;
+		std::unique_ptr<RenderPipeline::DeferredRenderPipeLine> mainRenderPipeline;
 		std::multimap<std::wstring, std::shared_ptr<DEObject::Object>> drawableObjects;
 		std::shared_ptr<Component::Camera> mainCamera;
 	};

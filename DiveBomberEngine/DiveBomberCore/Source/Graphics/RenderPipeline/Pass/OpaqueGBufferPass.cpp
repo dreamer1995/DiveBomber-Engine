@@ -11,7 +11,7 @@ namespace DiveBomber::RenderPipeline
 	OpaqueGBufferPass::OpaqueGBufferPass(std::shared_ptr<RenderTarget> inputRenderTarget,
 		std::shared_ptr<DepthStencil> inputDepthStencil)
 		:
-		RenderPass(inputRenderTarget, inputDepthStencil)
+		RenderPass("OpaqueGBufferPass", inputRenderTarget, inputDepthStencil)
 	{
 	}
 
