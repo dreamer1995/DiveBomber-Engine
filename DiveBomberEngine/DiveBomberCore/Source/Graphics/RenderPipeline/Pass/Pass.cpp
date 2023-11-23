@@ -6,15 +6,24 @@ namespace DiveBomber::RenderPipeline
 {
 	using namespace DEResource;
 
-	Pass::Pass(std::vector<std::shared_ptr<Pass>> inputPasses)
-		:
-		prevPasses(inputPasses)
+	std::vector<std::shared_ptr<Pass>> Pass::GetPreviousPass() noexcept
 	{
+		return prevPasses;
 	}
 
 	void Pass::SetPreviousPass(const std::vector<std::shared_ptr<Pass>> inputPasses) noexcept
 	{
 		prevPasses = inputPasses;
+	}
+
+	void Pass::AddPreviousPass(const std::shared_ptr<Pass> inputPass) noexcept
+	{
+		prevPasses.emplace_back(inputPass);
+	}
+
+	void Pass::ClearPreviousPass() noexcept
+	{
+		prevPasses.clear();
 	}
 
 	void Pass::SetTexture(const std::shared_ptr<ShaderInputable> inputResource, UINT slot) noexcept

@@ -8,11 +8,10 @@ namespace DiveBomber::RenderPipeline
 	using namespace Component;
 	using namespace DEResource;
 
-	OpaqueGBufferPass::OpaqueGBufferPass(std::vector<std::shared_ptr<Pass>> inputPasses,
-		std::shared_ptr<RenderTarget> inputRenderTarget,
+	OpaqueGBufferPass::OpaqueGBufferPass(std::shared_ptr<RenderTarget> inputRenderTarget,
 		std::shared_ptr<DepthStencil> inputDepthStencil)
 		:
-		RenderPass(inputPasses, inputRenderTarget, inputDepthStencil)
+		RenderPass(inputRenderTarget, inputDepthStencil)
 	{
 	}
 

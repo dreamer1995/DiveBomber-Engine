@@ -19,8 +19,7 @@ namespace DiveBomber::RenderPipeline
 	class FinalPostProcessPass : public ComputePass
 	{
 	public:
-		FinalPostProcessPass(std::vector<std::shared_ptr<Pass>> inputPasses,
-			std::shared_ptr<DEResource::UnorderedAccessBuffer> inputTarget);
+		FinalPostProcessPass(std::shared_ptr<DEResource::UnorderedAccessBuffer> inputTarget);
 
 		virtual void Execute() noxnd override;
 

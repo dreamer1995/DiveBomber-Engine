@@ -33,15 +33,15 @@ namespace DiveBomber::RenderPipeline
 			);
 
 		std::vector<std::shared_ptr<Pass>> lastPasses;
-		opaqueGBufferPass = std::make_shared<OpaqueGBufferPass>(lastPasses, HDRTarget, Graphics::GetInstance().GetMainDS());
+		opaqueGBufferPass = std::make_shared<OpaqueGBufferPass>(HDRTarget, Graphics::GetInstance().GetMainDS());
 		
-		UAVTarget = std::make_shared<UnorderedAccessBufferAsShaderResourceView>(
+		finalTarget = std::make_shared<UnorderedAccessBufferAsShaderResourceView>(
 			Graphics::GetInstance().GetWidth(), Graphics::GetInstance().GetHeight(),
 			Graphics::GetInstance().GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV),
 			DXGI_FORMAT_R8G8B8A8_UNORM);
 
 		lastPasses = { opaqueGBufferPass };
-		finalPostProcessPass = std::make_shared<FinalPostProcessPass>(lastPasses, UAVTarget->GetUAVPointer());
+		finalPostProcessPass = std::make_shared<FinalPostProcessPass>(finalTarget->GetUAVPointer());
 
 		rootSignature = GlobalResourceManager::Resolve<RootSignature>(L"StandardFullStageAccess");
 	}
@@ -50,23 +50,38 @@ namespace DiveBomber::RenderPipeline
 	{
 	}
 
-	void RenderPipelineGraph::SetRenderQueue(std::shared_ptr<Object> inputObject)
+	void RenderPipelineGraph::SubmitObject(std::shared_ptr<Object> inputObject)
 	{
 		opaqueGBufferPass->SubmitObject(inputObject);
 	}
 
-	void RenderPipelineGraph::AddPass(std::shared_ptr<Pass> pass)
-	{
-		passes.emplace_back(pass);
-	}
-
 	void RenderPipelineGraph::SetRenderPasses() noxnd
 	{
-		AddPass(opaqueGBufferPass);
-
 		finalPostProcessPass->SetTexture(HDRTarget, 0u);
-		finalPostProcessPass->SetTexture(UAVTarget->GetUAVPointer(), 1u);
-		AddPass(finalPostProcessPass);
+		finalPostProcessPass->SetTexture(finalTarget->GetUAVPointer(), 1u);
+		finalPostProcessPass->AddPreviousPass(opaqueGBufferPass);
+	}
+
+	void RenderPipelineGraph::BuildRenderPath() noexcept
+	{
+		std::vector<std::shared_ptr<Pass>> currentPasses = finalPostProcessPass->GetPreviousPass();
+		renderPath.emplace_back(finalPostProcessPass);
+		RecursivePassesTree(finalPostProcessPass);
+	}
+
+	void RenderPipelineGraph::RecursivePassesTree(const std::shared_ptr<Pass> inputNode) noexcept
+	{
+		std::vector<std::shared_ptr<Pass>> currentPasses = inputNode->GetPreviousPass();
+		for (std::shared_ptr<Pass>& currentPass : currentPasses)
+		{
+			auto iterator = std::find(renderPath.begin(), renderPath.end(), currentPass);
+			if (iterator != renderPath.end())
+			{
+				renderPath.erase(iterator);
+			}
+			renderPath.emplace_back(currentPass);
+			RecursivePassesTree(currentPass);
+		}
 	}
 
 	void RenderPipelineGraph::Render() noxnd
@@ -75,17 +90,19 @@ namespace DiveBomber::RenderPipeline
 		rootSignature->Bind();
 
 		SetRenderPasses();
+		BuildRenderPath();
 
-		for (std::shared_ptr<Pass>& pass : passes)
+		for (int i = (int)renderPath.size() - 1; i > -1; i--)
 		{
-			pass->Execute();
+			renderPath[i]->Execute();
+			renderPath[i]->ClearPreviousPass();
 		}
 
 		Graphics::GetInstance().GetCommandList()->CopyResource(
 			Graphics::GetInstance().GetCurrentBackBuffer()->GetRenderTargetBuffer(),
-			UAVTarget->GetUAVPointer()->GetUnorderedAccessBuffer());
+			finalTarget->GetUAVPointer()->GetUnorderedAccessBuffer());
 
-		passes.clear();
+		renderPath.clear();
 
 		ShaderManager::GetInstance().ResetAllShaderDirtyState();
 	}

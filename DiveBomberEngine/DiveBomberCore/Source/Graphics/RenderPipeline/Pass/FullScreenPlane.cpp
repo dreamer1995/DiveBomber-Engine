@@ -16,10 +16,9 @@ namespace DiveBomber::RenderPipeline
 	using namespace Component;
 	namespace dx = DirectX;
 
-	FullScreenPlane::FullScreenPlane(std::vector<std::shared_ptr<Pass>> inputPasses,
-		std::shared_ptr<RenderTarget> inputRenderTarget)
+	FullScreenPlane::FullScreenPlane(std::shared_ptr<RenderTarget> inputRenderTarget)
 		:
-		RenderPass(inputPasses, inputRenderTarget, nullptr)
+		RenderPass(inputRenderTarget, nullptr)
 	{
 		VertexProcess::VertexLayout lay;
 		lay.Append(VertexProcess::VertexLayout::Position2D);

@@ -46,7 +46,7 @@ namespace DiveBomber::DEScene
 	{
 		for (auto& drawableObject : drawableObjects)
 		{
-			mainRenderPipeline->SetRenderQueue(drawableObject.second);
+			mainRenderPipeline->SubmitObject(drawableObject.second);
 		}
 
 		mainRenderPipeline->Render();

@@ -16,12 +16,13 @@ namespace DiveBomber::RenderPipeline
 	class Pass
 	{
 	public:
-		Pass(std::vector<std::shared_ptr<Pass>> inputPasses);
-
 		virtual ~Pass() = default;
 
 		virtual void Execute() noxnd = 0;
+		[[nodiscard]] std::vector<std::shared_ptr<Pass>> GetPreviousPass() noexcept;
 		void SetPreviousPass(const std::vector<std::shared_ptr<Pass>> inputPasses) noexcept;
+		void AddPreviousPass(const std::shared_ptr<Pass> inputPass) noexcept;
+		void ClearPreviousPass() noexcept;
 
 		void SetTexture(const std::shared_ptr<DEResource::ShaderInputable> inputResource, UINT slot) noexcept;
 		void SetConstant(const std::shared_ptr<DEResource::ShaderInputable> inputResource, UINT slot) noexcept;

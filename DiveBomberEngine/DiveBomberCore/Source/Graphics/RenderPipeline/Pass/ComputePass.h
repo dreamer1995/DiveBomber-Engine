@@ -12,8 +12,7 @@ namespace DiveBomber::RenderPipeline
 	class ComputePass : public Pass
 	{
 	public:
-		ComputePass(std::vector<std::shared_ptr<Pass>> inputPasses,
-			std::shared_ptr<DEResource::UnorderedAccessBuffer> inputTarget);
+		ComputePass(std::shared_ptr<DEResource::UnorderedAccessBuffer> inputTarget);
 
 		virtual void Execute() noxnd override;
 		void SetUnorderedAccessBuffer(const std::shared_ptr<DEResource::UnorderedAccessBuffer> inputTarget) noexcept;

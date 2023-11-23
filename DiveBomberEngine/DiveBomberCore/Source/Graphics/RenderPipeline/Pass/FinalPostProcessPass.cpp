@@ -15,10 +15,9 @@ namespace DiveBomber::RenderPipeline
 	using namespace DX;
 	using namespace Component;
 
-	FinalPostProcessPass::FinalPostProcessPass(std::vector<std::shared_ptr<Pass>> inputPasses,
-		std::shared_ptr<UnorderedAccessBuffer> inputTarget)
+	FinalPostProcessPass::FinalPostProcessPass(std::shared_ptr<UnorderedAccessBuffer> inputTarget)
 		:
-		ComputePass(inputPasses, inputTarget)
+		ComputePass(inputTarget)
 	{
 		material = std::make_shared<Material>(L"FinalPostProcessMaterial", L"PostProcess");
 

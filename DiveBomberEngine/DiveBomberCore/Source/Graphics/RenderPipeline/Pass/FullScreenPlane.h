@@ -19,8 +19,7 @@ namespace DiveBomber::RenderPipeline
 	class FullScreenPlane final : public RenderPass
 	{
 	public:
-		FullScreenPlane(std::vector<std::shared_ptr<Pass>> inputPasses,
-			std::shared_ptr<DEResource::RenderTarget> inputRenderTarget);
+		FullScreenPlane(std::shared_ptr<DEResource::RenderTarget> inputRenderTarget);
 
 		void Execute() noxnd override;
 
