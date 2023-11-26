@@ -62,6 +62,7 @@
     <ClCompile Include="Source\Graphics\RenderPipeline\Pass\FinalPostProcessPass.cpp" />
     <ClCompile Include="Source\Graphics\RenderPipeline\Pass\Pass.cpp" />
     <ClCompile Include="Source\Graphics\RenderPipeline\DeferredRenderPipeLine.cpp" />
+    <ClCompile Include="Source\Graphics\RenderPipeline\Pass\SkyDomePass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Utility\Common.h" />
@@ -151,6 +152,7 @@
     <ClInclude Include="Source\Graphics\RenderPipeline\Pass\ComputePass.h" />
     <ClInclude Include="Source\Graphics\RenderPipeline\Pass\FinalPostProcessPass.h" />
     <ClInclude Include="Source\Graphics\RenderPipeline\DeferredRenderPipeLine.h" />
+    <ClInclude Include="Source\Graphics\RenderPipeline\Pass\SkyDomePass.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -106,6 +106,7 @@
     <ClCompile Include="Source\Graphics\RenderPipeline\Pass\OpaqueGBufferPass.cpp" />
     <ClCompile Include="Source\Graphics\RenderPipeline\Pass\Pass.cpp" />
     <ClCompile Include="Source\Graphics\RenderPipeline\Pass\RenderPass.cpp" />
+    <ClCompile Include="Source\Graphics\RenderPipeline\Pass\SkyDomePass.cpp" />
     <ClCompile Include="Source\Graphics\RenderPipeline\RenderPipelineGraph.cpp" />
     <ClCompile Include="Source\Graphics\DX\CommandList.cpp" />
     <ClCompile Include="Source\Graphics\DX\CommandQueue.cpp" />
@@ -166,6 +167,7 @@
     <ClInclude Include="Source\Graphics\RenderPipeline\Pass\OpaqueGBufferPass.h" />
     <ClInclude Include="Source\Graphics\RenderPipeline\Pass\Pass.h" />
     <ClInclude Include="Source\Graphics\RenderPipeline\Pass\RenderPass.h" />
+    <ClInclude Include="Source\Graphics\RenderPipeline\Pass\SkyDomePass.h" />
     <ClInclude Include="Source\Graphics\Resource\Bindable\Bindable.h" />
     <ClInclude Include="Source\Graphics\Resource\Bindable\ConstantBufferInRootSignature.h" />
     <ClInclude Include="Source\Graphics\Resource\Bindable\DynamicConstantBufferInRootSignature.h" />
