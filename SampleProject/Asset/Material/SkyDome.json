@@ -1,0 +1,26 @@
+{
+    "Param": [
+        {
+            "Name": "baseMap",
+            "Type": 4,
+            "Value": "EpicQuadPanorama_CC+EV1.jpg",
+            "sRGB": true
+        },
+        {
+            "Name": "baseColor",
+            "Type": 3,
+            "Value": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "sRGB": true
+        }
+    ],
+    "ShaderName": "SkyDome",
+    "Stage": [
+        0,
+        4
+    ]
+}

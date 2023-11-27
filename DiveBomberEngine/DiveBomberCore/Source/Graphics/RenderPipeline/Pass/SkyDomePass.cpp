@@ -5,7 +5,9 @@
 #include "..\..\Geometry\Cube.h"
 #include "..\..\Component\Mesh.h"
 #include "..\..\Component\Material.h"
+#include "..\..\Component\Camera.h"
 #include "..\..\DX\GlobalResourceManager.h"
+#include "..\..\Object\Object.h"
 
 namespace DiveBomber::RenderPipeline
 {
@@ -14,36 +16,39 @@ namespace DiveBomber::RenderPipeline
 	using namespace DEResource::VertexProcess;
 	using namespace DX;
 	using namespace Component;
+	using namespace DEObject;
 	namespace dx = DirectX;
 
-	SkyDomePass::SkyDomePass(std::shared_ptr<RenderTarget> inputRenderTarget)
+	SkyDomePass::SkyDomePass(std::shared_ptr<RenderTarget> inputRenderTarget,
+		std::shared_ptr<DEResource::DepthStencil> inputDepthStencil)
 		:
-		RenderPass("SkyDome", inputRenderTarget, nullptr)
+		RenderPass("SkyDome", inputRenderTarget, inputDepthStencil)
 	{
-		auto wName = Utility::
-		auto model = Cube::MakeIndependentTBN();
-		model.SetTBNIndependentFlat();
+		auto wName = Utility::ToWide(name);
 
 		IndexedTriangleList cube = Cube::MakeIndependentTBN();
-		cube.Transform(dx::XMMatrixScaling(1, 1, 1));
+		cube.Transform(dx::XMMatrixScaling(2, 2, 2));
 		cube.SetTBNIndependentFlat();
 
-		std::shared_ptr<IndexBuffer> indexBuffer = GlobalResourceManager::Resolve<IndexBuffer>(name, cube.indices);
+		std::shared_ptr<IndexBuffer> indexBuffer = GlobalResourceManager::Resolve<IndexBuffer>(wName, cube.indices);
 
-		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(name, cube.vertices, indexBuffer);
-		meshMap.emplace(mesh->GetName(), mesh);
-		
-		mesh = std::make_shared<Mesh>(L"SkyDome", bufFull, indexBuffer);
+		mesh = std::make_shared<Mesh>(wName, cube.vertices, indexBuffer);
 
-		material = std::make_shared<Material>(L"FullScreenPlaneMaterial", L"FullScreen");
+		material = std::make_shared<Material>(wName, L"SkyDome");
 
 		std::shared_ptr<RootSignature> rootSignature = GlobalResourceManager::Resolve<RootSignature>(L"StandardFullStageAccess");
 
 		D3D12_RT_FORMAT_ARRAY rtvFormats = {};
 		rtvFormats.NumRenderTargets = 1;
-		rtvFormats.RTFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		rtvFormats.RTFormats[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 
-		auto dsvFormat = DXGI_FORMAT_UNKNOWN;
+		auto dsvFormat = DXGI_FORMAT_D32_FLOAT;
+
+		CD3DX12_RASTERIZER_DESC rasterizerDesc{ D3D12_DEFAULT };
+		rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
+
+		CD3DX12_DEPTH_STENCIL_DESC depthStencilDesc{ D3D12_DEFAULT };
+		depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 
 		PipelineStateObject::PipelineStateReference pipelineStateReference;
 		pipelineStateReference.rootSignature = rootSignature;
@@ -51,8 +56,17 @@ namespace DiveBomber::RenderPipeline
 		pipelineStateReference.material = material;
 		pipelineStateReference.rtvFormats = rtvFormats;
 		pipelineStateReference.dsvFormat = dsvFormat;
+		pipelineStateReference.rasterizerDesc = rasterizerDesc;
+		pipelineStateReference.depthStencilDesc = depthStencilDesc;
 
-		pso = GlobalResourceManager::Resolve<PipelineStateObject>(L"FullScreenPlane", std::move(pipelineStateReference));
+		pso = GlobalResourceManager::Resolve<PipelineStateObject>(wName, std::move(pipelineStateReference));
+
+		skyDomeAnchor = std::make_shared<Object>(wName);
+
+		std::shared_ptr<DEResource::ConstantTransformBuffer> transformBuffer = std::make_shared<ConstantTransformBuffer>(wName + L"Transforms");
+		transformBuffer->InitializeParentReference(*skyDomeAnchor.get());
+
+		skyDomeAnchor->AddBindable(transformBuffer);
 	}
 
 	void SkyDomePass::Execute() noxnd
@@ -74,6 +88,8 @@ namespace DiveBomber::RenderPipeline
 		mesh->Bind();
 		material->Bind();
 		pso->Bind();
+		skyDomeAnchor->SetPos(Graphics::GetInstance().GetCamera()->GetPos());
+		skyDomeAnchor->Render();
 
 		Graphics::GetInstance().GetGraphicsCommandList()->DrawIndexedInstanced(mesh->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
 	}

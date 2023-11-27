@@ -18,7 +18,6 @@ namespace DiveBomber::DEObject
 	using namespace DiveBomber::DEResource::VertexProcess;
 	using namespace DX;
 	using namespace Component;
-	namespace dx = DirectX;
 
 	SimpleSphere::SimpleSphere(const std::wstring inputName)
 	{
@@ -70,24 +69,6 @@ namespace DiveBomber::DEObject
 	{
 	}
 
-	void SimpleSphere::SetPos(dx::XMFLOAT3 inputPosition) noexcept
-	{
-		position = inputPosition;
-	}
-
-	void SimpleSphere::SetRotation(dx::XMFLOAT3 inputRotation) noexcept
-	{
-		pitch = inputRotation.x;
-		yaw = inputRotation.y;
-		roll = inputRotation.z;
-	}
-	
-	dx::XMMATRIX SimpleSphere::GetTransformXM() const noexcept
-	{
-		return dx::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
-			dx::XMMatrixTranslation(position.x, position.y, position.z);
-	}
-
 	std::shared_ptr<Material> SimpleSphere::GetMaterialByName(std::wstring name) const noexcept
 	{
 		auto it = materialMap.find(name);
@@ -106,12 +87,12 @@ namespace DiveBomber::DEObject
 		return materialMap;
 	}
 
-	void SimpleSphere::Bind() const noxnd
+	void SimpleSphere::Render() const noxnd
 	{
 		meshMap.begin()->second->Bind();
 		materialMap.begin()->second->Bind();
 
-		Object::Bind();
+		Object::Render();
 
 		Graphics::GetInstance().GetGraphicsCommandList()->DrawIndexedInstanced(meshMap.begin()->second->GetIndexBuffer()->GetCount(), 1, 0, 0, 0);
 	}

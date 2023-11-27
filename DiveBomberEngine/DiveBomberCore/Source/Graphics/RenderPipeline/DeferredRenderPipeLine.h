@@ -23,7 +23,7 @@ namespace DiveBomber::RenderPipeline
 {
 	class OpaqueGBufferPass;
 	class FinalPostProcessPass;
-	class ComputePass;
+	class SkyDomePass;
 
 	class DeferredRenderPipeLine final : public RenderPipelineGraph
 	{
@@ -46,21 +46,6 @@ namespace DiveBomber::RenderPipeline
 
 		std::shared_ptr<OpaqueGBufferPass> opaqueGBufferPass;
 		std::shared_ptr<FinalPostProcessPass> finalPostProcessPass;
-
-		std::shared_ptr<ComputePass> testPass01;
-		std::shared_ptr<ComputePass> testPass02;
-		std::shared_ptr<ComputePass> testPass03;
-		std::shared_ptr<ComputePass> testPass04;
-		std::shared_ptr<ComputePass> testPass05;
-		std::shared_ptr<ComputePass> testPass06;
-		std::shared_ptr<ComputePass> testPass07;
-		std::shared_ptr<ComputePass> testPass08;
-		std::shared_ptr<ComputePass> testPass09;
-		std::shared_ptr<ComputePass> testPass10;
-		std::shared_ptr<ComputePass> testPass11;
-		std::shared_ptr<ComputePass> testPass12;
-		std::shared_ptr<ComputePass> testPass13;
-		std::shared_ptr<ComputePass> testPass14;
-		std::shared_ptr<ComputePass> testPass15;
+		std::shared_ptr<SkyDomePass> skyDomePass;
 	};
 }

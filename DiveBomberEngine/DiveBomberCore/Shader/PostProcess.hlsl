@@ -55,6 +55,8 @@ void CSMain(ComputeShaderInput In)
 	float2 uv = (In.DispatchThreadID.xy + 0.5) / float2(1280, 720);
 	
 	float4 col = mainRT.Sample(samp, uv) * baseShadingParams.baseColor;
+	
+	col.rgb = pow(col.rgb, 1 / 2.2f);
 		
 	outRT[In.DispatchThreadID.xy] = col;
 }

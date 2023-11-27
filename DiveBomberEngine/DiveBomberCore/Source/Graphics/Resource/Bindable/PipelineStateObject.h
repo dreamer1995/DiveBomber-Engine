@@ -21,11 +21,14 @@ namespace DiveBomber::DEResource
 	public:
 		struct PipelineStateReference
 		{
+		public:
 			std::shared_ptr<RootSignature> rootSignature;
 			std::shared_ptr<Component::Mesh> mesh;
 			std::shared_ptr<Component::Material> material;
 			DXGI_FORMAT dsvFormat = DXGI_FORMAT_UNKNOWN;
 			D3D12_RT_FORMAT_ARRAY rtvFormats{};
+			CD3DX12_RASTERIZER_DESC rasterizerDesc{ D3D12_DEFAULT };
+			CD3DX12_DEPTH_STENCIL_DESC depthStencilDesc{ D3D12_DEFAULT };
 		};
 
 	public:
@@ -58,6 +61,8 @@ namespace DiveBomber::DEResource
 			CD3DX12_PIPELINE_STATE_STREAM_CS CS;
 			CD3DX12_PIPELINE_STATE_STREAM_DEPTH_STENCIL_FORMAT DSVFormat;
 			CD3DX12_PIPELINE_STATE_STREAM_RENDER_TARGET_FORMATS RTVFormats;
+			CD3DX12_PIPELINE_STATE_STREAM_RASTERIZER rasterizer;
+			CD3DX12_PIPELINE_STATE_STREAM_DEPTH_STENCIL depthStencil;
 		};
 
 	private:

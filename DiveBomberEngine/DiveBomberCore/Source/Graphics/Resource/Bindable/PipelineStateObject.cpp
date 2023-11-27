@@ -100,6 +100,8 @@ namespace DiveBomber::DEResource
 		AssignShader(pipelineStateStream);
 		pipelineStateStream.DSVFormat = pipelineStateReference.dsvFormat;
 		pipelineStateStream.RTVFormats = pipelineStateReference.rtvFormats;
+		pipelineStateStream.rasterizer = pipelineStateReference.rasterizerDesc;
+		pipelineStateStream.depthStencil = pipelineStateReference.depthStencilDesc;
 
 		D3D12_PIPELINE_STATE_STREAM_DESC pipelineStateStreamDesc = {
 			sizeof(PipelineStateStream), &pipelineStateStream

@@ -49,13 +49,10 @@ namespace DiveBomber::RenderPipeline
 		{
 			renderTarget->BindTarget();
 		}
-
-		FLOAT clearColor[] = ClearMainRTColor;
-		Graphics::GetInstance().GetGraphicsCommandList()->ClearRenderTargetView(renderTarget->GetRTVCPUDescriptorHandle(), clearColor, 0, nullptr);
 		
 		for (std::shared_ptr<DEObject::Object>& object : objects)
 		{
-			object->Bind();
+			object->Render();
 		}
 
 		objects.clear();

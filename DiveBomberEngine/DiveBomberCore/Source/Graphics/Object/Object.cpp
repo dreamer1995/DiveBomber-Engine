@@ -17,7 +17,25 @@ namespace DiveBomber::DEObject
 	{
 	}
 
-	void Object::Bind() const noxnd
+	void Object::SetPos(dx::XMFLOAT3 inputPosition) noexcept
+	{
+		position = inputPosition;
+	}
+
+	void Object::SetRotation(dx::XMFLOAT3 inputRotation) noexcept
+	{
+		pitch = inputRotation.x;
+		yaw = inputRotation.y;
+		roll = inputRotation.z;
+	}
+
+	dx::XMMATRIX Object::GetTransformXM() const noexcept
+	{
+		return dx::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
+			dx::XMMatrixTranslation(position.x, position.y, position.z);
+	}
+
+	void Object::Render() const noxnd
 	{
 		for (auto& bindableObject : bindableObjects)
 		{

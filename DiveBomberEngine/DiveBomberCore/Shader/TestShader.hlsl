@@ -101,7 +101,5 @@ float4 PSMain(ProcessData In) : SV_Target
 	
 	float4 color = lerp(baseColor, rustColor, rustColor.g) * (baseShadingParamsCB0.baseColor + baseShadingParamsCB0.baseColor2);
 	
-	color.rgb = pow(color.rgb, 1 / 2.2f);
-	
 	return color;
 }

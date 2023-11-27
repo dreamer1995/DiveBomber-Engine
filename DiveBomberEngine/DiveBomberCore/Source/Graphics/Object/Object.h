@@ -20,15 +20,21 @@ namespace DiveBomber::DEObject
 		Object(const std::wstring inputName);
 		virtual ~Object();
 
-		[[nodiscard]] virtual DirectX::XMMATRIX GetTransformXM() const noexcept = 0;
+		void SetPos(DirectX::XMFLOAT3 inputPosition = { 0.0f,0.0f,0.0f }) noexcept;
+		void SetRotation(DirectX::XMFLOAT3 inputRotation = { 0.0f,0.0f,0.0f }) noexcept;
+		[[nodiscard]] DirectX::XMMATRIX GetTransformXM() const noexcept;
 
-		void Submit() const noexcept;
-		virtual void Bind() const noxnd;
+		virtual void Render() const noxnd;
 		void AddBindable(std::shared_ptr<DEResource::Bindable> bindableObject) noexcept;
 
 		std::wstring GetName() const noexcept;
 	protected:
 		std::wstring name;
 		std::vector<std::shared_ptr<DEResource::Bindable>> bindableObjects;
+
+		DirectX::XMFLOAT3 position{ 0.0f,0.0f,0.0f };
+		float pitch{ 0.0f };
+		float yaw{ 0.0f };
+		float roll{ 0.0f };
 	};
 }

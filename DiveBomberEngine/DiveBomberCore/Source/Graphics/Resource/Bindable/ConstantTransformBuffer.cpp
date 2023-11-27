@@ -42,7 +42,7 @@ namespace DiveBomber::DEResource
 
 	ConstantTransformBuffer::Transforms ConstantTransformBuffer::CalculateTransformMatrices() noxnd
 	{
-		const auto modelMatrix = parent->GetTransformXM();
+		const auto modelMatrix = parent != nullptr ? parent->GetTransformXM() : dx::XMMATRIX();
 		const auto cameraTransforms = Graphics::GetInstance().GetCamera()->GetTransforms();
 
 		const auto matrix_M2W = DirectX::XMMatrixTranspose(modelMatrix);
