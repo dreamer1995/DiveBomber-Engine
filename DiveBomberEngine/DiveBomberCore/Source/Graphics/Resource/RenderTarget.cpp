@@ -82,13 +82,14 @@ namespace DiveBomber::DEResource
 	{
 		resourceDesc = inputDesc;
 		optimizedClearValue.Format = resourceDesc.Format;
+
 		rtvDesc.Format = resourceDesc.Format;
 
 		if (resourceDesc.Dimension == D3D12_RESOURCE_DIMENSION_TEXTURE2D)
 		{
 			rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
 		}
-		else if(resourceDesc.Dimension == D3D12_RESOURCE_DIMENSION_TEXTURE3D)
+		else if (resourceDesc.Dimension == D3D12_RESOURCE_DIMENSION_TEXTURE3D)
 		{
 			rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE3D;
 		}
@@ -110,7 +111,7 @@ namespace DiveBomber::DEResource
 
 		ResourceStateTracker::AddGlobalResourceState(renderTargetBuffer, D3D12_RESOURCE_STATE_COMMON);
 
-		device->CreateRenderTargetView(renderTargetBuffer.Get(), nullptr, rtvCPUHandle);
+		device->CreateRenderTargetView(renderTargetBuffer.Get(), &rtvDesc, rtvCPUHandle);
 	}
 
 	void RenderTarget::Resize(const wrl::ComPtr<ID3D12Resource> newbuffer)

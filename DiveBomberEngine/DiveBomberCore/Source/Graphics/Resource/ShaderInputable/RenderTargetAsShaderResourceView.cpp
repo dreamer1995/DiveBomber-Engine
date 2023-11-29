@@ -12,18 +12,18 @@ namespace DiveBomber::DEResource
 	using namespace DEException;
 	using namespace DX;
 
-	RenderTargetAsShaderResourceView::RenderTargetAsShaderResourceView(UINT inputWidth, UINT inputHeight,
+	RenderTargetAsShaderResourceView::RenderTargetAsShaderResourceView(
 		std::shared_ptr<DX::DescriptorAllocator> inputRTVDescriptorAllocator,
 		std::shared_ptr<DX::DescriptorAllocator> inputSRVDescriptorAllocator,
-		DXGI_FORMAT inputFormat, UINT inputMipLevels)
+		CD3DX12_RESOURCE_DESC inputDesc)
 		:
-		RenderTarget(inputWidth, inputHeight, inputRTVDescriptorAllocator, inputFormat, inputMipLevels, false),
+		RenderTarget(inputRTVDescriptorAllocator, inputDesc, false),
 		srvDescriptorAllocator(inputSRVDescriptorAllocator),
 		srvDescriptorAllocation(srvDescriptorAllocator->Allocate(1u)),
 		srvCPUHandle(srvDescriptorAllocation->GetCPUDescriptorHandle()),
-		srv()
+		srvDesc()
 	{
-		Resize(inputWidth, inputHeight);
+		Resize(resourceDesc);
 	}
 
 	RenderTargetAsShaderResourceView::~RenderTargetAsShaderResourceView()
@@ -45,11 +45,22 @@ namespace DiveBomber::DEResource
 		Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(renderTargetBuffer, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE, true);
 	}
 
-	void RenderTargetAsShaderResourceView::Resize(const UINT inputWidth, const UINT inputHeight)
+	void RenderTargetAsShaderResourceView::Resize(CD3DX12_RESOURCE_DESC inputDesc)
 	{
-		RenderTarget::Resize(inputWidth, inputHeight);
+		RenderTarget::Resize(inputDesc);
 
 		auto device = Graphics::GetInstance().GetDevice();
+
+		srvDesc.Format = resourceDesc.Format;
+
+		if (resourceDesc.Dimension == D3D12_RESOURCE_DIMENSION_TEXTURE2D)
+		{
+			srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+		}
+		else if (resourceDesc.Dimension == D3D12_RESOURCE_DIMENSION_TEXTURE3D)
+		{
+			srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE3D;
+		}
 
 		device->CreateShaderResourceView(renderTargetBuffer.Get(), nullptr, srvCPUHandle);
 	}

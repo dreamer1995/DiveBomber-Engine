@@ -49,6 +49,7 @@ namespace DiveBomber::DEResource
 		~ConstantBuffer()
 		{
 			DX::ResourceStateTracker::RemoveGlobalResourceState(constantBuffer);
+			constantData.Release();
 		}
 
 		void InitializeConstantBufferSize()
