@@ -27,16 +27,19 @@ namespace DiveBomber::RenderPipeline
 		:
 		RenderPipelineGraph("DeferredRenderPipeLine")
 	{
-		HDRTarget = std::make_shared<RenderTargetAsShaderResourceView>(
+		auto HDRDesc = CD3DX12_RESOURCE_DESC::Tex2D(DXGI_FORMAT_R32G32B32A32_FLOAT,
 			Graphics::GetInstance().GetWidth(), Graphics::GetInstance().GetHeight(),
+			1, 1, 1, 0, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET);
+
+		HDRTarget = std::make_shared<RenderTargetAsShaderResourceView>(
 			Graphics::GetInstance().GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_RTV),
 			Graphics::GetInstance().GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV),
-			DXGI_FORMAT_R32G32B32A32_FLOAT
+			std::move(HDRDesc)
 			);
 
 		opaqueGBufferPass = std::make_shared<OpaqueGBufferPass>(HDRTarget, Graphics::GetInstance().GetMainDS());
 
-		//skyDomePass = std::make_shared<SkyDomePass>(HDRTarget, Graphics::GetInstance().GetMainDS());
+		skyDomePass = std::make_shared<SkyDomePass>(HDRTarget, Graphics::GetInstance().GetMainDS());
 		
 		finalTarget = std::make_shared<UnorderedAccessBufferAsShaderResourceView>(
 			Graphics::GetInstance().GetWidth(), Graphics::GetInstance().GetHeight(),
@@ -61,7 +64,7 @@ namespace DiveBomber::RenderPipeline
 	{
 		std::shared_ptr<Pass> currentPass = opaqueGBufferPass;
 
-		//currentPass = skyDomePass->LinkPass(passesTree, currentPass);
+		currentPass = skyDomePass->LinkPass(passesTree, currentPass);
 
 		finalPostProcessPass->SetTexture(HDRTarget, 0u);
 		finalPostProcessPass->SetTexture(finalTarget->GetUAVPointer(), 1u);

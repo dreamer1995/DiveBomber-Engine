@@ -36,7 +36,7 @@ namespace DiveBomber::DEResource
 		void BindTarget(std::shared_ptr<DepthStencil> depthStencil) noxnd;
 		[[nodiscard]] wrl::ComPtr<ID3D12Resource> GetRenderTargetBuffer() const noexcept;
 		[[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetRTVCPUDescriptorHandle() const noexcept;
-		virtual void Resize(D3D12_RENDER_TARGET_VIEW_DESC inputDesc);
+		virtual void Resize(CD3DX12_RESOURCE_DESC inputDesc);
 		void Resize(const wrl::ComPtr<ID3D12Resource> newbuffer);
 		void ReleaseBuffer();
 
@@ -48,7 +48,7 @@ namespace DiveBomber::DEResource
 		D3D12_CPU_DESCRIPTOR_HANDLE rtvCPUHandle;
 
 		D3D12_CLEAR_VALUE optimizedClearValue;
-		D3D12_RENDER_TARGET_VIEW_DESC rsvDesc;
+		D3D12_RENDER_TARGET_VIEW_DESC rtvDesc;
 		CD3DX12_RESOURCE_DESC resourceDesc;
 	};
 }

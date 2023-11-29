@@ -22,7 +22,8 @@ namespace DiveBomber::DEResource
 		rtvCPUHandle(rtvDescriptorAllocation->GetCPUDescriptorHandle()),
 		optimizedClearValue(),
 		//for partial view someday
-		rsvDesc()
+		rtvDesc(),
+		resourceDesc()
 	{
 		Resize(inputBuffer);
 	}
@@ -34,16 +35,16 @@ namespace DiveBomber::DEResource
 		rtvDescriptorAllocator(inputRTVDescriptorAllocator),
 		rtvDescriptorAllocation(rtvDescriptorAllocator->Allocate(1u)),
 		rtvCPUHandle(rtvDescriptorAllocation->GetCPUDescriptorHandle()),
-		rsvDesc(),
-
+		rtvDesc(),
+		resourceDesc(inputDesc)
 	{
 		// Resize screen dependent resources.
 		// Create a render target buffer.
-		optimizedClearValue.Format = rsvDesc.Format;
+		optimizedClearValue.Format = resourceDesc.Format;
 
 		if (updateRT)
 		{
-			Resize(inputWidth, inputHeight);
+			Resize(resourceDesc);
 		}
 	}
 
@@ -77,9 +78,20 @@ namespace DiveBomber::DEResource
 		return rtvCPUHandle;
 	}
 
-	void RenderTarget::Resize(const D3D12_RENDER_TARGET_VIEW_DESC inputDesc)
+	void RenderTarget::Resize(const CD3DX12_RESOURCE_DESC inputDesc)
 	{
-		rsvDesc = inputDesc;
+		resourceDesc = inputDesc;
+		optimizedClearValue.Format = resourceDesc.Format;
+		rtvDesc.Format = resourceDesc.Format;
+
+		if (resourceDesc.Dimension == D3D12_RESOURCE_DIMENSION_TEXTURE2D)
+		{
+			rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
+		}
+		else if(resourceDesc.Dimension == D3D12_RESOURCE_DIMENSION_TEXTURE3D)
+		{
+			rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE3D;
+		}
 
 		HRESULT hr;
 
@@ -90,7 +102,7 @@ namespace DiveBomber::DEResource
 		GFX_THROW_INFO(device->CreateCommittedResource(
 			&heapProp,
 			D3D12_HEAP_FLAG_NONE,
-			&resDes,
+			&resourceDesc,
 			D3D12_RESOURCE_STATE_COMMON,
 			&optimizedClearValue,
 			IID_PPV_ARGS(&renderTargetBuffer)
@@ -112,13 +124,6 @@ namespace DiveBomber::DEResource
 		renderTargetBuffer = newbuffer;
 
 		ResourceStateTracker::AddGlobalResourceState(renderTargetBuffer, D3D12_RESOURCE_STATE_COMMON);
-
-		D3D12_RESOURCE_DESC textureDesc;
-		textureDesc = renderTargetBuffer->GetDesc();
-		width = (UINT)textureDesc.Width;
-		height = (UINT)textureDesc.Height;
-		mipLevels = textureDesc.MipLevels;
-		format = textureDesc.Format;
 
 		Graphics::GetInstance().GetDevice()->CreateRenderTargetView(renderTargetBuffer.Get(), nullptr, rtvCPUHandle);
 	}
