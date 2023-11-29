@@ -22,26 +22,24 @@ namespace DiveBomber::DEResource
 		rtvCPUHandle(rtvDescriptorAllocation->GetCPUDescriptorHandle()),
 		optimizedClearValue(),
 		//for partial view someday
-		rsv()
+		rsvDesc()
 	{
 		Resize(inputBuffer);
 	}
 
-	RenderTarget::RenderTarget(UINT inputWidth, UINT inputHeight,
-		std::shared_ptr<DX::DescriptorAllocator> inputRTVDescriptorAllocator,
-		DXGI_FORMAT inputFormat, UINT inputMipLevels, bool updateRT)
+	RenderTarget::RenderTarget(std::shared_ptr<DX::DescriptorAllocator> inputRTVDescriptorAllocator,
+		CD3DX12_RESOURCE_DESC inputDesc, bool updateRT)
 		:
 		Resource(L"?"),
 		rtvDescriptorAllocator(inputRTVDescriptorAllocator),
 		rtvDescriptorAllocation(rtvDescriptorAllocator->Allocate(1u)),
 		rtvCPUHandle(rtvDescriptorAllocation->GetCPUDescriptorHandle()),
-		mipLevels(inputMipLevels),
-		format(inputFormat),
-		rsv()
+		rsvDesc(),
+
 	{
 		// Resize screen dependent resources.
 		// Create a render target buffer.
-		optimizedClearValue.Format = format;
+		optimizedClearValue.Format = rsvDesc.Format;
 
 		if (updateRT)
 		{
@@ -79,17 +77,13 @@ namespace DiveBomber::DEResource
 		return rtvCPUHandle;
 	}
 
-	void RenderTarget::Resize(const UINT inputWidth, const UINT inputHeight)
+	void RenderTarget::Resize(const D3D12_RENDER_TARGET_VIEW_DESC inputDesc)
 	{
-		width = std::max(1u, inputWidth);
-		height = std::max(1u, inputHeight);
+		rsvDesc = inputDesc;
 
 		HRESULT hr;
 
 		auto heapProp = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
-
-		auto resDes = CD3DX12_RESOURCE_DESC::Tex2D(format, width, height,
-			1, 1, 1, 0, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET);
 
 		auto device = Graphics::GetInstance().GetDevice();
 
@@ -107,7 +101,7 @@ namespace DiveBomber::DEResource
 		device->CreateRenderTargetView(renderTargetBuffer.Get(), nullptr, rtvCPUHandle);
 	}
 
-	void RenderTarget::Resize(wrl::ComPtr<ID3D12Resource> newbuffer)
+	void RenderTarget::Resize(const wrl::ComPtr<ID3D12Resource> newbuffer)
 	{
 		//renderTargetBuffer address changed
 		if (renderTargetBuffer)
