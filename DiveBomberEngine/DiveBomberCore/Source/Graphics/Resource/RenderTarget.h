@@ -28,7 +28,7 @@ namespace DiveBomber::DEResource
 		RenderTarget(wrl::ComPtr<ID3D12Resource> inputBuffer,
 			std::shared_ptr<DX::DescriptorAllocator> inputRTVDescriptorAllocator);
 		RenderTarget(std::shared_ptr<DX::DescriptorAllocator> inputRTVDescriptorAllocator,
-			CD3DX12_RESOURCE_DESC* inputDesc, bool updateRT = true);
+			CD3DX12_RESOURCE_DESC inputDesc, bool updateRT = true);
 
 		~RenderTarget();
 
