@@ -35,7 +35,7 @@
             "sRGB": true
         }
     ],
-    "ShaderName": "TestShader",
+    "ShaderName": "PBR",
     "Stage": [
         0,
         4
