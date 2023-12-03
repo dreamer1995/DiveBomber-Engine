@@ -39,6 +39,8 @@ namespace DiveBomber::DEResource
 		virtual void Resize(CD3DX12_RESOURCE_DESC inputDesc);
 		void Resize(const wrl::ComPtr<ID3D12Resource> newbuffer);
 		void ReleaseBuffer();
+		void TransitStateToRT() noxnd;
+		void Clear(FLOAT clearColor[]) noxnd;
 
 	protected:
 		wrl::ComPtr<ID3D12Resource> renderTargetBuffer;

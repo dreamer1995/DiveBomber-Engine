@@ -4,8 +4,6 @@
 #include "..\..\Resource\ShaderInputable\RenderTargetAsShaderResourceView.h"
 #include "..\..\Resource\DepthStencil.h"
 #include "..\..\Object\Object.h"
-#include "..\..\DX\CommandList.h"
-#include "..\..\DX\ResourceStateTracker.h"
 
 namespace DiveBomber::RenderPipeline
 {
@@ -60,11 +58,13 @@ namespace DiveBomber::RenderPipeline
 			std::move(customDataBufferDesc)
 		);
 
-		GBufferSet = {
-			baseColorBuffer->GetRTVCPUDescriptorHandle(),
-			roughAOShadowSMIDBuffer->GetRTVCPUDescriptorHandle(),
-			normalBuffer->GetRTVCPUDescriptorHandle(),
-			customDataBuffer->GetRTVCPUDescriptorHandle()};
+		GBufferSet = 
+		{
+			baseColorBuffer,
+			roughAOShadowSMIDBuffer,
+			normalBuffer,
+			customDataBuffer
+		};
 	}
 
 	void OpaqueGBufferPass::Execute() noxnd
@@ -72,18 +72,18 @@ namespace DiveBomber::RenderPipeline
 		Graphics::GetInstance().GetCamera()->Bind();
 
 		auto dsvHandle = depthStencil->GetDSVCPUDescriptorHandle();
-		Graphics::GetInstance().GetGraphicsCommandList()->OMSetRenderTargets(GBufferSet.size(), GBufferSet.data(), FALSE, &dsvHandle);
 
-		Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(baseColorBuffer->GetRenderTargetBuffer(), D3D12_RESOURCE_STATE_RENDER_TARGET, true);
-		Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(roughAOShadowSMIDBuffer->GetRenderTargetBuffer(), D3D12_RESOURCE_STATE_RENDER_TARGET, true);
-		Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(normalBuffer->GetRenderTargetBuffer(), D3D12_RESOURCE_STATE_RENDER_TARGET, true);
-		Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(customDataBuffer->GetRenderTargetBuffer(), D3D12_RESOURCE_STATE_RENDER_TARGET, true);
+		std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> targetHandles;
 
-		FLOAT clearColor[] = ClearMainRTColor;
-		Graphics::GetInstance().GetGraphicsCommandList()->ClearRenderTargetView(baseColorBuffer->GetRTVCPUDescriptorHandle(), clearColor, 0, nullptr);
-		Graphics::GetInstance().GetGraphicsCommandList()->ClearRenderTargetView(roughAOShadowSMIDBuffer->GetRTVCPUDescriptorHandle(), clearColor, 0, nullptr);
-		Graphics::GetInstance().GetGraphicsCommandList()->ClearRenderTargetView(normalBuffer->GetRTVCPUDescriptorHandle(), clearColor, 0, nullptr);
-		Graphics::GetInstance().GetGraphicsCommandList()->ClearRenderTargetView(customDataBuffer->GetRTVCPUDescriptorHandle(), clearColor, 0, nullptr);
+		for (std::shared_ptr<RenderTarget> target : GBufferSet)
+		{
+			target->TransitStateToRT();
+
+			FLOAT clearColor[] = ClearMainRTColor;
+			target->Clear(clearColor);
+		}
+
+		Graphics::GetInstance().GetGraphicsCommandList()->OMSetRenderTargets(targetHandles.size(), targetHandles.data(), FALSE, &dsvHandle);
 
 		for (std::shared_ptr<DEObject::Object>& object : objects)
 		{

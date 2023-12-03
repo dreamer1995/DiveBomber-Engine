@@ -55,14 +55,14 @@ namespace DiveBomber::DEResource
 
 	void RenderTarget::BindTarget() noxnd
 	{
-		Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(renderTargetBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET, true);
+		TransitStateToRT();
 
 		Graphics::GetInstance().GetGraphicsCommandList()->OMSetRenderTargets(1, &rtvCPUHandle, FALSE, nullptr);
 	}
 
 	void RenderTarget::BindTarget(std::shared_ptr<DepthStencil> depthStencil) noxnd
 	{
-		Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(renderTargetBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET, true);
+		TransitStateToRT();
 
 		D3D12_CPU_DESCRIPTOR_HANDLE depthDescHeapHandle = std::dynamic_pointer_cast<DepthStencil>(depthStencil)->GetDSVCPUDescriptorHandle();
 		Graphics::GetInstance().GetGraphicsCommandList()->OMSetRenderTargets(1, &rtvCPUHandle, FALSE, &depthDescHeapHandle);
@@ -129,9 +129,19 @@ namespace DiveBomber::DEResource
 		Graphics::GetInstance().GetDevice()->CreateRenderTargetView(renderTargetBuffer.Get(), nullptr, rtvCPUHandle);
 	}
 
-	void DiveBomber::DEResource::RenderTarget::ReleaseBuffer()
+	void RenderTarget::ReleaseBuffer()
 	{
 		ResourceStateTracker::RemoveGlobalResourceState(renderTargetBuffer);
 		renderTargetBuffer.Reset();
+	}
+
+	void RenderTarget::TransitStateToRT() noxnd
+	{
+		Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(renderTargetBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET, true);
+	}
+
+	void RenderTarget::Clear(FLOAT clearColor[]) noxnd
+	{
+		Graphics::GetInstance().GetGraphicsCommandList()->ClearRenderTargetView(rtvCPUHandle, clearColor, 0, nullptr);
 	}
 }

@@ -23,6 +23,6 @@ namespace DiveBomber::RenderPipeline
 		std::shared_ptr<DEResource::RenderTargetAsShaderResourceView> normalBuffer;
 		std::shared_ptr<DEResource::RenderTargetAsShaderResourceView> customDataBuffer;
 
-		std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> GBufferSet;
+		std::vector<std::shared_ptr<DEResource::RenderTarget>> GBufferSet;
 	};
 }
