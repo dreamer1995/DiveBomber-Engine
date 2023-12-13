@@ -26,26 +26,7 @@ struct VertexDataIndex
 	uint vertexDataIndex;
 };
 
-struct CameraTransforms
-{
-	matrix matrix_V;
-	matrix matrix_P;
-	matrix matrix_VP;
-	matrix matrix_I_V;
-	matrix matrix_I_P;
-	matrix matrix_I_VP;
-};
 
-struct ModelTransfoms
-{
-	matrix matrix_MVP;
-	matrix matrix_MV;
-	matrix matrix_T_MV;
-	matrix matrix_IT_MV;
-	matrix matrix_M2W;
-	matrix matrix_W2M;
-	matrix matrix_I_MVP;
-};
 
 struct BaseShadingParams
 {
