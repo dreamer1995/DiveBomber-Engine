@@ -25,7 +25,7 @@ namespace DiveBomber::Component
         defaultShaderName(inputDefaultShaderName)
     {
         using namespace std::string_literals;
-        indexConstantBuffer = std::make_shared<ConstantBufferInRootSignature<UINT>>(name + L"#"s + L"IndexConstant", 4u);
+        indexConstantBuffer = std::make_shared<ConstantBufferInRootSignature<UINT>>(name + L"#"s + L"IndexConstant", 7u);
 
         configFile = ProjectDirectoryW L"Asset\\Material\\" + name + L".json";
 

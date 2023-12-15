@@ -1,5 +1,3 @@
-#include "Include\header.hlsli"
-
 "Properties"
 {
 	"Stage":[ "VS","PS" ],
@@ -15,52 +13,32 @@ struct MaterialIndex
 	uint constant0Index;
 	uint texture0Index;
 };
+#include "Include\Common\Common.hlsli"
 
-struct VertexDataIndex
-{
-	uint vertexDataIndex;
-};
-
-struct CameraTransforms
-{
-	matrix matrix_V;
-	matrix matrix_P;
-	matrix matrix_VP;
-	matrix matrix_I_V;
-	matrix matrix_I_P;
-	matrix matrix_I_VP;
-};
-
-struct BaseShadingParams
+struct BaseShadingParam
 {
 	float4 baseColor;
 };
 
 struct VSIn
 {
-	float2 pos;
+	float3 position;
 };
 
 struct ProcessData
 {
 	float2 uv : Texcoord;
-	float4 hPos : SV_Position;
+	float4 hPosition : SV_Position;
 };
-
-ConstantBuffer<CameraTransforms> CameraTransformsCB : register(b0);
-ConstantBuffer<VertexDataIndex> LightingDataIndexCB : register(b1);
-ConstantBuffer<VertexDataIndex> VertexDataIndexCB : register(b2);
-ConstantBuffer<MaterialIndex> MaterialIndexCB : register(b4);
-SamplerState samp : register(s0);
 
 ProcessData VSMain(uint vertexID : SV_VertexID)
 {
 	ProcessData Out;
 	StructuredBuffer<VSIn> VSIn = ResourceDescriptorHeap[NonUniformResourceIndex(VertexDataIndexCB.vertexDataIndex)];
 	
-	float2 pos = VSIn[vertexID].pos;
-	Out.hPos = float4(pos, 0.0f, 1.0f);
-	Out.uv = float2((pos.x + 1) / 2.0f, -(pos.y - 1) / 2.0f);
+	float2 position = VSIn[vertexID].position;
+	Out.hPosition = float4(position, 0.0f, 1.0f);
+	Out.uv = float2((position.x + 1) / 2.0f, -(position.y - 1) / 2.0f);
 
 	return Out;
 }
@@ -68,9 +46,9 @@ ProcessData VSMain(uint vertexID : SV_VertexID)
 float4 PSMain(ProcessData In) : SV_Target
 {
 	Texture2D<float4> mainRT = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.texture0Index)];
-	ConstantBuffer<BaseShadingParams> baseShadingParams = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.constant0Index)];
+	ConstantBuffer<BaseShadingParam> baseShadingParam = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.constant0Index)];
 	
-	float4 col = mainRT.Sample(samp, In.uv) * baseShadingParams.baseColor;
+	float4 col = mainRT.Sample(samplerStandard, In.uv) * baseShadingParam.baseColor;
 	
 	return col;
 }

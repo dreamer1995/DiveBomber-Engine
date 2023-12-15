@@ -23,7 +23,7 @@ namespace DiveBomber::Component
 	{
 		projection = std::make_unique<Projection>(attributes.projectionAttributes);
 		using namespace std::string_literals;
-		transformConstantBuffer = std::make_shared<ConstantBufferInRootSignature<Transforms>>(name + L"#"s + L"CamTransform", 0u);
+		transformConstantBuffer = std::make_shared<ConstantBufferInRootSignature<Transforms>>(name + L"#"s + L"CamTransform", 1u);
 
 		if (tethered)
 		{
