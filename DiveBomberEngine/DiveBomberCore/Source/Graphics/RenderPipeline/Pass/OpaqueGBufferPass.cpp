@@ -65,6 +65,14 @@ namespace DiveBomber::RenderPipeline
 			normalBuffer,
 			customDataBuffer
 		};
+
+		targetHandles =
+		{
+			baseColorBuffer->GetRTVCPUDescriptorHandle(),
+			roughAOShadowSMIDBuffer->GetRTVCPUDescriptorHandle(),
+			normalBuffer->GetRTVCPUDescriptorHandle(),
+			customDataBuffer->GetRTVCPUDescriptorHandle()
+		};
 	}
 
 	void OpaqueGBufferPass::Execute() noxnd
@@ -72,8 +80,6 @@ namespace DiveBomber::RenderPipeline
 		Graphics::GetInstance().GetCamera()->Bind();
 
 		auto dsvHandle = depthStencil->GetDSVCPUDescriptorHandle();
-
-		std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> targetHandles;
 
 		for (std::shared_ptr<RenderTarget> target : GBufferSet)
 		{
