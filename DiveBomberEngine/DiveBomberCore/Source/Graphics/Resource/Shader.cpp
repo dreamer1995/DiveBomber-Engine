@@ -24,7 +24,7 @@ namespace DiveBomber::DEResource
 		Resource(inputName),
 		type(inputType)
 	{
-		builtFile = ProjectDirectoryW L"Asset\\Shader\\Built\\" + name + GetShaderTypeAbbreviation() + L".cso";
+		builtFile = ProjectDirectoryW L"Cache\\BuiltShader\\" + name + GetShaderTypeAbbreviation() + L".cso";
 
 		sourceFile = FindSourceFilePath();
 		directory = sourceFile.parent_path();

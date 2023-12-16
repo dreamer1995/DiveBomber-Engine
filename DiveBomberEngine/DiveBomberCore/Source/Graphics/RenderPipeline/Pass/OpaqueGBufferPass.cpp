@@ -66,13 +66,10 @@ namespace DiveBomber::RenderPipeline
 			customDataBuffer
 		};
 
-		targetHandles =
+		for (std::shared_ptr<RenderTarget> target : GBufferSet)
 		{
-			baseColorBuffer->GetRTVCPUDescriptorHandle(),
-			roughAOShadowSMIDBuffer->GetRTVCPUDescriptorHandle(),
-			normalBuffer->GetRTVCPUDescriptorHandle(),
-			customDataBuffer->GetRTVCPUDescriptorHandle()
-		};
+			targetHandles.emplace_back(target->GetRTVCPUDescriptorHandle());
+		}
 	}
 
 	void OpaqueGBufferPass::Execute() noxnd
@@ -89,7 +86,7 @@ namespace DiveBomber::RenderPipeline
 			target->Clear(clearColor);
 		}
 
-		Graphics::GetInstance().GetGraphicsCommandList()->OMSetRenderTargets(targetHandles.size(), targetHandles.data(), FALSE, &dsvHandle);
+		Graphics::GetInstance().GetGraphicsCommandList()->OMSetRenderTargets((UINT)targetHandles.size(), targetHandles.data(), FALSE, &dsvHandle);
 
 		for (std::shared_ptr<DEObject::Object>& object : objects)
 		{

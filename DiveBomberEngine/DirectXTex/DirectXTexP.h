@@ -71,6 +71,8 @@
 #pragma clang diagnostic ignored "-Wtautological-type-limit-compare"
 #pragma clang diagnostic ignored "-Wunknown-pragmas"
 #pragma clang diagnostic ignored "-Wundef"
+#pragma clang diagnostic ignored "-Wunknown-warning-option"
+#pragma clang diagnostic ignored "-Wunsafe-buffer-usage"
 #endif
 
 #ifdef _WIN32
@@ -131,6 +133,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <cctype>
 #include <cstdlib>
 #include <ctime>
 #include <cstring>

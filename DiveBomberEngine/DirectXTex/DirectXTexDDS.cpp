@@ -341,14 +341,31 @@ namespace
         auto pHeader = reinterpret_cast<const DDS_HEADER*>(static_cast<const uint8_t*>(pSource) + sizeof(uint32_t));
 
         // Verify header to validate DDS file
-        if (pHeader->size != sizeof(DDS_HEADER))
+        if (flags & DDS_FLAGS_PERMISSIVE)
         {
-            return E_FAIL;
+            if (pHeader->size != 24 /* Known variant */
+                && pHeader->size != sizeof(DDS_HEADER))
+            {
+                return HRESULT_E_NOT_SUPPORTED;
+            }
+        }
+        else if (pHeader->size != sizeof(DDS_HEADER))
+        {
+            return HRESULT_E_NOT_SUPPORTED;
         }
 
-        if (pHeader->ddspf.size != 0 && pHeader->ddspf.size != sizeof(DDS_PIXELFORMAT))
+        if (flags & DDS_FLAGS_PERMISSIVE)
         {
-            return E_FAIL;
+            if (pHeader->ddspf.size != 0 /* Known variant */
+                && pHeader->ddspf.size != 24 /* Known variant */
+                && pHeader->ddspf.size != sizeof(DDS_PIXELFORMAT))
+            {
+                return HRESULT_E_NOT_SUPPORTED;
+            }
+        }
+        else if (pHeader->ddspf.size != sizeof(DDS_PIXELFORMAT))
+        {
+            return HRESULT_E_NOT_SUPPORTED;
         }
 
         metadata.mipLevels = pHeader->mipMapCount;
@@ -359,6 +376,13 @@ namespace
         if ((pHeader->ddspf.flags & DDS_FOURCC)
             && (MAKEFOURCC('D', 'X', '1', '0') == pHeader->ddspf.fourCC))
         {
+            if (pHeader->size != sizeof(DDS_HEADER)
+                || pHeader->ddspf.size != sizeof(DDS_PIXELFORMAT))
+            {
+                // We do not accept legacy DX9 'known variants' for modern "DX10" extension header files.
+                return E_FAIL;
+            }
+
             // Buffer must be big enough for both headers and magic value
             if (size < (sizeof(DDS_HEADER) + sizeof(uint32_t) + sizeof(DDS_HEADER_DXT10)))
             {
@@ -452,6 +476,14 @@ namespace
                 metadata.height = pHeader->height;
                 metadata.depth = pHeader->depth;
                 metadata.dimension = TEX_DIMENSION_TEXTURE3D;
+
+                if (flags & DDS_FLAGS_PERMISSIVE)
+                {
+                    // Allow cases where mipCount was computed incorrectly
+                    size_t maxMips = 0;
+                    std::ignore = Internal::CalculateMipLevels3D(metadata.width, metadata.height, metadata.depth, maxMips);
+                    metadata.mipLevels = std::min(metadata.mipLevels, maxMips);
+                }
             }
             else
             {
@@ -471,6 +503,14 @@ namespace
                 metadata.dimension = TEX_DIMENSION_TEXTURE2D;
 
                 // Note there's no way for a legacy Direct3D 9 DDS to express a '1D' texture
+
+                if (flags & DDS_FLAGS_PERMISSIVE)
+                {
+                    // Allow cases where mipCount was computed incorrectly
+                    size_t maxMips = 0;
+                    std::ignore = Internal::CalculateMipLevels(metadata.width, metadata.height, maxMips);
+                    metadata.mipLevels = std::min(metadata.mipLevels, maxMips);
+                }
             }
 
             metadata.format = GetDXGIFormat(*pHeader, pHeader->ddspf, flags, convFlags);
@@ -2574,3 +2614,68 @@ HRESULT DirectX::SaveToDDSFile(
 
     return S_OK;
 }
+
+
+//--------------------------------------------------------------------------------------
+// Adapters for /Zc:wchar_t- clients
+
+#if defined(_MSC_VER) && !defined(_NATIVE_WCHAR_T_DEFINED)
+
+namespace DirectX
+{
+    HRESULT __cdecl GetMetadataFromDDSFile(
+        _In_z_ const __wchar_t* szFile,
+        _In_ DDS_FLAGS flags,
+        _Out_ TexMetadata& metadata) noexcept
+    {
+        return GetMetadataFromDDSFile(reinterpret_cast<const unsigned short*>(szFile), flags, metadata);
+    }
+
+    HRESULT __cdecl GetMetadataFromDDSFileEx(
+        _In_z_ const __wchar_t* szFile,
+        _In_ DDS_FLAGS flags,
+        _Out_ TexMetadata& metadata,
+        _Out_opt_ DDSMetaData* ddPixelFormat) noexcept
+    {
+        return GetMetadataFromDDSFileEx(reinterpret_cast<const unsigned short*>(szFile), flags, metadata, ddPixelFormat);
+    }
+
+    HRESULT __cdecl LoadFromDDSFile(
+        _In_z_ const __wchar_t* szFile,
+        _In_ DDS_FLAGS flags,
+        _Out_opt_ TexMetadata* metadata,
+        _Out_ ScratchImage& image) noexcept
+    {
+        return LoadFromDDSFile(reinterpret_cast<const unsigned short*>(szFile), flags, metadata, image);
+    }
+
+    HRESULT __cdecl LoadFromDDSFileEx(
+        _In_z_ const __wchar_t* szFile,
+        _In_ DDS_FLAGS flags,
+        _Out_opt_ TexMetadata* metadata,
+        _Out_opt_ DDSMetaData* ddPixelFormat,
+        _Out_ ScratchImage& image) noexcept
+    {
+        return LoadFromDDSFileEx(reinterpret_cast<const unsigned short*>(szFile), flags, metadata, ddPixelFormat, image);
+    }
+
+    HRESULT __cdecl SaveToDDSFile(
+        _In_ const Image& image,
+        _In_ DDS_FLAGS flags,
+        _In_z_ const __wchar_t* szFile) noexcept
+    {
+        return SaveToDDSFile(image, flags, reinterpret_cast<const unsigned short*>(szFile));
+    }
+
+    HRESULT __cdecl SaveToDDSFile(
+        _In_reads_(nimages) const Image* images,
+        _In_ size_t nimages,
+        _In_ const TexMetadata& metadata,
+        _In_ DDS_FLAGS flags,
+        _In_z_ const __wchar_t* szFile) noexcept
+    {
+        return SaveToDDSFile(images, nimages, metadata, flags, reinterpret_cast<const unsigned short*>(szFile));
+    }
+}
+
+#endif // !_NATIVE_WCHAR_T_DEFINED

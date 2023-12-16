@@ -3,6 +3,9 @@
 #include "ShaderInputable.h"
 #include "..\..\GraphicsHeader.h"
 
+#include <filesystem>
+#include <DirectXTex\DirectXTex.h>
+
 namespace DiveBomber::DX
 {
 	class DescriptorAllocation;
@@ -18,11 +21,13 @@ namespace DiveBomber::DEResource
 			bool sRGB = false;
 			bool generateMip = true;
 		};
+
 	public:
 		Texture(const std::wstring& inputName);
 		Texture(const std::wstring& inputName, TextureDescription inputTextureDesc);
 		~Texture();
 
+		void ChangeTexture(const std::wstring& inputName);
 		[[nodiscard]] UINT GetSRVDescriptorHeapOffset() const noexcept override;
 		
 		[[nodiscard]] static std::shared_ptr<Texture> Resolve(const std::wstring& name);
@@ -36,6 +41,14 @@ namespace DiveBomber::DEResource
 			return typeid(Texture).name() + "#"s + Utility::ToNarrow(name);
 		}
 		[[nodiscard]] std::string GetUID() const noexcept override;
+
+	private:
+		void LoadTexture();
+		void LoadTextureFromCache(const std::filesystem::path& filePath);
+		void LoadTextureFromRaw(const std::filesystem::path& filePath);
+		void GenerateCache(const std::filesystem::path& filePath);
+		void LoadScratchImage(const DirectX::ScratchImage& scratchImage);
+
 	private:
 		std::shared_ptr<DX::DescriptorAllocation> descriptorAllocation;
 		wrl::ComPtr<ID3D12Resource> textureBuffer;

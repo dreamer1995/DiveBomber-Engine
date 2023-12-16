@@ -8,10 +8,14 @@
 #include "..\..\DX\CommandList.h"
 #include "..\..\DX\ResourceStateTracker.h"
 
-#include <DirectXTex\DirectXTex.h>
+#include <DirectXTex\DirectXTexEXR.h>
 #pragma comment(lib,"DirectXTex.lib")
-#include <filesystem>
-
+#pragma comment(lib,"Iex-3_2_d.lib")
+#pragma comment(lib,"IlmThread-3_2_d.lib")
+#pragma comment(lib,"Imath-3_2_d.lib")
+#pragma comment(lib,"OpenEXR-3_2_d.lib")
+#pragma comment(lib,"OpenEXRCore-3_2_d.lib")
+#pragma comment(lib,"OpenEXRUtil-3_2_d.lib")
 
 namespace DiveBomber::DEResource
 {
@@ -31,8 +35,72 @@ namespace DiveBomber::DEResource
 		Resource(inputName),
 		textureDesc(inputTextureDesc)
 	{
-		fs::path filePath(ProjectDirectoryW L"Asset\\Texture\\" + name);
+		LoadTexture();
+	}
 
+	Texture::~Texture()
+	{
+		ResourceStateTracker::RemoveGlobalResourceState(textureBuffer);
+	}
+
+	UINT Texture::GetSRVDescriptorHeapOffset() const noexcept
+	{
+		return descriptorAllocation->GetBaseOffset();
+	}
+
+	std::shared_ptr<Texture> Texture::Resolve(const std::wstring& name)
+	{
+		return GlobalResourceManager::Resolve<Texture>(name);
+	}
+
+	std::shared_ptr<Texture> Texture::Resolve(const std::wstring& name, TextureDescription textureDesc)
+	{
+		return GlobalResourceManager::Resolve<Texture>(name, textureDesc);
+	}
+
+	std::wstring Texture::GetName() const noexcept
+	{
+		return name;
+	}
+
+	std::string Texture::GetUID() const noexcept
+	{
+		return GenerateUID(ProjectDirectoryW L"Asset\\Texture\\" + name, descriptorAllocation);
+	}
+
+	void Texture::LoadTexture()
+	{
+		fs::path cachePath(ProjectDirectoryW L"Cache\\Texture\\" + name);
+		cachePath.replace_extension(".dds");
+		if (fs::exists(cachePath))
+		{
+			LoadTextureFromCache(cachePath);
+		}
+		else
+		{
+			fs::path filePath(ProjectDirectoryW L"Asset\\Texture\\" + name);
+			LoadTextureFromRaw(filePath);
+		}
+	}
+
+	void Texture::LoadTextureFromCache(const fs::path& filePath)
+	{
+		dx::TexMetadata metadata;
+		dx::ScratchImage scratchRawImage;
+
+		HRESULT hr;
+
+		GFX_THROW_INFO(LoadFromDDSFile(
+			filePath.c_str(),
+			dx::DDS_FLAGS_NONE,
+			&metadata,
+			scratchRawImage));
+
+		LoadScratchImage(scratchRawImage);
+	}
+
+	void Texture::LoadTextureFromRaw(const fs::path& filePath)
+	{
 		if (!fs::exists(filePath))
 		{
 			throw std::exception("File not found.");
@@ -65,6 +133,13 @@ namespace DiveBomber::DEResource
 				&metadata,
 				scratchRawImage));
 		}
+		else if (filePath.extension() == ".exr")
+		{
+			GFX_THROW_INFO(LoadFromEXRFile(
+				filePath.c_str(),
+				&metadata,
+				scratchRawImage));
+		}
 		else
 		{
 			GFX_THROW_INFO(LoadFromWICFile(
@@ -89,6 +164,17 @@ namespace DiveBomber::DEResource
 			scratchImage = std::move(scratchRawImage);
 		}
 
+		metadata.mipLevels = scratchImage.GetImageCount();
+
+		fs::path cachePath(ProjectDirectoryW L"Cache\\Texture\\" + name);
+		cachePath.replace_extension(".dds");
+		dx::SaveToDDSFile(scratchImage.GetImages(), scratchImage.GetImageCount(), metadata, dx::DDS_FLAGS_NONE, cachePath.c_str());
+
+		LoadScratchImage(scratchImage);
+	}
+
+	void Texture::LoadScratchImage(const dx::ScratchImage& scratchImage)
+	{
 		const auto& chainBase = *scratchImage.GetImages();
 		const D3D12_RESOURCE_DESC texDesc{
 			.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D,
@@ -101,6 +187,8 @@ namespace DiveBomber::DEResource
 			.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN,
 			.Flags = D3D12_RESOURCE_FLAG_NONE,
 		};
+
+		HRESULT hr;
 
 		const CD3DX12_HEAP_PROPERTIES heapProps{ D3D12_HEAP_TYPE_DEFAULT };
 		GFX_THROW_INFO(Graphics::GetInstance().GetDevice()->CreateCommittedResource(
@@ -123,7 +211,7 @@ namespace DiveBomber::DEResource
 			auto subresourceClip = D3D12_SUBRESOURCE_DATA{
 				.pData = img->pixels,
 				.RowPitch = (LONG_PTR)img->rowPitch,
-				.SlicePitch = (LONG_PTR)img->slicePitch, 
+				.SlicePitch = (LONG_PTR)img->slicePitch,
 			};
 
 			subresourceData.emplace_back(subresourceClip);
@@ -171,35 +259,5 @@ namespace DiveBomber::DEResource
 
 		descriptorAllocation = Graphics::GetInstance().GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)->Allocate(1u);
 		Graphics::GetInstance().GetDevice()->CreateShaderResourceView(textureBuffer.Get(), &srvDesc, descriptorAllocation->GetCPUDescriptorHandle());
-	}
-
-	Texture::~Texture()
-	{
-		ResourceStateTracker::RemoveGlobalResourceState(textureBuffer);
-	}
-
-	UINT Texture::GetSRVDescriptorHeapOffset() const noexcept
-	{
-		return descriptorAllocation->GetBaseOffset();
-	}
-
-	std::shared_ptr<Texture> Texture::Resolve(const std::wstring& name)
-	{
-		return GlobalResourceManager::Resolve<Texture>(name);
-	}
-
-	std::shared_ptr<Texture> Texture::Resolve(const std::wstring& name, TextureDescription textureDesc)
-	{
-		return GlobalResourceManager::Resolve<Texture>(name, textureDesc);
-	}
-
-	std::wstring Texture::GetName() const noexcept
-	{
-		return name;
-	}
-
-	std::string Texture::GetUID() const noexcept
-	{
-		return GenerateUID(ProjectDirectoryW L"Asset\\Texture\\" + name, descriptorAllocation);
 	}
 }
