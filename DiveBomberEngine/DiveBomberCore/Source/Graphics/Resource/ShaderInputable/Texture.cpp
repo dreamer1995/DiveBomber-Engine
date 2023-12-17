@@ -10,12 +10,13 @@
 
 #include <..\DirectXTex\Auxiliary\DirectXTexEXR.h>
 #pragma comment(lib,"DirectXTex.lib")
-#pragma comment(lib,"Iex-3_2_d.lib")
-#pragma comment(lib,"IlmThread-3_2_d.lib")
-#pragma comment(lib,"Imath-3_2_d.lib")
-#pragma comment(lib,"OpenEXR-3_2_d.lib")
-#pragma comment(lib,"OpenEXRCore-3_2_d.lib")
-#pragma comment(lib,"OpenEXRUtil-3_2_d.lib")
+
+#pragma comment(lib,"Iex-3_2.lib")
+#pragma comment(lib,"IlmThread-3_2.lib")
+#pragma comment(lib,"Imath-3_2.lib")
+#pragma comment(lib,"OpenEXR-3_2.lib")
+#pragma comment(lib,"OpenEXRCore-3_2.lib")
+#pragma comment(lib,"OpenEXRUtil-3_2.lib")
 
 namespace DiveBomber::DEResource
 {

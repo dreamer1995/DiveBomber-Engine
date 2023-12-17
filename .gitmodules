@@ -1,6 +1,3 @@
 [submodule "DirectXTex"]
 	path = DirectXTex
 	url = https://github.com/dreamer1995/DirectXTex
-[submodule "openexrCMake"]
-	path = openexrCMake
-	url = https://github.com/dreamer1995/openexr
