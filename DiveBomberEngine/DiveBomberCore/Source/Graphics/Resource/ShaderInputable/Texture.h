@@ -4,7 +4,7 @@
 #include "..\..\GraphicsHeader.h"
 
 #include <filesystem>
-#include <DirectXTex\DirectXTex.h>
+#include <..\DirectXTex\DirectXTex\DirectXTex.h>
 
 namespace DiveBomber::DX
 {

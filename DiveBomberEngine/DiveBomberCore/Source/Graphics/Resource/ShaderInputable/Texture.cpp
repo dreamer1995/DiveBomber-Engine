@@ -8,7 +8,7 @@
 #include "..\..\DX\CommandList.h"
 #include "..\..\DX\ResourceStateTracker.h"
 
-#include <DirectXTex\DirectXTexEXR.h>
+#include <..\DirectXTex\Auxiliary\DirectXTexEXR.h>
 #pragma comment(lib,"DirectXTex.lib")
 #pragma comment(lib,"Iex-3_2_d.lib")
 #pragma comment(lib,"IlmThread-3_2_d.lib")

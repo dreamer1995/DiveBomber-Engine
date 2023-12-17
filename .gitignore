@@ -1,6 +1,5 @@
 #Built files
 .vs
 x64
-DiveBomberEngine/DirectXTex/Shaders/Compiled
 DiveBomberEngine/packages
 SampleProject/Cache
