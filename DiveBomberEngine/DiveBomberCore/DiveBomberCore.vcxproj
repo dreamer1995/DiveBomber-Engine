@@ -63,7 +63,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\..\OpenEXR\Debug;..\..\DirectXTex\DirectXTex\Bin\Desktop_2022\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\openexr\_build\install\$(Configuration);$(SolutionDir)..\DirectXTex\DirectXTex\Bin\Desktop_2022\x64\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>call "$(ProjectDir)Batch\OpenEXRDLLCopy.bat" $(SolutionDir) $(Configuration) $(OutDir)</Command>
@@ -82,7 +82,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\..\OpenEXR\Release;..\..\DirectXTex\DirectXTex\Bin\Desktop_2022\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\openexr\_build\install\$(Configuration);$(SolutionDir)..\DirectXTex\DirectXTex\Bin\Desktop_2022\x64\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>call "$(ProjectDir)Batch\OpenEXRDLLCopy.bat" $(SolutionDir) $(Configuration) $(OutDir)</Command>

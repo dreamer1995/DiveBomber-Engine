@@ -1,1 +1,1 @@
-xcopy /y /d "%1..\OpenEXR\%2\*.dll" "%3\"
+xcopy /y /d "%1..\openexr\_build\install\%2\*.dll" "%3\"
