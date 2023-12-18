@@ -1,0 +1,1 @@
+xcopy /y /d "%1..\OpenEXR\%2\*.dll" "%3\"
