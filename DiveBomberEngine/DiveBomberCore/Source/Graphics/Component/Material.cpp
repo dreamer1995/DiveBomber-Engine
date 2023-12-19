@@ -418,7 +418,7 @@ namespace DiveBomber::Component
 
     void Material::SetConstant(const std::shared_ptr<ShaderInputable> constant) noexcept
     {
-        
+        SetConstant(constant, numConstantIndices);
     }
 
     void Material::SetConstant(const std::shared_ptr<ShaderInputable> constant, UINT slot) noexcept

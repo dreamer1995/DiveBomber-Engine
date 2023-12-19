@@ -142,7 +142,7 @@ namespace DiveBomber::DX
         {
             compiledShaderBuffer->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(&bytecodeBlob), &dataPath);
 
-            const fs::path builtShaderDirectory(ProjectDirectoryW L"Asset\\Shader\\Built\\");
+            const fs::path builtShaderDirectory(ProjectDirectoryW L"Cache\\BuiltShader\\");
             if (!fs::exists(builtShaderDirectory))
             {
                 fs::create_directories(builtShaderDirectory);

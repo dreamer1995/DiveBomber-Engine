@@ -13,6 +13,8 @@ namespace DiveBomber::DX
 
 namespace DiveBomber::DEResource
 {
+	class PipelineStateObject;
+
 	class Texture final: public Resource, public ShaderInputable
 	{
 	public:
@@ -46,12 +48,14 @@ namespace DiveBomber::DEResource
 		void LoadTexture();
 		void LoadTextureFromCache(const std::filesystem::path& filePath);
 		void LoadTextureFromRaw(const std::filesystem::path& filePath);
-		void GenerateCache(const std::filesystem::path& filePath);
-		void LoadScratchImage(const DirectX::ScratchImage& scratchImage);
+		void GenerateCache(const dx::ScratchImage& scratchImage, dx::TexMetadata& metadata);
+		void LoadScratchImage(const dx::ScratchImage& scratchImage);
+		void GenerateMipMaps(const dx::ScratchImage& scratchRawImage, dx::ScratchImage& scratchImage);
 
 	private:
 		std::shared_ptr<DX::DescriptorAllocation> descriptorAllocation;
 		wrl::ComPtr<ID3D12Resource> textureBuffer;
 		TextureDescription textureDesc;
+		std::shared_ptr<PipelineStateObject> pipelineStateObject;
 	};
 }
