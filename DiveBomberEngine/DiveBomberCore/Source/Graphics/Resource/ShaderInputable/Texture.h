@@ -13,8 +13,6 @@ namespace DiveBomber::DX
 
 namespace DiveBomber::DEResource
 {
-	class PipelineStateObject;
-
 	class Texture final: public Resource, public ShaderInputable
 	{
 	public:
@@ -56,6 +54,5 @@ namespace DiveBomber::DEResource
 		std::shared_ptr<DX::DescriptorAllocation> descriptorAllocation;
 		wrl::ComPtr<ID3D12Resource> textureBuffer;
 		TextureDescription textureDesc;
-		std::shared_ptr<PipelineStateObject> pipelineStateObject;
 	};
 }
