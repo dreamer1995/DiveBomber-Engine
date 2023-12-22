@@ -281,15 +281,20 @@ namespace DiveBomber::DEResource
 		const std::wstring generateMipName(L"GenerateMipLinear");
 		GFX_THROW_INFO(dx::GenerateMipMaps(*scratchRawImage.GetImages(), dx::TEX_FILTER_LINEAR, 0, scratchImage));
 
-		std::shared_ptr<Material> material = std::make_shared<Material>(generateMipName, L"GenerateMipLinear");
+		std::shared_ptr<Shader> shader = std::make_shared<Shader>(L"GenerateMipLinear", (ShaderType)5u);
 
 
-		std::shared_ptr<RootSignature> rootSignature = GlobalResourceManager::Resolve<RootSignature>(L"StandardFullStageAccess");
-		PipelineStateObject::PipelineStateReference pipelineStateReference;
-		pipelineStateReference.rootSignature = rootSignature;
-		pipelineStateReference.material = material;
+		//std::shared_ptr<Material> material = std::make_shared<Material>(generateMipName, L"GenerateMipLinear");
 
-		std::shared_ptr<PipelineStateObject> pipelineStateObject = std::make_shared<PipelineStateObject>(generateMipName, std::move(pipelineStateReference));
+		// this place will make issue, because when constructing texture, globle resource manager is locked.
+		// Inside the texture constructor, we cannot lock the global manager to construct new shader again.
+
+		//std::shared_ptr<RootSignature> rootSignature = GlobalResourceManager::Resolve<RootSignature>(L"StandardFullStageAccess");
+		//PipelineStateObject::PipelineStateReference pipelineStateReference;
+		//pipelineStateReference.rootSignature = rootSignature;
+		//pipelineStateReference.material = material;
+
+		//std::shared_ptr<PipelineStateObject> pipelineStateObject = std::make_shared<PipelineStateObject>(generateMipName, std::move(pipelineStateReference));
 
 
 	}
