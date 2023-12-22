@@ -57,9 +57,10 @@ namespace DiveBomber::DX
 
 			if (needConstruct)
 			{
-				std::lock_guard<std::mutex> lock(GlobalResourceManagerMutex);
 				auto bind = std::make_shared<T>(std::forward<Params>(p)...);
+				GlobalResourceManagerMutex.lock();
 				resources[key] = bind;
+				GlobalResourceManagerMutex.unlock();
 				return bind;
 			}
 			else

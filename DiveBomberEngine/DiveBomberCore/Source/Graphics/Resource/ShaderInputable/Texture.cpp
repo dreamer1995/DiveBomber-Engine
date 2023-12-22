@@ -9,6 +9,7 @@
 #include "..\..\DX\ResourceStateTracker.h"
 #include "..\ResourceCommonInclude.h"
 #include "..\..\Component\Material.h"
+#include "..\..\DX\CommandQueue.h"
 
 #include <..\DirectXTex\Auxiliary\DirectXTexEXR.h>
 #pragma comment(lib,"DirectXTex.lib")
@@ -76,7 +77,7 @@ namespace DiveBomber::DEResource
 	{
 		fs::path cachePath(ProjectDirectoryW L"Cache\\Texture\\" + name);
 		cachePath.replace_extension(".dds");
-		if (fs::exists(cachePath))
+		if (/*fs::exists(cachePath)*/0)
 		{
 			LoadTextureFromCache(cachePath);
 		}
@@ -281,21 +282,27 @@ namespace DiveBomber::DEResource
 		const std::wstring generateMipName(L"GenerateMipLinear");
 		GFX_THROW_INFO(dx::GenerateMipMaps(*scratchRawImage.GetImages(), dx::TEX_FILTER_LINEAR, 0, scratchImage));
 
-		std::shared_ptr<Shader> shader = std::make_shared<Shader>(L"GenerateMipLinear", (ShaderType)5u);
+		std::shared_ptr<Material> material = std::make_shared<Material>(generateMipName, L"GenerateMipLinear");
+
+		std::shared_ptr<DEResource::UnorderedAccessBuffer> uavTarget = std::make_shared<UnorderedAccessBuffer>()
+
+		std::shared_ptr<RootSignature> rootSignature = GlobalResourceManager::Resolve<RootSignature>(L"StandardFullStageAccess");
+		PipelineStateObject::PipelineStateReference pipelineStateReference;
+		pipelineStateReference.rootSignature = rootSignature;
+		pipelineStateReference.material = material;
+
+		std::shared_ptr<PipelineStateObject> pipelineStateObject = std::make_shared<PipelineStateObject>(generateMipName, std::move(pipelineStateReference));
 
 
-		//std::shared_ptr<Material> material = std::make_shared<Material>(generateMipName, L"GenerateMipLinear");
 
-		// this place will make issue, because when constructing texture, globle resource manager is locked.
-		// Inside the texture constructor, we cannot lock the global manager to construct new shader again.
+		std::shared_ptr<CommandQueue> commandQueueCopy = Graphics::GetInstance().GetCommandQueue(D3D12_COMMAND_LIST_TYPE_COPY);
 
-		//std::shared_ptr<RootSignature> rootSignature = GlobalResourceManager::Resolve<RootSignature>(L"StandardFullStageAccess");
-		//PipelineStateObject::PipelineStateReference pipelineStateReference;
-		//pipelineStateReference.rootSignature = rootSignature;
-		//pipelineStateReference.material = material;
+		uint64_t fenceValue = Graphics::GetInstance().ExecuteCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
+		commandQueueCopy->WaitForFenceValue(fenceValue);
 
-		//std::shared_ptr<PipelineStateObject> pipelineStateObject = std::make_shared<PipelineStateObject>(generateMipName, std::move(pipelineStateReference));
+		std::shared_ptr<CommandQueue> commandQueue = Graphics::GetInstance().GetCommandQueue();
 
-
+		fenceValue = Graphics::GetInstance().ExecuteCommandList();
+		commandQueue->WaitForFenceValue(fenceValue);
 	}
 }
