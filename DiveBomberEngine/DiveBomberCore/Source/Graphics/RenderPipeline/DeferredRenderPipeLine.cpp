@@ -41,10 +41,13 @@ namespace DiveBomber::RenderPipeline
 
 		skyDomePass = std::make_shared<SkyDomePass>(HDRTarget, Graphics::GetInstance().GetMainDS());
 		
-		finalTarget = std::make_shared<UnorderedAccessBufferAsShaderResourceView>(
+		auto finalTargetDesc = CD3DX12_RESOURCE_DESC::Tex2D(DXGI_FORMAT_R8G8B8A8_UNORM,
 			Graphics::GetInstance().GetWidth(), Graphics::GetInstance().GetHeight(),
+			1, 1, 1, 0, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS);
+
+		finalTarget = std::make_shared<UnorderedAccessBufferAsShaderResourceView>(
 			Graphics::GetInstance().GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV),
-			DXGI_FORMAT_R8G8B8A8_UNORM);
+			finalTargetDesc);
 
 		finalPostProcessPass = std::make_shared<FinalPostProcessPass>(finalTarget->GetUAVPointer());
 

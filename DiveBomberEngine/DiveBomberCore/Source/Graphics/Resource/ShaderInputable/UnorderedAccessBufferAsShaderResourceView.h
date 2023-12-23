@@ -15,15 +15,15 @@ namespace DiveBomber::DEResource
 	class UnorderedAccessBufferAsShaderResourceView final : public Resource, public ShaderInputable
 	{
 	public:
-		UnorderedAccessBufferAsShaderResourceView(UINT inputWidth, UINT inputHeight,
+		UnorderedAccessBufferAsShaderResourceView(
 			std::shared_ptr<DX::DescriptorAllocator> inputDescriptorAllocator,
-			DXGI_FORMAT inputFormat = DXGI_FORMAT_R8G8B8A8_UNORM, UINT inputMipLevels = 0);
+			CD3DX12_RESOURCE_DESC inputDesc);
 
 		~UnorderedAccessBufferAsShaderResourceView();
 
 		void BindAsShaderResource() noxnd override;
 		[[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetSRVCPUDescriptorHandle() const noexcept;
-		void Resize(const UINT inputWidth, const UINT inputHeight);
+		void Resize(const CD3DX12_RESOURCE_DESC inputDesc);
 
 		[[nodiscard]] UINT GetSRVDescriptorHeapOffset() const noexcept override;
 

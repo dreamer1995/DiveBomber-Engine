@@ -169,12 +169,13 @@ namespace DiveBomber::DEResource
 			scratchImage = std::move(scratchRawImage);
 		}
 
-		GenerateCache(scratchImage, metadata);
+		GenerateCache(scratchImage);
 		LoadScratchImage(scratchImage);
 	}
 
-	void Texture::GenerateCache(const DirectX::ScratchImage& scratchImage, DirectX::TexMetadata& metadata)
+	void Texture::GenerateCache(const DirectX::ScratchImage& scratchImage)
 	{
+		dx::TexMetadata metadata = scratchImage.GetMetadata();
 		metadata.mipLevels = scratchImage.GetImageCount();
 
 		fs::path cachePath(ProjectDirectoryW L"Cache\\Texture\\");
@@ -282,9 +283,18 @@ namespace DiveBomber::DEResource
 		const std::wstring generateMipName(L"GenerateMipLinear");
 		GFX_THROW_INFO(dx::GenerateMipMaps(*scratchRawImage.GetImages(), dx::TEX_FILTER_LINEAR, 0, scratchImage));
 
-		std::shared_ptr<Material> material = std::make_shared<Material>(generateMipName, L"GenerateMipLinear");
+		dx::TexMetadata metadata = scratchRawImage.GetMetadata();
 
-		std::shared_ptr<DEResource::UnorderedAccessBuffer> uavTarget = std::make_shared<UnorderedAccessBuffer>()
+		auto mipDesc = CD3DX12_RESOURCE_DESC::Tex2D(metadata.format,
+			metadata.width, metadata.height,
+			1, 1, 1, 0, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS);
+
+		std::shared_ptr<DEResource::UnorderedAccessBuffer> mipTarget = std::make_shared<UnorderedAccessBuffer>(
+			Graphics::GetInstance().GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV),
+			mipDesc);
+
+		std::shared_ptr<Material> material = std::make_shared<Material>(generateMipName, L"GenerateMipLinear");
+		material->SetTexture(mipTarget, 0);
 
 		std::shared_ptr<RootSignature> rootSignature = GlobalResourceManager::Resolve<RootSignature>(L"StandardFullStageAccess");
 		PipelineStateObject::PipelineStateReference pipelineStateReference;
@@ -292,17 +302,18 @@ namespace DiveBomber::DEResource
 		pipelineStateReference.material = material;
 
 		std::shared_ptr<PipelineStateObject> pipelineStateObject = std::make_shared<PipelineStateObject>(generateMipName, std::move(pipelineStateReference));
+		
+		mipTarget->BindAsTarget();
 
+		rootSignature->Bind();
+		material->Bind();
+		pipelineStateObject->Bind();
 
+		Graphics::GetInstance().GetGraphicsCommandList()->Dispatch(
+			(UINT)mipDesc.Width / 8,
+			(UINT)mipDesc.Height / 8,
+			1u);
 
-		std::shared_ptr<CommandQueue> commandQueueCopy = Graphics::GetInstance().GetCommandQueue(D3D12_COMMAND_LIST_TYPE_COPY);
-
-		uint64_t fenceValue = Graphics::GetInstance().ExecuteCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
-		commandQueueCopy->WaitForFenceValue(fenceValue);
-
-		std::shared_ptr<CommandQueue> commandQueue = Graphics::GetInstance().GetCommandQueue();
-
-		fenceValue = Graphics::GetInstance().ExecuteCommandList();
-		commandQueue->WaitForFenceValue(fenceValue);
+		Graphics::GetInstance().ExecuteAllCurrentCommandLists();
 	}
 }

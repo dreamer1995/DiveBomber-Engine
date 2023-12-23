@@ -314,6 +314,25 @@ namespace DiveBomber::DEGraphics
 		}
 	}
 
+	void Graphics::ExecuteAllCurrentCommandLists()
+	{
+		if (copyCommandList != nullptr)
+		{
+			uint64_t fenceValue = copyCommandQueue->ExecuteCommandList(std::move(copyCommandList));
+			copyCommandQueue->WaitForFenceValue(fenceValue);
+		}
+		if (computeCommandList != nullptr)
+		{
+			uint64_t fenceValue = computeCommandQueue->ExecuteCommandList(std::move(computeCommandList));
+			computeCommandQueue->WaitForFenceValue(fenceValue);
+		}
+		if (directCommandList != nullptr)
+		{
+			uint64_t fenceValue = directCommandQueue->ExecuteCommandList(std::move(directCommandList));
+			directCommandQueue->WaitForFenceValue(fenceValue);
+		}
+	}
+
 	std::shared_ptr<DescriptorAllocator> Graphics::GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE type) const noexcept
 	{
 		switch (type)

@@ -12,17 +12,17 @@ namespace DiveBomber::DEResource
 	using namespace DEException;
 	using namespace DX;
 
-	UnorderedAccessBufferAsShaderResourceView::UnorderedAccessBufferAsShaderResourceView(UINT inputWidth, UINT inputHeight,
+	UnorderedAccessBufferAsShaderResourceView::UnorderedAccessBufferAsShaderResourceView(
 		std::shared_ptr<DescriptorAllocator> inputDescriptorAllocator,
-		DXGI_FORMAT inputFormat, UINT inputMipLevels)
+		CD3DX12_RESOURCE_DESC inputDesc)
 		:
 		Resource(L"?"),
 		descriptorAllocation(inputDescriptorAllocator->Allocate(1u)),
 		cpuHandle(descriptorAllocation->GetCPUDescriptorHandle()),
 		srv()
 	{
-		uavPointer = std::make_shared<UnorderedAccessBuffer>(inputWidth, inputHeight, inputDescriptorAllocator, inputFormat, inputMipLevels);
-		Resize(inputWidth, inputHeight);
+		uavPointer = std::make_shared<UnorderedAccessBuffer>(inputDescriptorAllocator, inputDesc);
+		Resize(inputDesc);
 	}
 
 	UnorderedAccessBufferAsShaderResourceView::~UnorderedAccessBufferAsShaderResourceView()
@@ -49,9 +49,9 @@ namespace DiveBomber::DEResource
 		return uavPointer;
 	}
 
-	void UnorderedAccessBufferAsShaderResourceView::Resize(const UINT inputWidth, const UINT inputHeight)
+	void UnorderedAccessBufferAsShaderResourceView::Resize(const CD3DX12_RESOURCE_DESC inputDesc)
 	{
-		uavPointer->Resize(inputWidth, inputHeight);
+		uavPointer->Resize(inputDesc);
 
 		auto device = Graphics::GetInstance().GetDevice();
 		device->CreateShaderResourceView(uavPointer->GetUnorderedAccessBuffer().Get(), nullptr, cpuHandle);

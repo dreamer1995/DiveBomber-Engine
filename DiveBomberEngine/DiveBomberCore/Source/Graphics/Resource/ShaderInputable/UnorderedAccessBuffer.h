@@ -15,15 +15,15 @@ namespace DiveBomber::DEResource
 	class UnorderedAccessBuffer final : public Resource, public ShaderInputable
 	{
 	public:
-		UnorderedAccessBuffer(UINT inputWidth, UINT inputHeight,
+		UnorderedAccessBuffer(
 			std::shared_ptr<DX::DescriptorAllocator> inputDescriptorAllocator,
-			DXGI_FORMAT inputFormat = DXGI_FORMAT_B8G8R8A8_UNORM, UINT inputMipLevels = 0);
+			CD3DX12_RESOURCE_DESC inputDesc);
 
 		~UnorderedAccessBuffer();
 
 		[[nodiscard]] wrl::ComPtr<ID3D12Resource> GetUnorderedAccessBuffer() const noexcept;
 		[[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetUAVCPUDescriptorHandle() const noexcept;
-		void Resize(const UINT inputWidth, const UINT inputHeight);
+		void Resize(const CD3DX12_RESOURCE_DESC inputDesc);
 
 		void BindAsTarget() noxnd;
 
@@ -41,5 +41,6 @@ namespace DiveBomber::DEResource
 		D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle;
 		
 		D3D12_UNORDERED_ACCESS_VIEW_DESC uav;
+		CD3DX12_RESOURCE_DESC resourceDesc;
 	};
 }

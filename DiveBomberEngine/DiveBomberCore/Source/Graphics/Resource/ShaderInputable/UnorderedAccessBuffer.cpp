@@ -12,21 +12,18 @@ namespace DiveBomber::DEResource
 	using namespace DEException;
 	using namespace DX;
 
-	UnorderedAccessBuffer::UnorderedAccessBuffer(UINT inputWidth, UINT inputHeight,
+	UnorderedAccessBuffer::UnorderedAccessBuffer(
 		std::shared_ptr<DX::DescriptorAllocator> inputDescriptorAllocator,
-		DXGI_FORMAT inputFormat, UINT inputMipLevels)
+		CD3DX12_RESOURCE_DESC inputDesc)
 		:
 		Resource(L"L"),
-		width(inputWidth),
-		height(inputHeight),
 		descriptorAllocator(inputDescriptorAllocator),
 		descriptorAllocation(descriptorAllocator->Allocate(1u)),
 		cpuHandle(descriptorAllocation->GetCPUDescriptorHandle()),
 		uav(),
-		mipLevels(inputMipLevels),
-		format(inputFormat)
+		resourceDesc(inputDesc)
 	{
-		Resize(inputWidth, inputHeight);
+		Resize(resourceDesc);
 	}
 
 	UnorderedAccessBuffer::~UnorderedAccessBuffer()
@@ -54,10 +51,9 @@ namespace DiveBomber::DEResource
 		return descriptorAllocation->GetBaseOffset();
 	}
 
-	void UnorderedAccessBuffer::Resize(const UINT inputWidth, const UINT inputHeight)
+	void UnorderedAccessBuffer::Resize(const CD3DX12_RESOURCE_DESC inputDesc)
 	{
-		width = std::max(1u, inputWidth);
-		height = std::max(1u, inputHeight);
+		resourceDesc = inputDesc;
 
 		HRESULT hr;
 
@@ -65,13 +61,10 @@ namespace DiveBomber::DEResource
 
 		auto heapProp = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
 
-		auto resDes = CD3DX12_RESOURCE_DESC::Tex2D(format, width, height,
-			1, 1, 1, 0, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS);
-
 		GFX_THROW_INFO(device->CreateCommittedResource(
 			&heapProp,
 			D3D12_HEAP_FLAG_NONE,
-			&resDes,
+			&resourceDesc,
 			D3D12_RESOURCE_STATE_UNORDERED_ACCESS,
 			nullptr,
 			IID_PPV_ARGS(&uavBuffer)
