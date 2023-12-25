@@ -37,8 +37,8 @@ struct VSIn
 
 struct ProcessData
 {
-	float2 uv : Texcoord;
-	float4 hPosition : SV_Position;
+	float2 uv			: Texcoord;
+	float4 hPosition	: SV_Position;
 };
 
 struct GBufferOutput

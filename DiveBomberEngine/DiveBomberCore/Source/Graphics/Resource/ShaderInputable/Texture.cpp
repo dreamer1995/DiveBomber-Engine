@@ -156,13 +156,18 @@ namespace DiveBomber::DEResource
 		}
 
 		LoadScratchImage(scratchImage);
-		//GenerateCache(scratchImage);
+		GenerateCache(scratchImage);
 	}
 
 	void Texture::GenerateCache(const DirectX::ScratchImage& scratchImage)
 	{
+		dx::Image temp = dx::Image();
+		CD3DX12_RANGE readRange(0, 0);
+		UINT8* pixels;
+		textureBuffer->Map(0, &readRange, reinterpret_cast<void**>(&pixels));
+		temp.pixels = pixels;
 		dx::TexMetadata metadata = scratchImage.GetMetadata();
-		metadata.mipLevels = scratchImage.GetImageCount();
+		metadata.mipLevels = textureBuffer->GetDesc().MipLevels;
 
 		fs::path cachePath(ProjectDirectoryW L"Cache\\Texture\\");
 		fs::path fileName(name);
@@ -172,7 +177,7 @@ namespace DiveBomber::DEResource
 		}
 
 		fileName.replace_extension(".dds");
-		dx::SaveToDDSFile(scratchImage.GetImages(), scratchImage.GetImageCount(), metadata, dx::DDS_FLAGS_NONE, (cachePath.wstring() + fileName.wstring()).c_str());
+		dx::SaveToDDSFile(&temp, textureBuffer->GetDesc().MipLevels, metadata, dx::DDS_FLAGS_NONE, (cachePath.wstring() + fileName.wstring()).c_str());
 	}
 
 	void Texture::LoadScratchImage(const dx::ScratchImage& scratchImage)

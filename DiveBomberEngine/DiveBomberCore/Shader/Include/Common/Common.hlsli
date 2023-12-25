@@ -95,9 +95,9 @@ ConstantBuffer<ShadowInfo> ShadowInfoCB : register(b6);
 ConstantBuffer<MaterialIndex> MaterialIndexCB : register(b7);
 
 //Samplers
-SamplerState samplerStandard : register(s0);
-SamplerState samplerPoint : register(s1);
-SamplerState samplerStandardClamp : register(s0);
-SamplerState samplerPointClamp : register(s1);
-SamplerState samplerStandardMirror : register(s0);
-SamplerState samplerPointMirror : register(s1);
+SamplerState samplerStandard		: register(s0);
+SamplerState samplerPoint			: register(s1);
+SamplerState samplerStandardClamp	: register(s2);
+SamplerState samplerPointClamp		: register(s3);
+SamplerState samplerStandardMirror	: register(s4);
+SamplerState samplerPointMirror		: register(s5);

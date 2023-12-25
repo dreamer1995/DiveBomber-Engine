@@ -27,8 +27,8 @@ struct VSIn
 
 struct ProcessData
 {
-	float2 uv : Texcoord;
-	float4 hPosition : SV_Position;
+	float2 uv			: Texcoord;
+	float4 hPosition	: SV_Position;
 };
 
 ProcessData VSMain(uint vertexID : SV_VertexID)

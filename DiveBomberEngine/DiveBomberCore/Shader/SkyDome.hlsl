@@ -33,8 +33,8 @@ struct VSIn
 
 struct ProcessData
 {
-	float3 uv : Texcoord;
-	float4 hPosition : SV_Position;
+	float3 uv			: Texcoord;
+	float4 hPosition	: SV_Position;
 };
 
 static float2 invAtan = float2(0.1591f, 0.3182f);

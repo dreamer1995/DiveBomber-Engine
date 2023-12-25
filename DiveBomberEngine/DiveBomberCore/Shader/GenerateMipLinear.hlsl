@@ -47,7 +47,7 @@ struct BaseShadingParam
 
 struct GenerateMips
 {
-	uint srcMipLevel;	// Texture level of source mip
+	uint inputMapLevel;	// Texture level of source mip
 	uint numMipLevels;	// Number of OutMips to write: [1-4]
 	uint srcDimension;	// Width and height of the source texture are even or odd.
 	bool isSRGB; 		// Must apply gamma correction to sRGB textures.
@@ -56,10 +56,10 @@ struct GenerateMips
 
 struct ComputeShaderInput
 {
-	uint3 groupID : SV_GroupID;						// 3D index of the thread group in the dispatch.
-	uint3 groupThreadID : SV_GroupThreadID;			// 3D index of local thread ID in a thread group.
-	uint3 dispatchThreadID : SV_DispatchThreadID;	// 3D index of global thread ID in the dispatch.
-	uint droupIndex : SV_GroupIndex;				// Flattened local index of the thread within a thread group.
+	uint3 groupID			: SV_GroupID;			// 3D index of the thread group in the dispatch.
+	uint3 groupThreadID		: SV_GroupThreadID;		// 3D index of local thread ID in a thread group.
+	uint3 dispatchThreadID	: SV_DispatchThreadID;	// 3D index of global thread ID in the dispatch.
+	uint groupIndex			: SV_GroupIndex;		// Flattened local index of the thread within a thread group.
 };
 
 // The reason for separating channels is to reduce bank conflicts in the
@@ -83,46 +83,155 @@ float4 LoadColor(uint Index)
 	return float4(gs_R[Index], gs_G[Index], gs_B[Index], gs_A[Index]);
 }
 
+// Convert linear color to sRGB before storing if the original source is 
+// an sRGB texture.
+float4 PackColor(float4 x)
+{
+	if (0)
+	{
+		return float4(x.rgb, x.a);
+	}
+	else
+	{
+		return x;
+	}
+}
+
 [numthreads(BLOCK_SIZE, BLOCK_SIZE, 1)]
 void CSMain(ComputeShaderInput In)
 {
-	Texture2D<float4> mainRT = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.texture0Index)];
-	RWTexture2D<float4> outRT0 = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.texture1Index)];
-	RWTexture2D<float4> outRT1 = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.texture2Index)];
-	RWTexture2D<float4> outRT2 = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.texture3Index)];
-	RWTexture2D<float4> outRT3 = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.texture4Index)];
+	Texture2D<float4> inputMap = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.texture0Index)];
+	RWTexture2D<float4> outMip1 = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.texture1Index)];
+	RWTexture2D<float4> outMip2 = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.texture2Index)];
+	RWTexture2D<float4> outMip3 = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.texture3Index)];
+	RWTexture2D<float4> outMip4 = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.texture4Index)];
 	ConstantBuffer<BaseShadingParam> baseShadingParam = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.constant0Index)];
 	ConstantBuffer<GenerateMips> generateMipsCB = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.constant1Index)];
 	
-	float2 uv = generateMipsCB.texelSize * (In.dispatchThreadID.xy + 0.5);
-	
-	float4 Src1 = (float4) 0;
-	Src1 = mainRT.SampleLevel(samplerStandard, uv, generateMipsCB.srcMipLevel);
+	float4 src1 = (float4) 0;
 		
-	outRT0[In.dispatchThreadID.xy] = Src1;
+	// One bilinear sample is insufficient when scaling down by more than 2x.
+    // You will slightly undersample in the case where the source dimension
+    // is odd.  This is why it's a really good idea to only generate mips on
+    // power-of-two sized textures.  Trying to handle the undersampling case
+    // will force this shader to be slower and more complicated as it will
+    // have to take more source texture samples.
+
+    // Determine the path to use based on the dimension of the 
+    // source texture.
+    // 0b00(0): Both width and height are even.
+    // 0b01(1): Width is odd, height is even.
+    // 0b10(2): Width is even, height is odd.
+    // 0b11(3): Both width and height are odd.
+	switch (0)
+	{
+		case WIDTH_HEIGHT_EVEN:
+        {
+			float2 uv = generateMipsCB.texelSize * (In.dispatchThreadID.xy + 0.5f);
+
+			src1 = inputMap.SampleLevel(samplerStandardClamp, uv, generateMipsCB.inputMapLevel);
+		}
+		break;
+		case WIDTH_ODD_HEIGHT_EVEN:
+        {
+			// > 2:1 in X dimension
+			// Use 2 bilinear samples to guarantee we don't undersample when downsizing by more than 2x
+			// horizontally.
+			float2 uv1 = generateMipsCB.texelSize * (In.dispatchThreadID.xy + float2(0.25f, 0.5f));
+			float2 offset = generateMipsCB.texelSize * float2(0.5f, 0.0f);
+
+			src1 = 0.5f * (inputMap.SampleLevel(samplerStandardClamp, uv1, generateMipsCB.inputMapLevel) +
+                        inputMap.SampleLevel(samplerStandardClamp, uv1 + offset, generateMipsCB.inputMapLevel));
+		}
+		break;
+		case WIDTH_EVEN_HEIGHT_ODD:
+        {
+            // > 2:1 in Y dimension
+            // Use 2 bilinear samples to guarantee we don't undersample when downsizing by more than 2x
+            // vertically.
+			float2 uv1 = generateMipsCB.texelSize * (In.dispatchThreadID.xy + float2(0.5f, 0.25f));
+			float2 offset = generateMipsCB.texelSize * float2(0.0f, 0.5f);
+
+			src1 = 0.5f * (inputMap.SampleLevel(samplerStandardClamp, uv1, generateMipsCB.inputMapLevel) +
+						inputMap.SampleLevel(samplerStandardClamp, uv1 + offset, generateMipsCB.inputMapLevel));
+		}
+		break;
+		case WIDTH_HEIGHT_ODD:
+        {
+            // > 2:1 in in both dimensions
+            // Use 4 bilinear samples to guarantee we don't undersample when downsizing by more than 2x
+            // in both directions.
+			float2 uv1 = generateMipsCB.texelSize * (In.dispatchThreadID.xy + float2(0.25f, 0.25f));
+			float2 offset = generateMipsCB.texelSize * 0.5f;
+
+			src1 = inputMap.SampleLevel(samplerStandardClamp, uv1, generateMipsCB.inputMapLevel);
+			src1 += inputMap.SampleLevel(samplerStandardClamp, uv1 + float2(offset.x, 0.0), generateMipsCB.inputMapLevel);
+			src1 += inputMap.SampleLevel(samplerStandardClamp, uv1 + float2(0.0, offset.y), generateMipsCB.inputMapLevel);
+			src1 += inputMap.SampleLevel(samplerStandardClamp, uv1 + float2(offset.x, offset.y), generateMipsCB.inputMapLevel);
+			src1 *= 0.25f;
+		}
+		break;
+	}
+	
+	outMip1[In.dispatchThreadID.xy] = PackColor(src1);
 	
 	// A scalar (constant) branch can exit all threads coherently.
 	if (generateMipsCB.numMipLevels == 1)
 		return;
+	
+	// Without lane swizzle operations, the only way to share data with other
+    // threads is through LDS.
+	StoreColor(In.groupIndex, src1);
 	
 	// This guarantees all LDS writes are complete and that all threads have
     // executed all instructions so far (and therefore have issued their LDS
     // write instructions.)
 	GroupMemoryBarrierWithGroupSync();
 	
-	outRT1[In.dispatchThreadID.xy / 2] = float4(0.3f, 0.3f, 0.3f, 1.0f);
+	// With low three bits for X and high three bits for Y, this bit mask
+    // (binary: 001001) checks that X and Y are even.
+	if ((In.groupIndex & 0x9) == 0)
+	{
+		float4 src2 = LoadColor(In.groupIndex + 0x01);
+		float4 src3 = LoadColor(In.groupIndex + 0x08);
+		float4 src4 = LoadColor(In.groupIndex + 0x09);
+		src1 = 0.25 * (src1 + src2 + src3 + src4);
+
+		outMip2[In.dispatchThreadID.xy / 2] = PackColor(src1);
+		StoreColor(In.groupIndex, src1);
+	}
 	
 	if (generateMipsCB.numMipLevels == 2)
 		return;
 	
 	GroupMemoryBarrierWithGroupSync();
 	
-	outRT2[In.dispatchThreadID.xy / 4] = float4(0.2f, 0.2f, 0.2f, 1.0f);
+	// This bit mask (binary: 011011) checks that X and Y are multiples of four.
+	if ((In.groupIndex & 0x1B) == 0)
+	{
+		float4 src2 = LoadColor(In.groupIndex + 0x02);
+		float4 src3 = LoadColor(In.groupIndex + 0x10);
+		float4 src4 = LoadColor(In.groupIndex + 0x12);
+		src1 = 0.25 * (src1 + src2 + src3 + src4);
+
+		outMip3[In.dispatchThreadID.xy / 4] = PackColor(src1);
+		StoreColor(In.groupIndex, src1);
+	}
 	
 	if (generateMipsCB.numMipLevels == 3)
 		return;
 	
 	GroupMemoryBarrierWithGroupSync();
 	
-	outRT3[In.dispatchThreadID.xy / 8] = float4(0.1f, 0.1f, 0.1f, 1.0f);
+	// This bit mask would be 111111 (X & Y multiples of 8), but only one
+    // thread fits that criteria.
+	if (In.groupIndex == 0)
+	{
+		float4 src2 = LoadColor(In.groupIndex + 0x04);
+		float4 src3 = LoadColor(In.groupIndex + 0x20);
+		float4 src4 = LoadColor(In.groupIndex + 0x24);
+		src1 = 0.25 * (src1 + src2 + src3 + src4);
+
+		outMip4[In.dispatchThreadID.xy / 8] = PackColor(src1);
+	}
 }

@@ -32,7 +32,7 @@ namespace DiveBomber::DEResource
 			descriptorAllocation = DEGraphics::Graphics::GetInstance().GetDescriptorAllocator()->Allocate(1u);
 			if (updateCBV)
 			{
-				UpdateCBV(ConstantBuffer<C>::bufferSize);
+				UpdateCBV();
 			}
 		}
 
@@ -43,11 +43,8 @@ namespace DiveBomber::DEResource
 
 		virtual void Update(const C* constantData, size_t dataSize) override
 		{
-			if (dataSize != ConstantBuffer<C>::bufferSize)
-			{
-				UpdateCBV(dataSize);
-			}
 			ConstantBuffer<C>::Update(constantData, dataSize);
+			UpdateCBV();
 		}
 
 		[[nodiscard]] UINT GetSRVDescriptorHeapOffset() const noexcept override
@@ -59,11 +56,11 @@ namespace DiveBomber::DEResource
 		std::shared_ptr<DX::DescriptorAllocation> descriptorAllocation;
 
 	private:
-		void UpdateCBV(size_t inputDataSize)
+		void UpdateCBV()
 		{
 			D3D12_CONSTANT_BUFFER_VIEW_DESC constantBufferViewDesc;
 			constantBufferViewDesc.BufferLocation = ConstantBuffer<C>::constantBuffer->GetGPUVirtualAddress();
-			constantBufferViewDesc.SizeInBytes = Utility::AlignUp((UINT)inputDataSize, D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT);
+			constantBufferViewDesc.SizeInBytes = Utility::AlignUp((UINT)ConstantBuffer<C>::bufferSize, D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT);
 
 			DEGraphics::Graphics::GetInstance().GetDevice()->CreateConstantBufferView(&constantBufferViewDesc, descriptorAllocation->GetCPUDescriptorHandle());
 		}
