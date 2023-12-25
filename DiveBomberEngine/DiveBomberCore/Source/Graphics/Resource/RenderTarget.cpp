@@ -123,6 +123,7 @@ namespace DiveBomber::DEResource
 		}
 
 		renderTargetBuffer = newbuffer;
+		resourceDesc = CD3DX12_RESOURCE_DESC(newbuffer->GetDesc());
 
 		ResourceStateTracker::AddGlobalResourceState(renderTargetBuffer, D3D12_RESOURCE_STATE_COMMON);
 

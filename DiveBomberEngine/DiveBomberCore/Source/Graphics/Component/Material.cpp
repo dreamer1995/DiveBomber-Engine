@@ -391,6 +391,11 @@ namespace DiveBomber::Component
 
     void Material::SetTexture(const std::shared_ptr<ShaderInputable> texture, UINT slot) noexcept
     {
+        SetTexture(texture->GetSRVDescriptorHeapOffset(), slot);
+    }
+
+    void Material::SetTexture(UINT srvDescriptorHeapOffset, UINT slot) noexcept
+    {
         if (slot >= numTextureIndices)
         {
             UINT needInsert = slot - numTextureIndices + 1;
@@ -400,7 +405,7 @@ namespace DiveBomber::Component
         }
 
         UINT index = (numConstantIndices + slot);
-        shaderResourceIndices[index] = texture->GetSRVDescriptorHeapOffset();
+        shaderResourceIndices[index] = srvDescriptorHeapOffset;
 
         indexDirty = true;
     }
@@ -423,6 +428,11 @@ namespace DiveBomber::Component
 
     void Material::SetConstant(const std::shared_ptr<ShaderInputable> constant, UINT slot) noexcept
     {
+        SetConstant(constant->GetSRVDescriptorHeapOffset(), slot);
+    }
+
+    void Material::SetConstant(UINT srvDescriptorHeapOffse, UINT slot) noexcept
+    {
         if (slot >= numConstantIndices)
         {
             UINT needInsert = slot - numConstantIndices + 1;
@@ -430,7 +440,7 @@ namespace DiveBomber::Component
             shaderResourceIndices.insert(it + slot, needInsert, 0u);
             numConstantIndices = slot + 1;
         }
-        shaderResourceIndices[slot] = constant->GetSRVDescriptorHeapOffset();
+        shaderResourceIndices[slot] = srvDescriptorHeapOffse;
 
         indexDirty = true;
     }

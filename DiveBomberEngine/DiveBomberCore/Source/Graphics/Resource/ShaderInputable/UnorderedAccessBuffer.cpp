@@ -20,10 +20,25 @@ namespace DiveBomber::DEResource
 		descriptorAllocator(inputDescriptorAllocator),
 		descriptorAllocation(descriptorAllocator->Allocate(1u)),
 		cpuHandle(descriptorAllocation->GetCPUDescriptorHandle()),
-		uav(),
+		uavDesc(),
 		resourceDesc(inputDesc)
 	{
 		Resize(resourceDesc);
+	}
+
+	UnorderedAccessBuffer::UnorderedAccessBuffer(
+		std::shared_ptr<DescriptorAllocator> inputDescriptorAllocator,
+		wrl::ComPtr<ID3D12Resource> inputUAVBuffer,
+		D3D12_UNORDERED_ACCESS_VIEW_DESC inputUAVDesc)
+		:
+		Resource(L"L"),
+		descriptorAllocator(inputDescriptorAllocator),
+		descriptorAllocation(descriptorAllocator->Allocate(1u)),
+		cpuHandle(descriptorAllocation->GetCPUDescriptorHandle()),
+		uavDesc(inputUAVDesc),
+		uavBuffer(inputUAVBuffer),
+		resourceDesc(inputUAVBuffer->GetDesc())
+	{
 	}
 
 	UnorderedAccessBuffer::~UnorderedAccessBuffer()
@@ -72,5 +87,19 @@ namespace DiveBomber::DEResource
 		ResourceStateTracker::AddGlobalResourceState(uavBuffer, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
 
 		device->CreateUnorderedAccessView(uavBuffer.Get(), nullptr, nullptr, cpuHandle);
+	}
+
+	void UnorderedAccessBuffer::Resize(const wrl::ComPtr<ID3D12Resource> inputUAVBuffer)
+	{
+		if (uavBuffer != nullptr)
+		{
+			ResourceStateTracker::RemoveGlobalResourceState(uavBuffer);
+		}
+		uavBuffer = inputUAVBuffer;
+		resourceDesc = CD3DX12_RESOURCE_DESC(uavBuffer->GetDesc());
+
+		ResourceStateTracker::AddGlobalResourceState(uavBuffer, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+
+		Graphics::GetInstance().GetDevice()->CreateUnorderedAccessView(uavBuffer.Get(), nullptr, &uavDesc, cpuHandle);
 	}
 }

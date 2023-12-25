@@ -30,7 +30,10 @@ namespace DiveBomber::DEResource
 			ConstantBuffer<C>(inputName, constantData, inputDataSize, 999u)
 		{
 			descriptorAllocation = DEGraphics::Graphics::GetInstance().GetDescriptorAllocator()->Allocate(1u);
-			UpdateCBV();
+			if (updateCBV)
+			{
+				UpdateCBV();
+			}
 		}
 
 		virtual void Update(const C& constantData) override

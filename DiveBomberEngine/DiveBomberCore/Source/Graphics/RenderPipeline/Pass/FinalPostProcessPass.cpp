@@ -52,8 +52,8 @@ namespace DiveBomber::RenderPipeline
 		D3D12_RESOURCE_DESC uavdesc = uavTarget->GetUnorderedAccessBuffer()->GetDesc();
 
 		Graphics::GetInstance().GetGraphicsCommandList()->Dispatch(
-			(UINT)uavdesc.Width / 8,
-			(UINT)uavdesc.Height / 8,
+			((UINT)uavdesc.Width + 7u) / 8,
+			((UINT)uavdesc.Height + 7u) / 8,
 			1u);
 	}
 }

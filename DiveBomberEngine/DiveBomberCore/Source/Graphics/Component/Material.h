@@ -39,11 +39,13 @@ namespace DiveBomber::Component
 		void SetTexture(const std::shared_ptr<DEResource::ShaderInputable> texture, UINT slot) noexcept;
 		void SetTexture(const std::string textureName, const std::shared_ptr<DEResource::ShaderInputable> texture) noexcept;
 		void SetTexture(const std::string textureName, const std::shared_ptr<DEResource::ShaderInputable> texture, UINT slot) noexcept;
+		void SetTexture(const UINT srvDescriptorHeapOffset, UINT slot) noexcept;
 
 		void SetConstant(const std::shared_ptr<DEResource::ShaderInputable> constant) noexcept;
 		void SetConstant(const std::shared_ptr<DEResource::ShaderInputable> constant, UINT slot) noexcept;
 		void SetConstant(const std::string constantName, const std::shared_ptr<DEResource::ShaderInputable> constant) noexcept;
 		void SetConstant(const std::string constantName, const std::shared_ptr<DEResource::ShaderInputable> constant, UINT slot) noexcept;
+		void SetConstant(const UINT srvDescriptorHeapOffset, UINT slot) noexcept;
 
 		void Bind() noxnd;
 

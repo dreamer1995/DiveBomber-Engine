@@ -38,7 +38,8 @@ namespace DiveBomber::DEResource
 	Texture::Texture(const std::wstring& inputName, TextureDescription inputTextureDesc)
 		:
 		Resource(inputName),
-		textureDesc(inputTextureDesc)
+		textureDesc(inputTextureDesc),
+		descriptorAllocation(Graphics::GetInstance().GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)->Allocate(1u))
 	{
 		LoadTexture();
 	}
@@ -70,7 +71,7 @@ namespace DiveBomber::DEResource
 
 	std::string Texture::GetUID() const noexcept
 	{
-		return GenerateUID(ProjectDirectoryW L"Asset\\Texture\\" + name, descriptorAllocation);
+		return GenerateUID(ProjectDirectoryW L"Asset\\Texture\\" + name);
 	}
 
 	void Texture::LoadTexture()
@@ -112,7 +113,7 @@ namespace DiveBomber::DEResource
 		}
 
 		dx::TexMetadata metadata;
-		dx::ScratchImage scratchRawImage;
+		dx::ScratchImage scratchImage;
 
 		HRESULT hr;
 
@@ -122,28 +123,28 @@ namespace DiveBomber::DEResource
 				filePath.c_str(),
 				dx::DDS_FLAGS_NONE,
 				&metadata,
-				scratchRawImage));
+				scratchImage));
 		}
 		else if (filePath.extension() == ".hdr")
 		{
 			GFX_THROW_INFO(LoadFromHDRFile(
 				filePath.c_str(),
 				&metadata,
-				scratchRawImage));
+				scratchImage));
 		}
 		else if (filePath.extension() == ".tga")
 		{
 			GFX_THROW_INFO(LoadFromTGAFile(
 				filePath.c_str(),
 				&metadata,
-				scratchRawImage));
+				scratchImage));
 		}
 		else if (filePath.extension() == ".exr")
 		{
 			GFX_THROW_INFO(LoadFromEXRFile(
 				filePath.c_str(),
 				&metadata,
-				scratchRawImage));
+				scratchImage));
 		}
 		else
 		{
@@ -151,26 +152,11 @@ namespace DiveBomber::DEResource
 				filePath.c_str(),
 				dx::WIC_FLAGS_NONE,
 				&metadata,
-				scratchRawImage));
+				scratchImage));
 		}
 
-		dx::ScratchImage scratchImage;
-
-		DXGI_FORMAT format = scratchRawImage.GetImages()->format;
-		bool generrateMipNotSupport = dx::IsCompressed(format) || dx::IsTypeless(format) ||
-			dx::IsPlanar(format) || dx::IsPalettized(format);
-
-		if (textureDesc.generateMip && !generrateMipNotSupport)
-		{
-			GenerateMipMaps(scratchRawImage, scratchImage);
-		}
-		else
-		{
-			scratchImage = std::move(scratchRawImage);
-		}
-
-		GenerateCache(scratchImage);
 		LoadScratchImage(scratchImage);
+		//GenerateCache(scratchImage);
 	}
 
 	void Texture::GenerateCache(const DirectX::ScratchImage& scratchImage)
@@ -192,16 +178,21 @@ namespace DiveBomber::DEResource
 	void Texture::LoadScratchImage(const dx::ScratchImage& scratchImage)
 	{
 		const auto& chainBase = *scratchImage.GetImages();
-		const D3D12_RESOURCE_DESC texDesc{
+
+		DXGI_FORMAT format = chainBase.format;
+		bool generrateMipNotSupport = dx::IsCompressed(format) || dx::IsTypeless(format) ||
+			dx::IsPlanar(format) || dx::IsPalettized(format);
+
+		D3D12_RESOURCE_DESC texDesc{
 			.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D,
 			.Width = (UINT)chainBase.width,
 			.Height = (UINT)chainBase.height,
-			.DepthOrArraySize = 1,
-			.MipLevels = textureDesc.generateMip ? (UINT16)scratchImage.GetImageCount() : 1u,
+			.DepthOrArraySize = 1u,
+			.MipLevels = 0u,
 			.Format = chainBase.format,
 			.SampleDesc = {.Count = 1 },
 			.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN,
-			.Flags = D3D12_RESOURCE_FLAG_NONE,
+			.Flags = generrateMipNotSupport ? D3D12_RESOURCE_FLAG_NONE : D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS,
 		};
 
 		HRESULT hr;
@@ -220,7 +211,7 @@ namespace DiveBomber::DEResource
 
 		std::vector<D3D12_SUBRESOURCE_DATA> subresourceData;
 
-		for (int i = 0; i < texDesc.MipLevels; i++)
+		for (int i = 0; i < scratchImage.GetImageCount(); i++)
 		{
 			const auto img = scratchImage.GetImage(i, 0, 0);
 
@@ -262,9 +253,28 @@ namespace DiveBomber::DEResource
 			);
 
 			copyCommandList->TrackResource(textureUploadBuffer);
+			Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(textureBuffer, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE, true);
 		}
 
-		Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(textureBuffer, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE, true);
+		D3D12_RESOURCE_DESC resDesc = textureBuffer->GetDesc();
+
+		texDesc.MipLevels = (UINT)subresourceData.size();
+
+		if (textureDesc.generateMip && !generrateMipNotSupport && subresourceData.size() < resDesc.MipLevels)
+		{
+			const D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{
+				.Format = texDesc.Format,
+				.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D,
+				.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING,
+				.Texture2D{.MipLevels = texDesc.MipLevels },
+			};
+
+			Graphics::GetInstance().GetDevice()->CreateShaderResourceView(textureBuffer.Get(), &srvDesc, descriptorAllocation->GetCPUDescriptorHandle());
+			
+			GenerateMipMaps();
+
+			texDesc.MipLevels = resDesc.MipLevels;
+		}
 
 		const D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{
 				.Format = texDesc.Format,
@@ -273,47 +283,100 @@ namespace DiveBomber::DEResource
 				.Texture2D{.MipLevels = texDesc.MipLevels },
 		};
 
-		descriptorAllocation = Graphics::GetInstance().GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)->Allocate(1u);
 		Graphics::GetInstance().GetDevice()->CreateShaderResourceView(textureBuffer.Get(), &srvDesc, descriptorAllocation->GetCPUDescriptorHandle());
 	}
 
-	void Texture::GenerateMipMaps(const dx::ScratchImage& scratchRawImage, dx::ScratchImage& scratchImage)
+	void Texture::GenerateMipMaps()
 	{
-		HRESULT hr;
 		const std::wstring generateMipName(L"GenerateMipLinear");
-		GFX_THROW_INFO(dx::GenerateMipMaps(*scratchRawImage.GetImages(), dx::TEX_FILTER_LINEAR, 0, scratchImage));
-
-		dx::TexMetadata metadata = scratchRawImage.GetMetadata();
-
-		auto mipDesc = CD3DX12_RESOURCE_DESC::Tex2D(metadata.format,
-			metadata.width, metadata.height,
-			1, 1, 1, 0, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS);
-
-		std::shared_ptr<DEResource::UnorderedAccessBuffer> mipTarget = std::make_shared<UnorderedAccessBuffer>(
-			Graphics::GetInstance().GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV),
-			mipDesc);
+		D3D12_RESOURCE_DESC resDesc = textureBuffer->GetDesc();
 
 		std::shared_ptr<Material> material = std::make_shared<Material>(generateMipName, L"GenerateMipLinear");
-		material->SetTexture(mipTarget, 0);
+		material->SetTexture(GetSRVDescriptorHeapOffset(), 0);
 
 		std::shared_ptr<RootSignature> rootSignature = GlobalResourceManager::Resolve<RootSignature>(L"StandardFullStageAccess");
+		
+		TextureMipMapGenerateConstant mipGenCB;
+		mipGenCB.isSRGB = textureDesc.sRGB;
+		std::shared_ptr<ConstantBufferInHeap<TextureMipMapGenerateConstant>> mipGenCBIndex =
+			std::make_shared<ConstantBufferInHeap<TextureMipMapGenerateConstant>>(generateMipName);
+		material->SetConstant(mipGenCBIndex, 1);
+
 		PipelineStateObject::PipelineStateReference pipelineStateReference;
 		pipelineStateReference.rootSignature = rootSignature;
 		pipelineStateReference.material = material;
 
 		std::shared_ptr<PipelineStateObject> pipelineStateObject = std::make_shared<PipelineStateObject>(generateMipName, std::move(pipelineStateReference));
-		
-		mipTarget->BindAsTarget();
 
-		rootSignature->Bind();
-		material->Bind();
-		pipelineStateObject->Bind();
+		Graphics::GetInstance().BindShaderDescriptorHeaps();
+		for (int srcMip = 0; srcMip < resDesc.MipLevels - 1;)
+		{
+			UINT srcWidth = (UINT)resDesc.Width >> srcMip;
+			UINT srcHeight = resDesc.Height >> srcMip;
+			UINT dstWidth = srcWidth >> 1;
+			UINT dstHeight = srcHeight >> 1;
 
-		Graphics::GetInstance().GetGraphicsCommandList()->Dispatch(
-			(UINT)mipDesc.Width / 8,
-			(UINT)mipDesc.Height / 8,
-			1u);
+			// 0b00(0): Both width and height are even.
+			// 0b01(1): Width is odd, height is even.
+			// 0b10(2): Width is even, height is odd.
+			// 0b11(3): Both width and height are odd.
+			mipGenCB.srcDimension = (srcHeight & 1) << 1 | (srcWidth & 1);
 
-		Graphics::GetInstance().ExecuteAllCurrentCommandLists();
+			// How many mipmap levels to compute this pass (max 4 mips per pass)
+			DWORD mipCount;
+
+			// The number of times we can half the size of the texture and get
+			// exactly a 50% reduction in size.
+			// A 1 bit in the width or height indicates an odd dimension.
+			// The case where either the width or the height is exactly 1 is handled
+			// as a special case (as the dimension does not require reduction).
+			_BitScanForward(&mipCount, (dstWidth == 1 ? dstHeight : dstWidth) |
+				(dstHeight == 1 ? dstWidth : dstHeight));
+			// Maximum number of mips to generate is 4.
+			mipCount = std::min<DWORD>(4, mipCount + 1);
+			
+			// Clamp to total number of mips left over.
+			mipCount = (srcMip + mipCount) >= resDesc.MipLevels ?
+				resDesc.MipLevels - srcMip - 1 : mipCount;
+
+			// Dimensions should not reduce to 0.
+			// This can happen if the width and height are not the same.
+			dstWidth = std::max<DWORD>(1, dstWidth);
+			dstHeight = std::max<DWORD>(1, dstHeight);
+
+			mipGenCB.srcMipLevel = srcMip;
+			mipGenCB.numMipLevels = mipCount;
+			mipGenCB.texelSize.x = 1.0f / (float)dstWidth;
+			mipGenCB.texelSize.y = 1.0f / (float)dstHeight;
+
+			mipGenCBIndex->Update(mipGenCB);
+
+			for (uint32_t mip = 0; mip < mipCount; ++mip)
+			{
+				D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc{};
+				uavDesc.Format = resDesc.Format;
+				uavDesc.ViewDimension = D3D12_UAV_DIMENSION_TEXTURE2D;
+				uavDesc.Texture2D.MipSlice = srcMip + mip + 1;
+				std::shared_ptr<UnorderedAccessBuffer> mipTarget = std::make_shared<UnorderedAccessBuffer>(
+					Graphics::GetInstance().GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV),
+					textureBuffer, uavDesc);
+
+				mipTarget->BindAsTarget();
+				material->SetTexture(mipTarget, mip + 1);
+			}
+			
+			rootSignature->Bind();
+			material->Bind();
+			pipelineStateObject->Bind();
+
+			Graphics::GetInstance().GetGraphicsCommandList()->Dispatch(
+				(dstWidth + 7u) / 8,
+				(dstHeight + 7u) / 8,
+				1u);
+
+			Graphics::GetInstance().ExecuteAllCurrentCommandLists();
+
+			srcMip += mipCount;
+		}
 	}
 }

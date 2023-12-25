@@ -13,13 +13,22 @@ namespace DiveBomber::DX
 
 namespace DiveBomber::DEResource
 {
-	class Texture final: public Resource, public ShaderInputable
+	class Texture final : public Resource, public ShaderInputable
 	{
 	public:
 		struct TextureDescription
 		{
 			bool sRGB = false;
 			bool generateMip = true;
+		};
+
+		struct TextureMipMapGenerateConstant
+		{
+			uint32_t srcMipLevel;           // Texture level of source mip
+			uint32_t numMipLevels;          // Number of OutMips to write: [1-4]
+			uint32_t srcDimension;          // Width and height of the source texture are even or odd.
+			uint32_t isSRGB;                // Must apply gamma correction to sRGB textures.
+			dx::XMFLOAT2 texelSize;			// 1.0 / OutMip1.Dimensions
 		};
 
 	public:
@@ -48,7 +57,7 @@ namespace DiveBomber::DEResource
 		void LoadTextureFromRaw(const std::filesystem::path& filePath);
 		void GenerateCache(const dx::ScratchImage& scratchImage);
 		void LoadScratchImage(const dx::ScratchImage& scratchImage);
-		void GenerateMipMaps(const dx::ScratchImage& scratchRawImage, dx::ScratchImage& scratchImage);
+		void GenerateMipMaps();
 
 	private:
 		std::shared_ptr<DX::DescriptorAllocation> descriptorAllocation;
