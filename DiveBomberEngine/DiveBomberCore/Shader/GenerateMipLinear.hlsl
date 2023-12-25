@@ -94,10 +94,10 @@ void CSMain(ComputeShaderInput In)
 	ConstantBuffer<BaseShadingParam> baseShadingParam = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.constant0Index)];
 	ConstantBuffer<GenerateMips> generateMipsCB = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.constant1Index)];
 	
-	float2 uv = generateMipsCB.texelSize * (In.dispatchThreadID.xy + 0.5) / float2(1280, 720);
+	float2 uv = generateMipsCB.texelSize * (In.dispatchThreadID.xy + 0.5);
 	
 	float4 Src1 = (float4) 0;
-	Src1 = mainRT.SampleLevel(samplerStandard, uv, generateMipsCB.srcMipLevel) * baseShadingParam.baseColor;
+	Src1 = mainRT.SampleLevel(samplerStandard, uv, generateMipsCB.srcMipLevel);
 		
 	outRT0[In.dispatchThreadID.xy] = Src1;
 	

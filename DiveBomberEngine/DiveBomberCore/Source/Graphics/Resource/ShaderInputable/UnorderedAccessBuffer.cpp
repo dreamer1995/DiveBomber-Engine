@@ -39,6 +39,7 @@ namespace DiveBomber::DEResource
 		uavBuffer(inputUAVBuffer),
 		resourceDesc(inputUAVBuffer->GetDesc())
 	{
+		Resize(uavBuffer);
 	}
 
 	UnorderedAccessBuffer::~UnorderedAccessBuffer()
