@@ -78,7 +78,7 @@ namespace DiveBomber::DEResource
 	{
 		fs::path cachePath(ProjectDirectoryW L"Cache\\Texture\\" + name);
 		cachePath.replace_extension(".dds");
-		if (/*fs::exists(cachePath)*/0)
+		if (fs::exists(cachePath))
 		{
 			LoadTextureFromCache(cachePath);
 		}
@@ -161,11 +161,10 @@ namespace DiveBomber::DEResource
 
 	void Texture::GenerateCache(const DirectX::ScratchImage& scratchImage)
 	{
-		dx::Image temp = dx::Image();
-		CD3DX12_RANGE readRange(0, 0);
-		UINT8* pixels;
-		textureBuffer->Map(0, &readRange, reinterpret_cast<void**>(&pixels));
-		temp.pixels = pixels;
+		DirectX::ScratchImage saveToImage;
+		dx::CaptureTexture(Graphics::GetInstance().GetCommandQueue()->GetCommandQueue().Get(), textureBuffer.Get(), false, saveToImage,
+			D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COMMON);
+
 		dx::TexMetadata metadata = scratchImage.GetMetadata();
 		metadata.mipLevels = textureBuffer->GetDesc().MipLevels;
 
@@ -177,7 +176,7 @@ namespace DiveBomber::DEResource
 		}
 
 		fileName.replace_extension(".dds");
-		dx::SaveToDDSFile(&temp, textureBuffer->GetDesc().MipLevels, metadata, dx::DDS_FLAGS_NONE, (cachePath.wstring() + fileName.wstring()).c_str());
+		dx::SaveToDDSFile(saveToImage.GetImages(), textureBuffer->GetDesc().MipLevels, metadata, dx::DDS_FLAGS_NONE, (cachePath.wstring() + fileName.wstring()).c_str());
 	}
 
 	void Texture::LoadScratchImage(const dx::ScratchImage& scratchImage)
@@ -258,7 +257,8 @@ namespace DiveBomber::DEResource
 			);
 
 			copyCommandList->TrackResource(textureUploadBuffer);
-			Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(textureBuffer, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE, true);
+
+			Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(textureBuffer, D3D12_RESOURCE_STATE_COMMON, true);
 		}
 
 		D3D12_RESOURCE_DESC resDesc = textureBuffer->GetDesc();
@@ -381,6 +381,8 @@ namespace DiveBomber::DEResource
 
 			srcMip += mipCount;
 		}
+
+		Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(textureBuffer, D3D12_RESOURCE_STATE_COMMON, true);
 
 		Graphics::GetInstance().ExecuteAllCurrentCommandLists();
 	}
