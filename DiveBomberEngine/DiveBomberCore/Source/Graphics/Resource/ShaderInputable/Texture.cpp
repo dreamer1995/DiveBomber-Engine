@@ -374,9 +374,9 @@ namespace DiveBomber::DEResource
 				(dstHeight + 7u) / 8,
 				1u);
 
-			Graphics::GetInstance().ExecuteAllCurrentCommandLists();
-
 			srcMip += mipCount;
 		}
+
+		Graphics::GetInstance().ExecuteAllCurrentCommandLists();
 	}
 }
