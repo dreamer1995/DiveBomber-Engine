@@ -1,60 +1,36 @@
 #pragma once
-#include "..\DynamicConstantBuffer.h"
-#include "ShaderInputable.h"
-
-#include "..\..\DX\DescriptorAllocator.h"
-#include "..\..\DX\DescriptorAllocation.h"
+#include "DynamicBufferInHeap.h"
 
 namespace DiveBomber::DEResource
 {
-	class DynamicConstantBufferInHeap : public DynamicConstantBuffer, public ShaderInputable
+	class DynamicConstantBufferInHeap final : public DynamicBufferInHeap
 	{
 	public:
 		DynamicConstantBufferInHeap(const std::wstring& inputName,
 			const DynamicConstantProcess::CookedLayout& inputLayout)
 			:
-			DynamicConstantBuffer(inputName, inputLayout, 999u),
-			descriptorAllocation(DEGraphics::Graphics::GetInstance().GetDescriptorAllocator()->Allocate(1u))
+			DynamicBufferInHeap(inputName, inputLayout)
 		{
-			
 		}
 
 		DynamicConstantBufferInHeap(const std::wstring& inputName,
-			const DynamicConstantProcess::Buffer& inputBuffer, bool updateCBV = true)
+			const DynamicConstantProcess::Buffer& inputBuffer)
 			:
-			DynamicConstantBufferInHeap(inputName, inputBuffer.GetRootLayoutElement(), inputBuffer, updateCBV)
+			DynamicConstantBufferInHeap(inputName, inputBuffer.GetRootLayoutElement(), inputBuffer)
 		{
 		}
 
 		DynamicConstantBufferInHeap(const std::wstring& inputName,
 			const DynamicConstantProcess::LayoutElement& inputLayout,
-			const DynamicConstantProcess::Buffer& inputBuffer, bool updateCBV = true)
+			const DynamicConstantProcess::Buffer& inputBuffer)
 			:
-			DynamicConstantBuffer(inputName, inputLayout, inputBuffer, 999u),
-			descriptorAllocation(DEGraphics::Graphics::GetInstance().GetDescriptorAllocator()->Allocate(1u))
+			DynamicBufferInHeap(inputName, inputLayout, inputBuffer)
 		{
-			if (updateCBV)
-			{
-				UpdateCBV();
-			}
-		}
-
-		virtual void Update(const DynamicConstantProcess::Buffer& buffer) override
-		{
-			DynamicConstantBuffer::Update(buffer);
 			UpdateCBV();
 		}
 
-		[[nodiscard]] UINT GetSRVDescriptorHeapOffset() const noexcept override
-		{
-			return descriptorAllocation->GetBaseOffset();
-		}
-
-	protected:
-		std::shared_ptr<DX::DescriptorAllocation> descriptorAllocation;
-
-	private:
-		void UpdateCBV()
+private:
+		virtual void UpdateCBV() override
 		{
 			D3D12_CONSTANT_BUFFER_VIEW_DESC constantBufferViewDesc;
 			constantBufferViewDesc.BufferLocation = constantBuffer->GetGPUVirtualAddress();

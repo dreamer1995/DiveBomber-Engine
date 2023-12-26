@@ -1,15 +1,15 @@
 #pragma once
-#include "DynamicConstantBufferInHeap.h"
+#include "DynamicBufferInHeap.h"
 
 namespace DiveBomber::DEResource
 {
-	class DynamicStructuredBufferInHeap final : public DynamicConstantBufferInHeap
+	class DynamicStructuredBufferInHeap final : public DynamicBufferInHeap
 	{
 	public:
 		DynamicStructuredBufferInHeap(const std::wstring& inputName,
 			const DynamicConstantProcess::CookedLayout& inputLayout, size_t inputNumElements = 1)
 			:
-			DynamicConstantBufferInHeap(inputName, inputLayout),
+			DynamicBufferInHeap(inputName, inputLayout),
 			numElements(inputNumElements)
 		{
 		}
@@ -24,15 +24,9 @@ namespace DiveBomber::DEResource
 		DynamicStructuredBufferInHeap(const std::wstring& inputName,
 			const DynamicConstantProcess::LayoutElement& inputLayout, const DynamicConstantProcess::Buffer& inputBuffer, size_t inputNumElements = 1)
 			:
-			DynamicConstantBufferInHeap(inputName, inputLayout, inputBuffer, false),
+			DynamicBufferInHeap(inputName, inputLayout, inputBuffer),
 			numElements(inputNumElements)
 		{
-			UpdateCBV();
-		}
-
-		virtual void Update(const DynamicConstantProcess::Buffer& buffer) override
-		{
-			DynamicConstantBuffer::Update(buffer);
 			UpdateCBV();
 		}
 
@@ -41,7 +35,7 @@ namespace DiveBomber::DEResource
 			numElements = size;
 		}
 	private:
-		void UpdateCBV()
+		virtual void UpdateCBV() override
 		{
 			const D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc
 			{

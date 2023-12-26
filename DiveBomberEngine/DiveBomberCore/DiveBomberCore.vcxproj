@@ -191,6 +191,8 @@
     <ClInclude Include="Source\Graphics\Resource\DynamicConstant.h" />
     <ClInclude Include="Source\Graphics\Resource\Resource.h" />
     <ClInclude Include="Source\Graphics\Resource\ResourceCommonInclude.h" />
+    <ClInclude Include="Source\Graphics\Resource\ShaderInputable\BufferInHeap.h" />
+    <ClInclude Include="Source\Graphics\Resource\ShaderInputable\DynamicBufferInHeap.h" />
     <ClInclude Include="Source\Graphics\Resource\ShaderInputable\ShaderInputable.h" />
     <ClInclude Include="Source\Graphics\Resource\ShaderInputable\ConstantBufferInHeap.h" />
     <ClInclude Include="Source\Graphics\Resource\ShaderInputable\DynamicConstantBufferInHeap.h" />

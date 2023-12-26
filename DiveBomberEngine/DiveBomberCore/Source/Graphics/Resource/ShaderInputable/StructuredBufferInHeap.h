@@ -1,15 +1,15 @@
 #pragma once
-#include "ConstantBufferInHeap.h"
+#include "BufferInHeap.h"
 
 namespace DiveBomber::DEResource
 {
 	template<typename C>
-	class StructuredBufferInHeap final : public ConstantBufferInHeap<C>
+	class StructuredBufferInHeap final : public BufferInHeap<C>
 	{
 	public:
 		StructuredBufferInHeap(const std::wstring& inputName, size_t inputNumElements = 1)
 			:
-			ConstantBufferInHeap<C>(inputName),
+			BufferInHeap<C>(inputName),
 			numElements(inputNumElements)
 		{
 		}
@@ -22,21 +22,9 @@ namespace DiveBomber::DEResource
 
 		StructuredBufferInHeap(const std::wstring& inputName, const C* constantData, size_t inputDataSize, size_t inputNumElements = 1)
 			:
-			ConstantBufferInHeap<C>(inputName),
+			BufferInHeap<C>(inputName, constantData, inputDataSize),
 			numElements(inputNumElements)
 		{
-			// place to set data
-			Update(constantData, inputDataSize);
-		}
-
-		virtual void Update(const C& constantData) override
-		{
-			Update(&constantData, sizeof(constantData));
-		}
-
-		virtual void Update(const C* constantData, size_t dataSize) override
-		{
-			ConstantBuffer<C>::Update(constantData, dataSize);
 			UpdateCBV();
 		}
 
@@ -45,7 +33,7 @@ namespace DiveBomber::DEResource
 			numElements = size;
 		}
 	private:
-		void UpdateCBV()
+		virtual void UpdateCBV() override
 		{
 			const D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc
 			{
@@ -60,7 +48,7 @@ namespace DiveBomber::DEResource
 					},
 			};
 
-			DEGraphics::Graphics::GetInstance().GetDevice()->CreateShaderResourceView(ConstantBuffer<C>::constantBuffer.Get(), &srvDesc, ConstantBufferInHeap<C>::descriptorAllocation->GetCPUDescriptorHandle());
+			DEGraphics::Graphics::GetInstance().GetDevice()->CreateShaderResourceView(ConstantBuffer<C>::constantBuffer.Get(), &srvDesc, BufferInHeap<C>::descriptorAllocation->GetCPUDescriptorHandle());
 		}
 
 	private:

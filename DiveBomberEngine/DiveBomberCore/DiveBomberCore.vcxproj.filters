@@ -153,6 +153,8 @@
     <ClInclude Include="Source\Graphics\RenderPipeline\Pass\FinalPostProcessPass.h" />
     <ClInclude Include="Source\Graphics\RenderPipeline\DeferredRenderPipeLine.h" />
     <ClInclude Include="Source\Graphics\RenderPipeline\Pass\SkyDomePass.h" />
+    <ClInclude Include="Source\Graphics\Resource\ShaderInputable\BufferInHeap.h" />
+    <ClInclude Include="Source\Graphics\Resource\ShaderInputable\DynamicBufferInHeap.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
