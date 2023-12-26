@@ -13,9 +13,10 @@ namespace DiveBomber::DEResource
 		DynamicConstantBufferInHeap(const std::wstring& inputName,
 			const DynamicConstantProcess::CookedLayout& inputLayout)
 			:
-			DynamicConstantBuffer(inputName, inputLayout, 999u)
+			DynamicConstantBuffer(inputName, inputLayout, 999u),
+			descriptorAllocation(DEGraphics::Graphics::GetInstance().GetDescriptorAllocator()->Allocate(1u))
 		{
-			descriptorAllocation = DEGraphics::Graphics::GetInstance().GetDescriptorAllocator()->Allocate(1u);
+			
 		}
 
 		DynamicConstantBufferInHeap(const std::wstring& inputName,
@@ -29,9 +30,9 @@ namespace DiveBomber::DEResource
 			const DynamicConstantProcess::LayoutElement& inputLayout,
 			const DynamicConstantProcess::Buffer& inputBuffer, bool updateCBV = true)
 			:
-			DynamicConstantBuffer(inputName, inputLayout, inputBuffer, 999u)
+			DynamicConstantBuffer(inputName, inputLayout, inputBuffer, 999u),
+			descriptorAllocation(DEGraphics::Graphics::GetInstance().GetDescriptorAllocator()->Allocate(1u))
 		{
-			descriptorAllocation = DEGraphics::Graphics::GetInstance().GetDescriptorAllocator()->Allocate(1u);
 			if (updateCBV)
 			{
 				UpdateCBV();

@@ -277,7 +277,7 @@ namespace DiveBomber::Component
         {
             //std::cout << shaderStage << std::endl;
 
-            std::shared_ptr<Shader> shader = Shader::Resolve(shaderName, shaderStage);
+            std::shared_ptr<Shader> shader = GlobalResourceManager::Resolve<Shader>(shaderName, shaderStage);
             ShaderManager::GetInstance().AddToUsingPool(shader);
 
             shaders.emplace_back(shader);
@@ -295,17 +295,17 @@ namespace DiveBomber::Component
                 {
                     if (Utility::ToNarrow(matExsists->second.first->GetName()) != param["Value"])
                     {
-                        SetTexture(param["Name"].get<std::string>(), GlobalResourceManager::Resolve<Texture>(Utility::ToWide(param["Value"])), textureCounter);
+                        SetTexture(param["Name"].get<std::string>(), Texture::LoadTexture(Utility::ToWide(param["Value"])), textureCounter);
                     }
                     else if(textureCounter != matExsists->second.second)
                     {
                         matExsists->second.second = textureCounter;
-                        SetTexture(param["Name"].get<std::string>(), GlobalResourceManager::Resolve<Texture>(Utility::ToWide(param["Value"])), textureCounter);
+                        SetTexture(param["Name"].get<std::string>(), Texture::LoadTexture(Utility::ToWide(param["Value"])), textureCounter);
                     }
                 }
                 else
                 {
-                    SetTexture(param["Name"], Texture::Resolve(Utility::ToWide(param["Value"])), textureCounter);
+                    SetTexture(param["Name"], Texture::LoadTexture(Utility::ToWide(param["Value"])), textureCounter);
                 }
                 textureCounter++;
             }

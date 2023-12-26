@@ -30,7 +30,6 @@ namespace DiveBomber::DEResource
 		Shader(const std::wstring inputName, ShaderType inputType);
 
 		[[nodiscard]] wrl::ComPtr<ID3DBlob> GetBytecode() const noexcept;
-		[[nodiscard]] static std::shared_ptr<Shader> Resolve(const std::wstring name, ShaderType type);
 		[[nodiscard]] static std::string GenerateUID(const std::wstring name, ShaderType type);
 		[[nodiscard]] std::string GetUID() const noexcept override;
 

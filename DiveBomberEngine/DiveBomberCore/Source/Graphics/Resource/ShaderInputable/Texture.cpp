@@ -30,18 +30,12 @@ namespace DiveBomber::DEResource
 	namespace fs = std::filesystem;
 	namespace dx = DirectX;
 
-	Texture::Texture(const std::wstring& inputName)
-		:
-		Texture(inputName, TextureDescription{})
-	{
-	}
 	Texture::Texture(const std::wstring& inputName, TextureDescription inputTextureDesc)
 		:
 		Resource(inputName),
 		textureDesc(inputTextureDesc),
 		descriptorAllocation(Graphics::GetInstance().GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)->Allocate(1u))
 	{
-		LoadTexture();
 	}
 
 	Texture::~Texture()
@@ -52,16 +46,6 @@ namespace DiveBomber::DEResource
 	UINT Texture::GetSRVDescriptorHeapOffset() const noexcept
 	{
 		return descriptorAllocation->GetBaseOffset();
-	}
-
-	std::shared_ptr<Texture> Texture::Resolve(const std::wstring& name)
-	{
-		return GlobalResourceManager::Resolve<Texture>(name);
-	}
-
-	std::shared_ptr<Texture> Texture::Resolve(const std::wstring& name, TextureDescription textureDesc)
-	{
-		return GlobalResourceManager::Resolve<Texture>(name, textureDesc);
 	}
 
 	std::wstring Texture::GetName() const noexcept
@@ -385,5 +369,12 @@ namespace DiveBomber::DEResource
 		Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(textureBuffer, D3D12_RESOURCE_STATE_COMMON, true);
 
 		Graphics::GetInstance().ExecuteAllCurrentCommandLists();
+	}
+
+	std::shared_ptr<Texture> Texture::LoadTexture(const std::wstring& inputName, TextureDescription inputTextureDesc)
+	{
+		std::shared_ptr<Texture> texture = GlobalResourceManager::Resolve<Texture>(inputName, inputTextureDesc);
+		texture->LoadTexture();
+		return texture;
 	}
 }

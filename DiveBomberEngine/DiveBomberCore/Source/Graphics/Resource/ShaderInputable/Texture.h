@@ -13,7 +13,7 @@ namespace DiveBomber::DX
 
 namespace DiveBomber::DEResource
 {
-	class Texture final : public Resource, public ShaderInputable
+	class Texture : public Resource, public ShaderInputable
 	{
 	public:
 		struct TextureDescription
@@ -32,16 +32,12 @@ namespace DiveBomber::DEResource
 		};
 
 	public:
-		Texture(const std::wstring& inputName);
 		Texture(const std::wstring& inputName, TextureDescription inputTextureDesc);
 		~Texture();
 
 		void ChangeTexture(const std::wstring& inputName);
 		[[nodiscard]] UINT GetSRVDescriptorHeapOffset() const noexcept override;
 		
-		[[nodiscard]] static std::shared_ptr<Texture> Resolve(const std::wstring& name);
-		[[nodiscard]] static std::shared_ptr<Texture> Resolve(const std::wstring& name,
-			TextureDescription textureDesc);
 		std::wstring GetName() const noexcept;
 		template<typename...Ignore>
 		[[nodiscard]] static std::string GenerateUID(const std::wstring& name, Ignore&&...ignore)
@@ -51,7 +47,9 @@ namespace DiveBomber::DEResource
 		}
 		[[nodiscard]] std::string GetUID() const noexcept override;
 
-	private:
+		[[nodiscard]] static std::shared_ptr<Texture> LoadTexture(const std::wstring& inputName, TextureDescription inputTextureDesc = TextureDescription{});
+
+	protected:
 		void LoadTexture();
 		void LoadTextureFromCache(const std::filesystem::path& filePath);
 		void LoadTextureFromRaw(const std::filesystem::path& filePath);
@@ -59,7 +57,7 @@ namespace DiveBomber::DEResource
 		void LoadScratchImage(const dx::ScratchImage& scratchImage);
 		void GenerateMipMaps();
 
-	private:
+	protected:
 		std::shared_ptr<DX::DescriptorAllocation> descriptorAllocation;
 		wrl::ComPtr<ID3D12Resource> textureBuffer;
 		TextureDescription textureDesc;

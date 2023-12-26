@@ -172,11 +172,6 @@ namespace DiveBomber::DEResource
 		return sourceFilePath;
 	}
 
-	std::shared_ptr<Shader> Shader::Resolve(const std::wstring name, ShaderType type)
-	{
-		return GlobalResourceManager::Resolve<Shader>(name, type);
-	}
-
 	std::string Shader::GenerateUID(const std::wstring name, ShaderType type)
 	{
 		using namespace std::string_literals;

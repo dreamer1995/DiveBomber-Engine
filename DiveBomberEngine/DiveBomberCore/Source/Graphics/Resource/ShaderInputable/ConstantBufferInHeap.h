@@ -13,9 +13,9 @@ namespace DiveBomber::DEResource
 	public:
 		ConstantBufferInHeap(const std::wstring& inputName)
 			:
-			ConstantBuffer<C>(inputName, 999u)
+			ConstantBuffer<C>(inputName, 999u),
+			descriptorAllocation(DEGraphics::Graphics::GetInstance().GetDescriptorAllocator()->Allocate(1u))
 		{
-			descriptorAllocation = DEGraphics::Graphics::GetInstance().GetDescriptorAllocator()->Allocate(1u);
 		}
 
 		ConstantBufferInHeap(const std::wstring& inputName, const C& constantData)
@@ -27,9 +27,9 @@ namespace DiveBomber::DEResource
 		ConstantBufferInHeap(const std::wstring& inputName, const C* constantData,
 			size_t inputDataSize, bool updateCBV = true)
 			:
-			ConstantBuffer<C>(inputName, constantData, inputDataSize, 999u)
+			ConstantBuffer<C>(inputName, constantData, inputDataSize, 999u),
+			descriptorAllocation(DEGraphics::Graphics::GetInstance().GetDescriptorAllocator()->Allocate(1u))
 		{
-			descriptorAllocation = DEGraphics::Graphics::GetInstance().GetDescriptorAllocator()->Allocate(1u);
 			if (updateCBV)
 			{
 				UpdateCBV();
