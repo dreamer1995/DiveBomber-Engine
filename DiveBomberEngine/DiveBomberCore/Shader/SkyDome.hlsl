@@ -1,3 +1,5 @@
+#include "Include\Algorithm\Common.hlsli"
+
 "Properties"
 {
 	"Stage":[ "VS","PS" ],
@@ -65,9 +67,7 @@ float4 PSMain(ProcessData In) : SV_Target
 	
 	float2 skyDomeUV = SampleSphereicalMap(normalize(In.uv));
 	
-	float4 baseColor = baseMap.SampleLevel(samplerStandard, skyDomeUV, 0);
-	
-	baseColor.rgb = pow(baseColor.rgb, 2.2f);
+	float4 baseColor = SampleSRGBTextureLevel(baseMap, samplerStandard, skyDomeUV, 0u);
 	
 	float4 color = baseColor * baseShadingParamCB0.baseColor;
 	

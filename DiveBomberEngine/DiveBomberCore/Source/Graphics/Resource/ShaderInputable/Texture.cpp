@@ -36,6 +36,7 @@ namespace DiveBomber::DEResource
 		textureDesc(inputTextureDesc),
 		descriptorAllocation(Graphics::GetInstance().GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)->Allocate(1u))
 	{
+		LoadTexture();
 	}
 
 	Texture::~Texture()
@@ -369,12 +370,5 @@ namespace DiveBomber::DEResource
 		Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(textureBuffer, D3D12_RESOURCE_STATE_COMMON, true);
 
 		Graphics::GetInstance().ExecuteAllCurrentCommandLists();
-	}
-
-	std::shared_ptr<Texture> Texture::LoadTexture(const std::wstring& inputName, TextureDescription inputTextureDesc)
-	{
-		std::shared_ptr<Texture> texture = GlobalResourceManager::Resolve<Texture>(inputName, inputTextureDesc);
-		texture->LoadTexture();
-		return texture;
 	}
 }

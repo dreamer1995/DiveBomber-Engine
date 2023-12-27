@@ -3,17 +3,23 @@
 //https://seblagarde.files.wordpress.com/2015/07/course_notes_moving_frostbite_to_pbr_v32.pdf
 float3 DecodeGamma(in float3 sRGBCol)
 {
-	float3 linearRGBLo = sRGBCol / 12.92;
-	float3 linearRGBHi = pow((sRGBCol + 0.055) / 1.055, 2.4);
-	float3 linearRGB = (sRGBCol <= 0.04045) ? linearRGBLo : linearRGBHi;
+	float3 linearRGBLo = sRGBCol / 12.92f;
+	float3 linearRGBHi = pow((sRGBCol + 0.055f) / 1.055f, 2.4f);
+	float3 linearRGB;
+	linearRGB.r = (sRGBCol.r <= 0.04045f) ? linearRGBLo.r : linearRGBHi.r;
+	linearRGB.g = (sRGBCol.g <= 0.04045f) ? linearRGBLo.g : linearRGBHi.g;
+	linearRGB.b = (sRGBCol.b <= 0.04045f) ? linearRGBLo.b : linearRGBHi.b;
 	return linearRGB;
 }
 
 float3 EncodeGamma(in float3 linearCol)
 {
-	float3 sRGBLo = linearCol * 12.92;
-	float3 sRGBHi = (pow(abs(linearCol), 1.0 / 2.4) * 1.055) - 0.055;
-	float3 sRGB = (linearCol <= 0.0031308) ? sRGBLo : sRGBHi;
+	float3 sRGBLo = linearCol * 12.92f;
+	float3 sRGBHi = (pow(abs(linearCol), 1.0f / 2.4f) * 1.055f) - 0.055f;
+	float3 sRGB;
+	sRGB.r = (linearCol.r <= 0.0031308f) ? sRGBLo.r : sRGBHi.r;
+	sRGB.g = (linearCol.g <= 0.0031308f) ? sRGBLo.g : sRGBHi.g;
+	sRGB.b = (linearCol.b <= 0.0031308f) ? sRGBLo.b : sRGBHi.b;
 	return sRGB;
 }
 
@@ -97,4 +103,78 @@ float2 WeightedLerpFactors(float WeightA, float WeightB, float Blend)
 	BlendA *= RcpBlend;
 	BlendB *= RcpBlend;
 	return float2(BlendA, BlendB);
+}
+
+float4 SampleTexture(Texture2D texture, SamplerState samp, float2 uv)
+{
+	return texture.Sample(samp, uv);
+}
+
+float4 SampleTextureLevel(Texture2D texture, SamplerState samp, float2 uv, uint mipLevel)
+{
+	return texture.SampleLevel(samp, uv, mipLevel);
+}
+
+float4 SampleTexture(Texture2D texture, SamplerState samp, float2 uv, bool isSRGB)
+{
+	float4 outColor = texture.Sample(samp, uv);
+	if (isSRGB)
+	{
+		outColor.rgb = DecodeGamma(outColor.rgb);
+	}	
+	
+	return outColor;
+}
+
+float4 SampleTextureLevel(Texture2D texture, SamplerState samp, float2 uv, uint mipLevel, bool isSRGB)
+{
+	float4 outColor = texture.SampleLevel(samp, uv, mipLevel);
+	if (isSRGB)
+	{
+		outColor.rgb = DecodeGamma(outColor.rgb);
+	}
+	
+	return outColor;
+}
+
+float4 SampleSRGBTexture(Texture2D texture, SamplerState samp, float2 uv)
+{
+	float4 outColor = texture.Sample(samp, uv);
+	outColor.rgb = DecodeGamma(outColor.rgb);
+	
+	return outColor;
+}
+
+float4 SampleSRGBTextureLevel(Texture2D texture, SamplerState samp, float2 uv, uint mipLevel)
+{
+	float4 outColor = texture.SampleLevel(samp, uv, mipLevel);
+	outColor.rgb = DecodeGamma(outColor.rgb);
+	
+	return outColor;
+}
+
+float3 DecodeNormal(float3 normal)
+{
+	return normal * 2.0f - 1.0f;
+}
+
+float3 EncodeNormal(float3 normal)
+{
+	return normal / 2.0f + 0.5f;
+}
+
+float4 SampleNormalTexture(Texture2D texture, SamplerState samp, float2 uv)
+{
+	float4 outColor = texture.Sample(samp, uv);
+	outColor.rbg = DecodeNormal(outColor.rgb);
+	
+	return outColor;
+}
+
+float4 SampleNormalTextureLevel(Texture2D texture, SamplerState samp, float2 uv, uint mipLevel)
+{
+	float4 outColor = texture.SampleLevel(samp, uv, mipLevel);
+	outColor.rbg = DecodeNormal(outColor.rgb);
+	
+	return outColor;
 }

@@ -1,3 +1,5 @@
+#include "Include\Algorithm\Common.hlsli"
+
 "Properties"
 {
 	"Stage":[ "CS" ],
@@ -38,9 +40,9 @@ void CSMain(ComputeShaderInput In)
 	
 	float2 uv = (In.dispatchThreadID.xy + 0.5) / float2(1280, 720);
 	
-	float4 col = mainRT.Sample(samplerStandard, uv) * baseShadingParam.baseColor;
+	float4 col = SampleTexture(mainRT, samplerStandard, uv) * baseShadingParam.baseColor;
 	
-	col.rgb = pow(col.rgb, 1 / 2.2f);
+	col.rgb = EncodeGamma(col.rgb);
 		
 	outRT[In.dispatchThreadID.xy] = col;
 }

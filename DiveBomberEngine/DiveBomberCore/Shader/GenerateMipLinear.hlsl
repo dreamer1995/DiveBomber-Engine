@@ -1,3 +1,5 @@
+#include "Include\Algorithm\Common.hlsli"
+
 /**
  * Compute shader to generate mipmaps for a given texture.
  * Source: https://github.com/Microsoft/DirectX-Graphics-Samples/blob/master/MiniEngine/Core/Shaders/GenerateMipsCS.hlsli
@@ -78,18 +80,25 @@ void StoreColor(uint Index, float4 Color)
 	gs_A[Index] = Color.a;
 }
 
-float4 LoadColor(uint Index)
+float4 LoadColor(uint Index, bool isSRGB)
 {
-	return float4(gs_R[Index], gs_G[Index], gs_B[Index], gs_A[Index]);
+	if (isSRGB)
+	{
+		return float4(DecodeGamma(float3(gs_R[Index], gs_G[Index], gs_B[Index])), gs_A[Index]);
+	}
+	else
+	{
+		return float4(gs_R[Index], gs_G[Index], gs_B[Index], gs_A[Index]);
+	}
 }
 
 // Convert linear color to sRGB before storing if the original source is 
 // an sRGB texture.
-float4 PackColor(float4 x)
+float4 PackColor(float4 x, bool isSRGB)
 {
-	if (0)
+	if (isSRGB)
 	{
-		return float4(x.rgb, x.a);
+		return float4(EncodeGamma(x.rgb), x.a);
 	}
 	else
 	{
@@ -123,13 +132,13 @@ void CSMain(ComputeShaderInput In)
     // 0b01(1): Width is odd, height is even.
     // 0b10(2): Width is even, height is odd.
     // 0b11(3): Both width and height are odd.
-	switch (0)
+	switch (generateMipsCB.srcDimension)
 	{
 		case WIDTH_HEIGHT_EVEN:
         {
 			float2 uv = generateMipsCB.texelSize * (In.dispatchThreadID.xy + 0.5f);
 
-			src1 = inputMap.SampleLevel(samplerStandardClamp, uv, generateMipsCB.inputMapLevel);
+			src1 = SampleTextureLevel(inputMap, samplerStandardClamp, uv, generateMipsCB.inputMapLevel, generateMipsCB.isSRGB);
 		}
 		break;
 		case WIDTH_ODD_HEIGHT_EVEN:
@@ -140,8 +149,8 @@ void CSMain(ComputeShaderInput In)
 			float2 uv1 = generateMipsCB.texelSize * (In.dispatchThreadID.xy + float2(0.25f, 0.5f));
 			float2 offset = generateMipsCB.texelSize * float2(0.5f, 0.0f);
 
-			src1 = 0.5f * (inputMap.SampleLevel(samplerStandardClamp, uv1, generateMipsCB.inputMapLevel) +
-                        inputMap.SampleLevel(samplerStandardClamp, uv1 + offset, generateMipsCB.inputMapLevel));
+			src1 = 0.5f * (SampleTextureLevel(inputMap, samplerStandardClamp, uv1, generateMipsCB.inputMapLevel, generateMipsCB.isSRGB) +
+                        SampleTextureLevel(inputMap, samplerStandardClamp, uv1 + offset, generateMipsCB.inputMapLevel, generateMipsCB.isSRGB));
 		}
 		break;
 		case WIDTH_EVEN_HEIGHT_ODD:
@@ -152,8 +161,8 @@ void CSMain(ComputeShaderInput In)
 			float2 uv1 = generateMipsCB.texelSize * (In.dispatchThreadID.xy + float2(0.5f, 0.25f));
 			float2 offset = generateMipsCB.texelSize * float2(0.0f, 0.5f);
 
-			src1 = 0.5f * (inputMap.SampleLevel(samplerStandardClamp, uv1, generateMipsCB.inputMapLevel) +
-						inputMap.SampleLevel(samplerStandardClamp, uv1 + offset, generateMipsCB.inputMapLevel));
+			src1 = 0.5f * (SampleTextureLevel(inputMap, samplerStandardClamp, uv1, generateMipsCB.inputMapLevel, generateMipsCB.isSRGB) +
+                        SampleTextureLevel(inputMap, samplerStandardClamp, uv1 + offset, generateMipsCB.inputMapLevel, generateMipsCB.isSRGB));
 		}
 		break;
 		case WIDTH_HEIGHT_ODD:
@@ -164,16 +173,16 @@ void CSMain(ComputeShaderInput In)
 			float2 uv1 = generateMipsCB.texelSize * (In.dispatchThreadID.xy + float2(0.25f, 0.25f));
 			float2 offset = generateMipsCB.texelSize * 0.5f;
 
-			src1 = inputMap.SampleLevel(samplerStandardClamp, uv1, generateMipsCB.inputMapLevel);
-			src1 += inputMap.SampleLevel(samplerStandardClamp, uv1 + float2(offset.x, 0.0), generateMipsCB.inputMapLevel);
-			src1 += inputMap.SampleLevel(samplerStandardClamp, uv1 + float2(0.0, offset.y), generateMipsCB.inputMapLevel);
-			src1 += inputMap.SampleLevel(samplerStandardClamp, uv1 + float2(offset.x, offset.y), generateMipsCB.inputMapLevel);
+			src1 = SampleTextureLevel(inputMap, samplerStandardClamp, uv1, generateMipsCB.inputMapLevel, generateMipsCB.isSRGB);
+			src1 += SampleTextureLevel(inputMap, samplerStandardClamp, uv1 + float2(0.0, offset.y), generateMipsCB.inputMapLevel, generateMipsCB.isSRGB);
+			src1 += SampleTextureLevel(inputMap, samplerStandardClamp, uv1 + float2(0.0, offset.y), generateMipsCB.inputMapLevel, generateMipsCB.isSRGB);
+			src1 += SampleTextureLevel(inputMap, samplerStandardClamp, uv1 + float2(offset.x, offset.y), generateMipsCB.inputMapLevel, generateMipsCB.isSRGB);
 			src1 *= 0.25f;
 		}
 		break;
 	}
 	
-	outMip1[In.dispatchThreadID.xy] = PackColor(src1);
+	outMip1[In.dispatchThreadID.xy] = PackColor(src1, generateMipsCB.isSRGB);
 	
 	// A scalar (constant) branch can exit all threads coherently.
 	if (generateMipsCB.numMipLevels == 1)
@@ -192,12 +201,12 @@ void CSMain(ComputeShaderInput In)
     // (binary: 001001) checks that X and Y are even.
 	if ((In.groupIndex & 0x9) == 0)
 	{
-		float4 src2 = LoadColor(In.groupIndex + 0x01);
-		float4 src3 = LoadColor(In.groupIndex + 0x08);
-		float4 src4 = LoadColor(In.groupIndex + 0x09);
+		float4 src2 = LoadColor(In.groupIndex + 0x01, generateMipsCB.isSRGB);
+		float4 src3 = LoadColor(In.groupIndex + 0x08, generateMipsCB.isSRGB);
+		float4 src4 = LoadColor(In.groupIndex + 0x09, generateMipsCB.isSRGB);
 		src1 = 0.25 * (src1 + src2 + src3 + src4);
 
-		outMip2[In.dispatchThreadID.xy / 2] = PackColor(src1);
+		outMip2[In.dispatchThreadID.xy / 2] = PackColor(src1, generateMipsCB.isSRGB);
 		StoreColor(In.groupIndex, src1);
 	}
 	
@@ -209,12 +218,12 @@ void CSMain(ComputeShaderInput In)
 	// This bit mask (binary: 011011) checks that X and Y are multiples of four.
 	if ((In.groupIndex & 0x1B) == 0)
 	{
-		float4 src2 = LoadColor(In.groupIndex + 0x02);
-		float4 src3 = LoadColor(In.groupIndex + 0x10);
-		float4 src4 = LoadColor(In.groupIndex + 0x12);
+		float4 src2 = LoadColor(In.groupIndex + 0x02, generateMipsCB.isSRGB);
+		float4 src3 = LoadColor(In.groupIndex + 0x10, generateMipsCB.isSRGB);
+		float4 src4 = LoadColor(In.groupIndex + 0x12, generateMipsCB.isSRGB);
 		src1 = 0.25 * (src1 + src2 + src3 + src4);
 
-		outMip3[In.dispatchThreadID.xy / 4] = PackColor(src1);
+		outMip3[In.dispatchThreadID.xy / 4] = PackColor(src1, generateMipsCB.isSRGB);
 		StoreColor(In.groupIndex, src1);
 	}
 	
@@ -227,11 +236,11 @@ void CSMain(ComputeShaderInput In)
     // thread fits that criteria.
 	if (In.groupIndex == 0)
 	{
-		float4 src2 = LoadColor(In.groupIndex + 0x04);
-		float4 src3 = LoadColor(In.groupIndex + 0x20);
-		float4 src4 = LoadColor(In.groupIndex + 0x24);
+		float4 src2 = LoadColor(In.groupIndex + 0x04, generateMipsCB.isSRGB);
+		float4 src3 = LoadColor(In.groupIndex + 0x20, generateMipsCB.isSRGB);
+		float4 src4 = LoadColor(In.groupIndex + 0x24, generateMipsCB.isSRGB);
 		src1 = 0.25 * (src1 + src2 + src3 + src4);
 
-		outMip4[In.dispatchThreadID.xy / 8] = PackColor(src1);
+		outMip4[In.dispatchThreadID.xy / 8] = PackColor(src1, generateMipsCB.isSRGB);
 	}
 }

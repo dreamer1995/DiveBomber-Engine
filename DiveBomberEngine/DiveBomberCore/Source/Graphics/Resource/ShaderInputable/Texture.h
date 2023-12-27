@@ -32,7 +32,7 @@ namespace DiveBomber::DEResource
 		};
 
 	public:
-		Texture(const std::wstring& inputName, TextureDescription inputTextureDesc);
+		Texture(const std::wstring& inputName, TextureDescription inputTextureDesc = TextureDescription{});
 		~Texture();
 
 		void ChangeTexture(const std::wstring& inputName);
@@ -46,8 +46,6 @@ namespace DiveBomber::DEResource
 			return typeid(Texture).name() + "#"s + Utility::ToNarrow(name);
 		}
 		[[nodiscard]] std::string GetUID() const noexcept override;
-
-		[[nodiscard]] static std::shared_ptr<Texture> LoadTexture(const std::wstring& inputName, TextureDescription inputTextureDesc = TextureDescription{});
 
 	protected:
 		void LoadTexture();

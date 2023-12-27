@@ -1,3 +1,5 @@
+#include "Include\Algorithm\Common.hlsli"
+
 "Properties"
 {
 	"Stage":[ "VS","PS" ],
@@ -71,11 +73,8 @@ GBufferOutput PSMain(ProcessData In)
 	Texture2D<float4> baseMap = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.texure0Index)];
 	Texture2D<float4> rustMap = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.texure1Index)];
 	
-	float4 baseColor = baseMap.Sample(samplerStandard, In.uv);
-	float4 rustColor = rustMap.Sample(samplerStandard, In.uv);
-	
-	baseColor.rgb = pow(baseColor.rgb, 2.2f);
-	rustColor.rgb = pow(rustColor.rgb, 2.2f);
+	float4 baseColor = SampleSRGBTexture(baseMap, samplerStandard, In.uv);
+	float4 rustColor = SampleSRGBTexture(rustMap, samplerStandard, In.uv);
 	
 	float4 color = lerp(baseColor, rustColor, rustColor.g) * (baseShadingParamCB0.baseColor + baseShadingParamCB0.baseColor2);
 	
