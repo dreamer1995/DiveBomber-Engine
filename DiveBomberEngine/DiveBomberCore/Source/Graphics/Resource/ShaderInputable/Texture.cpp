@@ -65,32 +65,38 @@ namespace DiveBomber::DEResource
 		cachePath.replace_extension(".dds");
 		if (fs::exists(cachePath))
 		{
-			LoadTextureFromCache(cachePath);
+			LoadScratchImage(cachePath);
 		}
 		else
 		{
 			fs::path filePath(ProjectDirectoryW L"Asset\\Texture\\" + name);
-			LoadTextureFromRaw(filePath);
+			LoadScratchImage(filePath);		
+			//Because currently, dxtc function CaptureTexture can't capture ID3D12Resource to ScratchImage
+			if (filePath.extension() != ".dds")
+			{
+				GenerateCache();
+			}
 		}
 	}
 
-	void Texture::LoadTextureFromCache(const fs::path& filePath)
+	void Texture::GenerateCache()
 	{
-		dx::TexMetadata metadata;
-		dx::ScratchImage scratchRawImage;
+		DirectX::ScratchImage saveToImage;
+		dx::CaptureTexture(Graphics::GetInstance().GetCommandQueue()->GetCommandQueue().Get(), textureBuffer.Get(), false, saveToImage,
+			D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COMMON);
 
-		HRESULT hr;
+		fs::path cachePath(ProjectDirectoryW L"Cache\\Texture\\");
+		fs::path fileName(name);
+		if (!fs::exists(cachePath))
+		{
+			fs::create_directories(cachePath);
+		}
 
-		GFX_THROW_INFO(LoadFromDDSFile(
-			filePath.c_str(),
-			dx::DDS_FLAGS_NONE,
-			&metadata,
-			scratchRawImage));
-
-		LoadScratchImage(scratchRawImage);
+		fileName.replace_extension(".dds");
+		dx::SaveToDDSFile(saveToImage.GetImages(), textureBuffer->GetDesc().MipLevels, saveToImage.GetMetadata(), dx::DDS_FLAGS_NONE, (cachePath.wstring() + fileName.wstring()).c_str());
 	}
 
-	void Texture::LoadTextureFromRaw(const fs::path& filePath)
+	void Texture::LoadScratchImage(const std::filesystem::path& filePath)
 	{
 		if (!fs::exists(filePath))
 		{
@@ -140,32 +146,6 @@ namespace DiveBomber::DEResource
 				scratchImage));
 		}
 
-		LoadScratchImage(scratchImage);
-		GenerateCache(scratchImage);
-	}
-
-	void Texture::GenerateCache(const DirectX::ScratchImage& scratchImage)
-	{
-		DirectX::ScratchImage saveToImage;
-		dx::CaptureTexture(Graphics::GetInstance().GetCommandQueue()->GetCommandQueue().Get(), textureBuffer.Get(), false, saveToImage,
-			D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COMMON);
-
-		dx::TexMetadata metadata = scratchImage.GetMetadata();
-		metadata.mipLevels = textureBuffer->GetDesc().MipLevels;
-
-		fs::path cachePath(ProjectDirectoryW L"Cache\\Texture\\");
-		fs::path fileName(name);
-		if (!fs::exists(cachePath))
-		{
-			fs::create_directories(cachePath);
-		}
-
-		fileName.replace_extension(".dds");
-		dx::SaveToDDSFile(saveToImage.GetImages(), textureBuffer->GetDesc().MipLevels, metadata, dx::DDS_FLAGS_NONE, (cachePath.wstring() + fileName.wstring()).c_str());
-	}
-
-	void Texture::LoadScratchImage(const dx::ScratchImage& scratchImage)
-	{
 		const auto& chainBase = *scratchImage.GetImages();
 
 		DXGI_FORMAT format = chainBase.format;
@@ -183,8 +163,6 @@ namespace DiveBomber::DEResource
 			.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN,
 			.Flags = generrateMipNotSupport ? D3D12_RESOURCE_FLAG_NONE : D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS,
 		};
-
-		HRESULT hr;
 
 		const CD3DX12_HEAP_PROPERTIES heapProps{ D3D12_HEAP_TYPE_DEFAULT };
 		GFX_THROW_INFO(Graphics::GetInstance().GetDevice()->CreateCommittedResource(
@@ -248,29 +226,16 @@ namespace DiveBomber::DEResource
 
 		D3D12_RESOURCE_DESC resDesc = textureBuffer->GetDesc();
 
-		texDesc.MipLevels = (UINT)subresourceData.size();
-
 		if (textureDesc.generateMip && !generrateMipNotSupport && subresourceData.size() < resDesc.MipLevels)
 		{
-			const D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{
-				.Format = texDesc.Format,
-				.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D,
-				.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING,
-				.Texture2D{.MipLevels = texDesc.MipLevels },
-			};
-
-			Graphics::GetInstance().GetDevice()->CreateShaderResourceView(textureBuffer.Get(), &srvDesc, descriptorAllocation->GetCPUDescriptorHandle());
-			
 			GenerateMipMaps();
-
-			texDesc.MipLevels = resDesc.MipLevels;
 		}
 
 		const D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{
-				.Format = texDesc.Format,
+				.Format = resDesc.Format,
 				.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D,
 				.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING,
-				.Texture2D{.MipLevels = texDesc.MipLevels },
+				.Texture2D{.MipLevels = resDesc.MipLevels },
 		};
 
 		Graphics::GetInstance().GetDevice()->CreateShaderResourceView(textureBuffer.Get(), &srvDesc, descriptorAllocation->GetCPUDescriptorHandle());
@@ -280,6 +245,15 @@ namespace DiveBomber::DEResource
 	{
 		const std::wstring generateMipName(L"GenerateMipLinear");
 		D3D12_RESOURCE_DESC resDesc = textureBuffer->GetDesc();
+
+		const D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{
+				.Format = resDesc.Format,
+				.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D,
+				.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING,
+				.Texture2D{.MipLevels = resDesc.MipLevels },
+		};
+
+		Graphics::GetInstance().GetDevice()->CreateShaderResourceView(textureBuffer.Get(), &srvDesc, descriptorAllocation->GetCPUDescriptorHandle());
 
 		std::shared_ptr<Material> material = std::make_shared<Material>(generateMipName, L"GenerateMipLinear");
 		material->SetTexture(GetSRVDescriptorHeapOffset(), 0);

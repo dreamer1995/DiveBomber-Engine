@@ -49,10 +49,8 @@ namespace DiveBomber::DEResource
 
 	protected:
 		void LoadTexture();
-		void LoadTextureFromCache(const std::filesystem::path& filePath);
-		void LoadTextureFromRaw(const std::filesystem::path& filePath);
-		void GenerateCache(const dx::ScratchImage& scratchImage);
-		void LoadScratchImage(const dx::ScratchImage& scratchImage);
+		void GenerateCache();
+		void LoadScratchImage(const std::filesystem::path& filePath);
 		void GenerateMipMaps();
 
 	protected:
