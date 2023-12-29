@@ -2,6 +2,7 @@
 #include "..\Resource.h"
 #include "ShaderInputable.h"
 #include "..\..\GraphicsHeader.h"
+#include "..\..\..\Utility\DEJson.h"
 
 #include <filesystem>
 #include <..\DirectXTex\DirectXTex\DirectXTex.h>
@@ -13,13 +14,20 @@ namespace DiveBomber::DX
 
 namespace DiveBomber::DEResource
 {
+	namespace fs = std::filesystem;
+	using json = nlohmann::json;
+
 	class Texture : public Resource, public ShaderInputable
 	{
 	public:
-		struct TextureDescription
+		struct TextureParam
 		{
 			bool sRGB = false;
 			bool generateMip = true;
+			bool cubeMap = false;
+			bool diffuseMip = false;
+			bool textureArray = false;
+			bool texture3D = false;
 		};
 
 		struct TextureMipMapGenerateConstant
@@ -32,7 +40,7 @@ namespace DiveBomber::DEResource
 		};
 
 	public:
-		Texture(const std::wstring& inputName, TextureDescription inputTextureDesc = TextureDescription{});
+		Texture(const std::wstring& inputName, TextureParam inputTextureDesc = TextureParam{});
 		~Texture();
 
 		void ChangeTexture(const std::wstring& inputName);
@@ -48,14 +56,20 @@ namespace DiveBomber::DEResource
 		[[nodiscard]] std::string GetUID() const noexcept override;
 
 	protected:
+		void GetConfig();
+		void UpdateConfig(const TextureParam inputTextureParam);
 		void LoadTexture();
 		void GenerateCache();
 		void LoadScratchImage(const std::filesystem::path& filePath);
 		void GenerateMipMaps();
+		void GenerateCubeMap();
+		void GenerateDiffuseMip();
 
 	protected:
+		json config;
+		fs::path configFilePath;
 		std::shared_ptr<DX::DescriptorAllocation> descriptorAllocation;
 		wrl::ComPtr<ID3D12Resource> textureBuffer;
-		TextureDescription textureDesc;
+		TextureParam textureParam;
 	};
 }

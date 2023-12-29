@@ -11,6 +11,7 @@
 #include "..\..\Component\Material.h"
 #include "..\..\DX\CommandQueue.h"
 
+#include <fstream>
 #include <..\DirectXTex\Auxiliary\DirectXTexEXR.h>
 #pragma comment(lib,"DirectXTex.lib")
 
@@ -30,12 +31,13 @@ namespace DiveBomber::DEResource
 	namespace fs = std::filesystem;
 	namespace dx = DirectX;
 
-	Texture::Texture(const std::wstring& inputName, TextureDescription inputTextureDesc)
+	Texture::Texture(const std::wstring& inputName, TextureParam inputTextureDesc)
 		:
 		Resource(inputName),
-		textureDesc(inputTextureDesc),
+		textureParam(inputTextureDesc),
 		descriptorAllocation(Graphics::GetInstance().GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)->Allocate(1u))
 	{
+		GetConfig();
 		LoadTexture();
 	}
 
@@ -57,6 +59,41 @@ namespace DiveBomber::DEResource
 	std::string Texture::GetUID() const noexcept
 	{
 		return GenerateUID(ProjectDirectoryW L"Asset\\Texture\\" + name);
+	}
+
+	void Texture::GetConfig()
+	{
+		configFilePath = ProjectDirectoryW L"Asset\\Texture\\" + name;
+		configFilePath.replace_extension(".json");
+		if (!fs::exists(configFilePath))
+		{
+			UpdateConfig(textureParam);
+		}
+		else
+		{
+			std::ifstream rawFile(configFilePath);
+			if (!rawFile.is_open())
+			{
+				throw std::exception("Unable to open script file");
+			}
+			rawFile >> config;
+			rawFile.close();
+		}
+	}
+
+	void Texture::UpdateConfig(const TextureParam inputTextureParam)
+	{
+		config["sRGB"] = inputTextureParam.sRGB;
+		config["GenerateMip"] = inputTextureParam.generateMip;
+		config["CubeMap"] = inputTextureParam.cubeMap;
+		config["DiffuseMip"] = inputTextureParam.diffuseMip;
+		config["TextureArray"] = inputTextureParam.textureArray;
+		config["Texture3D"] = inputTextureParam.texture3D;
+
+		// write prettified JSON to another file
+		std::ofstream outFile(configFilePath);
+		outFile << std::setw(4) << config << std::endl;
+		outFile.close();
 	}
 
 	void Texture::LoadTexture()
@@ -148,10 +185,6 @@ namespace DiveBomber::DEResource
 
 		const auto& chainBase = *scratchImage.GetImages();
 
-		DXGI_FORMAT format = chainBase.format;
-		bool generrateMipNotSupport = dx::IsCompressed(format) || dx::IsTypeless(format) ||
-			dx::IsPlanar(format) || dx::IsPalettized(format);
-
 		D3D12_RESOURCE_DESC texDesc{
 			.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D,
 			.Width = (UINT)chainBase.width,
@@ -161,7 +194,7 @@ namespace DiveBomber::DEResource
 			.Format = chainBase.format,
 			.SampleDesc = {.Count = 1 },
 			.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN,
-			.Flags = generrateMipNotSupport ? D3D12_RESOURCE_FLAG_NONE : D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS,
+			.Flags = dx::IsCompressed(chainBase.format) ? D3D12_RESOURCE_FLAG_NONE : D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS,
 		};
 
 		const CD3DX12_HEAP_PROPERTIES heapProps{ D3D12_HEAP_TYPE_DEFAULT };
@@ -226,7 +259,11 @@ namespace DiveBomber::DEResource
 
 		D3D12_RESOURCE_DESC resDesc = textureBuffer->GetDesc();
 
-		if (textureDesc.generateMip && !generrateMipNotSupport && subresourceData.size() < resDesc.MipLevels)
+		DXGI_FORMAT format = resDesc.Format;
+		bool generrateMipNotSupport = dx::IsCompressed(format) || dx::IsTypeless(format) ||
+			dx::IsPlanar(format) || dx::IsPalettized(format);
+
+		if (textureParam.generateMip && !generrateMipNotSupport && subresourceData.size() < resDesc.MipLevels)
 		{
 			GenerateMipMaps();
 		}
@@ -261,7 +298,7 @@ namespace DiveBomber::DEResource
 		std::shared_ptr<RootSignature> rootSignature = GlobalResourceManager::Resolve<RootSignature>(L"StandardFullStageAccess");
 		
 		TextureMipMapGenerateConstant mipGenCB;
-		mipGenCB.isSRGB = textureDesc.sRGB;
+		mipGenCB.isSRGB = textureParam.sRGB;
 		std::shared_ptr<ConstantBufferInHeap<TextureMipMapGenerateConstant>> mipGenCBIndex =
 			std::make_shared<ConstantBufferInHeap<TextureMipMapGenerateConstant>>(generateMipName);
 		material->SetConstant(mipGenCBIndex, 1);
