@@ -55,23 +55,23 @@ void CSMain(ComputeShaderInput In)
 	RWTexture2DArray<float4> outTarget = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.texture1Index)];
 	ConstantBuffer<GenerateCube> generateCubeCB = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.constant1Index)];
 	
-	float2 uv = generateCubeCB.texelSize * (In.dispatchThreadID.xy + 0.5f);
+	float2 uv = generateCubeCB.texelSize * (In.dispatchThreadID.xy + 0.5f) - 0.5f;
 	
-	float3 pos = float3(0.5f, 1.0f - uv.y, 1.0f - uv.x);	
+	float3 pos = float3(0.5f, -uv.y, -uv.x);	
 	outTarget[uint3(In.dispatchThreadID.xy, 0u)] = SampleTexture(inputMap, samplerStandard, SampleSphereicalMap(normalize(pos)));
 	
-	pos = float3(-0.5f, 1.0f - uv.y, uv.x);
+	pos = float3(-0.5f, -uv.y, uv.x);
 	outTarget[uint3(In.dispatchThreadID.xy, 1u)] = SampleTexture(inputMap, samplerStandard, SampleSphereicalMap(normalize(pos)));
 	
 	pos = float3(uv.x, 0.5f, uv.y);
 	outTarget[uint3(In.dispatchThreadID.xy, 2u)] = SampleTexture(inputMap, samplerStandard, SampleSphereicalMap(normalize(pos)));
 	
-	pos = float3(uv.x, -0.5f, 1.0f - uv.y);
+	pos = float3(uv.x, -0.5f, -uv.y);
 	outTarget[uint3(In.dispatchThreadID.xy, 3u)] = SampleTexture(inputMap, samplerStandard, SampleSphereicalMap(normalize(pos)));
 	
-	pos = float3(uv.x, 1.0f - uv.y, 0.5f);
+	pos = float3(uv.x, -uv.y, 0.5f);
 	outTarget[uint3(In.dispatchThreadID.xy, 4u)] = SampleTexture(inputMap, samplerStandard, SampleSphereicalMap(normalize(pos)));
 	
-	pos = float3(1.0f - uv.x, 1.0f - uv.y, -0.5f);
+	pos = float3(-uv.x, -uv.y, -0.5f);
 	outTarget[uint3(In.dispatchThreadID.xy, 5u)] = SampleTexture(inputMap, samplerStandard, SampleSphereicalMap(normalize(pos)));
 }

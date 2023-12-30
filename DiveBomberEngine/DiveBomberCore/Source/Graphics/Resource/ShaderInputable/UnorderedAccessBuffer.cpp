@@ -99,8 +99,6 @@ namespace DiveBomber::DEResource
 		uavBuffer = inputUAVBuffer;
 		resourceDesc = CD3DX12_RESOURCE_DESC(uavBuffer->GetDesc());
 
-		ResourceStateTracker::AddGlobalResourceState(uavBuffer, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
-
 		Graphics::GetInstance().GetDevice()->CreateUnorderedAccessView(uavBuffer.Get(), nullptr, &uavDesc, cpuHandle);
 	}
 }

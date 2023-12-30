@@ -126,6 +126,7 @@ namespace DiveBomber::DEResource
 
 	void Texture::GenerateCache()
 	{
+		HRESULT hr;
 		DirectX::ScratchImage saveToImage;
 		dx::CaptureTexture(Graphics::GetInstance().GetCommandQueue()->GetCommandQueue().Get(), textureBuffer.Get(), textureParam.cubeMap, saveToImage,
 			D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COMMON);
@@ -138,7 +139,7 @@ namespace DiveBomber::DEResource
 		}
 
 		fileName.replace_extension(".dds");
-		dx::SaveToDDSFile(saveToImage.GetImages(), textureBuffer->GetDesc().MipLevels, saveToImage.GetMetadata(), dx::DDS_FLAGS_NONE, (cachePath.wstring() + fileName.wstring()).c_str());
+		GFX_THROW_INFO(dx::SaveToDDSFile(saveToImage.GetImages(), saveToImage.GetImageCount(), saveToImage.GetMetadata(), dx::DDS_FLAGS_NONE, (cachePath.wstring() + fileName.wstring()).c_str()));
 	}
 
 	void Texture::LoadScratchImage(const std::filesystem::path& filePath)
@@ -213,19 +214,26 @@ namespace DiveBomber::DEResource
 			IID_PPV_ARGS(&textureBuffer)
 		));
 
-		const auto img = scratchImage.GetImages();
+		std::vector<D3D12_SUBRESOURCE_DATA> subresourceData;
 
-		D3D12_SUBRESOURCE_DATA subresourceData = D3D12_SUBRESOURCE_DATA{
-			.pData = img->pixels,
-			.RowPitch = (LONG_PTR)img->rowPitch,
-			.SlicePitch = (LONG_PTR)img->slicePitch,
-		};
+		for (int i = 0; i < metadata.mipLevels; i++)
+			for (int j = 0; j < metadata.arraySize; j++)
+		{
+			const auto img = scratchImage.GetImage(i, j, 0);
+
+			D3D12_SUBRESOURCE_DATA subresourceDataClip = D3D12_SUBRESOURCE_DATA{
+				.pData = img->pixels,
+				.RowPitch = (LONG_PTR)img->rowPitch,
+				.SlicePitch = (LONG_PTR)img->slicePitch,
+			};
+			subresourceData.emplace_back(subresourceDataClip);
+		}
 
 		{
 			wrl::ComPtr<ID3D12Resource> textureUploadBuffer;
 
 			const CD3DX12_HEAP_PROPERTIES heapProps{ D3D12_HEAP_TYPE_UPLOAD };
-			const auto uploadBufferSize = GetRequiredIntermediateSize(textureBuffer.Get(), 0, 1u);
+			const auto uploadBufferSize = GetRequiredIntermediateSize(textureBuffer.Get(), 0u, (UINT)subresourceData.size());
 			const auto resourceDesc = CD3DX12_RESOURCE_DESC::Buffer(uploadBufferSize);
 			GFX_THROW_INFO(Graphics::GetInstance().GetDevice()->CreateCommittedResource(
 				&heapProps,
@@ -243,8 +251,8 @@ namespace DiveBomber::DEResource
 				textureBuffer.Get(),
 				textureUploadBuffer.Get(),
 				0, 0u,
-				1u,
-				&subresourceData
+				(UINT)subresourceData.size(),
+				subresourceData.data()
 			);
 
 			copyCommandList->TrackResource(textureUploadBuffer);
@@ -255,18 +263,26 @@ namespace DiveBomber::DEResource
 
 		D3D12_RESOURCE_DESC resDesc = textureBuffer->GetDesc();
 
-		const D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{
-				.Format = resDesc.Format,
-				.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D,
-				.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING,
-				.Texture2D{.MipLevels = resDesc.MipLevels },
-		};
+		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+		srvDesc.Format = resDesc.Format;
+		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+
+		if (textureParam.cubeMap && metadata.arraySize == 6)
+		{
+			srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURECUBE;
+			srvDesc.TextureCube.MipLevels = resDesc.MipLevels;
+		}
+		else
+		{
+			srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+			srvDesc.Texture2D.MipLevels = resDesc.MipLevels;
+		}
 
 		Graphics::GetInstance().GetDevice()->CreateShaderResourceView(textureBuffer.Get(), &srvDesc, descriptorAllocation->GetCPUDescriptorHandle());
 
 		if (textureParam.cubeMap && metadata.arraySize == 1)
 		{
-			//GenerateCubeMap();
+			GenerateCubeMap();
 		}
 
 		DXGI_FORMAT format = resDesc.Format;
@@ -382,9 +398,11 @@ namespace DiveBomber::DEResource
 		wrl::ComPtr<ID3D12Resource> cubeSourceTextureBuffer = textureBuffer;
 
 		D3D12_RESOURCE_DESC resDesc = textureBuffer->GetDesc();
+		resDesc.Alignment = 0u;
 		resDesc.Width = 512u;
 		resDesc.Height = 512u;
 		resDesc.DepthOrArraySize = 6u;
+		resDesc.MipLevels = 1u;
 
 		const CD3DX12_HEAP_PROPERTIES heapProps{ D3D12_HEAP_TYPE_DEFAULT };
 		GFX_THROW_INFO(Graphics::GetInstance().GetDevice()->CreateCommittedResource(
@@ -397,6 +415,7 @@ namespace DiveBomber::DEResource
 		));
 
 		ResourceStateTracker::AddGlobalResourceState(textureBuffer, D3D12_RESOURCE_STATE_COMMON);
+		Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(textureBuffer, D3D12_RESOURCE_STATE_COMMON, true);
 
 		const std::wstring generateCubeName(L"GenerateCubeMap");
 
@@ -424,9 +443,10 @@ namespace DiveBomber::DEResource
 
 		D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc{};
 		uavDesc.Format = resDesc.Format;
-		uavDesc.ViewDimension = D3D12_UAV_DIMENSION_TEXTURE2D;
+		uavDesc.ViewDimension = D3D12_UAV_DIMENSION_TEXTURE2DARRAY;
 		uavDesc.Texture2DArray.ArraySize = 6u;
 		uavDesc.Texture2DArray.FirstArraySlice = 0u;
+		uavDesc.Texture2DArray.MipSlice = 0;
 
 		std::shared_ptr<UnorderedAccessBuffer> mipTarget = std::make_shared<UnorderedAccessBuffer>(
 			Graphics::GetInstance().GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV),
@@ -447,6 +467,8 @@ namespace DiveBomber::DEResource
 		Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(textureBuffer, D3D12_RESOURCE_STATE_COMMON, true);
 
 		Graphics::GetInstance().ExecuteAllCurrentCommandLists();
+
+		resDesc = textureBuffer->GetDesc();
 
 		const D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{
 				.Format = resDesc.Format,
