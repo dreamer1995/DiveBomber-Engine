@@ -115,6 +115,16 @@ float4 SampleTextureLevel(Texture2D texture, SamplerState samp, float2 uv, uint 
 	return texture.SampleLevel(samp, uv, mipLevel);
 }
 
+float4 SampleCubeTexture(TextureCube texture, SamplerState samp, float3 uv)
+{
+	return texture.Sample(samp, uv);
+}
+
+float4 SampleCubeTextureLevel(TextureCube texture, SamplerState samp, float3 uv, uint mipLevel)
+{
+	return texture.SampleLevel(samp, uv, mipLevel);
+}
+
 float4 SampleTexture(Texture2D texture, SamplerState samp, float2 uv, bool isSRGB)
 {
 	float4 outColor = texture.Sample(samp, uv);
@@ -137,6 +147,28 @@ float4 SampleTextureLevel(Texture2D texture, SamplerState samp, float2 uv, uint 
 	return outColor;
 }
 
+float4 SampleCubeTexture(TextureCube texture, SamplerState samp, float3 uv, bool isSRGB)
+{
+	float4 outColor = texture.Sample(samp, uv);
+	if (isSRGB)
+	{
+		outColor.rgb = DecodeGamma(outColor.rgb);
+	}
+	
+	return outColor;
+}
+
+float4 SampleCubeTextureLevel(TextureCube texture, SamplerState samp, float3 uv, uint mipLevel, bool isSRGB)
+{
+	float4 outColor = texture.SampleLevel(samp, uv, mipLevel);
+	if (isSRGB)
+	{
+		outColor.rgb = DecodeGamma(outColor.rgb);
+	}
+	
+	return outColor;
+}
+
 float4 SampleSRGBTexture(Texture2D texture, SamplerState samp, float2 uv)
 {
 	float4 outColor = texture.Sample(samp, uv);
@@ -146,6 +178,22 @@ float4 SampleSRGBTexture(Texture2D texture, SamplerState samp, float2 uv)
 }
 
 float4 SampleSRGBTextureLevel(Texture2D texture, SamplerState samp, float2 uv, uint mipLevel)
+{
+	float4 outColor = texture.SampleLevel(samp, uv, mipLevel);
+	outColor.rgb = DecodeGamma(outColor.rgb);
+	
+	return outColor;
+}
+
+float4 SampleSRGBCubeTexture(TextureCube texture, SamplerState samp, float3 uv)
+{
+	float4 outColor = texture.Sample(samp, uv);
+	outColor.rgb = DecodeGamma(outColor.rgb);
+	
+	return outColor;
+}
+
+float4 SampleSRGBCubeTextureLevel(TextureCube texture, SamplerState samp, float3 uv, uint mipLevel)
 {
 	float4 outColor = texture.SampleLevel(samp, uv, mipLevel);
 	outColor.rgb = DecodeGamma(outColor.rgb);

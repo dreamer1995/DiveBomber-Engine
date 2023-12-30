@@ -114,7 +114,6 @@ void CSMain(ComputeShaderInput In)
 	RWTexture2D<float4> outMip2 = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.texture2Index)];
 	RWTexture2D<float4> outMip3 = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.texture3Index)];
 	RWTexture2D<float4> outMip4 = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.texture4Index)];
-	ConstantBuffer<BaseShadingParam> baseShadingParam = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.constant0Index)];
 	ConstantBuffer<GenerateMips> generateMipsCB = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.constant1Index)];
 	
 	float4 src1 = (float4) 0;

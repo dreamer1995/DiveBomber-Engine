@@ -39,6 +39,11 @@ namespace DiveBomber::DEResource
 			dx::XMFLOAT2 texelSize;			// 1.0 / OutMip1.Dimensions
 		};
 
+		struct TextureCubeMapGenerateConstant
+		{
+			dx::XMFLOAT2 texelSize;			// 1.0 / OutMip1.Dimensions
+		};
+
 	public:
 		Texture(const std::wstring& inputName, TextureParam inputTextureDesc = TextureParam{});
 		~Texture();

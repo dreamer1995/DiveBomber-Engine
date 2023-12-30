@@ -63,11 +63,9 @@ float4 PSMain(ProcessData In) : SV_Target
 {
 	ConstantBuffer<BaseShadingParam> baseShadingParamCB0 = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.constant0Index)];
 	
-	Texture2D<float4> baseMap = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.texure0Index)];
+	TextureCube<float4> baseMap = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.texure0Index)];
 	
-	float2 skyDomeUV = SampleSphereicalMap(normalize(In.uv));
-	
-	float4 baseColor = SampleSRGBTextureLevel(baseMap, samplerStandard, skyDomeUV, 0u);
+	float4 baseColor = SampleSRGBCubeTextureLevel(baseMap, samplerStandard, normalize(In.uv), 0u);
 	
 	float4 color = baseColor * baseShadingParamCB0.baseColor;
 	

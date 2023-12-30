@@ -1,8 +1,8 @@
 {
-    "CubeMap": false,
+    "CubeMap": true,
     "DiffuseMip": false,
-    "GenerateMip": true,
+    "GenerateMip": false,
     "Texture3D": false,
     "TextureArray": false,
-    "sRGB": false
+    "sRGB": true
 }
