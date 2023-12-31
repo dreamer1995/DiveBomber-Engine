@@ -122,8 +122,6 @@ namespace DiveBomber::DEResource
 				GenerateCache();
 			}
 		}
-
-		Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(textureBuffer, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE, true);
 	}
 
 	void Texture::GenerateCache()
@@ -131,7 +129,7 @@ namespace DiveBomber::DEResource
 		HRESULT hr;
 		DirectX::ScratchImage saveToImage;
 		dx::CaptureTexture(Graphics::GetInstance().GetCommandQueue()->GetCommandQueue().Get(), textureBuffer.Get(), textureParam.cubeMap, saveToImage,
-			D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COMMON);
+			D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
 
 		fs::path cachePath(ProjectDirectoryW L"Cache\\Texture\\");
 		fs::path fileName(name);
@@ -260,6 +258,7 @@ namespace DiveBomber::DEResource
 			copyCommandList->TrackResource(textureUploadBuffer);
 			
 			ResourceStateTracker::AddGlobalResourceState(textureBuffer, D3D12_RESOURCE_STATE_COMMON);
+			Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(textureBuffer, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE, true);
 		}
 
 		if (textureParam.cubeMap && metadata.arraySize == 1)
@@ -398,7 +397,7 @@ namespace DiveBomber::DEResource
 			srcMip += mipCount;
 		}
 
-		Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(textureBuffer, D3D12_RESOURCE_STATE_COMMON, true);
+		Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(textureBuffer, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE, true);
 
 		Graphics::GetInstance().ExecuteAllCurrentCommandLists();
 	}
@@ -422,12 +421,12 @@ namespace DiveBomber::DEResource
 			&heapProps,
 			D3D12_HEAP_FLAG_NONE,
 			&resDesc,
-			D3D12_RESOURCE_STATE_COMMON,
+			D3D12_RESOURCE_STATE_UNORDERED_ACCESS,
 			nullptr,
 			IID_PPV_ARGS(&textureBuffer)
 		));
 
-		ResourceStateTracker::AddGlobalResourceState(textureBuffer, D3D12_RESOURCE_STATE_COMMON);
+		ResourceStateTracker::AddGlobalResourceState(textureBuffer, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
 
 		// Create render request resource
 		const std::wstring generateCubeName(L"GenerateCubeMap");
@@ -486,7 +485,7 @@ namespace DiveBomber::DEResource
 			((UINT)resDesc.Height + 7u) / 8,
 			1u);
 
-		Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(textureBuffer, D3D12_RESOURCE_STATE_COMMON, true);
+		Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(textureBuffer, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE, true);
 
 		Graphics::GetInstance().ExecuteAllCurrentCommandLists();
 	}
