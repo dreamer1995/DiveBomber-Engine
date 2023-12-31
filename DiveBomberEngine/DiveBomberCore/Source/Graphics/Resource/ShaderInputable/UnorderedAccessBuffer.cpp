@@ -92,6 +92,7 @@ namespace DiveBomber::DEResource
 
 	void UnorderedAccessBuffer::Resize(const wrl::ComPtr<ID3D12Resource> inputUAVBuffer)
 	{
+		// Careful!!!
 		if (uavBuffer != nullptr)
 		{
 			ResourceStateTracker::RemoveGlobalResourceState(uavBuffer);

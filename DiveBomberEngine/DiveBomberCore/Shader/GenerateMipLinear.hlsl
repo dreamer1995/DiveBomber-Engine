@@ -109,11 +109,11 @@ float4 PackColor(float4 x, bool isSRGB)
 [numthreads(BLOCK_SIZE, BLOCK_SIZE, 1)]
 void CSMain(ComputeShaderInput In)
 {
-	Texture2D<float4> inputMap = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.texture0Index)];
-	RWTexture2D<float4> outMip1 = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.texture1Index)];
-	RWTexture2D<float4> outMip2 = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.texture2Index)];
-	RWTexture2D<float4> outMip3 = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.texture3Index)];
-	RWTexture2D<float4> outMip4 = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.texture4Index)];
+	Texture2DArray<float4> inputMap = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.texture0Index)];
+	RWTexture2DArray<float4> outMip1 = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.texture1Index)];
+	RWTexture2DArray<float4> outMip2 = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.texture2Index)];
+	RWTexture2DArray<float4> outMip3 = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.texture3Index)];
+	RWTexture2DArray<float4> outMip4 = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.texture4Index)];
 	ConstantBuffer<GenerateMips> generateMipsCB = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.constant1Index)];
 	
 	float4 src1 = (float4) 0;
@@ -135,9 +135,9 @@ void CSMain(ComputeShaderInput In)
 	{
 		case WIDTH_HEIGHT_EVEN:
         {
-			float2 uv = generateMipsCB.texelSize * (In.dispatchThreadID.xy + 0.5f);
+			float3 uv = float3(generateMipsCB.texelSize * (In.dispatchThreadID.xy + 0.5f), In.dispatchThreadID.z);
 
-			src1 = SampleTextureLevel(inputMap, samplerStandardClamp, uv, generateMipsCB.inputMapLevel, generateMipsCB.isSRGB);
+			src1 = SampleTextureArrayLevel(inputMap, samplerStandardClamp, uv, generateMipsCB.inputMapLevel, generateMipsCB.isSRGB);
 		}
 		break;
 		case WIDTH_ODD_HEIGHT_EVEN:
@@ -145,11 +145,11 @@ void CSMain(ComputeShaderInput In)
 			// > 2:1 in X dimension
 			// Use 2 bilinear samples to guarantee we don't undersample when downsizing by more than 2x
 			// horizontally.
-			float2 uv1 = generateMipsCB.texelSize * (In.dispatchThreadID.xy + float2(0.25f, 0.5f));
-			float2 offset = generateMipsCB.texelSize * float2(0.5f, 0.0f);
+			float3 uv1 = float3(generateMipsCB.texelSize * (In.dispatchThreadID.xy + float2(0.25f, 0.5f)), In.dispatchThreadID.z);
+			float3 offset = float3(generateMipsCB.texelSize * float2(0.5f, 0.0f), 0.0f);
 
-			src1 = 0.5f * (SampleTextureLevel(inputMap, samplerStandardClamp, uv1, generateMipsCB.inputMapLevel, generateMipsCB.isSRGB) +
-                        SampleTextureLevel(inputMap, samplerStandardClamp, uv1 + offset, generateMipsCB.inputMapLevel, generateMipsCB.isSRGB));
+			src1 = 0.5f * (SampleTextureArrayLevel(inputMap, samplerStandardClamp, uv1, generateMipsCB.inputMapLevel, generateMipsCB.isSRGB) +
+                        SampleTextureArrayLevel(inputMap, samplerStandardClamp, uv1 + offset, generateMipsCB.inputMapLevel, generateMipsCB.isSRGB));
 		}
 		break;
 		case WIDTH_EVEN_HEIGHT_ODD:
@@ -157,11 +157,11 @@ void CSMain(ComputeShaderInput In)
             // > 2:1 in Y dimension
             // Use 2 bilinear samples to guarantee we don't undersample when downsizing by more than 2x
             // vertically.
-			float2 uv1 = generateMipsCB.texelSize * (In.dispatchThreadID.xy + float2(0.5f, 0.25f));
-			float2 offset = generateMipsCB.texelSize * float2(0.0f, 0.5f);
+			float3 uv1 = float3(generateMipsCB.texelSize * (In.dispatchThreadID.xy + float2(0.5f, 0.25f)), In.dispatchThreadID.z);
+			float3 offset = float3(generateMipsCB.texelSize * float2(0.0f, 0.5f), 0.0f);
 
-			src1 = 0.5f * (SampleTextureLevel(inputMap, samplerStandardClamp, uv1, generateMipsCB.inputMapLevel, generateMipsCB.isSRGB) +
-                        SampleTextureLevel(inputMap, samplerStandardClamp, uv1 + offset, generateMipsCB.inputMapLevel, generateMipsCB.isSRGB));
+			src1 = 0.5f * (SampleTextureArrayLevel(inputMap, samplerStandardClamp, uv1, generateMipsCB.inputMapLevel, generateMipsCB.isSRGB) +
+                        SampleTextureArrayLevel(inputMap, samplerStandardClamp, uv1 + offset, generateMipsCB.inputMapLevel, generateMipsCB.isSRGB));
 		}
 		break;
 		case WIDTH_HEIGHT_ODD:
@@ -169,19 +169,19 @@ void CSMain(ComputeShaderInput In)
             // > 2:1 in in both dimensions
             // Use 4 bilinear samples to guarantee we don't undersample when downsizing by more than 2x
             // in both directions.
-			float2 uv1 = generateMipsCB.texelSize * (In.dispatchThreadID.xy + float2(0.25f, 0.25f));
+			float3 uv1 = float3(generateMipsCB.texelSize * (In.dispatchThreadID.xy + float2(0.25f, 0.25f)), In.dispatchThreadID.z);
 			float2 offset = generateMipsCB.texelSize * 0.5f;
 
-			src1 = SampleTextureLevel(inputMap, samplerStandardClamp, uv1, generateMipsCB.inputMapLevel, generateMipsCB.isSRGB);
-			src1 += SampleTextureLevel(inputMap, samplerStandardClamp, uv1 + float2(0.0, offset.y), generateMipsCB.inputMapLevel, generateMipsCB.isSRGB);
-			src1 += SampleTextureLevel(inputMap, samplerStandardClamp, uv1 + float2(0.0, offset.y), generateMipsCB.inputMapLevel, generateMipsCB.isSRGB);
-			src1 += SampleTextureLevel(inputMap, samplerStandardClamp, uv1 + float2(offset.x, offset.y), generateMipsCB.inputMapLevel, generateMipsCB.isSRGB);
+			src1 = SampleTextureArrayLevel(inputMap, samplerStandardClamp, uv1, generateMipsCB.inputMapLevel, generateMipsCB.isSRGB);
+			src1 += SampleTextureArrayLevel(inputMap, samplerStandardClamp, uv1 + float3(0.0f, offset.y, 0.0f), generateMipsCB.inputMapLevel, generateMipsCB.isSRGB);
+			src1 += SampleTextureArrayLevel(inputMap, samplerStandardClamp, uv1 + float3(0.0f, offset.y, 0.0f), generateMipsCB.inputMapLevel, generateMipsCB.isSRGB);
+			src1 += SampleTextureArrayLevel(inputMap, samplerStandardClamp, uv1 + float3(offset.x, offset.y, 0.0f), generateMipsCB.inputMapLevel, generateMipsCB.isSRGB);
 			src1 *= 0.25f;
 		}
 		break;
 	}
 	
-	outMip1[In.dispatchThreadID.xy] = PackColor(src1, generateMipsCB.isSRGB);
+	outMip1[In.dispatchThreadID] = PackColor(src1, generateMipsCB.isSRGB);
 	
 	// A scalar (constant) branch can exit all threads coherently.
 	if (generateMipsCB.numMipLevels == 1)
@@ -205,7 +205,7 @@ void CSMain(ComputeShaderInput In)
 		float4 src4 = LoadColor(In.groupIndex + 0x09, generateMipsCB.isSRGB);
 		src1 = 0.25 * (src1 + src2 + src3 + src4);
 
-		outMip2[In.dispatchThreadID.xy / 2] = PackColor(src1, generateMipsCB.isSRGB);
+		outMip2[uint3(In.dispatchThreadID.xy / 2, In.dispatchThreadID.z)] = PackColor(src1, generateMipsCB.isSRGB);
 		StoreColor(In.groupIndex, src1);
 	}
 	
@@ -222,7 +222,7 @@ void CSMain(ComputeShaderInput In)
 		float4 src4 = LoadColor(In.groupIndex + 0x12, generateMipsCB.isSRGB);
 		src1 = 0.25 * (src1 + src2 + src3 + src4);
 
-		outMip3[In.dispatchThreadID.xy / 4] = PackColor(src1, generateMipsCB.isSRGB);
+		outMip3[uint3(In.dispatchThreadID.xy / 4, In.dispatchThreadID.z)] = PackColor(src1, generateMipsCB.isSRGB);
 		StoreColor(In.groupIndex, src1);
 	}
 	
@@ -240,6 +240,6 @@ void CSMain(ComputeShaderInput In)
 		float4 src4 = LoadColor(In.groupIndex + 0x24, generateMipsCB.isSRGB);
 		src1 = 0.25 * (src1 + src2 + src3 + src4);
 
-		outMip4[In.dispatchThreadID.xy / 8] = PackColor(src1, generateMipsCB.isSRGB);
+		outMip4[uint3(In.dispatchThreadID.xy / 8, In.dispatchThreadID.z)] = PackColor(src1, generateMipsCB.isSRGB);
 	}
 }
