@@ -23,7 +23,9 @@ namespace DiveBomber::DEResource
 		optimizedClearValue(),
 		//for partial view someday
 		rtvDesc(),
-		resourceDesc()
+		resourceDesc(),
+		renderTargetBuffer(inputBuffer),
+		selfManagedBuffer(false)
 	{
 		Resize(inputBuffer);
 	}
@@ -36,7 +38,8 @@ namespace DiveBomber::DEResource
 		rtvDescriptorAllocation(rtvDescriptorAllocator->Allocate(1u)),
 		rtvCPUHandle(rtvDescriptorAllocation->GetCPUDescriptorHandle()),
 		rtvDesc(),
-		resourceDesc(inputDesc)
+		resourceDesc(inputDesc),
+		selfManagedBuffer(true)
 	{
 		// Resize screen dependent resources.
 		// Create a render target buffer.
@@ -50,7 +53,10 @@ namespace DiveBomber::DEResource
 
 	RenderTarget::~RenderTarget()
 	{
-		ResourceStateTracker::RemoveGlobalResourceState(renderTargetBuffer);
+		if (selfManagedBuffer)
+		{
+			ResourceStateTracker::RemoveGlobalResourceState(renderTargetBuffer);
+		}
 	}
 
 	void RenderTarget::BindTarget() noxnd
@@ -80,6 +86,11 @@ namespace DiveBomber::DEResource
 
 	void RenderTarget::Resize(const CD3DX12_RESOURCE_DESC inputDesc)
 	{
+		if (!selfManagedBuffer)
+		{
+			throw std::exception{ "Try to overwrite external buffer!" };
+		}
+
 		resourceDesc = inputDesc;
 		optimizedClearValue.Format = resourceDesc.Format;
 
@@ -116,8 +127,13 @@ namespace DiveBomber::DEResource
 
 	void RenderTarget::Resize(const wrl::ComPtr<ID3D12Resource> newbuffer)
 	{
+		if (selfManagedBuffer)
+		{
+			throw std::exception{ "Try to overwrite internal buffer!" };
+		}
+
 		//renderTargetBuffer address changed
-		if (renderTargetBuffer)
+		if (renderTargetBuffer != newbuffer)
 		{
 			ResourceStateTracker::RemoveGlobalResourceState(renderTargetBuffer);
 		}

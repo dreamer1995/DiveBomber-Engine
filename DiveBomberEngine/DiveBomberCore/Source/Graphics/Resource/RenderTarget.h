@@ -43,6 +43,7 @@ namespace DiveBomber::DEResource
 		void Clear(FLOAT clearColor[]) noxnd;
 
 	protected:
+		bool selfManagedBuffer;
 		wrl::ComPtr<ID3D12Resource> renderTargetBuffer;
 
 		std::shared_ptr<DX::DescriptorAllocator> rtvDescriptorAllocator;
@@ -52,5 +53,6 @@ namespace DiveBomber::DEResource
 		D3D12_CLEAR_VALUE optimizedClearValue;
 		D3D12_RENDER_TARGET_VIEW_DESC rtvDesc;
 		CD3DX12_RESOURCE_DESC resourceDesc;
+
 	};
 }

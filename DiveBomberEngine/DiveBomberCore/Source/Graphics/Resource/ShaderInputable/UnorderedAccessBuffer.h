@@ -35,6 +35,7 @@ namespace DiveBomber::DEResource
 
 		[[nodiscard]] UINT GetSRVDescriptorHeapOffset() const noexcept override;
 	private:
+		bool selfManagedBuffer;
 		wrl::ComPtr<ID3D12Resource> uavBuffer;
 
 		std::shared_ptr<DX::DescriptorAllocator> descriptorAllocator;

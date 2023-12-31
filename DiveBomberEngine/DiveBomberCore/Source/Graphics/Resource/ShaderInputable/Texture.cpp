@@ -122,6 +122,8 @@ namespace DiveBomber::DEResource
 				GenerateCache();
 			}
 		}
+
+		Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(textureBuffer, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE, true);
 	}
 
 	void Texture::GenerateCache()
@@ -216,8 +218,8 @@ namespace DiveBomber::DEResource
 
 		std::vector<D3D12_SUBRESOURCE_DATA> subresourceData;
 
-		for (int i = 0; i < metadata.mipLevels; i++)
-			for (int j = 0; j < metadata.arraySize; j++)
+		for (int j = 0; j < metadata.arraySize; j++)
+			for (int i = 0; i < metadata.mipLevels; i++)
 		{
 			const auto img = scratchImage.GetImage(i, j, 0);
 
@@ -258,7 +260,6 @@ namespace DiveBomber::DEResource
 			copyCommandList->TrackResource(textureUploadBuffer);
 			
 			ResourceStateTracker::AddGlobalResourceState(textureBuffer, D3D12_RESOURCE_STATE_COMMON);
-			Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(textureBuffer, D3D12_RESOURCE_STATE_COMMON, true);
 		}
 
 		if (textureParam.cubeMap && metadata.arraySize == 1)
@@ -427,7 +428,6 @@ namespace DiveBomber::DEResource
 		));
 
 		ResourceStateTracker::AddGlobalResourceState(textureBuffer, D3D12_RESOURCE_STATE_COMMON);
-		Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(textureBuffer, D3D12_RESOURCE_STATE_COMMON, true);
 
 		// Create render request resource
 		const std::wstring generateCubeName(L"GenerateCubeMap");

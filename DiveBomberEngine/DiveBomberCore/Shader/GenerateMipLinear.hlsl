@@ -80,16 +80,9 @@ void StoreColor(uint Index, float4 Color)
 	gs_A[Index] = Color.a;
 }
 
-float4 LoadColor(uint Index, bool isSRGB)
+float4 LoadColor(uint Index)
 {
-	if (isSRGB)
-	{
-		return float4(DecodeGamma(float3(gs_R[Index], gs_G[Index], gs_B[Index])), gs_A[Index]);
-	}
-	else
-	{
-		return float4(gs_R[Index], gs_G[Index], gs_B[Index], gs_A[Index]);
-	}
+	return float4(gs_R[Index], gs_G[Index], gs_B[Index], gs_A[Index]);
 }
 
 // Convert linear color to sRGB before storing if the original source is 
@@ -200,9 +193,9 @@ void CSMain(ComputeShaderInput In)
     // (binary: 001001) checks that X and Y are even.
 	if ((In.groupIndex & 0x9) == 0)
 	{
-		float4 src2 = LoadColor(In.groupIndex + 0x01, generateMipsCB.isSRGB);
-		float4 src3 = LoadColor(In.groupIndex + 0x08, generateMipsCB.isSRGB);
-		float4 src4 = LoadColor(In.groupIndex + 0x09, generateMipsCB.isSRGB);
+		float4 src2 = LoadColor(In.groupIndex + 0x01);
+		float4 src3 = LoadColor(In.groupIndex + 0x08);
+		float4 src4 = LoadColor(In.groupIndex + 0x09);
 		src1 = 0.25 * (src1 + src2 + src3 + src4);
 
 		outMip2[uint3(In.dispatchThreadID.xy / 2, In.dispatchThreadID.z)] = PackColor(src1, generateMipsCB.isSRGB);
@@ -217,9 +210,9 @@ void CSMain(ComputeShaderInput In)
 	// This bit mask (binary: 011011) checks that X and Y are multiples of four.
 	if ((In.groupIndex & 0x1B) == 0)
 	{
-		float4 src2 = LoadColor(In.groupIndex + 0x02, generateMipsCB.isSRGB);
-		float4 src3 = LoadColor(In.groupIndex + 0x10, generateMipsCB.isSRGB);
-		float4 src4 = LoadColor(In.groupIndex + 0x12, generateMipsCB.isSRGB);
+		float4 src2 = LoadColor(In.groupIndex + 0x02);
+		float4 src3 = LoadColor(In.groupIndex + 0x10);
+		float4 src4 = LoadColor(In.groupIndex + 0x12);
 		src1 = 0.25 * (src1 + src2 + src3 + src4);
 
 		outMip3[uint3(In.dispatchThreadID.xy / 4, In.dispatchThreadID.z)] = PackColor(src1, generateMipsCB.isSRGB);
@@ -235,9 +228,9 @@ void CSMain(ComputeShaderInput In)
     // thread fits that criteria.
 	if (In.groupIndex == 0)
 	{
-		float4 src2 = LoadColor(In.groupIndex + 0x04, generateMipsCB.isSRGB);
-		float4 src3 = LoadColor(In.groupIndex + 0x20, generateMipsCB.isSRGB);
-		float4 src4 = LoadColor(In.groupIndex + 0x24, generateMipsCB.isSRGB);
+		float4 src2 = LoadColor(In.groupIndex + 0x04);
+		float4 src3 = LoadColor(In.groupIndex + 0x20);
+		float4 src4 = LoadColor(In.groupIndex + 0x24);
 		src1 = 0.25 * (src1 + src2 + src3 + src4);
 
 		outMip4[uint3(In.dispatchThreadID.xy / 8, In.dispatchThreadID.z)] = PackColor(src1, generateMipsCB.isSRGB);

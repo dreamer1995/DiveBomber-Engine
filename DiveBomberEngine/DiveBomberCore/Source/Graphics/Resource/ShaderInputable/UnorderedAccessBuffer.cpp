@@ -21,7 +21,8 @@ namespace DiveBomber::DEResource
 		descriptorAllocation(descriptorAllocator->Allocate(1u)),
 		cpuHandle(descriptorAllocation->GetCPUDescriptorHandle()),
 		uavDesc(),
-		resourceDesc(inputDesc)
+		resourceDesc(inputDesc),
+		selfManagedBuffer(true)
 	{
 		Resize(resourceDesc);
 	}
@@ -37,14 +38,18 @@ namespace DiveBomber::DEResource
 		cpuHandle(descriptorAllocation->GetCPUDescriptorHandle()),
 		uavDesc(inputUAVDesc),
 		uavBuffer(inputUAVBuffer),
-		resourceDesc(inputUAVBuffer->GetDesc())
+		resourceDesc(inputUAVBuffer->GetDesc()),
+		selfManagedBuffer(false)
 	{
 		Resize(uavBuffer);
 	}
 
 	UnorderedAccessBuffer::~UnorderedAccessBuffer()
 	{
-		ResourceStateTracker::RemoveGlobalResourceState(uavBuffer);
+		if (selfManagedBuffer)
+		{
+			ResourceStateTracker::RemoveGlobalResourceState(uavBuffer);
+		}
 	}
 
 	void UnorderedAccessBuffer::BindAsTarget() noxnd
@@ -69,6 +74,11 @@ namespace DiveBomber::DEResource
 
 	void UnorderedAccessBuffer::Resize(const CD3DX12_RESOURCE_DESC inputDesc)
 	{
+		if (!selfManagedBuffer)
+		{
+			throw std::exception{ "Try to overwrite external buffer!" };
+		}
+
 		resourceDesc = inputDesc;
 
 		HRESULT hr;
@@ -92,8 +102,12 @@ namespace DiveBomber::DEResource
 
 	void UnorderedAccessBuffer::Resize(const wrl::ComPtr<ID3D12Resource> inputUAVBuffer)
 	{
-		// Careful!!!
-		if (uavBuffer != nullptr)
+		if (selfManagedBuffer)
+		{
+			throw std::exception{ "Try to overwrite internal buffer!" };
+		}
+
+		if (uavBuffer != inputUAVBuffer)
 		{
 			ResourceStateTracker::RemoveGlobalResourceState(uavBuffer);
 		}
