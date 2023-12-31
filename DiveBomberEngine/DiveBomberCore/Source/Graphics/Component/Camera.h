@@ -23,7 +23,7 @@ namespace DiveBomber::Component
 			Projection::ProjectionAttributes projectionAttributes;
 		};
 
-		struct Transforms
+		struct alignas(16) Transforms
 		{
 			DirectX::XMMATRIX matrix_V;
 			DirectX::XMMATRIX matrix_P;

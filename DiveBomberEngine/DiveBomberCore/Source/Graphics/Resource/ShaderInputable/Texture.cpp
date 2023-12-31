@@ -274,7 +274,14 @@ namespace DiveBomber::DEResource
 
 		if (textureParam.generateMip && !generrateMipNotSupport && metadata.mipLevels < resDesc.MipLevels)
 		{
-			GenerateMipMaps();
+			if (textureParam.diffuseMip)
+			{
+				GenerateDiffuseMipMaps();
+			}
+			else
+			{
+				GenerateMipMaps();
+			}
 		}
 
 		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
@@ -402,6 +409,76 @@ namespace DiveBomber::DEResource
 		Graphics::GetInstance().ExecuteAllCurrentCommandLists();
 	}
 
+	void Texture::GenerateDiffuseMipMaps()
+	{
+		const std::wstring generateMipName(L"GenerateDiffuseMipLinear");
+		D3D12_RESOURCE_DESC resDesc = textureBuffer->GetDesc();
+
+		std::shared_ptr<Material> material = std::make_shared<Material>(generateMipName, generateMipName);
+
+		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+		srvDesc.Format = resDesc.Format;
+		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURECUBE;
+		srvDesc.TextureCube.MipLevels = resDesc.MipLevels;
+
+		Graphics::GetInstance().GetDevice()->CreateShaderResourceView(textureBuffer.Get(), &srvDesc, descriptorAllocation->GetCPUDescriptorHandle());
+
+		material->SetTexture(GetSRVDescriptorHeapOffset(), 0);
+
+		std::shared_ptr<RootSignature> rootSignature = GlobalResourceManager::Resolve<RootSignature>(L"StandardFullStageAccess");
+
+		TextureDiffuseMipGenerateConstant mipGenCB;
+		mipGenCB.isSRGB = textureParam.sRGB;
+		std::shared_ptr<ConstantBufferInHeap<TextureDiffuseMipGenerateConstant>> mipGenCBIndex =
+			std::make_shared<ConstantBufferInHeap<TextureDiffuseMipGenerateConstant>>(generateMipName);
+		material->SetConstant(mipGenCBIndex, 1);
+
+		PipelineStateObject::PipelineStateReference pipelineStateReference;
+		pipelineStateReference.rootSignature = rootSignature;
+		pipelineStateReference.material = material;
+
+		std::shared_ptr<PipelineStateObject> pipelineStateObject = std::make_shared<PipelineStateObject>(generateMipName, std::move(pipelineStateReference));
+
+		Graphics::GetInstance().BindShaderDescriptorHeaps();
+		for (int srcMip = 0; srcMip < resDesc.MipLevels - 1; srcMip++)
+		{
+			UINT dstWidth = (UINT)resDesc.Width >> (srcMip + 1);
+			UINT dstHeight = resDesc.Height >> (srcMip + 1);
+
+			mipGenCB.srcMipLevel = srcMip;
+			mipGenCB.texelSize.x = 1.0f / (float)dstWidth;
+			mipGenCB.texelSize.y = 1.0f / (float)dstHeight;
+
+			mipGenCBIndex->Update(mipGenCB);
+
+			D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc{};
+			uavDesc.Format = resDesc.Format;
+			uavDesc.ViewDimension = D3D12_UAV_DIMENSION_TEXTURE2DARRAY;
+			uavDesc.Texture2DArray.MipSlice = srcMip + 1u;
+			uavDesc.Texture2DArray.ArraySize = 6u;
+			std::shared_ptr<UnorderedAccessBuffer> mipTarget = std::make_shared<UnorderedAccessBuffer>(
+				Graphics::GetInstance().GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV),
+				textureBuffer, uavDesc);
+
+			mipTarget->BindAsTarget();
+			material->SetTexture(mipTarget, 1u);
+
+			rootSignature->Bind();
+			material->Bind();
+			pipelineStateObject->Bind();
+
+			Graphics::GetInstance().GetGraphicsCommandList()->Dispatch(
+				(dstWidth + 7u) / 8u,
+				(dstHeight + 7u) / 8u,
+				6u);
+		}
+
+		Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(textureBuffer, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE, true);
+
+		Graphics::GetInstance().ExecuteAllCurrentCommandLists();
+	}
+
 	void Texture::GenerateCubeMap()
 	{
 		HRESULT hr;
@@ -483,7 +560,7 @@ namespace DiveBomber::DEResource
 		Graphics::GetInstance().GetGraphicsCommandList()->Dispatch(
 			((UINT)resDesc.Width + 7u) / 8,
 			((UINT)resDesc.Height + 7u) / 8,
-			1u);
+			6u);
 
 		Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(textureBuffer, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE, true);
 

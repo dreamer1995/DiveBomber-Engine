@@ -30,7 +30,7 @@ namespace DiveBomber::DEResource
 			bool texture3D = false;
 		};
 
-		struct TextureMipMapGenerateConstant
+		struct alignas(16) TextureMipMapGenerateConstant
 		{
 			uint32_t srcMipLevel;           // Texture level of source mip
 			uint32_t numMipLevels;          // Number of OutMips to write: [1-4]
@@ -39,7 +39,14 @@ namespace DiveBomber::DEResource
 			dx::XMFLOAT2 texelSize;			// 1.0 / OutMip1.Dimensions
 		};
 
-		struct TextureCubeMapGenerateConstant
+		struct alignas(16) TextureDiffuseMipGenerateConstant
+		{
+			uint32_t srcMipLevel;           // Texture level of source mip
+			uint32_t isSRGB;                // Must apply gamma correction to sRGB textures.
+			dx::XMFLOAT2 texelSize;			// 1.0 / OutMip1.Dimensions
+		};
+
+		struct alignas(16) TextureCubeMapGenerateConstant
 		{
 			dx::XMFLOAT2 texelSize;			// 1.0 / OutMip1.Dimensions
 		};
@@ -67,8 +74,8 @@ namespace DiveBomber::DEResource
 		void GenerateCache();
 		void LoadScratchImage(const std::filesystem::path& filePath);
 		void GenerateMipMaps();
+		void GenerateDiffuseMipMaps();
 		void GenerateCubeMap();
-		void GenerateDiffuseMip();
 
 	protected:
 		json config;

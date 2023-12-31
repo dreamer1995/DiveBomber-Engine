@@ -17,7 +17,7 @@ namespace DiveBomber::DEResource
 	class ConstantTransformBuffer final : public Resource, public Bindable
 	{
 	public:
-		struct Transforms
+		struct alignas(16) Transforms
 		{
 			DirectX::XMMATRIX matrix_MVP;
 			DirectX::XMMATRIX matrix_MV;

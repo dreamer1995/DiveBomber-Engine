@@ -1,6 +1,6 @@
 {
     "CubeMap": true,
-    "DiffuseMip": false,
+    "DiffuseMip": true,
     "GenerateMip": true,
     "Texture3D": false,
     "TextureArray": false,
