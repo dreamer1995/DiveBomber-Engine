@@ -25,7 +25,7 @@ namespace DiveBomber::DEResource
 			bool sRGB = false;
 			bool generateMip = true;
 			bool cubeMap = false;
-			bool diffuseMip = false;
+			bool globalIllumination = false;
 			bool textureArray = false;
 			bool texture3D = false;
 		};
@@ -74,8 +74,9 @@ namespace DiveBomber::DEResource
 		void GenerateCache();
 		void LoadScratchImage(const std::filesystem::path& filePath);
 		void GenerateMipMaps();
-		void GenerateDiffuseMipMaps();
+		void GenerateSpecularIBLMipMaps();
 		void GenerateCubeMap();
+		void GenerateDiffuseIrradiance();
 
 	protected:
 		json config;
