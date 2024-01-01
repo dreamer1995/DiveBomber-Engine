@@ -274,3 +274,17 @@ float4 SampleNormalTextureLevel(Texture2D texture, SamplerState samp, float2 uv,
 	
 	return outColor;
 }
+
+// Convert linear color to sRGB before storing if the original source is 
+// an sRGB texture.
+float4 PackColor(float4 x, bool isSRGB)
+{
+	if (isSRGB)
+	{
+		return float4(EncodeGamma(x.rgb), x.a);
+	}
+	else
+	{
+		return x;
+	}
+}

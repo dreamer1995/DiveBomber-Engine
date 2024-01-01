@@ -29,7 +29,6 @@ struct BaseShadingParam
 
 struct GenerateDiffuseMips
 {
-	float roughness;
 	bool isSRGB;
 	float2 texelSize;
 };
@@ -50,10 +49,10 @@ void CSMain(ComputeShaderInput In)
 	ConstantBuffer<GenerateDiffuseMips> generateDiffuseMips = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.constant1Index)];
 	
 	float2 uv = generateDiffuseMips.texelSize * (In.dispatchThreadID.xy + 0.5f) - 0.5f;
-	float3 normalVec = normalize(ThreadIDToCubeFaceCoordinate(uv, In.dispatchThreadID.z));
+	float3 front = normalize(ThreadIDToCubeFaceCoordinate(uv, In.dispatchThreadID.z));
 	
 	outMip1[In.dispatchThreadID] = PackColor(
-		float4(ConvolutionCubeMapSpecular(inputMap, samplerStandard, normalVec,
-			generateDiffuseMips.roughness, generateDiffuseMips.isSRGB), 1.0f),
+		float4(ConvolutionCubeMapDiffuse(inputMap, samplerStandard, front,
+			generateDiffuseMips.isSRGB), 1.0f),
 			generateDiffuseMips.isSRGB);
 }

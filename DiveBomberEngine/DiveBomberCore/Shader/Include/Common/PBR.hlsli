@@ -1,3 +1,5 @@
+static const float PI = 3.14159265359f;
+
 float DistributionGGX(float NdotH, float roughness)
 {
 	float a = roughness * roughness;

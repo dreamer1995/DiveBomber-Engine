@@ -18,17 +18,3 @@ float4 LoadColor(uint Index)
 {
 	return float4(gs_R[Index], gs_G[Index], gs_B[Index], gs_A[Index]);
 }
-
-// Convert linear color to sRGB before storing if the original source is 
-// an sRGB texture.
-float4 PackColor(float4 x, bool isSRGB)
-{
-	if (isSRGB)
-	{
-		return float4(EncodeGamma(x.rgb), x.a);
-	}
-	else
-	{
-		return x;
-	}
-}

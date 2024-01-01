@@ -30,8 +30,7 @@ float3 ThreadIDToCubeFaceCoordinate(float2 position, uint groupIndex)
 	return float3(0.0f, 0.0f, 0.0f);
 }
 
-static const float PI = 3.14159265359;
-float3 ConvolutionCubeMapIrradiance(TextureCube texture, SamplerState samp, float3 front, bool isSRGB)
+float3 ConvolutionCubeMapDiffuse(TextureCube texture, SamplerState samp, float3 front, bool isSRGB)
 {
 	float3 up = float3(0.0f, 1.0f, 0.0f);
 	float3 right = cross(up, front);

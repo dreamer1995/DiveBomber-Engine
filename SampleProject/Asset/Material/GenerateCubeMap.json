@@ -1,26 +1,19 @@
 {
     "Param": [
         {
-            "Name": "baseMap",
-            "Type": 4,
-            "Value": "hayloft_4k.exr",
-            "sRGB": true
-        },
-        {
             "Name": "baseColor",
             "Type": 3,
             "Value": [
                 1.0,
-                1.0,
+                0.0,
                 1.0,
                 1.0
             ],
             "sRGB": true
         }
     ],
-    "ShaderName": "SkyDome",
+    "ShaderName": "GenerateCubeMap",
     "Stage": [
-        0,
-        4
+        5
     ]
 }

@@ -119,27 +119,25 @@ namespace DiveBomber::DEResource
 			//Because currently, dxtc function CaptureTexture can't capture ID3D12Resource to ScratchImage
 			if (filePath.extension() != ".dds")
 			{
-				GenerateCache();
+				GenerateCache(textureBuffer, cachePath);
 			}
 		}
 	}
 
-	void Texture::GenerateCache()
+	void Texture::GenerateCache(const wrl::ComPtr<ID3D12Resource> outputTextureBuffer, const std::filesystem::path& outputPath)
 	{
 		HRESULT hr;
 		DirectX::ScratchImage saveToImage;
-		dx::CaptureTexture(Graphics::GetInstance().GetCommandQueue()->GetCommandQueue().Get(), textureBuffer.Get(), textureParam.cubeMap, saveToImage,
+		dx::CaptureTexture(Graphics::GetInstance().GetCommandQueue()->GetCommandQueue().Get(), outputTextureBuffer.Get(), textureParam.cubeMap, saveToImage,
 			D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
 
 		fs::path cachePath(ProjectDirectoryW L"Cache\\Texture\\");
-		fs::path fileName(name);
 		if (!fs::exists(cachePath))
 		{
 			fs::create_directories(cachePath);
 		}
 
-		fileName.replace_extension(".dds");
-		GFX_THROW_INFO(dx::SaveToDDSFile(saveToImage.GetImages(), saveToImage.GetImageCount(), saveToImage.GetMetadata(), dx::DDS_FLAGS_NONE, (cachePath.wstring() + fileName.wstring()).c_str()));
+		GFX_THROW_INFO(dx::SaveToDDSFile(saveToImage.GetImages(), saveToImage.GetImageCount(), saveToImage.GetMetadata(), dx::DDS_FLAGS_NONE, outputPath.c_str()));
 	}
 
 	void Texture::LoadScratchImage(const std::filesystem::path& filePath)
@@ -277,12 +275,23 @@ namespace DiveBomber::DEResource
 			GenerateMipMaps();
 		}
 
-		if (textureParam.globalIllumination && metadata.arraySize == 1 && !generrateMipNotSupport /*&& if no cache*/)
+		if (textureParam.globalIllumination && metadata.arraySize == 1 && !generrateMipNotSupport)
 		{
-			GenerateDiffuseIrradiance();
-			GenerateSpecularIBLMipMaps();
+			fs::path fileName(name);
+			fs::path cachePath(ProjectDirectoryW L"Cache\\Texture\\" + fileName.stem().wstring() + L"#DiffuseIrradiance.dds");
+			if (!fs::exists(cachePath))
+			{
+				GenerateDiffuseIrradiance(cachePath);
+			}
+
+			cachePath = ProjectDirectoryW L"Cache\\Texture\\" + fileName.stem().wstring() + L"#SpecularIBL.dds";
+			if (!fs::exists(cachePath))
+			{
+				GenerateSpecularIBLMipMaps(cachePath);
+			}
 		}
 
+		resDesc = textureBuffer->GetDesc();
 		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 		srvDesc.Format = resDesc.Format;
 		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
@@ -408,10 +417,30 @@ namespace DiveBomber::DEResource
 		Graphics::GetInstance().ExecuteAllCurrentCommandLists();
 	}
 
-	void Texture::GenerateSpecularIBLMipMaps()
+	void Texture::GenerateDiffuseIrradiance(const std::filesystem::path& outputPath)
 	{
-		const std::wstring generateMipName(L"GenerateSpecularIBLMip");
+		HRESULT hr;
+
+		wrl::ComPtr<ID3D12Resource> outputCubeTarget;
+
+		// Create final cube resource
 		D3D12_RESOURCE_DESC resDesc = textureBuffer->GetDesc();
+		resDesc.Alignment = 0u;
+		resDesc.MipLevels = 1u;
+
+		const CD3DX12_HEAP_PROPERTIES heapProps{ D3D12_HEAP_TYPE_DEFAULT };
+		GFX_THROW_INFO(Graphics::GetInstance().GetDevice()->CreateCommittedResource(
+			&heapProps,
+			D3D12_HEAP_FLAG_NONE,
+			&resDesc,
+			D3D12_RESOURCE_STATE_UNORDERED_ACCESS,
+			nullptr,
+			IID_PPV_ARGS(&outputCubeTarget)
+		));
+
+		ResourceStateTracker::AddGlobalResourceState(outputCubeTarget, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+
+		const std::wstring generateMipName(L"GenerateDiffuseIrradiance");
 
 		std::shared_ptr<Material> material = std::make_shared<Material>(generateMipName + L"Material", generateMipName);
 
@@ -427,6 +456,8 @@ namespace DiveBomber::DEResource
 
 		std::shared_ptr<RootSignature> rootSignature = GlobalResourceManager::Resolve<RootSignature>(L"StandardFullStageAccess");
 
+		resDesc = outputCubeTarget->GetDesc();
+
 		TextureDiffuseMipGenerateConstant mipGenCB;
 		mipGenCB.isSRGB = textureParam.sRGB;
 		std::shared_ptr<ConstantBufferInHeap<TextureDiffuseMipGenerateConstant>> mipGenCBIndex =
@@ -440,12 +471,99 @@ namespace DiveBomber::DEResource
 		std::shared_ptr<PipelineStateObject> pipelineStateObject = std::make_shared<PipelineStateObject>(generateMipName, std::move(pipelineStateReference));
 
 		Graphics::GetInstance().BindShaderDescriptorHeaps();
-		for (int srcMip = 0; srcMip < resDesc.MipLevels - 1; srcMip++)
-		{
-			UINT dstWidth = (UINT)resDesc.Width >> (srcMip + 1);
-			UINT dstHeight = resDesc.Height >> (srcMip + 1);
 
-			mipGenCB.srcMipLevel = srcMip;
+		mipGenCB.texelSize.x = 1.0f / (float)resDesc.Width;
+		mipGenCB.texelSize.y = 1.0f / (float)resDesc.Height;
+
+		mipGenCBIndex->Update(mipGenCB);
+
+		D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc{};
+		uavDesc.Format = resDesc.Format;
+		uavDesc.ViewDimension = D3D12_UAV_DIMENSION_TEXTURE2DARRAY;
+		uavDesc.Texture2DArray.MipSlice = 0u;
+		uavDesc.Texture2DArray.ArraySize = 6u;
+		std::shared_ptr<UnorderedAccessBuffer> mipTarget = std::make_shared<UnorderedAccessBuffer>(
+			Graphics::GetInstance().GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV),
+			outputCubeTarget, uavDesc);
+
+		mipTarget->BindAsTarget();
+		material->SetTexture(mipTarget, 1u);
+
+		rootSignature->Bind();
+		material->Bind();
+		pipelineStateObject->Bind();
+
+		Graphics::GetInstance().GetGraphicsCommandList()->Dispatch(
+			((UINT)resDesc.Width + 7u) / 8u,
+			((UINT)resDesc.Height + 7u) / 8u,
+			6u);
+		
+		Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(outputCubeTarget, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE, true);
+
+		Graphics::GetInstance().ExecuteAllCurrentCommandLists();
+
+		GenerateCache(outputCubeTarget, outputPath);
+	}
+
+	void Texture::GenerateSpecularIBLMipMaps(const std::filesystem::path& outputPath)
+	{
+		HRESULT hr;
+		
+		wrl::ComPtr<ID3D12Resource> outputCubeTarget;
+
+		// Create final cube resource
+		D3D12_RESOURCE_DESC resDesc = textureBuffer->GetDesc();
+		resDesc.Alignment = 0u;
+
+		const CD3DX12_HEAP_PROPERTIES heapProps{ D3D12_HEAP_TYPE_DEFAULT };
+		GFX_THROW_INFO(Graphics::GetInstance().GetDevice()->CreateCommittedResource(
+			&heapProps,
+			D3D12_HEAP_FLAG_NONE,
+			&resDesc,
+			D3D12_RESOURCE_STATE_UNORDERED_ACCESS,
+			nullptr,
+			IID_PPV_ARGS(&outputCubeTarget)
+		));
+
+		ResourceStateTracker::AddGlobalResourceState(outputCubeTarget, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+
+		const std::wstring generateMipName(L"GenerateSpecularIBLMip");
+
+		std::shared_ptr<Material> material = std::make_shared<Material>(generateMipName + L"Material", generateMipName);
+
+		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+		srvDesc.Format = resDesc.Format;
+		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURECUBE;
+		srvDesc.TextureCube.MipLevels = resDesc.MipLevels;
+
+		Graphics::GetInstance().GetDevice()->CreateShaderResourceView(textureBuffer.Get(), &srvDesc, descriptorAllocation->GetCPUDescriptorHandle());
+
+		material->SetTexture(GetSRVDescriptorHeapOffset(), 0);
+
+		std::shared_ptr<RootSignature> rootSignature = GlobalResourceManager::Resolve<RootSignature>(L"StandardFullStageAccess");
+
+		resDesc = outputCubeTarget->GetDesc();
+
+		TextureSpecularMipGenerateConstant mipGenCB;
+		mipGenCB.isSRGB = textureParam.sRGB;
+		std::shared_ptr<ConstantBufferInHeap<TextureSpecularMipGenerateConstant>> mipGenCBIndex =
+			std::make_shared<ConstantBufferInHeap<TextureSpecularMipGenerateConstant>>(generateMipName);
+		material->SetConstant(mipGenCBIndex, 1);
+
+		PipelineStateObject::PipelineStateReference pipelineStateReference;
+		pipelineStateReference.rootSignature = rootSignature;
+		pipelineStateReference.material = material;
+
+		std::shared_ptr<PipelineStateObject> pipelineStateObject = std::make_shared<PipelineStateObject>(generateMipName, std::move(pipelineStateReference));
+
+		Graphics::GetInstance().BindShaderDescriptorHeaps();
+		for (int srcMip = 0; srcMip < resDesc.MipLevels; srcMip++)
+		{
+			UINT dstWidth = (UINT)resDesc.Width >> srcMip;
+			UINT dstHeight = resDesc.Height >> srcMip;
+
+			mipGenCB.roughness = srcMip / (float)(resDesc.MipLevels - 1);
 			mipGenCB.texelSize.x = 1.0f / (float)dstWidth;
 			mipGenCB.texelSize.y = 1.0f / (float)dstHeight;
 
@@ -454,11 +572,11 @@ namespace DiveBomber::DEResource
 			D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc{};
 			uavDesc.Format = resDesc.Format;
 			uavDesc.ViewDimension = D3D12_UAV_DIMENSION_TEXTURE2DARRAY;
-			uavDesc.Texture2DArray.MipSlice = srcMip + 1u;
+			uavDesc.Texture2DArray.MipSlice = srcMip;
 			uavDesc.Texture2DArray.ArraySize = 6u;
 			std::shared_ptr<UnorderedAccessBuffer> mipTarget = std::make_shared<UnorderedAccessBuffer>(
 				Graphics::GetInstance().GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV),
-				textureBuffer, uavDesc);
+				outputCubeTarget, uavDesc);
 
 			mipTarget->BindAsTarget();
 			material->SetTexture(mipTarget, 1u);
@@ -473,9 +591,11 @@ namespace DiveBomber::DEResource
 				6u);
 		}
 
-		Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(textureBuffer, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE, true);
+		Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(outputCubeTarget, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE, true);
 
 		Graphics::GetInstance().ExecuteAllCurrentCommandLists();
+
+		GenerateCache(outputCubeTarget, outputPath);
 	}
 
 	void Texture::GenerateCubeMap()
