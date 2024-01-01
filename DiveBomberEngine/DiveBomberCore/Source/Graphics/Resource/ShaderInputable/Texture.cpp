@@ -80,7 +80,7 @@ namespace DiveBomber::DEResource
 			textureParam.sRGB = config["sRGB"];
 			textureParam.generateMip = config["GenerateMip"];
 			textureParam.cubeMap = config["CubeMap"];
-			textureParam.diffuseMip = config["DiffuseMip"];
+			textureParam.globalIllumination = config["GlobalIllumination"];
 			textureParam.textureArray = config["TextureArray"];
 			textureParam.texture3D = config["Texture3D"];
 			rawFile.close();
@@ -94,7 +94,7 @@ namespace DiveBomber::DEResource
 		config["sRGB"] = inputTextureParam.sRGB;
 		config["GenerateMip"] = inputTextureParam.generateMip;
 		config["CubeMap"] = inputTextureParam.cubeMap;
-		config["DiffuseMip"] = inputTextureParam.diffuseMip;
+		config["GlobalIllumination"] = inputTextureParam.globalIllumination;
 		config["TextureArray"] = inputTextureParam.textureArray;
 		config["Texture3D"] = inputTextureParam.texture3D;
 
@@ -260,28 +260,27 @@ namespace DiveBomber::DEResource
 			ResourceStateTracker::AddGlobalResourceState(textureBuffer, D3D12_RESOURCE_STATE_COMMON);
 			Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(textureBuffer, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE, true);
 		}
-
-		if (textureParam.cubeMap && metadata.arraySize == 1)
-		{
-			GenerateCubeMap();
-		}
-
+		
 		D3D12_RESOURCE_DESC resDesc = textureBuffer->GetDesc();
 
 		DXGI_FORMAT format = resDesc.Format;
 		bool generrateMipNotSupport = dx::IsCompressed(format) || dx::IsTypeless(format) ||
 			dx::IsPlanar(format) || dx::IsPalettized(format);
 
+		if (textureParam.cubeMap && metadata.arraySize == 1 && !generrateMipNotSupport)
+		{
+			GenerateCubeMap();
+		}
+
 		if (textureParam.generateMip && !generrateMipNotSupport && metadata.mipLevels < resDesc.MipLevels)
 		{
-			if (textureParam.diffuseMip)
-			{
-				GenerateDiffuseMipMaps();
-			}
-			else
-			{
-				GenerateMipMaps();
-			}
+			GenerateMipMaps();
+		}
+
+		if (textureParam.globalIllumination && metadata.arraySize == 1 && !generrateMipNotSupport /*&& if no cache*/)
+		{
+			GenerateDiffuseIrradiance();
+			GenerateSpecularIBLMipMaps();
 		}
 
 		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
@@ -307,7 +306,7 @@ namespace DiveBomber::DEResource
 		const std::wstring generateMipName(L"GenerateMipLinear");
 		D3D12_RESOURCE_DESC resDesc = textureBuffer->GetDesc();
 
-		std::shared_ptr<Material> material = std::make_shared<Material>(generateMipName, generateMipName);
+		std::shared_ptr<Material> material = std::make_shared<Material>(generateMipName + L"Material", generateMipName);
 
 		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 		srvDesc.Format = resDesc.Format;
@@ -409,12 +408,12 @@ namespace DiveBomber::DEResource
 		Graphics::GetInstance().ExecuteAllCurrentCommandLists();
 	}
 
-	void Texture::GenerateDiffuseMipMaps()
+	void Texture::GenerateSpecularIBLMipMaps()
 	{
-		const std::wstring generateMipName(L"GenerateDiffuseMipLinear");
+		const std::wstring generateMipName(L"GenerateSpecularIBLMip");
 		D3D12_RESOURCE_DESC resDesc = textureBuffer->GetDesc();
 
-		std::shared_ptr<Material> material = std::make_shared<Material>(generateMipName, generateMipName);
+		std::shared_ptr<Material> material = std::make_shared<Material>(generateMipName + L"Material", generateMipName);
 
 		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 		srvDesc.Format = resDesc.Format;
