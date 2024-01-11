@@ -1,3 +1,6 @@
+#ifndef __CommonVertexShader__
+#define __CommonVertexShader__
+
 #include "ConstantsVS.hlsli"
 
 VSOut MainVS(VSIn v)
@@ -34,3 +37,5 @@ VSOut MainVS(VSIn v)
     GetVertexParameters(o, v);
     return o;
 }
+
+#endif // __CommonVertexShader__

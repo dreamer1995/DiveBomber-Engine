@@ -1,3 +1,6 @@
+#ifndef __AlgorithmCommon__
+#define __AlgorithmCommon__
+
 #define EncodeGammaWithAtten(x) pow(x / (x + 1.0f), 1.0f / 2.2f)
 
 //https://seblagarde.files.wordpress.com/2015/07/course_notes_moving_frostbite_to_pbr_v32.pdf
@@ -288,3 +291,81 @@ float4 PackColor(float4 x, bool isSRGB)
 		return x;
 	}
 }
+
+// VanDerCorpus calculation
+// http://holger.dammertz.org/stuff/notes_HammersleyOnHemisphere.html
+
+float RadicalInverse_VdC(uint bits)
+{
+	bits = (bits << 16u) | (bits >> 16u);
+	bits = ((bits & 0x55555555u) << 1u) | ((bits & 0xAAAAAAAAu) >> 1u);
+	bits = ((bits & 0x33333333u) << 2u) | ((bits & 0xCCCCCCCCu) >> 2u);
+	bits = ((bits & 0x0F0F0F0Fu) << 4u) | ((bits & 0xF0F0F0F0u) >> 4u);
+	bits = ((bits & 0x00FF00FFu) << 8u) | ((bits & 0xFF00FF00u) >> 8u);
+	return float(bits) * 2.3283064365386963e-10; // / 0x100000000
+}
+
+/** Reverses all the 32 bits. */
+uint ReverseBits32(uint bits)
+{
+	bits = (bits << 16) | (bits >> 16);
+	bits = ((bits & 0x00ff00ff) << 8) | ((bits & 0xff00ff00) >> 8);
+	bits = ((bits & 0x0f0f0f0f) << 4) | ((bits & 0xf0f0f0f0) >> 4);
+	bits = ((bits & 0x33333333) << 2) | ((bits & 0xcccccccc) >> 2);
+	bits = ((bits & 0x55555555) << 1) | ((bits & 0xaaaaaaaa) >> 1);
+	return bits;
+}
+
+float2 Hammersley(uint i, uint N)
+{
+	return float2(float(i) / float(N), RadicalInverse_VdC(i));
+}
+
+float2 Hammersley(uint Index, uint NumSamples, uint2 Random)
+{
+	float E1 = frac((float) Index / NumSamples + float(Random.x & 0xffff) / (1 << 16));
+	float E2 = float(ReverseBits32(Index) ^ Random.y) * 2.3283064365386963e-10;
+	return float2(E1, E2);
+}
+
+float2 Hammersley16(uint Index, uint NumSamples, uint2 Random)
+{
+	float E1 = frac((float) Index / NumSamples + float(Random.x) * (1.0 / 65536.0));
+	float E2 = float((ReverseBits32(Index) >> 16) ^ Random.y) * (1.0 / 65536.0);
+	return float2(E1, E2);
+}
+
+uint3 Rand3DPCG16(int3 p)
+{
+	// taking a signed int then reinterpreting as unsigned gives good behavior for negatives
+	uint3 v = uint3(p);
+
+	// Linear congruential step. These LCG constants are from Numerical Recipies
+	// For additional #'s, PCG would do multiple LCG steps and scramble each on output
+	// So v here is the RNG state
+	v = v * 1664525u + 1013904223u;
+
+	// PCG uses xorshift for the final shuffle, but it is expensive (and cheap
+	// versions of xorshift have visible artifacts). Instead, use simple MAD Feistel steps
+	//
+	// Feistel ciphers divide the state into separate parts (usually by bits)
+	// then apply a series of permutation steps one part at a time. The permutations
+	// use a reversible operation (usually ^) to part being updated with the result of
+	// a permutation function on the other parts and the key.
+	//
+	// In this case, I'm using v.x, v.y and v.z as the parts, using + instead of ^ for
+	// the combination function, and just multiplying the other two parts (no key) for 
+	// the permutation function.
+	//
+	// That gives a simple mad per round.
+	v.x += v.y * v.z;
+	v.y += v.z * v.x;
+	v.z += v.x * v.y;
+	v.x += v.y * v.z;
+	v.y += v.z * v.x;
+	v.z += v.x * v.y;
+
+	// only top 16 bits are well shuffled
+	return v >> 16u;
+}
+#endif // __AlgorithmCommon__

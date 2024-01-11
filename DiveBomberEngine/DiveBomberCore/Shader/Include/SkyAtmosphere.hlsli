@@ -1,3 +1,6 @@
+#ifndef __SkyAtmosphere__
+#define __SkyAtmosphere__
+
 Texture2D TransmittanceLutTexture : register(t0);
 Texture2D MultiScatTexture : register(t1);
 
@@ -710,3 +713,5 @@ float3 GetSunLuminance(float3 WorldPos, float3 WorldDir, float PlanetRadius, flo
 #endif
 	return 0;
 }
+
+#endif // __SkyAtmosphere__

@@ -1,3 +1,6 @@
+#ifndef __CommonCommon__
+#define __CommonCommon__
+
 // CommonBuffers
 struct RenderInfo
 {
@@ -101,3 +104,5 @@ SamplerState samplerStandardClamp	: register(s2);
 SamplerState samplerPointClamp		: register(s3);
 SamplerState samplerStandardMirror	: register(s4);
 SamplerState samplerPointMirror		: register(s5);
+
+#endif // __CommonCommon__

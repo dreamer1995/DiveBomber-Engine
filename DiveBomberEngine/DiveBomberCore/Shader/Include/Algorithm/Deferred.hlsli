@@ -1,3 +1,6 @@
+#ifndef __AlgorithmDeferred__
+#define __AlgorithmDeferred__
+
 float EncodeShadingModelID(uint ShadingModelID)
 {
 	return (float)ShadingModelID / (float)0xFF;
@@ -65,3 +68,5 @@ float Luminance(float3 LinearColor)
 {
 	return dot(LinearColor, float3(0.3f, 0.59f, 0.11f));
 }
+
+#endif // __AlgorithmDeferred__

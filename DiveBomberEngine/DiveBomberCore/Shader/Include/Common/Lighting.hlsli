@@ -1,3 +1,6 @@
+#ifndef __CommonLighting__
+#define __CommonLighting__
+
 cbuffer PointLightCBuf2 : register(b7)//PS
 {
 	float3 lightPos2;
@@ -27,3 +30,5 @@ struct LightVectorData
 	float3 dirToL;
 	float distToL;
 };
+
+#endif // __CommonLighting__

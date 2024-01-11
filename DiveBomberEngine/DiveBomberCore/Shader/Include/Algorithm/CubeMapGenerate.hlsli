@@ -1,3 +1,6 @@
+#ifndef __AlgorithmCubeMapGenerate__
+#define __AlgorithmCubeMapGenerate__
+
 #include "..\Common\PBR.hlsli"
 
 static float2 invAtan = float2(0.1591f, 0.3182f);
@@ -33,8 +36,8 @@ float3 ThreadIDToCubeFaceCoordinate(float2 position, uint groupIndex)
 float3 ConvolutionCubeMapDiffuse(TextureCube texture, SamplerState samp, float3 front, bool isSRGB)
 {
 	float3 up = float3(0.0f, 1.0f, 0.0f);
-	float3 right = cross(up, front);
-	up = cross(front, right);
+	float3 right = normalize(cross(up, front));
+	up = normalize(cross(front, right));
 	
 	float3 irradiance = float3(0.0f, 0.0f, 0.0f);
 	
@@ -56,8 +59,14 @@ float3 ConvolutionCubeMapDiffuse(TextureCube texture, SamplerState samp, float3 
 	return PI * irradiance * (1 / nrSamples);
 }
 
-float3 ConvolutionCubeMapSpecular(TextureCube texture, SamplerState samp, float3 normalVec, float roughness, bool isSRGB)
+float3 ConvolutionCubeMapSpecular(TextureCube texture, SamplerState samp, uint2 random, float3 normalVec, float roughness, bool isSRGB)
 {
+	uint mipLevel;
+	uint width;
+	uint height;
+	uint numOfLevels;
+	texture.GetDimensions(mipLevel, width, height, numOfLevels);
+	
 	float3 reflectionDir = normalVec;
 	float3 viewDir = reflectionDir;
 	
@@ -67,7 +76,7 @@ float3 ConvolutionCubeMapSpecular(TextureCube texture, SamplerState samp, float3
 	const uint NumSamples = 1024;
 	for (uint i = 0; i < NumSamples; i++)
 	{
-		float2 Xi = Hammersley(i, NumSamples);
+		float2 Xi = Hammersley(i, NumSamples, random);
 		float3 halfwayVec = ImportanceSampleGGX(Xi, roughness, normalVec);
 		float3 lightDir = 2.0f * dot(viewDir, halfwayVec) * halfwayVec - viewDir;
 		float NdotL = saturate(dot(normalVec, lightDir));
@@ -79,7 +88,7 @@ float3 ConvolutionCubeMapSpecular(TextureCube texture, SamplerState samp, float3
 			float HdotV = max(dot(halfwayVec, viewDir), 0.0f);
 			float pdf = D * NdotH / (4.0f * HdotV) + 0.0001f;
 
-			float resolution = 512.0f; // resolution of source cubemap (per face)
+			float resolution = width; // resolution of source cubemap (per face)
 			float saTexel = 4.0f * PI / (6.0f * resolution * resolution);
 			float saSample = 1.0f / (float(NumSamples) * pdf + 0.0001f);
 
@@ -92,3 +101,5 @@ float3 ConvolutionCubeMapSpecular(TextureCube texture, SamplerState samp, float3
 	
 	return PrefilteredColor /= totalWeight;
 }
+
+#endif // __AlgorithmCubeMapGenerate__

@@ -1,3 +1,8 @@
+#ifndef __CommonPBR__
+#define __CommonPBR__
+
+#include "..\Algorithm\Common.hlsli"
+
 static const float PI = 3.14159265359f;
 
 float DistributionGGX(float NdotH, float roughness)
@@ -63,24 +68,6 @@ float IBLGeometrySmith(float3 normalVec, float3 viewDir, float3 lightDir, float 
 	return ggx1 * ggx2;
 }
 
-// VanDerCorpus calculation
-// http://holger.dammertz.org/stuff/notes_HammersleyOnHemisphere.html
-
-float RadicalInverse_VdC(uint bits)
-{
-	bits = (bits << 16u) | (bits >> 16u);
-	bits = ((bits & 0x55555555u) << 1u) | ((bits & 0xAAAAAAAAu) >> 1u);
-	bits = ((bits & 0x33333333u) << 2u) | ((bits & 0xCCCCCCCCu) >> 2u);
-	bits = ((bits & 0x0F0F0F0Fu) << 4u) | ((bits & 0xF0F0F0F0u) >> 4u);
-	bits = ((bits & 0x00FF00FFu) << 8u) | ((bits & 0xFF00FF00u) >> 8u);
-	return float(bits) * 2.3283064365386963e-10; // / 0x100000000
-}
-
-float2 Hammersley(uint i, uint N)
-{
-	return float2(float(i) / float(N), RadicalInverse_VdC(i));
-}
-
 float3 ImportanceSampleGGX(float2 Xi, float Roughness, float3 normalVec)
 {
 	float a = Roughness * Roughness;
@@ -99,3 +86,5 @@ float3 ImportanceSampleGGX(float2 Xi, float Roughness, float3 normalVec)
 	// Tangent to world space
 	return normalize((TangentX * halfwayVec.x) + (TangentY * halfwayVec.y) + (normalVec * halfwayVec.z));
 }
+
+#endif // __CommonPBR__

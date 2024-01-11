@@ -1,3 +1,6 @@
+#ifndef __AlgorithmMipMapGenerate__
+#define __AlgorithmMipMapGenerate__
+
 // The reason for separating channels is to reduce bank conflicts in the
 // local data memory controller.  A large stride will cause more threads
 // to collide on the same memory bank.
@@ -18,3 +21,5 @@ float4 LoadColor(uint Index)
 {
 	return float4(gs_R[Index], gs_G[Index], gs_B[Index], gs_A[Index]);
 }
+
+#endif // __AlgorithmMipMapGenerate__

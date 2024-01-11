@@ -1,3 +1,6 @@
+#ifndef __ForwardRenderingPixelShader__
+#define __ForwardRenderingPixelShader__
+
 #include "ShadingModel.hlsli"
 #include "ConstantsPS.hlsli"
 
@@ -112,3 +115,5 @@ float4 main(PSIn IN) : SV_Target
 
     return float4(outCol, 1.0f);
 }
+
+#endif // __ForwardRenderingPixelShader__

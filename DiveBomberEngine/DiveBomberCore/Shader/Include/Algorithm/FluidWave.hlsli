@@ -1,3 +1,6 @@
+#ifndef __AlgorithmFluidWave__
+#define __AlgorithmFluidWave__
+
 float Motion_4WayChaos(Texture2D textureIn, float2 uv, float speed)
 {
 	float2 offset[4] = { float2(0.000000f,0.000000f),
@@ -86,3 +89,5 @@ float GenerateDepth(float worldPosZ)
 	float linearPosZ = worldPosZ * 0.1f + 0.5f;
 	return linearPosZ * linearPosZ;
 }
+
+#endif // __AlgorithmFluidWave__

@@ -1,3 +1,6 @@
+#ifndef __AlgorithmLighting__
+#define __AlgorithmLighting__
+
 #define ShadingModel_UnLit 0u
 #define ShadingModel_Phong 1u
 #define ShadingModel_PBR 2u
@@ -212,3 +215,5 @@ LightVectorData CalculateLightVectorData(const in float3 lightPos, const in floa
 	lv.dirToL = lv.vToL / lv.distToL;
 	return lv;
 }
+
+#endif // __AlgorithmLighting__

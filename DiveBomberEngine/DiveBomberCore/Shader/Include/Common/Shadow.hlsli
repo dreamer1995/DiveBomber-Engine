@@ -1,3 +1,6 @@
+#ifndef __CommonShadow__
+#define __CommonShadow__
+
 //Used 0,1,2
 
 cbuffer ShadowTransformCBuf0 : register(b7)//VS
@@ -14,3 +17,5 @@ cbuffer ShadowTransformCBuf2 : register(b9)//VS
 {
 	matrix shadowMatrix_M2;
 };
+
+#endif // __CommonShadow__
