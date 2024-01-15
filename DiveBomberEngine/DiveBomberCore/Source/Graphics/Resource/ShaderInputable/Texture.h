@@ -79,10 +79,11 @@ namespace DiveBomber::DEResource
 		void LoadTexture();
 		void GenerateCache(const wrl::ComPtr<ID3D12Resource> outputTextureBuffer, const std::filesystem::path& outputPath);
 		void LoadScratchImage(const std::filesystem::path& filePath);
-		void GenerateMipMaps();
-		void GenerateDiffuseIrradiance(const std::filesystem::path& outputPath);
-		void GenerateSpecularIBLMipMaps(const std::filesystem::path& outputPath);
-		void GenerateCubeMap();
+		void GenerateMipMaps(wrl::ComPtr<ID3D12Resource> uavBuffer);
+		void GenerateDiffuseIrradiance(wrl::ComPtr<ID3D12Resource> uavBuffer, const std::filesystem::path& outputPath);
+		void GenerateSpecularIBLMipMaps(wrl::ComPtr<ID3D12Resource> uavBuffer, const std::filesystem::path& outputPath);
+		void GenerateCubeMap(wrl::ComPtr<ID3D12Resource> uavBuffer);
+		[[nodiscard]] DXGI_FORMAT GetUAVCompatableFormat(DXGI_FORMAT format);
 
 	protected:
 		json config;

@@ -87,4 +87,23 @@ float3 ImportanceSampleGGX(float2 Xi, float Roughness, float3 normalVec)
 	return normalize((TangentX * halfwayVec.x) + (TangentY * halfwayVec.y) + (normalVec * halfwayVec.z));
 }
 
+float3 CosineSampleHemisphere(float2 Xi, float3 normalVec)
+{
+	float Phi = 2.0f * PI * Xi.x;
+	float CosTheta = Xi.y;
+	float SinTheta = sqrt(1 - CosTheta * CosTheta);
+	// from spherical coordinates to cartesian coordinates - halfway vector
+	float3 halfwayVec;
+	halfwayVec.x = SinTheta * cos(Phi);
+	halfwayVec.y = SinTheta * sin(Phi);
+	halfwayVec.z = CosTheta;
+	halfwayVec = normalize(halfwayVec + normalVec);
+	// from tangent-space H vector to world-space sample vector
+	float3 UpVector = abs(normalVec.z) < 0.999 ? float3(0, 0, 1) : float3(1, 0, 0);
+	float3 TangentX = normalize(cross(UpVector, normalVec));
+	float3 TangentY = cross(normalVec, TangentX);
+	// Tangent to world space
+	return normalize((TangentX * halfwayVec.x) + (TangentY * halfwayVec.y) + (normalVec * halfwayVec.z));
+}
+
 #endif // __CommonPBR__

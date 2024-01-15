@@ -51,8 +51,10 @@ void CSMain(ComputeShaderInput In)
 	float2 uv = generateDiffuseMips.texelSize * (In.dispatchThreadID.xy + 0.5f) - 0.5f;
 	float3 front = normalize(ThreadIDToCubeFaceCoordinate(uv, In.dispatchThreadID.z));
 	
+	uint2 random = Rand3DPCG16(uint3(In.dispatchThreadID)).xy;
+	
 	outMip1[In.dispatchThreadID] = PackColor(
-		float4(ConvolutionCubeMapDiffuse(inputMap, samplerStandard, front,
+		float4(ConvolutionCubeMapDiffuse(inputMap, samplerStandard, random, front,
 			generateDiffuseMips.isSRGB), 1.0f),
 			generateDiffuseMips.isSRGB);
 }

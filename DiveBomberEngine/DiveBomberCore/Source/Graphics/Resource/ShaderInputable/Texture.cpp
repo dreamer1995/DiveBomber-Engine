@@ -116,11 +116,7 @@ namespace DiveBomber::DEResource
 		{
 			fs::path filePath(ProjectDirectoryW L"Asset\\Texture\\" + name);
 			LoadScratchImage(filePath);		
-			//Because currently, dxtc function CaptureTexture can't capture ID3D12Resource to ScratchImage
-			if (filePath.extension() != ".dds")
-			{
-				GenerateCache(textureBuffer, cachePath);
-			}
+			GenerateCache(textureBuffer, cachePath);
 		}
 	}
 
@@ -199,7 +195,7 @@ namespace DiveBomber::DEResource
 			.Format = metadata.format,
 			.SampleDesc = {.Count = 1 },
 			.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN,
-			.Flags = dx::IsCompressed(metadata.format) ? D3D12_RESOURCE_FLAG_NONE : D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS,
+			.Flags = D3D12_RESOURCE_FLAG_NONE,
 		};
 
 		const CD3DX12_HEAP_PROPERTIES heapProps{ D3D12_HEAP_TYPE_DEFAULT };
@@ -261,34 +257,139 @@ namespace DiveBomber::DEResource
 		
 		D3D12_RESOURCE_DESC resDesc = textureBuffer->GetDesc();
 
-		DXGI_FORMAT format = resDesc.Format;
-		bool generrateMipNotSupport = dx::IsCompressed(format) || dx::IsTypeless(format) ||
-			dx::IsPlanar(format) || dx::IsPalettized(format);
+		wrl::ComPtr<ID3D12Resource> aliasBuffer;
+		wrl::ComPtr<ID3D12Resource> uavBuffer;
 
-		if (textureParam.cubeMap && metadata.arraySize == 1 && !generrateMipNotSupport)
+		if (((textureParam.cubeMap && metadata.arraySize == 1) ||
+			(textureParam.generateMip && metadata.mipLevels < resDesc.MipLevels) ||
+			(textureParam.globalIllumination && metadata.arraySize == 1)) ||
+			((resDesc.Flags & D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS) == 0))
 		{
-			GenerateCubeMap();
+			uavBuffer = textureBuffer;
+
+			D3D12_RESOURCE_DESC resDesc = textureBuffer->GetDesc();
+
+			if (textureParam.cubeMap && metadata.arraySize == 1)
+			{
+				resDesc.Alignment = 0u;
+				resDesc.Width = resDesc.Height / 2;
+				resDesc.Height = (UINT)resDesc.Width;
+				resDesc.DepthOrArraySize = 6u;
+				resDesc.MipLevels = textureParam.generateMip ? 0u : 1u;
+			}
+
+			// Describe an alias resource that is used to copy the original texture.
+			D3D12_RESOURCE_DESC aliasDesc = resDesc;
+			// Placed resources can't be render targets or depth-stencil views.
+			aliasDesc.Flags &= ~(D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET | D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL);
+
+			// Describe a UAV compatible resource that is used to perform
+			// mipmapping of the original texture.
+			D3D12_RESOURCE_DESC uavDesc = aliasDesc;   
+			// The flags for the UAV description must match that of the alias description.
+			uavDesc.Format = GetUAVCompatableFormat(resDesc.Format);
+			uavDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
+
+			D3D12_RESOURCE_DESC resourceDescs[] = {
+				aliasDesc,
+				uavDesc
+			};
+
+			// Create a heap that is large enough to store a copy of the original resource.
+			D3D12_RESOURCE_ALLOCATION_INFO allocationInfo = Graphics::GetInstance().GetDevice()->GetResourceAllocationInfo(0, _countof(resourceDescs), resourceDescs);
+
+			D3D12_HEAP_DESC heapDesc = {};
+			heapDesc.SizeInBytes = allocationInfo.SizeInBytes;
+			heapDesc.Alignment = allocationInfo.Alignment;
+			heapDesc.Flags = D3D12_HEAP_FLAG_ALLOW_ONLY_NON_RT_DS_TEXTURES;
+			heapDesc.Properties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+			heapDesc.Properties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+			heapDesc.Properties.Type = D3D12_HEAP_TYPE_DEFAULT;
+
+			wrl::ComPtr<ID3D12Heap> heap;
+
+			HRESULT hr;
+			GFX_THROW_INFO(Graphics::GetInstance().GetDevice()->CreateHeap(&heapDesc, IID_PPV_ARGS(&heap)));
+
+			// Create a placed resource that matches the description of the 
+			// original resource. This resource is used to copy the original 
+			// texture to the UAV compatible resource.
+			GFX_THROW_INFO(Graphics::GetInstance().GetDevice()->CreatePlacedResource(
+				heap.Get(),
+				0,
+				&aliasDesc,
+				D3D12_RESOURCE_STATE_COMMON,
+				nullptr,
+				IID_PPV_ARGS(&aliasBuffer)
+			));
+
+			ResourceStateTracker::AddGlobalResourceState(aliasBuffer, D3D12_RESOURCE_STATE_COMMON);
+
+			// Create a UAV compatible resource in the same heap as the alias
+			// resource.
+			GFX_THROW_INFO(Graphics::GetInstance().GetDevice()->CreatePlacedResource(
+				heap.Get(),
+				0,
+				&uavDesc,
+				D3D12_RESOURCE_STATE_COMMON,
+				nullptr,
+				IID_PPV_ARGS(&uavBuffer)
+			));
+
+			ResourceStateTracker::AddGlobalResourceState(uavBuffer, D3D12_RESOURCE_STATE_COMMON);
+
+			Graphics::GetInstance().GetCommandList()->AliasingBarrier(nullptr, aliasBuffer);
+
+			if (!textureParam.cubeMap || metadata.arraySize != 1)
+			{
+				// Copy the original resource to the alias resource.
+				// This ensures GPU validation.
+				Graphics::GetInstance().GetCommandList()->CopyResource(aliasBuffer, textureBuffer);
+			}
+
+			Graphics::GetInstance().GetCommandList()->AliasingBarrier(aliasBuffer, uavBuffer);
+
+			Graphics::GetInstance().ExecuteAllCurrentCommandLists();
 		}
 
-		if (textureParam.generateMip && !generrateMipNotSupport && metadata.mipLevels < resDesc.MipLevels)
+		if (textureParam.cubeMap && metadata.arraySize == 1)
 		{
-			GenerateMipMaps();
+			GenerateCubeMap(uavBuffer);
 		}
 
-		if (textureParam.globalIllumination && metadata.arraySize == 1 && !generrateMipNotSupport)
+		if (textureParam.generateMip && metadata.mipLevels < resDesc.MipLevels)
+		{
+			GenerateMipMaps(uavBuffer);
+		}
+
+		if (textureParam.globalIllumination && metadata.arraySize == 1)
 		{
 			fs::path fileName(name);
 			fs::path cachePath(ProjectDirectoryW L"Cache\\Texture\\" + fileName.stem().wstring() + L"#DiffuseIrradiance.dds");
 			if (!fs::exists(cachePath))
 			{
-				GenerateDiffuseIrradiance(cachePath);
+				GenerateDiffuseIrradiance(uavBuffer, cachePath);
 			}
 
 			cachePath = ProjectDirectoryW L"Cache\\Texture\\" + fileName.stem().wstring() + L"#SpecularIBL.dds";
 			if (!fs::exists(cachePath))
 			{
-				GenerateSpecularIBLMipMaps(cachePath);
+				GenerateSpecularIBLMipMaps(uavBuffer, cachePath);
 			}
+		}
+
+		if (aliasBuffer)
+		{
+			Graphics::GetInstance().GetCommandList()->AliasingBarrier(uavBuffer, aliasBuffer);
+			// Copy the alias resource back to the original resource.
+			Graphics::GetInstance().GetCommandList()->CopyResource(textureBuffer, aliasBuffer);
+
+			Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(textureBuffer, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE, true);
+			
+			Graphics::GetInstance().ExecuteAllCurrentCommandLists();
+
+			ResourceStateTracker::RemoveGlobalResourceState(aliasBuffer);
+			ResourceStateTracker::RemoveGlobalResourceState(uavBuffer);
 		}
 
 		resDesc = textureBuffer->GetDesc();
@@ -310,10 +411,10 @@ namespace DiveBomber::DEResource
 		Graphics::GetInstance().GetDevice()->CreateShaderResourceView(textureBuffer.Get(), &srvDesc, descriptorAllocation->GetCPUDescriptorHandle());
 	}
 
-	void Texture::GenerateMipMaps()
+	void Texture::GenerateMipMaps(wrl::ComPtr<ID3D12Resource> uavBuffer)
 	{
 		const std::wstring generateMipName(L"GenerateMipLinear");
-		D3D12_RESOURCE_DESC resDesc = textureBuffer->GetDesc();
+		D3D12_RESOURCE_DESC resDesc = uavBuffer->GetDesc();
 
 		std::shared_ptr<Material> material = std::make_shared<Material>(generateMipName + L"Material", generateMipName);
 
@@ -324,7 +425,7 @@ namespace DiveBomber::DEResource
 		srvDesc.Texture2DArray.MipLevels = resDesc.MipLevels;
 		srvDesc.Texture2DArray.ArraySize = resDesc.DepthOrArraySize;
 
-		Graphics::GetInstance().GetDevice()->CreateShaderResourceView(textureBuffer.Get(), &srvDesc, descriptorAllocation->GetCPUDescriptorHandle());
+		Graphics::GetInstance().GetDevice()->CreateShaderResourceView(uavBuffer.Get(), &srvDesc, descriptorAllocation->GetCPUDescriptorHandle());
 
 		material->SetTexture(GetSRVDescriptorHeapOffset(), 0);
 
@@ -394,7 +495,7 @@ namespace DiveBomber::DEResource
 				uavDesc.Texture2DArray.ArraySize = resDesc.DepthOrArraySize;
 				std::shared_ptr<UnorderedAccessBuffer> mipTarget = std::make_shared<UnorderedAccessBuffer>(
 					Graphics::GetInstance().GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV),
-					textureBuffer, uavDesc);
+					uavBuffer, uavDesc);
 
 				mipTarget->BindAsTarget();
 				material->SetTexture(mipTarget, mip + 1);
@@ -412,19 +513,17 @@ namespace DiveBomber::DEResource
 			srcMip += mipCount;
 		}
 
-		Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(textureBuffer, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE, true);
-
 		Graphics::GetInstance().ExecuteAllCurrentCommandLists();
 	}
 
-	void Texture::GenerateDiffuseIrradiance(const std::filesystem::path& outputPath)
+	void Texture::GenerateDiffuseIrradiance(wrl::ComPtr<ID3D12Resource> uavBuffer, const std::filesystem::path& outputPath)
 	{
 		HRESULT hr;
 
 		wrl::ComPtr<ID3D12Resource> outputCubeTarget;
 
 		// Create final cube resource
-		D3D12_RESOURCE_DESC resDesc = textureBuffer->GetDesc();
+		D3D12_RESOURCE_DESC resDesc = uavBuffer->GetDesc();
 		resDesc.Alignment = 0u;
 		resDesc.MipLevels = 1u;
 
@@ -450,7 +549,7 @@ namespace DiveBomber::DEResource
 		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURECUBE;
 		srvDesc.TextureCube.MipLevels = resDesc.MipLevels;
 
-		Graphics::GetInstance().GetDevice()->CreateShaderResourceView(textureBuffer.Get(), &srvDesc, descriptorAllocation->GetCPUDescriptorHandle());
+		Graphics::GetInstance().GetDevice()->CreateShaderResourceView(uavBuffer.Get(), &srvDesc, descriptorAllocation->GetCPUDescriptorHandle());
 
 		material->SetTexture(GetSRVDescriptorHeapOffset(), 0);
 
@@ -505,14 +604,14 @@ namespace DiveBomber::DEResource
 		GenerateCache(outputCubeTarget, outputPath);
 	}
 
-	void Texture::GenerateSpecularIBLMipMaps(const std::filesystem::path& outputPath)
+	void Texture::GenerateSpecularIBLMipMaps(wrl::ComPtr<ID3D12Resource> uavBuffer, const std::filesystem::path& outputPath)
 	{
 		HRESULT hr;
 		
 		wrl::ComPtr<ID3D12Resource> outputCubeTarget;
 
 		// Create final cube resource
-		D3D12_RESOURCE_DESC resDesc = textureBuffer->GetDesc();
+		D3D12_RESOURCE_DESC resDesc = uavBuffer->GetDesc();
 		resDesc.Alignment = 0u;
 
 		const CD3DX12_HEAP_PROPERTIES heapProps{ D3D12_HEAP_TYPE_DEFAULT };
@@ -537,7 +636,7 @@ namespace DiveBomber::DEResource
 		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURECUBE;
 		srvDesc.TextureCube.MipLevels = resDesc.MipLevels;
 
-		Graphics::GetInstance().GetDevice()->CreateShaderResourceView(textureBuffer.Get(), &srvDesc, descriptorAllocation->GetCPUDescriptorHandle());
+		Graphics::GetInstance().GetDevice()->CreateShaderResourceView(uavBuffer.Get(), &srvDesc, descriptorAllocation->GetCPUDescriptorHandle());
 
 		material->SetTexture(GetSRVDescriptorHeapOffset(), 0);
 
@@ -598,31 +697,33 @@ namespace DiveBomber::DEResource
 		GenerateCache(outputCubeTarget, outputPath);
 	}
 
-	void Texture::GenerateCubeMap()
+	void Texture::GenerateCubeMap(wrl::ComPtr<ID3D12Resource> uavBuffer)
 	{
 		HRESULT hr;
 
 		wrl::ComPtr<ID3D12Resource> cubeSourceTextureBuffer = textureBuffer;
 
 		// Create final cube resource
-		D3D12_RESOURCE_DESC resDesc = textureBuffer->GetDesc();
-		resDesc.Alignment = 0u;
-		resDesc.Width = resDesc.Height / 2;
-		resDesc.Height = (UINT)resDesc.Width;
-		resDesc.DepthOrArraySize = 6u;
-		resDesc.MipLevels = textureParam.generateMip ? 0u : 1u;
+		D3D12_RESOURCE_DESC resDesc = uavBuffer->GetDesc();
+
+		D3D12_RESOURCE_DESC rawResDesc = textureBuffer->GetDesc();
+		rawResDesc.Alignment = 0u;
+		rawResDesc.Width = rawResDesc.Height / 2;
+		rawResDesc.Height = (UINT)rawResDesc.Width;
+		rawResDesc.DepthOrArraySize = 6u;
+		rawResDesc.MipLevels = textureParam.generateMip ? 0u : 1u;
 
 		const CD3DX12_HEAP_PROPERTIES heapProps{ D3D12_HEAP_TYPE_DEFAULT };
 		GFX_THROW_INFO(Graphics::GetInstance().GetDevice()->CreateCommittedResource(
 			&heapProps,
 			D3D12_HEAP_FLAG_NONE,
 			&resDesc,
-			D3D12_RESOURCE_STATE_UNORDERED_ACCESS,
+			D3D12_RESOURCE_STATE_COMMON,
 			nullptr,
 			IID_PPV_ARGS(&textureBuffer)
 		));
 
-		ResourceStateTracker::AddGlobalResourceState(textureBuffer, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+		ResourceStateTracker::AddGlobalResourceState(textureBuffer, D3D12_RESOURCE_STATE_COMMON);
 
 		// Create render request resource
 		const std::wstring generateCubeName(L"GenerateCubeMap");
@@ -667,7 +768,7 @@ namespace DiveBomber::DEResource
 
 		std::shared_ptr<UnorderedAccessBuffer> mipTarget = std::make_shared<UnorderedAccessBuffer>(
 			Graphics::GetInstance().GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV),
-			textureBuffer, uavDesc);
+			uavBuffer, uavDesc);
 
 		mipTarget->BindAsTarget();
 		material->SetTexture(mipTarget, 1u);
@@ -681,8 +782,64 @@ namespace DiveBomber::DEResource
 			((UINT)resDesc.Height + 7u) / 8,
 			6u);
 
-		Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(textureBuffer, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE, true);
-
 		Graphics::GetInstance().ExecuteAllCurrentCommandLists();
+
+		ResourceStateTracker::RemoveGlobalResourceState(cubeSourceTextureBuffer);
+	}
+
+	DXGI_FORMAT Texture::GetUAVCompatableFormat(DXGI_FORMAT format)
+	{
+		DXGI_FORMAT uavFormat = format;
+
+		switch (uavFormat)
+		{
+		case DXGI_FORMAT_BC1_TYPELESS:
+		case DXGI_FORMAT_BC2_TYPELESS:
+		case DXGI_FORMAT_BC3_TYPELESS:
+		case DXGI_FORMAT_BC7_TYPELESS:
+			uavFormat = DXGI_FORMAT_R8G8B8A8_TYPELESS;
+			break;
+		case DXGI_FORMAT_BC1_UNORM_SRGB:
+		case DXGI_FORMAT_BC2_UNORM_SRGB:
+		case DXGI_FORMAT_BC3_UNORM_SRGB:
+		case DXGI_FORMAT_BC7_UNORM_SRGB:
+			uavFormat = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+			break;
+		case DXGI_FORMAT_BC1_UNORM:
+		case DXGI_FORMAT_BC2_UNORM:
+		case DXGI_FORMAT_BC3_UNORM:
+		case DXGI_FORMAT_BC7_UNORM:
+			uavFormat = DXGI_FORMAT_R8G8B8A8_TYPELESS;
+			break;
+		case DXGI_FORMAT_BC4_TYPELESS:
+			uavFormat = DXGI_FORMAT_R8_TYPELESS;
+			break;
+		case DXGI_FORMAT_BC4_UNORM:
+			uavFormat = DXGI_FORMAT_R8_UNORM;
+			break;
+		case DXGI_FORMAT_BC4_SNORM:
+			uavFormat = DXGI_FORMAT_R8_SNORM;
+			break;
+		case DXGI_FORMAT_BC5_TYPELESS:
+			uavFormat = DXGI_FORMAT_R8G8_TYPELESS;
+			break;
+		case DXGI_FORMAT_BC5_UNORM:
+			uavFormat = DXGI_FORMAT_R8G8_UNORM;
+			break;
+		case DXGI_FORMAT_BC5_SNORM:
+			uavFormat = DXGI_FORMAT_R8G8_SNORM;
+			break;
+		case DXGI_FORMAT_BC6H_TYPELESS:
+			uavFormat = DXGI_FORMAT_R16G16B16A16_TYPELESS;
+			break;
+		case DXGI_FORMAT_BC6H_UF16:
+			uavFormat = DXGI_FORMAT_R16G16B16A16_UNORM;
+			break;
+		case DXGI_FORMAT_BC6H_SF16:
+			uavFormat = DXGI_FORMAT_R16G16B16A16_SNORM;
+			break;
+		}
+
+		return uavFormat;
 	}
 }

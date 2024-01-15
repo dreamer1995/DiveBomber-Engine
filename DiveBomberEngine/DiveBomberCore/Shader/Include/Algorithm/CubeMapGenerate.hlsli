@@ -33,30 +33,24 @@ float3 ThreadIDToCubeFaceCoordinate(float2 position, uint groupIndex)
 	return float3(0.0f, 0.0f, 0.0f);
 }
 
-float3 ConvolutionCubeMapDiffuse(TextureCube texture, SamplerState samp, float3 front, bool isSRGB)
+float3 ConvolutionCubeMapDiffuse(TextureCube texture, SamplerState samp, uint2 random, float3 front, bool isSRGB)
 {
-	float3 up = float3(0.0f, 1.0f, 0.0f);
-	float3 right = normalize(cross(up, front));
-	up = normalize(cross(front, right));
-	
 	float3 irradiance = float3(0.0f, 0.0f, 0.0f);
 	
-	float sampleDelta = 0.025f;
-	float nrSamples = 0.0f;
-	
-	for (float phi = 0.0f; phi < 2.0 * PI; phi += sampleDelta)
+	const uint NumSamples = 1024;
+	for (uint i = 0; i < NumSamples; i++)
 	{
-		for (float theta = 0.0f; theta < 0.5 * PI; theta += sampleDelta)
+		float2 Xi = Hammersley(i, NumSamples, random);
+		float3 sampleVec = CosineSampleHemisphere(Xi, front);
+		
+		float NoL = saturate(dot(front, sampleVec));
+		if (NoL > 0)
 		{
-			float3 tangentSample = float3(sin(theta) * cos(phi), sin(theta) * sin(phi), cos(theta));
-			float3 sampleVec = (tangentSample.x * right) + (tangentSample.y * up) + (tangentSample.z * front);
-
-			irradiance += SampleCubeTextureLevel(texture, samp, sampleVec, 0u, isSRGB).rgb * cos(theta) * sin(theta);
-			nrSamples++;
+			irradiance += SampleCubeTextureLevel(texture, samp, sampleVec, 0u, isSRGB).rgb * NoL;
 		}
 	}
 	
-	return PI * irradiance * (1 / nrSamples);
+	return PI * irradiance / NumSamples;
 }
 
 float3 ConvolutionCubeMapSpecular(TextureCube texture, SamplerState samp, uint2 random, float3 normalVec, float roughness, bool isSRGB)
