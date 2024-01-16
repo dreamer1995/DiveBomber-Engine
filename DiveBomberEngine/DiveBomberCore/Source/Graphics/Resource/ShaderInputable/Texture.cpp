@@ -116,6 +116,7 @@ namespace DiveBomber::DEResource
 		{
 			fs::path filePath(ProjectDirectoryW L"Asset\\Texture\\" + name);
 			LoadScratchImage(filePath);		
+			Graphics::GetInstance().ExecuteAllCurrentCommandLists();
 			GenerateCache(textureBuffer, cachePath);
 		}
 	}
@@ -262,7 +263,7 @@ namespace DiveBomber::DEResource
 
 		if (((textureParam.cubeMap && metadata.arraySize == 1) ||
 			(textureParam.generateMip && metadata.mipLevels < resDesc.MipLevels) ||
-			(textureParam.globalIllumination && metadata.arraySize == 1)) ||
+			(textureParam.globalIllumination && metadata.arraySize == 1)) &&
 			((resDesc.Flags & D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS) == 0))
 		{
 			uavBuffer = textureBuffer;
