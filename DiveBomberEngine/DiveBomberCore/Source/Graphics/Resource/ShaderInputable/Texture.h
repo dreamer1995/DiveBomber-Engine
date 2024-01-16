@@ -41,7 +41,7 @@ namespace DiveBomber::DEResource
 
 		struct alignas(16) TextureDiffuseMipGenerateConstant
 		{
-			alignas(16) uint32_t isSRGB;                // Must apply gamma correction to sRGB textures.
+			alignas(16) uint32_t isSRGB;    // Must apply gamma correction to sRGB textures.
 			dx::XMFLOAT2 texelSize;			// 1.0 / OutMip1.Dimensions
 		};
 
@@ -54,6 +54,7 @@ namespace DiveBomber::DEResource
 
 		struct alignas(16) TextureCubeMapGenerateConstant
 		{
+			alignas(16) uint32_t readSRGB;	// Must apply gamma correction to sRGB textures.
 			dx::XMFLOAT2 texelSize;			// 1.0 / OutMip1.Dimensions
 		};
 
@@ -82,8 +83,9 @@ namespace DiveBomber::DEResource
 		void GenerateMipMaps(wrl::ComPtr<ID3D12Resource> uavBuffer);
 		void GenerateDiffuseIrradiance(wrl::ComPtr<ID3D12Resource> uavBuffer, const std::filesystem::path& outputPath);
 		void GenerateSpecularIBLMipMaps(wrl::ComPtr<ID3D12Resource> uavBuffer, const std::filesystem::path& outputPath);
-		void GenerateCubeMap(wrl::ComPtr<ID3D12Resource> uavBuffer);
+		void GenerateCubeMap(wrl::ComPtr<ID3D12Resource> uavBuffer, bool readSRGB);
 		[[nodiscard]] DXGI_FORMAT GetUAVCompatableFormat(DXGI_FORMAT format);
+		[[nodiscard]] bool CheckSRGBFormat(DXGI_FORMAT format);
 
 	protected:
 		json config;

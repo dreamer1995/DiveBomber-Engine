@@ -29,6 +29,7 @@ struct BaseShadingParam
 
 struct GenerateCube
 {
+	bool readSRGB;
 	float2 texelSize;	// 1.0 / OutMip1.Dimensions
 };
 
@@ -50,5 +51,11 @@ void CSMain(ComputeShaderInput In)
 	float2 uv = generateCubeCB.texelSize * (In.dispatchThreadID.xy + 0.5f) - 0.5f;	
 	float3 pos = ThreadIDToCubeFaceCoordinate(uv, In.dispatchThreadID.z);
 	
-	outTarget[In.dispatchThreadID] = SampleTexture(inputMap, samplerStandard, SampleSphereicalMap(normalize(pos)));
+	float4 outColor = SampleTexture(inputMap, samplerStandard, SampleSphereicalMap(normalize(pos)));
+	if (generateCubeCB.readSRGB)
+	{
+		outColor.rgb = EncodeGamma(outColor.rgb);
+	}
+	
+	outTarget[In.dispatchThreadID] = outColor;
 }

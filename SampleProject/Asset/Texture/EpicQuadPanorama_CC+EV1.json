@@ -4,5 +4,5 @@
     "GlobalIllumination": true,
     "Texture3D": false,
     "TextureArray": false,
-    "sRGB": false
+    "sRGB": true
 }
