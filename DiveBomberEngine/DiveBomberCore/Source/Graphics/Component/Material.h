@@ -60,6 +60,8 @@ namespace DiveBomber::Component
 
 		[[nodiscard]] std::vector<std::shared_ptr<DEResource::Shader>> GetShaders() const noexcept;
 		[[nodiscard]] bool IsShaderDirty() noexcept;
+
+		[[nodiscard]] std::shared_ptr<DEResource::ConstantBufferInRootSignature<UINT>> GetIndexConstantBuffer() const noexcept;
 	private:
 		void CreateDefaultConfig();
 		[[nodiscard]] int ParamTypeStringToEnum(std::string string) noexcept;

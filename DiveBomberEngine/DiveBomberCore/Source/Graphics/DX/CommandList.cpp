@@ -3,6 +3,7 @@
 #include "..\GraphicsSource.h"
 #include "UploadBuffer.h"
 #include "ResourceStateTracker.h"
+#include "..\Resource\Resource.h"
 
 namespace DiveBomber::DX
 {
@@ -33,7 +34,7 @@ namespace DiveBomber::DX
 		GFX_THROW_INFO(commandList->Reset(commandAllocator.Get(), nullptr));
 
 		resourceStateTracker->Reset();
-		ReleaseTrackedObjects();
+		ReleaseTracked();
 		uploadBuffer->Reset();
 	}
 
@@ -117,9 +118,21 @@ namespace DiveBomber::DX
 		trackedObjects.emplace_back(object);
 	}
 
-	void CommandList::ReleaseTrackedObjects() noexcept
+	void CommandList::TrackResource(std::shared_ptr<DEResource::Resource> resource) noexcept
+	{
+		trackedResource.emplace_back(resource);
+	}
+
+	void CommandList::TrackResource(std::shared_ptr<Component::Material> component) noexcept
+	{
+		trackedComponent.emplace_back(component);
+	}
+
+	void CommandList::ReleaseTracked() noexcept
 	{
 		trackedObjects.clear();
+		trackedResource.clear();
+		trackedComponent.clear();
 	}
 
 	std::shared_ptr<UploadBufferAllocation> CommandList::AllocateDynamicUploadBuffer(const size_t size, const size_t alignment)

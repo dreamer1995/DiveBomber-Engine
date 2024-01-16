@@ -373,6 +373,11 @@ namespace DiveBomber::Component
         return isShaderDirty;
     }
 
+    std::shared_ptr<DEResource::ConstantBufferInRootSignature<UINT>> Material::GetIndexConstantBuffer() const noexcept
+    {
+        return indexConstantBuffer;
+    }
+
     void Material::SetTexture(const std::string textureName, const std::shared_ptr<ShaderInputable> texture) noexcept
     {
         SetTexture(textureName, texture, numTextureIndices);

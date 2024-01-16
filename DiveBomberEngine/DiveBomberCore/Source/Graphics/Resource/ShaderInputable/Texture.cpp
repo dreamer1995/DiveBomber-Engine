@@ -116,13 +116,15 @@ namespace DiveBomber::DEResource
 		{
 			fs::path filePath(ProjectDirectoryW L"Asset\\Texture\\" + name);
 			LoadScratchImage(filePath);		
-			Graphics::GetInstance().ExecuteAllCurrentCommandLists();
 			GenerateCache(textureBuffer, cachePath);
 		}
 	}
 
 	void Texture::GenerateCache(const wrl::ComPtr<ID3D12Resource> outputTextureBuffer, const std::filesystem::path& outputPath)
 	{
+		Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(outputTextureBuffer, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE, true);
+		Graphics::GetInstance().ExecuteAllCurrentCommandLists();
+
 		HRESULT hr;
 		DirectX::ScratchImage saveToImage;
 		dx::CaptureTexture(Graphics::GetInstance().GetCommandQueue()->GetCommandQueue().Get(), outputTextureBuffer.Get(), textureParam.cubeMap, saveToImage,
@@ -259,15 +261,13 @@ namespace DiveBomber::DEResource
 		D3D12_RESOURCE_DESC resDesc = textureBuffer->GetDesc();
 
 		wrl::ComPtr<ID3D12Resource> aliasBuffer;
-		wrl::ComPtr<ID3D12Resource> uavBuffer;
+		wrl::ComPtr<ID3D12Resource> uavBuffer = textureBuffer;
 
 		if (((textureParam.cubeMap && metadata.arraySize == 1) ||
 			(textureParam.generateMip && metadata.mipLevels < resDesc.MipLevels) ||
 			(textureParam.globalIllumination && metadata.arraySize == 1)) &&
 			((resDesc.Flags & D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS) == 0))
 		{
-			uavBuffer = textureBuffer;
-
 			D3D12_RESOURCE_DESC resDesc = textureBuffer->GetDesc();
 
 			if (textureParam.cubeMap && metadata.arraySize == 1)
@@ -349,8 +349,6 @@ namespace DiveBomber::DEResource
 			}
 
 			Graphics::GetInstance().GetCommandList()->AliasingBarrier(aliasBuffer, uavBuffer);
-
-			Graphics::GetInstance().ExecuteAllCurrentCommandLists();
 		}
 
 		if (textureParam.cubeMap && metadata.arraySize == 1)
@@ -385,8 +383,6 @@ namespace DiveBomber::DEResource
 			// Copy the alias resource back to the original resource.
 			Graphics::GetInstance().GetCommandList()->CopyResource(textureBuffer, aliasBuffer);
 
-			Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(textureBuffer, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE, true);
-			
 			Graphics::GetInstance().ExecuteAllCurrentCommandLists();
 
 			ResourceStateTracker::RemoveGlobalResourceState(aliasBuffer);
@@ -431,7 +427,7 @@ namespace DiveBomber::DEResource
 		material->SetTexture(GetSRVDescriptorHeapOffset(), 0);
 
 		std::shared_ptr<RootSignature> rootSignature = GlobalResourceManager::Resolve<RootSignature>(L"StandardFullStageAccess");
-		
+
 		TextureMipMapGenerateConstant mipGenCB;
 		mipGenCB.isSRGB = textureParam.sRGB;
 		std::shared_ptr<ConstantBufferInHeap<TextureMipMapGenerateConstant>> mipGenCBIndex =
@@ -597,10 +593,6 @@ namespace DiveBomber::DEResource
 			((UINT)resDesc.Width + 7u) / 8u,
 			((UINT)resDesc.Height + 7u) / 8u,
 			6u);
-		
-		Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(outputCubeTarget, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE, true);
-
-		Graphics::GetInstance().ExecuteAllCurrentCommandLists();
 
 		GenerateCache(outputCubeTarget, outputPath);
 	}
@@ -691,10 +683,6 @@ namespace DiveBomber::DEResource
 				6u);
 		}
 
-		Graphics::GetInstance().GetCommandList()->AddTransitionBarrier(outputCubeTarget, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE, true);
-
-		Graphics::GetInstance().ExecuteAllCurrentCommandLists();
-
 		GenerateCache(outputCubeTarget, outputPath);
 	}
 
@@ -746,6 +734,7 @@ namespace DiveBomber::DEResource
 		TextureCubeMapGenerateConstant cubeGenCB;
 		std::shared_ptr<ConstantBufferInHeap<TextureCubeMapGenerateConstant>> cubeGenCBIndex =
 			std::make_shared<ConstantBufferInHeap<TextureCubeMapGenerateConstant>>(generateCubeName);
+
 		material->SetConstant(cubeGenCBIndex, 1);
 
 		PipelineStateObject::PipelineStateReference pipelineStateReference;
@@ -804,13 +793,14 @@ namespace DiveBomber::DEResource
 		case DXGI_FORMAT_BC2_UNORM_SRGB:
 		case DXGI_FORMAT_BC3_UNORM_SRGB:
 		case DXGI_FORMAT_BC7_UNORM_SRGB:
-			uavFormat = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+		case DXGI_FORMAT_R8G8B8A8_UNORM_SRGB:
+			uavFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
 			break;
 		case DXGI_FORMAT_BC1_UNORM:
 		case DXGI_FORMAT_BC2_UNORM:
 		case DXGI_FORMAT_BC3_UNORM:
 		case DXGI_FORMAT_BC7_UNORM:
-			uavFormat = DXGI_FORMAT_R8G8B8A8_TYPELESS;
+			uavFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
 			break;
 		case DXGI_FORMAT_BC4_TYPELESS:
 			uavFormat = DXGI_FORMAT_R8_TYPELESS;

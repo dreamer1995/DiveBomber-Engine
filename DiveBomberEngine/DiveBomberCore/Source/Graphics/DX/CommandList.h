@@ -3,6 +3,16 @@
 
 #include <memory>
 
+namespace DiveBomber::DEResource
+{
+	class Resource;
+}
+
+namespace DiveBomber::Component
+{
+	class Material;
+}
+
 namespace DiveBomber::DX
 {
 	class UploadBuffer;
@@ -26,7 +36,9 @@ namespace DiveBomber::DX
 		[[nodiscard]] bool Close(CommandList& pendingCommandList);
 
 		void TrackResource(wrl::ComPtr<ID3D12Object> object) noexcept;
-		void ReleaseTrackedObjects() noexcept;
+		void TrackResource(std::shared_ptr<DEResource::Resource> resource) noexcept;
+		void TrackResource(std::shared_ptr<Component::Material> component) noexcept;
+		void ReleaseTracked() noexcept;
 		std::shared_ptr<UploadBufferAllocation> AllocateDynamicUploadBuffer(const size_t size, const size_t alignment);
 		void CopyResource(wrl::ComPtr<ID3D12Resource> dstRes, wrl::ComPtr<ID3D12Resource> srcRes);
 	private:
@@ -36,6 +48,8 @@ namespace DiveBomber::DX
 		std::unique_ptr<UploadBuffer> uploadBuffer;
 		std::unique_ptr<ResourceStateTracker> resourceStateTracker;
 		std::vector<wrl::ComPtr<ID3D12Object>> trackedObjects;
+		std::vector<std::shared_ptr<DEResource::Resource>> trackedResource;
+		std::vector<std::shared_ptr<Component::Material>> trackedComponent;
 	};
 }
 
