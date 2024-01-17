@@ -96,10 +96,13 @@ namespace DiveBomber::RenderPipeline
 			}
 			first = false;
 		}
-
 		Graphics::GetInstance().GetCommandList()->CopyResource(
 			Graphics::GetInstance().GetCurrentBackBuffer()->GetRenderTargetBuffer(),
 			finalTarget->GetUAVPointer()->GetUnorderedAccessBuffer());
+
+		// Set it for UI Paint.
+		D3D12_CPU_DESCRIPTOR_HANDLE backBufferHandle = Graphics::GetInstance().GetCurrentBackBuffer()->GetRTVCPUDescriptorHandle();
+		Graphics::GetInstance().GetGraphicsCommandList()->OMSetRenderTargets(1, &backBufferHandle, FALSE, nullptr);
 
 		PostRender();
 	}

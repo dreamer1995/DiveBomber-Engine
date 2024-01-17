@@ -7,12 +7,16 @@
 #include "..\Graphics\Graphics.h"
 #include "..\DiveBomberCore.h"
 
+#include <..\imgui\backends\imgui_impl_win32.h>
 #include <shellapi.h> // For CommandLineToArgvW
 #include <optional>
 #include <cassert>
 #include <memory>
 #include <vector>
 // #include "..\..\ThirdParty\WindowsMessageMap.h"
+
+// Forward declare message handler from imgui_impl_win32.cpp
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 namespace DiveBomber::DEWindow
 {
@@ -137,6 +141,9 @@ namespace DiveBomber::DEWindow
 
 		// newly created windows start off as hidden
 		::ShowWindow(hWnd, SW_SHOW);
+
+		// Init ImGui Win32 Impl
+		ImGui_ImplWin32_Init(hWnd);
 	}
 
 	LRESULT CALLBACK Window::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
@@ -171,11 +178,11 @@ namespace DiveBomber::DEWindow
 		//static WindowsMessageMap wMM;
 		//OutputDebugString(wMM(msg, lParam, wParam).c_str());
 
-		//if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
-		//{
-		//	return true;
-		//}
-		//const auto& imio = ImGui::GetIO();
+		if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
+		{
+			return true;
+		}
+		const auto& imio = ImGui::GetIO();
 
 		switch (msg)
 		{
@@ -229,10 +236,10 @@ namespace DiveBomber::DEWindow
 			// syskey commands need to be handled to track ALT key (VK_MENU) and F10
 		case WM_SYSKEYDOWN:
 			// stifle this keyboard message if imgui wants to capture
-			//if (imio.WantCaptureKeyboard)
-			//{
-			//	break;
-			//}
+			if (imio.WantCaptureKeyboard)
+			{
+				break;
+			}
 			if (!(lParam & 0x40000000) || kbd->AutorepeatIsEnabled()) // filter autorepeat
 			{
 				kbd->OnKeyDown(static_cast<unsigned char>(wParam));
@@ -241,18 +248,18 @@ namespace DiveBomber::DEWindow
 		case WM_KEYUP:
 		case WM_SYSKEYUP:
 			// stifle this keyboard message if imgui wants to capture
-			//if (imio.WantCaptureKeyboard)
-			//{
-			//	break;
-			//}
+			if (imio.WantCaptureKeyboard)
+			{
+				break;
+			}
 			kbd->OnKeyUp(static_cast<unsigned char>(wParam));
 			break;
 		case WM_CHAR:
 			// stifle this keyboard message if imgui wants to capture
-			//if (imio.WantCaptureKeyboard)
-			//{
-			//	break;
-			//}
+			if (imio.WantCaptureKeyboard)
+			{
+				break;
+			}
 			kbd->OnChar(static_cast<unsigned char>(wParam));
 			break;
 			/*********** END KEYBOARD MESSAGES ***********/
@@ -273,10 +280,10 @@ namespace DiveBomber::DEWindow
 				break;
 			}
 			// stifle this mouse message if imgui wants to capture
-			//if (imio.WantCaptureMouse)
-			//{
-			//	break;
-			//}
+			if (imio.WantCaptureMouse)
+			{
+				break;
+			}
 			// in client region -> log move, and log enter + capture mouse (if not previously in window)
 			if (pt.x >= 0 && pt.x < windowWidth && pt.y >= 0 && pt.y < windowHeight)
 			{
@@ -312,40 +319,40 @@ namespace DiveBomber::DEWindow
 				HideCursor();
 			}
 			// stifle this mouse message if imgui wants to capture
-			//if (imio.WantCaptureMouse)
-			//{
-			//	break;
-			//}
+			if (imio.WantCaptureMouse)
+			{
+				break;
+			}
 			mouse->OnLeftDown();
 			break;
 		}
 		case WM_RBUTTONDOWN:
 		{
 			// stifle this mouse message if imgui wants to capture
-			//if (imio.WantCaptureMouse)
-			//{
-			//	break;
-			//}
+			if (imio.WantCaptureMouse)
+			{
+				break;
+			}
 			mouse->OnRightDown();
 			break;
 		}
 		case WM_MBUTTONDOWN:
 		{
 			// stifle this mouse message if imgui wants to capture
-			//if (imio.WantCaptureMouse)
-			//{
-			//	break;
-			//}
+			if (imio.WantCaptureMouse)
+			{
+				break;
+			}
 			mouse->OnWheelDown();
 			break;
 		}
 		case WM_LBUTTONUP:
 		{
 			// stifle this mouse message if imgui wants to capture
-			//if (imio.WantCaptureMouse)
-			//{
-			//	break;
-			//}
+			if (imio.WantCaptureMouse)
+			{
+				break;
+			}
 			const POINTS pt = MAKEPOINTS(lParam);
 			mouse->OnLeftUp();
 			// release mouse if outside of window
@@ -359,10 +366,10 @@ namespace DiveBomber::DEWindow
 		case WM_RBUTTONUP:
 		{
 			// stifle this mouse message if imgui wants to capture
-			//if (imio.WantCaptureMouse)
-			//{
-			//	break;
-			//}
+			if (imio.WantCaptureMouse)
+			{
+				break;
+			}
 			const POINTS pt = MAKEPOINTS(lParam);
 			mouse->OnRightUp();
 			// release mouse if outside of window
@@ -376,10 +383,10 @@ namespace DiveBomber::DEWindow
 		case WM_MBUTTONUP:
 		{
 			// stifle this mouse message if imgui wants to capture
-			//if (imio.WantCaptureMouse)
-			//{
-			//	break;
-			//}
+			if (imio.WantCaptureMouse)
+			{
+				break;
+			}
 			const POINTS pt = MAKEPOINTS(lParam);
 			mouse->OnWheelUp();
 			// release mouse if outside of window
@@ -393,10 +400,10 @@ namespace DiveBomber::DEWindow
 		case WM_MOUSEWHEEL:
 		{
 			// stifle this mouse message if imgui wants to capture
-			//if (imio.WantCaptureMouse)
-			//{
-			//	break;
-			//}
+			if (imio.WantCaptureMouse)
+			{
+				break;
+			}
 			const POINTS pt = MAKEPOINTS(lParam);
 			const int delta = GET_WHEEL_DELTA_WPARAM(wParam);
 			mouse->OnWheelDelta(delta);
@@ -456,6 +463,7 @@ namespace DiveBomber::DEWindow
 		{
 			DestroyWindow(hWnd);
 		}
+		ImGui_ImplWin32_Shutdown();
 	}
 
 	void Window::EnableCursor() noexcept
@@ -504,12 +512,12 @@ namespace DiveBomber::DEWindow
 
 	void Window::EnableImGuiMouse() noexcept
 	{
-		// ImGui::GetIO().ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
+		ImGui::GetIO().ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
 	}
 
 	void Window::DisableImGuiMouse() noexcept
 	{
-		// ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouse;
+		ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouse;
 	}
 
 	void Window::SetTitle(const std::wstring& title)

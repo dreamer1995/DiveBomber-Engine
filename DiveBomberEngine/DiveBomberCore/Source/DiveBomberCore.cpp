@@ -15,6 +15,7 @@
 #include "Graphics\Object\SimpleSphere.h"
 #include "Graphics\Component\Material.h"
 
+#include <..\imgui\imgui.h>
 #include <iostream>
 
 namespace DiveBomber
@@ -42,6 +43,11 @@ namespace DiveBomber
 				});
 		}
 
+		// init imgui
+		IMGUI_CHECKVERSION();
+		ImGui::CreateContext();
+		ImGui::StyleColorsDark();
+
 		Graphics::GetInstance().PostInitializeGraphics();
 	}
 
@@ -60,7 +66,9 @@ namespace DiveBomber
 		}
 		GlobalResourceManager::Destructor();
 		ShaderManager::Destructor();
+		Window::Destructor();
 		Graphics::Destructor();
+		ImGui::DestroyContext();
 	}
 
 	int DiveBomberCore::GameLoop()
@@ -108,6 +116,11 @@ namespace DiveBomber
 		Graphics::GetInstance().BeginFrame();
 
 		currentScene->Render();
+
+		static bool demoWinOpened = true;
+		ImGui::ShowDemoWindow(&demoWinOpened);
+
+		ImGui::Render();
 
 		Graphics::GetInstance().EndFrame();
 	}

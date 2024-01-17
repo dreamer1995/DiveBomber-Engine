@@ -4,3 +4,6 @@
 [submodule "openexr"]
 	path = openexr
 	url = https://github.com/dreamer1995/openexr
+[submodule "imgui"]
+	path = imgui
+	url = https://github.com/dreamer1995/imgui

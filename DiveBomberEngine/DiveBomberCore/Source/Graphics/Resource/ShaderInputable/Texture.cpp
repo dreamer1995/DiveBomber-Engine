@@ -202,7 +202,7 @@ namespace DiveBomber::DEResource
 		};
 
 		bool readSRGB = false;
-		if(texDesc.Format == DXGI_FORMAT_R16G16B16A16_FLOAT || DXGI_FORMAT_R32G32B32_FLOAT || DXGI_FORMAT_R32G32B32A32_FLOAT)
+		if(texDesc.Format == DXGI_FORMAT_R16G16B16A16_FLOAT || texDesc.Format == DXGI_FORMAT_R32G32B32_FLOAT || texDesc.Format == DXGI_FORMAT_R32G32B32A32_FLOAT)
 		{
 			readSRGB = true;
 		}
