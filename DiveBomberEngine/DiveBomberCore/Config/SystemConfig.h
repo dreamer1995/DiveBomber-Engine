@@ -21,4 +21,6 @@ namespace DiveBomber::Config
 // Miscellaneous Settings
 #define ThrowLanguage LANG_ENGLISH
 #define EnableConsole true
+#define EditorMode true
+#define EnableEditorUI true
 }

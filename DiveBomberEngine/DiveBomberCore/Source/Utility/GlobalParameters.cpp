@@ -11,4 +11,5 @@ namespace DiveBomber::Utility
 	double g_GameTime = 0.0;
 	float g_FramePerSnd = 0.0f;
 	float g_TimerSpeed = TimerSpeed;
+	bool g_EnableEditorUI = EnableEditorUI;
 }

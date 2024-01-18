@@ -142,8 +142,11 @@ namespace DiveBomber::DEWindow
 		// newly created windows start off as hidden
 		::ShowWindow(hWnd, SW_SHOW);
 
-		// Init ImGui Win32 Impl
-		ImGui_ImplWin32_Init(hWnd);
+		if (EditorMode)
+		{
+			// Init ImGui Win32 Impl
+			ImGui_ImplWin32_Init(hWnd);
+		}
 	}
 
 	LRESULT CALLBACK Window::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
@@ -177,12 +180,16 @@ namespace DiveBomber::DEWindow
 	{
 		//static WindowsMessageMap wMM;
 		//OutputDebugString(wMM(msg, lParam, wParam).c_str());
+		ImGuiIO imio;
 
-		if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
+		if (EditorMode && EnableEditorUI)
 		{
-			return true;
+			if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
+			{
+				return true;
+			}
+			imio = ImGui::GetIO();
 		}
-		const auto& imio = ImGui::GetIO();
 
 		switch (msg)
 		{
@@ -236,7 +243,7 @@ namespace DiveBomber::DEWindow
 			// syskey commands need to be handled to track ALT key (VK_MENU) and F10
 		case WM_SYSKEYDOWN:
 			// stifle this keyboard message if imgui wants to capture
-			if (imio.WantCaptureKeyboard)
+			if (EditorMode && EnableEditorUI && imio.WantCaptureKeyboard)
 			{
 				break;
 			}
@@ -248,7 +255,7 @@ namespace DiveBomber::DEWindow
 		case WM_KEYUP:
 		case WM_SYSKEYUP:
 			// stifle this keyboard message if imgui wants to capture
-			if (imio.WantCaptureKeyboard)
+			if (EditorMode && EnableEditorUI && imio.WantCaptureKeyboard)
 			{
 				break;
 			}
@@ -256,7 +263,7 @@ namespace DiveBomber::DEWindow
 			break;
 		case WM_CHAR:
 			// stifle this keyboard message if imgui wants to capture
-			if (imio.WantCaptureKeyboard)
+			if (EditorMode && EnableEditorUI && imio.WantCaptureKeyboard)
 			{
 				break;
 			}
@@ -280,7 +287,7 @@ namespace DiveBomber::DEWindow
 				break;
 			}
 			// stifle this mouse message if imgui wants to capture
-			if (imio.WantCaptureMouse)
+			if (EditorMode && EnableEditorUI && imio.WantCaptureMouse)
 			{
 				break;
 			}
@@ -319,7 +326,7 @@ namespace DiveBomber::DEWindow
 				HideCursor();
 			}
 			// stifle this mouse message if imgui wants to capture
-			if (imio.WantCaptureMouse)
+			if (EditorMode && EnableEditorUI && imio.WantCaptureMouse)
 			{
 				break;
 			}
@@ -329,7 +336,7 @@ namespace DiveBomber::DEWindow
 		case WM_RBUTTONDOWN:
 		{
 			// stifle this mouse message if imgui wants to capture
-			if (imio.WantCaptureMouse)
+			if (EditorMode && EnableEditorUI && imio.WantCaptureMouse)
 			{
 				break;
 			}
@@ -339,7 +346,7 @@ namespace DiveBomber::DEWindow
 		case WM_MBUTTONDOWN:
 		{
 			// stifle this mouse message if imgui wants to capture
-			if (imio.WantCaptureMouse)
+			if (EditorMode && EnableEditorUI && imio.WantCaptureMouse)
 			{
 				break;
 			}
@@ -349,7 +356,7 @@ namespace DiveBomber::DEWindow
 		case WM_LBUTTONUP:
 		{
 			// stifle this mouse message if imgui wants to capture
-			if (imio.WantCaptureMouse)
+			if (EditorMode && EnableEditorUI && imio.WantCaptureMouse)
 			{
 				break;
 			}
@@ -366,7 +373,7 @@ namespace DiveBomber::DEWindow
 		case WM_RBUTTONUP:
 		{
 			// stifle this mouse message if imgui wants to capture
-			if (imio.WantCaptureMouse)
+			if (EditorMode && EnableEditorUI && imio.WantCaptureMouse)
 			{
 				break;
 			}
@@ -383,7 +390,7 @@ namespace DiveBomber::DEWindow
 		case WM_MBUTTONUP:
 		{
 			// stifle this mouse message if imgui wants to capture
-			if (imio.WantCaptureMouse)
+			if (EditorMode && EnableEditorUI && imio.WantCaptureMouse)
 			{
 				break;
 			}
@@ -400,7 +407,7 @@ namespace DiveBomber::DEWindow
 		case WM_MOUSEWHEEL:
 		{
 			// stifle this mouse message if imgui wants to capture
-			if (imio.WantCaptureMouse)
+			if (EditorMode && EnableEditorUI && imio.WantCaptureMouse)
 			{
 				break;
 			}
@@ -463,14 +470,20 @@ namespace DiveBomber::DEWindow
 		{
 			DestroyWindow(hWnd);
 		}
-		ImGui_ImplWin32_Shutdown();
+		if (EditorMode)
+		{
+			ImGui_ImplWin32_Shutdown();
+		}
 	}
 
 	void Window::EnableCursor() noexcept
 	{
 		cursorEnabled = true;
 		ShowCursor();
-		EnableImGuiMouse();
+		if (EditorMode)
+		{
+			EnableImGuiMouse();
+		}
 		FreeCursor();
 	}
 
@@ -478,7 +491,10 @@ namespace DiveBomber::DEWindow
 	{
 		cursorEnabled = false;
 		HideCursor();
-		DisableImGuiMouse();
+		if (EditorMode)
+		{
+			DisableImGuiMouse();
+		}
 		ConfineCursor();
 	}
 

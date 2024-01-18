@@ -43,10 +43,16 @@ namespace DiveBomber
 				});
 		}
 
-		// init imgui
-		IMGUI_CHECKVERSION();
-		ImGui::CreateContext();
-		ImGui::StyleColorsDark();
+		if (EditorMode)
+		{
+			// init imgui
+			IMGUI_CHECKVERSION();
+			ImGui::CreateContext();
+			ImGui::StyleColorsDark();
+			ImGuiIO& io = ImGui::GetIO(); (void)io;
+			io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
+			io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
+		}
 
 		Graphics::GetInstance().PostInitializeGraphics();
 	}
@@ -68,7 +74,10 @@ namespace DiveBomber
 		ShaderManager::Destructor();
 		Window::Destructor();
 		Graphics::Destructor();
-		ImGui::DestroyContext();
+		if (EditorMode)
+		{
+			ImGui::DestroyContext();
+		}
 	}
 
 	int DiveBomberCore::GameLoop()
@@ -117,10 +126,10 @@ namespace DiveBomber
 
 		currentScene->Render();
 
-		static bool demoWinOpened = true;
-		ImGui::ShowDemoWindow(&demoWinOpened);
-
-		ImGui::Render();
+		if (EditorMode && g_EnableEditorUI)
+		{
+			ImGui::ShowDemoWindow(&g_EnableEditorUI);
+		}
 
 		Graphics::GetInstance().EndFrame();
 	}
@@ -141,7 +150,7 @@ namespace DiveBomber
 			switch (e->GetCode())
 			{
 			case VK_F1:
-				//showDemoWindow = true;
+				g_EnableEditorUI = !g_EnableEditorUI;
 				break;
 				//case VK_F3:
 					//isWireframe = true;

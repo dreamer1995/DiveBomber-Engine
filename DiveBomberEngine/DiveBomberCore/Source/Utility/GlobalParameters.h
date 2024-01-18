@@ -19,4 +19,5 @@ namespace DiveBomber::Utility
 	extern float g_FramePerSnd;
 	extern float g_TimerSpeed;
 	extern double g_RawDeltaTime;
+	extern bool g_EnableEditorUI;
 }

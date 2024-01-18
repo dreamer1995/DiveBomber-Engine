@@ -14,6 +14,7 @@
 #include "DX\DescriptorAllocation.h"
 #include "..\DiveBomberCore.h"
 #include "..\Window\Window.h"
+#include "..\Utility\GlobalParameters.h"
 
 #include <..\imgui\backends\imgui_impl_win32.h>
 #include <..\imgui\backends\imgui_impl_dx12.h>
@@ -26,6 +27,7 @@ namespace DiveBomber::DEGraphics
 	using namespace DEException;
 	using namespace DEResource;
 	using namespace Component;
+	using namespace Utility;
 
 	std::unique_ptr<Graphics> Graphics::instance;
 
@@ -49,7 +51,10 @@ namespace DiveBomber::DEGraphics
 	Graphics::~Graphics()
 	{
 		Flush();
-		ImGui_ImplDX12_Shutdown();
+		if (EditorMode)
+		{
+			ImGui_ImplDX12_Shutdown();
+		}
 	}
 
 	void Graphics::PostInitializeGraphics()
@@ -71,17 +76,20 @@ namespace DiveBomber::DEGraphics
 
 		mainDS = std::make_shared<DepthStencil>(width, height, dsvDescriptorHeap);
 
-		std::shared_ptr<DescriptorAllocation> imguiAllocation = cbvSrvUavDescriptorHeap->Allocate(1u);
-		std::vector<ID3D12DescriptorHeap*> descriptorHeaps{};
-		auto descriptorHeapsClip = cbvSrvUavDescriptorHeap->GetAllDescriptorHeaps();
-		for (const auto& heap : descriptorHeapsClip)
+		if (EditorMode)
 		{
-			descriptorHeaps.emplace_back(heap.Get());
+			std::shared_ptr<DescriptorAllocation> imguiAllocation = cbvSrvUavDescriptorHeap->Allocate(1u);
+			std::vector<ID3D12DescriptorHeap*> descriptorHeaps{};
+			auto descriptorHeapsClip = cbvSrvUavDescriptorHeap->GetAllDescriptorHeaps();
+			for (const auto& heap : descriptorHeapsClip)
+			{
+				descriptorHeaps.emplace_back(heap.Get());
+			}
+			ImGui_ImplDX12_Init(GetDevice().Get(), SwapChainBufferCount,
+				DXGI_FORMAT_R8G8B8A8_UNORM, *descriptorHeaps.data(),
+				imguiAllocation->GetCPUDescriptorHandle(),
+				imguiAllocation->GetGPUDescriptorHandle());
 		}
-		ImGui_ImplDX12_Init(GetDevice().Get(), SwapChainBufferCount,
-			DXGI_FORMAT_R8G8B8A8_UNORM, *descriptorHeaps.data(),
-			imguiAllocation->GetCPUDescriptorHandle(),
-			imguiAllocation->GetGPUDescriptorHandle());
 	}
 
 	void Graphics::BeginFrame()
@@ -106,10 +114,13 @@ namespace DiveBomber::DEGraphics
 		viewport->Bind();
 		scissorRects->Bind();
 
-		// Start the Dear ImGui frame
-		ImGui_ImplDX12_NewFrame();
-		ImGui_ImplWin32_NewFrame();
-		ImGui::NewFrame();
+		if (EditorMode && g_EnableEditorUI)
+		{
+			// Start the Dear ImGui frame
+			ImGui_ImplDX12_NewFrame();
+			ImGui_ImplWin32_NewFrame();
+			ImGui::NewFrame();
+		}
 	}
 
 	void Graphics::EndFrame()
@@ -120,9 +131,19 @@ namespace DiveBomber::DEGraphics
 		auto commandQueue = GetCommandQueue();
 		wrl::ComPtr<ID3D12GraphicsCommandList7> commandList = GetGraphicsCommandList();
 
-		GetCommandList()->AddTransitionBarrier(backBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET, true);
+		if (EditorMode && g_EnableEditorUI)
+		{
+			ImGui::Render();
+			ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), GetGraphicsCommandList().Get());
 
-		ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), GetGraphicsCommandList().Get());
+			ImGuiIO& io = ImGui::GetIO(); (void)io;
+			// Update and Render additional Platform Windows
+			if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+			{
+				ImGui::UpdatePlatformWindows();
+				ImGui::RenderPlatformWindowsDefault(nullptr, (void*)GetGraphicsCommandList().Get());
+			}
+		}
 
 		// Present
 		{
