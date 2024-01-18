@@ -138,6 +138,11 @@
     <ClCompile Include="Source\Graphics\Resource\ShaderInputable\Texture.cpp" />
     <ClCompile Include="Source\Graphics\Resource\ShaderInputable\UnorderedAccessBuffer.cpp" />
     <ClCompile Include="Source\Graphics\Resource\ShaderInputable\UnorderedAccessBufferAsShaderResourceView.cpp" />
+    <ClCompile Include="Source\Graphics\UI\MainMenuBar.cpp" />
+    <ClCompile Include="Source\Graphics\UI\ObjectDetail.cpp" />
+    <ClCompile Include="Source\Graphics\UI\ResourceBrowser.cpp" />
+    <ClCompile Include="Source\Graphics\UI\SceneOutliner.cpp" />
+    <ClCompile Include="Source\Graphics\UI\UIManager.cpp" />
     <ClCompile Include="Source\Scene\Scene.cpp" />
     <ClCompile Include="Source\Utility\Color.h" />
     <ClCompile Include="Source\Utility\Common.cpp" />
@@ -218,6 +223,12 @@
     <ClInclude Include="Source\Graphics\Resource\ShaderInputable\Texture.h" />
     <ClInclude Include="Source\Graphics\Resource\ShaderInputable\UnorderedAccessBuffer.h" />
     <ClInclude Include="Source\Graphics\Resource\ShaderInputable\UnorderedAccessBufferAsShaderResourceView.h" />
+    <ClInclude Include="Source\Graphics\UI\MainMenuBar.h" />
+    <ClInclude Include="Source\Graphics\UI\ObjectDetail.h" />
+    <ClInclude Include="Source\Graphics\UI\ResourceBrowser.h" />
+    <ClInclude Include="Source\Graphics\UI\SceneOutliner.h" />
+    <ClInclude Include="Source\Graphics\UI\UIManager.h" />
+    <ClInclude Include="Source\Graphics\UI\UIWidget.h" />
     <ClInclude Include="Source\Utility\DEJson.h" />
     <ClInclude Include="Source\Graphics\DEDirextX.h" />
     <ClInclude Include="Source\Graphics\DX\DescriptorAllocation.h" />

@@ -11,9 +11,9 @@
 #include "Scene\Scene.h"
 #include "Graphics\DX\GlobalResourceManager.h"
 #include "Graphics\DX\ShaderManager.h"
-
 #include "Graphics\Object\SimpleSphere.h"
 #include "Graphics\Component\Material.h"
+#include "Graphics\UI\UIManager.h"
 
 #include <..\imgui\imgui.h>
 #include <iostream>
@@ -125,10 +125,9 @@ namespace DiveBomber
 		Graphics::GetInstance().BeginFrame();
 
 		currentScene->Render();
-
 		if (EditorMode && g_EnableEditorUI)
 		{
-			ImGui::ShowDemoWindow(&g_EnableEditorUI);
+			UI::UIManager::GetInstance().DrawUI();
 		}
 
 		Graphics::GetInstance().EndFrame();

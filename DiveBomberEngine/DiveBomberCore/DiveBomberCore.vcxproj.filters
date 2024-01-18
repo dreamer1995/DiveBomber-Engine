@@ -84,6 +84,11 @@
     <ClCompile Include="..\..\imgui\backends\imgui_impl_win32.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Graphics\UI\MainMenuBar.cpp" />
+    <ClCompile Include="Source\Graphics\UI\ObjectDetail.cpp" />
+    <ClCompile Include="Source\Graphics\UI\ResourceBrowser.cpp" />
+    <ClCompile Include="Source\Graphics\UI\SceneOutliner.cpp" />
+    <ClCompile Include="Source\Graphics\UI\UIManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Utility\Common.h" />
@@ -200,6 +205,12 @@
     <ClInclude Include="..\..\imgui\backends\imgui_impl_win32.h">
       <Filter>imgui</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Graphics\UI\MainMenuBar.h" />
+    <ClInclude Include="Source\Graphics\UI\ObjectDetail.h" />
+    <ClInclude Include="Source\Graphics\UI\ResourceBrowser.h" />
+    <ClInclude Include="Source\Graphics\UI\SceneOutliner.h" />
+    <ClInclude Include="Source\Graphics\UI\UIManager.h" />
+    <ClInclude Include="Source\Graphics\UI\UIWidget.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
