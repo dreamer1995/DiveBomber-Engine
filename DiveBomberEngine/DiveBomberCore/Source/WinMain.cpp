@@ -45,7 +45,8 @@ int CALLBACK wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
 	try
 	{
-		int returnValue = DiveBomberCore{}.GameLoop();
+		int returnValue = DiveBomberCore::GetInstance().GameLoop();
+		DiveBomberCore::Destructor();
 		atexit(&ReportLiveObjects);
 		return returnValue;
 	}
@@ -64,6 +65,8 @@ int CALLBACK wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 		ClearMessageQueue();
 		MessageBox(nullptr, L"No details available", L"Unknown Exception", MB_OK | MB_ICONEXCLAMATION);
 	}
+
+	DiveBomberCore::Destructor();
 
 	atexit(&ReportLiveObjects);
 

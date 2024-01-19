@@ -1,5 +1,10 @@
 #include "MainMenuBar.h"
 
+#include "ObjectDetail.h"
+#include "ResourceBrowser.h"
+#include "SceneOutliner.h"
+#include "UIManager.h"
+
 #include <..\imgui\imgui.h>
 
 namespace DiveBomber::UI
@@ -24,6 +29,24 @@ namespace DiveBomber::UI
 				}
 				ImGui::EndMenu();
 			}
+
+			if (ImGui::BeginMenu("Window"))
+			{
+				if (ImGui::MenuItem("Object Detail"))
+				{
+					UIManager::GetInstance().AddToUIDrawList(std::make_shared<ObjectDetail>());
+				}
+				if (ImGui::MenuItem("Resource Browser"))
+				{
+					UIManager::GetInstance().AddToUIDrawList(std::make_shared<ResourceBrowser>());
+				}
+				if (ImGui::MenuItem("Scene Outliner"))
+				{
+					UIManager::GetInstance().AddToUIDrawList(std::make_shared<SceneOutliner>());
+				}
+				ImGui::EndMenu();
+			}
+
 			ImGui::EndMainMenuBar();
 		}
 	}

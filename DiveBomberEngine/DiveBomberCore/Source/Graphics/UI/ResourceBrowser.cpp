@@ -6,7 +6,11 @@ namespace DiveBomber::UI
 {
 	void ResourceBrowser::DrawUI()
 	{
-		ImGui::Begin("Resource Browser");
-		ImGui::End();
+		if (isShown)
+		{
+			std::string captionChar = GetCaption() + " " + std::to_string(id);
+			ImGui::Begin(captionChar.c_str(), &isShown);
+			ImGui::End();
+		}
 	}
 }

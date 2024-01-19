@@ -7,5 +7,13 @@ namespace DiveBomber::UI
 	{
 	public:
 		void DrawUI() override;
+		[[nodiscard]] std::string GetCaption() override
+		{
+			return "Object Detail";
+		}
+		[[nodiscard]] bool GetIsUniqueUI() override
+		{
+			return false;
+		}
 	};
 }

@@ -7,5 +7,13 @@ namespace DiveBomber::UI
 	{
 	public:
 		void DrawUI() override;
+		[[nodiscard]] std::string GetCaption() override
+		{
+			return "Main MenuBar";
+		}
+		[[nodiscard]] bool GetIsUniqueUI() override
+		{
+			return true;
+		}
 	};
 }

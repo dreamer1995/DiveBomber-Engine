@@ -38,6 +38,10 @@ namespace DiveBomber
 	public:
 		DiveBomberCore();
 		~DiveBomberCore();
+
+		[[nodiscard]] static DiveBomberCore& GetInstance();
+		static void Destructor() noexcept;
+
 		[[nodiscard]] int GameLoop();
 		void ExecuteConsoleCommand();
 		void RefreshRenderReport();
@@ -49,6 +53,8 @@ namespace DiveBomber
 		void GameLogic();
 		void RenderLogic();
 
+	private:
+		static std::unique_ptr<DiveBomberCore> instance;
 		std::unique_ptr<DEConsole::Console> console;
 		std::queue<std::thread> threadTasks;
 		std::wstring command;

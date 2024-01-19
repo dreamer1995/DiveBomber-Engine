@@ -20,6 +20,8 @@
 
 namespace DiveBomber
 {
+	std::unique_ptr<DiveBomberCore> DiveBomberCore::instance;
+
 	using namespace DEWindow;
 	using namespace DEGraphics;
 	using namespace DEConsole;
@@ -77,6 +79,23 @@ namespace DiveBomber
 		if (EditorMode)
 		{
 			ImGui::DestroyContext();
+		}
+	}
+
+	DiveBomberCore& DiveBomberCore::GetInstance()
+	{
+		if (instance == nullptr)
+		{
+			instance = std::make_unique<DiveBomberCore>();
+		}
+		return *instance;
+	}
+
+	void DiveBomberCore::Destructor() noexcept
+	{
+		if (instance != nullptr)
+		{
+			instance.reset();
 		}
 	}
 

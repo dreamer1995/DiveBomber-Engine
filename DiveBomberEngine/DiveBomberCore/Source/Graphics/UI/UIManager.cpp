@@ -12,14 +12,10 @@ namespace DiveBomber::UI
 	UIManager::UIManager()
 	{
 		mainMenuBar = std::make_shared<MainMenuBar>();
-		objectDetail = std::make_shared<ObjectDetail>();
-		resourceBrowser = std::make_shared<ResourceBrowser>();
-		sceneOutliner = std::make_shared<SceneOutliner>();
 
-		UIDrawList.emplace_back(mainMenuBar);
-		UIDrawList.emplace_back(objectDetail);
-		UIDrawList.emplace_back(resourceBrowser);
-		UIDrawList.emplace_back(sceneOutliner);
+		AddToUIDrawList(std::make_shared<ObjectDetail>());
+		AddToUIDrawList(std::make_shared<ResourceBrowser>());
+		AddToUIDrawList(std::make_shared<SceneOutliner>());
 	}
 
 	UIManager& UIManager::GetInstance()
@@ -41,9 +37,44 @@ namespace DiveBomber::UI
 
 	void UIManager::DrawUI()
 	{
-		for (std::shared_ptr<UIWidget>& UI : UIDrawList)
+		mainMenuBar->DrawUI();
+		for (auto& UI : UIDrawList)
 		{
-			UI->DrawUI();
+			UI.second->DrawUI();
+		}
+	}
+
+	void UIManager::AddToUIDrawList(const std::shared_ptr<UIWidget> widget) noexcept
+	{
+		using namespace std::string_literals;
+
+		if (UIDrawList.size() == 0 || widget->GetIsUniqueUI())
+		{
+			const std::string questKey = widget->GetCaption() + " " + std::to_string(1);
+			UIDrawList[questKey] = widget;
+			widget->SetID(1);
+			return;
+		}
+
+		for (int i = 1; i < UIDrawList.size() + 1; i++)
+		{
+			const std::string questKey = widget->GetCaption() + " " + std::to_string(i);
+			auto iterator = UIDrawList.find(questKey);
+			if (iterator == UIDrawList.end())
+			{
+				UIDrawList[questKey] = widget;
+				widget->SetID(i);
+				break;
+			}
+			else
+			{
+				if (iterator->second->IsShown() != true)
+				{
+					UIDrawList[questKey] = widget;
+					widget->SetID(i);
+					break;
+				}
+			}
 		}
 	}
 }
