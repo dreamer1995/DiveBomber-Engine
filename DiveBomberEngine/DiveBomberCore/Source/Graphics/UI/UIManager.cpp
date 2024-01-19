@@ -4,6 +4,7 @@
 #include "ObjectDetail.h"
 #include "ResourceBrowser.h"
 #include "SceneOutliner.h"
+#include "RenderStatusPanel.h"
 
 namespace DiveBomber::UI
 {
@@ -16,6 +17,7 @@ namespace DiveBomber::UI
 		AddToUIDrawList(std::make_shared<ObjectDetail>());
 		AddToUIDrawList(std::make_shared<ResourceBrowser>());
 		AddToUIDrawList(std::make_shared<SceneOutliner>());
+		AddToUIDrawList(std::make_shared<RenderStatusPanel>());
 	}
 
 	UIManager& UIManager::GetInstance()

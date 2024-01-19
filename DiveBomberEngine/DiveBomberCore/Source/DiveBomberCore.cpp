@@ -126,13 +126,7 @@ namespace DiveBomber
 
 	void DiveBomberCore::Update()
 	{
-		g_FrameCounter++;
-		g_RawDeltaTime = coreTimer->Mark();
-		g_EngineTime += g_RawDeltaTime;
-		g_DeltaTime = g_RawDeltaTime * g_TimerSpeed;
-		g_GameTime += g_DeltaTime;
-
-		RefreshRenderReport();
+		UpdateRenderStatus();
 
 		ProcessInput();
 		GameLogic();
@@ -418,24 +412,28 @@ namespace DiveBomber
 		}
 	};
 
-	void DiveBomberCore::RefreshRenderReport()
+	void DiveBomberCore::UpdateRenderStatus()
 	{
+		// Standard
+		g_FrameCounter++;
+		g_RawDeltaTime = coreTimer->Mark();
+		g_EngineTime += g_RawDeltaTime;
+		g_DeltaTime = g_RawDeltaTime * g_TimerSpeed;
+		g_GameTime += g_DeltaTime;
 		static double elapsedSeconds = 0.0;
 		static uint64_t elapsedFrames = 0;
 
+		// FPS
 		elapsedSeconds += g_RawDeltaTime;
 		elapsedFrames++;
 
-		if (elapsedSeconds > 1.0f)
+		if (elapsedSeconds > 0.5f)
 		{
 			g_FramePerSnd = float(elapsedFrames / elapsedSeconds);
 			std::wcout << g_FramePerSnd << std::endl;
 			elapsedSeconds = 0.0;
 			elapsedFrames = 0;
 		}
-
-		//std::wcout << g_FramePerSnd << std::endl;
-		//std::wcout << g_GameTime << std::endl;
 	}
 
 	std::shared_ptr<Scene> DiveBomberCore::GetCurrentScene()

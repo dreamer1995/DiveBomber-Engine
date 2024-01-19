@@ -140,6 +140,7 @@
     <ClCompile Include="Source\Graphics\Resource\ShaderInputable\UnorderedAccessBufferAsShaderResourceView.cpp" />
     <ClCompile Include="Source\Graphics\UI\MainMenuBar.cpp" />
     <ClCompile Include="Source\Graphics\UI\ObjectDetail.cpp" />
+    <ClCompile Include="Source\Graphics\UI\RenderStatusPanel.cpp" />
     <ClCompile Include="Source\Graphics\UI\ResourceBrowser.cpp" />
     <ClCompile Include="Source\Graphics\UI\SceneOutliner.cpp" />
     <ClCompile Include="Source\Graphics\UI\UIManager.cpp" />
@@ -225,6 +226,7 @@
     <ClInclude Include="Source\Graphics\Resource\ShaderInputable\UnorderedAccessBufferAsShaderResourceView.h" />
     <ClInclude Include="Source\Graphics\UI\MainMenuBar.h" />
     <ClInclude Include="Source\Graphics\UI\ObjectDetail.h" />
+    <ClInclude Include="Source\Graphics\UI\RenderStatusPanel.h" />
     <ClInclude Include="Source\Graphics\UI\ResourceBrowser.h" />
     <ClInclude Include="Source\Graphics\UI\SceneOutliner.h" />
     <ClInclude Include="Source\Graphics\UI\UIManager.h" />

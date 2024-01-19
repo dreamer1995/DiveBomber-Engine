@@ -89,6 +89,7 @@
     <ClCompile Include="Source\Graphics\UI\ResourceBrowser.cpp" />
     <ClCompile Include="Source\Graphics\UI\SceneOutliner.cpp" />
     <ClCompile Include="Source\Graphics\UI\UIManager.cpp" />
+    <ClCompile Include="Source\Graphics\UI\RenderStatusPanel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Utility\Common.h" />
@@ -211,6 +212,7 @@
     <ClInclude Include="Source\Graphics\UI\SceneOutliner.h" />
     <ClInclude Include="Source\Graphics\UI\UIManager.h" />
     <ClInclude Include="Source\Graphics\UI\UIWidget.h" />
+    <ClInclude Include="Source\Graphics\UI\RenderStatusPanel.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

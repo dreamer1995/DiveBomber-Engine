@@ -49,7 +49,7 @@ namespace DiveBomber
 
 		[[nodiscard]] int GameLoop();
 		void ExecuteConsoleCommand();
-		void RefreshRenderReport();
+		void UpdateRenderStatus();
 		[[nodiscard]] std::shared_ptr<DEScene::Scene> GetCurrentScene();
 		[[nodiscard]] std::shared_ptr<DEObject::Object> GetCurrentSelectedObject();
 		void SetCurrentSelectedObject(std::shared_ptr<DEObject::Object> object);
