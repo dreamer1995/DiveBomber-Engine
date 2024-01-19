@@ -31,6 +31,11 @@ namespace DiveBomber::DX
 	class GlobalResourceManager;
 }
 
+namespace DiveBomber::DEObject
+{
+	class Object;
+}
+
 namespace DiveBomber
 {
 	class DiveBomberCore final
@@ -45,6 +50,9 @@ namespace DiveBomber
 		[[nodiscard]] int GameLoop();
 		void ExecuteConsoleCommand();
 		void RefreshRenderReport();
+		[[nodiscard]] std::shared_ptr<DEScene::Scene> GetCurrentScene();
+		[[nodiscard]] std::shared_ptr<DEObject::Object> GetCurrentSelectedObject();
+		void SetCurrentSelectedObject(std::shared_ptr<DEObject::Object> object);
 
 	private:
 		void Start();
@@ -61,6 +69,7 @@ namespace DiveBomber
 
 		std::unique_ptr<Utility::Timer> coreTimer;
 
-		std::unique_ptr<DEScene::Scene> currentScene;
+		std::shared_ptr<DEScene::Scene> currentScene;
+		std::shared_ptr<DEObject::Object> currentSelectedObject;
 	};
 }

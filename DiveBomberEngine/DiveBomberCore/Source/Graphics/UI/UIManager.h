@@ -17,7 +17,7 @@ namespace DiveBomber::UI
 		[[nodiscard]] static UIManager& GetInstance();
 		static void Destructor() noexcept;
 		void DrawUI();
-		void AddToUIDrawList(const std::shared_ptr<UIWidget> widget) noexcept;
+		void AddToUIDrawList(const std::shared_ptr<UIWidget> widget);
 
 	private:
 		static std::unique_ptr<UIManager> instance;

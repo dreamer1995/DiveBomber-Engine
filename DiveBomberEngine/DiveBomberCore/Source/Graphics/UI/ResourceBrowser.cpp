@@ -8,7 +8,7 @@ namespace DiveBomber::UI
 	{
 		if (isShown)
 		{
-			std::string captionChar = GetCaption() + " " + std::to_string(id);
+			std::string captionChar = GetCaption() + (id == 1 ? "" : " " + std::to_string(id));
 			ImGui::Begin(captionChar.c_str(), &isShown);
 			ImGui::End();
 		}

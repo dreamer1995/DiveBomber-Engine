@@ -7,11 +7,11 @@ namespace DiveBomber::UI
 	{
 	public:
 		void DrawUI() override;
-		[[nodiscard]] std::string GetCaption() override
+		[[nodiscard]] std::string GetCaption() const noexcept override
 		{
 			return "Object Detail";
 		}
-		[[nodiscard]] bool GetIsUniqueUI() override
+		[[nodiscard]] bool GetIsUniqueUI() const noexcept override
 		{
 			return false;
 		}

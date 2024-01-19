@@ -12,20 +12,20 @@ namespace DiveBomber::UI
 		virtual ~UIWidget() = default;
 
 		virtual void DrawUI() = 0;
-		virtual [[nodiscard]] std::string GetCaption() = 0;
-		virtual [[nodiscard]] bool GetIsUniqueUI() = 0;
+		virtual [[nodiscard]] std::string GetCaption() const noexcept = 0;
+		virtual [[nodiscard]] bool GetIsUniqueUI() const noexcept = 0;
 
-		[[nodiscard]] UINT GetID()
+		[[nodiscard]] UINT GetID() const noexcept
 		{
 			return id;
 		}
 
-		void SetID(UINT inputID)
+		void SetID(UINT inputID) noexcept
 		{
 			id = inputID;
 		}
 
-		[[nodiscard]] bool IsShown()
+		[[nodiscard]] bool IsShown() const noexcept
 		{
 			return isShown;
 		}

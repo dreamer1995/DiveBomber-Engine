@@ -23,8 +23,10 @@ namespace DiveBomber::DEScene
 	{
 	}
 
-	void Scene::LoadSceneFromFile(const std::wstring name) noexcept
+	void Scene::LoadSceneFromFile(const std::wstring inputName) noexcept
 	{
+		name = inputName;
+
 		mainRenderPipeline = std::make_unique<DeferredRenderPipeLine>();
 
 		drawableObjects.emplace(L"Sphere01", std::make_shared<SimpleSphere>(L"Sphere01"));
@@ -73,5 +75,10 @@ namespace DiveBomber::DEScene
 	std::multimap<std::wstring, std::shared_ptr<Object>> Scene::GetSceneObjects() const noexcept
 	{
 		return drawableObjects;
+	}
+
+	std::wstring DiveBomber::DEScene::Scene::GetName() const noexcept
+	{
+		return name;
 	}
 }

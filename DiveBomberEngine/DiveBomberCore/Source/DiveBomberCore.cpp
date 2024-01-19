@@ -119,7 +119,7 @@ namespace DiveBomber
 
 	void DiveBomberCore::Start()
 	{
-		currentScene = std::make_unique<Scene>();
+		currentScene = std::make_shared<Scene>();
 
 		currentScene->LoadSceneFromFile(L"Test Scene");
 	}
@@ -143,11 +143,12 @@ namespace DiveBomber
 	{
 		Graphics::GetInstance().BeginFrame();
 
-		currentScene->Render();
+		// Need more consideration
 		if (EditorMode && g_EnableEditorUI)
 		{
 			UI::UIManager::GetInstance().DrawUI();
 		}
+		currentScene->Render();
 
 		Graphics::GetInstance().EndFrame();
 	}
@@ -435,6 +436,21 @@ namespace DiveBomber
 
 		//std::wcout << g_FramePerSnd << std::endl;
 		//std::wcout << g_GameTime << std::endl;
+	}
+
+	std::shared_ptr<Scene> DiveBomberCore::GetCurrentScene()
+	{
+		return currentScene;
+	}
+
+	std::shared_ptr<Object> DiveBomberCore::GetCurrentSelectedObject()
+	{
+		return currentSelectedObject;
+	}
+
+	void DiveBomberCore::SetCurrentSelectedObject(std::shared_ptr<Object> object)
+	{
+		currentSelectedObject = object;
 	}
 
 	void DiveBomberCore::GameLogic()

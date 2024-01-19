@@ -44,7 +44,7 @@ namespace DiveBomber::UI
 		}
 	}
 
-	void UIManager::AddToUIDrawList(const std::shared_ptr<UIWidget> widget) noexcept
+	void UIManager::AddToUIDrawList(const std::shared_ptr<UIWidget> widget)
 	{
 		using namespace std::string_literals;
 
