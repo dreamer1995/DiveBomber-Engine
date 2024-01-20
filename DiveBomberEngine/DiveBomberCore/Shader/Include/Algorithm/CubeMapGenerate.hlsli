@@ -6,7 +6,7 @@
 static float2 invAtan = float2(0.1591f, 0.3182f);
 float2 SampleSphereicalMap(float3 tc)
 {
-	float2 position = float2(atan2(tc.z, -tc.x), asin(-tc.y));
+	float2 position = float2(atan2(tc.x, tc.z), asin(-tc.y));
 	position *= invAtan;
 	position += 0.5;
 	return position;
@@ -50,7 +50,7 @@ float3 ConvolutionCubeMapDiffuse(TextureCube texture, SamplerState samp, uint2 r
 		}
 	}
 	
-	return PI * irradiance / NumSamples;
+	return irradiance / NumSamples;
 }
 
 float3 ConvolutionCubeMapSpecular(TextureCube texture, SamplerState samp, uint2 random, float3 normalVec, float roughness, bool isSRGB)
