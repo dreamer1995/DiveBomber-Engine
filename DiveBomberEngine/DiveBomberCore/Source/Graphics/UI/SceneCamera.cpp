@@ -14,7 +14,6 @@ namespace DiveBomber::UI
 	{
 		if(isShown)
 		{
-			ImGui::ShowDemoWindow();
 			std::string captionChar = GetCaption() + (id == 1 ? "" : " " + std::to_string(id));
 			ImGui::Begin(captionChar.c_str(), &isShown);
 				Graphics::GetInstance().GetCamera()->DrawComponentUI();

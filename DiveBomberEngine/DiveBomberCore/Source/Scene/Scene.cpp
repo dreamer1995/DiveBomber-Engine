@@ -38,9 +38,10 @@ namespace DiveBomber::DEScene
 		uint64_t fenceValue = Graphics::GetInstance().ExecuteCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
 		commandQueue->WaitForFenceValue(fenceValue);
 
-		Camera::CameraAttributes cameraAttr;
+		Camera::CameraAttributes cameraAttr{};
 		cameraAttr.position.z = -6.0f;
-		mainCamera = std::make_shared<Camera>(L"Main Camera", cameraAttr, false);
+		cameraAttr.projectionAttributes.isPerspective = true;
+		mainCamera = std::make_shared<Camera>(L"Main Camera", cameraAttr);
 		mainCamera->BindToGraphics(mainCamera);
 	}
 

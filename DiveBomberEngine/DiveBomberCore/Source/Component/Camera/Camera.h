@@ -35,15 +35,13 @@ namespace DiveBomber::DEComponent
 		};
 
 	public:
-		Camera(std::wstring inputName, CameraAttributes attributes, bool inputTethered = false) noexcept;
-		Camera(std::wstring inputName, bool tethered = false) noexcept;
+		Camera(std::wstring inputName, CameraAttributes inpputAttributes = CameraAttributes{}) noexcept;
 		void BindToGraphics(std::shared_ptr<Camera> camera) const;
 
 		[[nodiscard]] DirectX::XMMATRIX GetMatrix() const noexcept;
 		[[nodiscard]] DirectX::XMMATRIX GetProjection() const noexcept;
 		[[nodiscard]] DirectX::XMMATRIX GetProjection(UINT renderTargetWidth, UINT renderTargetHeight) const noexcept;
 		[[nodiscard]] float GetFOV() const noexcept;
-		//void SpawnControlWidgets(DEGraphics::Graphics& gfx) noexcept;
 		void Reset() noexcept;
 		void Rotate(const float dx, const float dy) noexcept;
 		void Translate(const DirectX::XMFLOAT3 translation) noexcept;
@@ -57,8 +55,8 @@ namespace DiveBomber::DEComponent
 		void RotateAround(const float dx, const float dy, const DirectX::XMFLOAT3 centralPoint) noexcept;
 		void Bind() noxnd;
 		void SetRotation(const float pitch, const float yaw) noexcept;
-		void ProjectScreenToWorldExpansionBasis(DirectX::XMFLOAT4& vWBasisX, DirectX::XMFLOAT4& vWBasisY, DirectX::XMFLOAT4& vWBasisZ,
-			DirectX::XMFLOAT2& UVToViewA, DirectX::XMFLOAT2& UVToViewB) const noxnd;
+		//void ProjectScreenToWorldExpansionBasis(DirectX::XMFLOAT4& vWBasisX, DirectX::XMFLOAT4& vWBasisY, DirectX::XMFLOAT4& vWBasisZ,
+		//	DirectX::XMFLOAT2& UVToViewA, DirectX::XMFLOAT2& UVToViewB) const noxnd;
 		void SetOffsetPixels(const float offsetX, const float offsetY) noxnd;
 		void ResizeAspectRatio() noexcept;
 		void ResizeAspectRatio(const UINT width, const UINT height) noexcept;
@@ -84,13 +82,10 @@ namespace DiveBomber::DEComponent
 		void CalculateTransformMatrices() noexcept;
 
 	private:
-		float yaw_;
 		std::wstring name;
-		bool tethered;
-		DirectX::XMFLOAT3 homePos;
-		DirectX::XMFLOAT3 homeRot;
-		DirectX::XMFLOAT3 position;
-		DirectX::XMFLOAT3 rotation; //pitch //yaw //roll;
+		float yaw_;
+		CameraAttributes homeAttributes;
+		CameraAttributes attributes;
 		static constexpr float travelSpeed = 12.0f;
 		static constexpr float rotationSpeed = 0.004f;
 		bool enableCameraIndicator = false;

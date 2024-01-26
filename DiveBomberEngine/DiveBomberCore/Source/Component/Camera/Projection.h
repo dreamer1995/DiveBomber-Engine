@@ -13,48 +13,55 @@ namespace DiveBomber::DEComponent
 	class Projection final
 	{
 	public:
+		struct PerspectiveAttributes
+		{
+			float FOV = 60.0f / 180.0f * Utility::PI;
+			float aspectRatio = (float)MainWindowWidth / MainWindowHeight;
+		};
+
+		struct OrthographicAttributes
+		{
+			float width = 512.0f;
+			float height = 512.0f;
+		};
+
 		struct ProjectionAttributes
 		{
-			float aspectRatio = (float)MainWindowWidth / MainWindowHeight;
 			float nearPlane = 0.01f;
 			float farPlane = 400.0f;
 			bool isPerspective = true;
-			float FOV = 60.0f / 180.0f * Utility::PI;
+			union
+			{
+				PerspectiveAttributes perspectiveAttributes;
+				OrthographicAttributes orthographicAttributes;
+			};
 		};
 
 	public:
-		Projection(ProjectionAttributes projectionAttributes);
+		Projection(ProjectionAttributes inputAttributes);
 		[[nodiscard]] DirectX::XMMATRIX GetMatrix() const;
 		[[nodiscard]] DirectX::XMMATRIX GetMatrix(UINT renderTargetWidth, UINT renderTargetHeight) const;
-		//void RenderWidgets(DEGraphics::Graphics& gfx);
 		void SetPos(const DirectX::XMFLOAT3);
 		void SetRotation(const DirectX::XMFLOAT3);
 		void Submit(size_t channel) const;
 		//void LinkTechniques(Rgph::RenderGraph& rg);
 		void Reset();
-		void SetProjection(const float inputFOV, const float inputAspectRatio,
-			const float inputNearPlane, const float inputFarPlane);
+		void SetPerspectiveProjection(const float FOV, const float aspectRatio,
+			const float nearPlane, const float farPlane);
+		void SetOrthographicProjection(const float width, const float height,
+			const float nearPlane, const float farPlane);
 		[[nodiscard]] DirectX::XMFLOAT2 GetFarNearPlane() const;
 		float GetFOV() const;
 		float GetAspectRatio() const;
 		void SetOffsetPixels(const float offsetX, const float offsetY) noexcept;
 		void ResizeAspectRatio() noexcept;
 		void ResizeAspectRatio(const UINT inputWidth, const UINT inputHeight) noexcept;
-	private:
-		float width;
-		float height;
-		float nearPlane;
-		float farPlane;
-		float aspectRatio;
-		bool isPerspective;
-		float FOV;
 
-		float homeWidth;
-		float homeHeight;
-		float homeNearPlane;
-		float homeFarPlane;
-		float homeAspectRatio;
-		float homeFOV;
+		void DrawComponentUI();
+
+	private:
+		ProjectionAttributes homeAttributes;
+		ProjectionAttributes attributes;
 
 		//std::unique_ptr<Frustum> frust;
 

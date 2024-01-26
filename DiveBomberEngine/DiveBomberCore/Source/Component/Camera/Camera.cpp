@@ -11,35 +11,24 @@ namespace DiveBomber::DEComponent
 	using namespace DEResource;
 	namespace dx = DirectX;
 
-	Camera::Camera(std::wstring inputName, CameraAttributes attributes, bool inputTethered) noexcept
+	Camera::Camera(std::wstring inputName, CameraAttributes inputAttributes) noexcept
 		:
 		name(std::move(inputName)),
-		homePos(attributes.position),
-		homeRot(attributes.rotation),
-		//indicator(gfx),
-		tethered(inputTethered)
-		//vCbuf(gfx, 1u),
-		//pCbuf(gfx, 1u),
+		homeAttributes(inputAttributes),
+		attributes(homeAttributes)
 	{
 		projection = std::make_unique<Projection>(attributes.projectionAttributes);
 		using namespace std::string_literals;
 		transformConstantBuffer = std::make_shared<ConstantBufferInRootSignature<Transforms>>(name + L"#"s + L"CamTransform", 1u);
 
-		if (tethered)
-		{
-			position = homePos;
-			rotation = homeRot;
-			//indicator.SetPos(pos);
-			//proj.SetPos(pos);
-		}
-		Reset();
+		projection->SetPos(attributes.position);
+		projection->SetRotation(attributes.rotation);
+		//indicator.SetPos(pos);
 	}
 
 	void Camera::BindToGraphics(std::shared_ptr<Camera> camera) const
 	{
 		Graphics::GetInstance().SetCamera(camera);
-		//gfx.SetProjection(proj.GetMatrix());
-		//gfx.SetFOV(proj.GetFOV());
 	}
 
 	DirectX::XMMATRIX Camera::GetMatrix() const noexcept
@@ -49,16 +38,16 @@ namespace DiveBomber::DEComponent
 		const dx::XMVECTOR forwardBaseVector = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 		// apply the camera rotations to a base vector
 		const auto lookVector = XMVector3Transform(forwardBaseVector,
-			XMMatrixRotationRollPitchYaw(rotation.x, rotation.y, rotation.z)
+			XMMatrixRotationRollPitchYaw(attributes.rotation.x, attributes.rotation.y, attributes.rotation.z)
 		);
 		// generate camera transform (applied to all objects to arrange them relative
 		// to camera position/orientation in world) from cam position and direction
 		// camera "top" always faces towards +Y (cannot do a barrel roll)
-		const auto camPosition = XMLoadFloat3(&position);
+		const auto camPosition = XMLoadFloat3(&attributes.position);
 		const auto camTarget = camPosition + lookVector;
 
 		XMVECTOR upVector;
-		if (-PI / 2.0f >= rotation.x || rotation.x >= PI / 2.0f)
+		if (-PI / 2.0f >= attributes.rotation.x || attributes.rotation.x >= PI / 2.0f)
 		{
 			upVector = XMVectorSet(0.0f, -1.0f, 0.0f, 0.0f);
 		}
@@ -84,96 +73,57 @@ namespace DiveBomber::DEComponent
 		return projection->GetFOV();
 	}
 
-	//void Camera::SpawnControlWidgets(Graphics& gfx) noexcept
-	//{
-	//	bool rotDirty = false;
-	//	bool posDirty = false;
-	//	const auto dcheck = [](bool d, bool& carry) { carry = carry || d; };
-	//	if (!tethered)
-	//	{
-	//		ImGui::Text("Position");
-	//		dcheck(ImGui::SliderFloat("X", &pos.x, -80.0f, 80.0f, "%.1f"), posDirty);
-	//		dcheck(ImGui::SliderFloat("Y", &pos.y, -80.0f, 80.0f, "%.1f"), posDirty);
-	//		dcheck(ImGui::SliderFloat("Z", &pos.z, -80.0f, 80.0f, "%.1f"), posDirty);
-	//	}
-	//	ImGui::Text("Orientation");
-	//	dcheck(ImGui::SliderAngle("Pitch", &pitch, 0.995f * -90.0f, 0.995f * 90.0f), rotDirty);
-	//	dcheck(ImGui::SliderAngle("Yaw", &yaw, -180.0f, 180.0f), rotDirty);
-	//	proj.RenderWidgets(gfx);
-	//	ImGui::Checkbox("Camera Indicator", &enableCameraIndicator);
-	//	ImGui::Checkbox("Frustum Indicator", &enableFrustumIndicator);
-	//	if (ImGui::Button("Reset"))
-	//	{
-	//		Reset(gfx);
-	//	}
-
-	//	if (rotDirty)
-	//	{
-	//		yaw_ = yaw;
-	//		const dx::XMFLOAT3 angles = { pitch,yaw,0.0f };
-	//		indicator.SetRotation(angles);
-	//		proj.SetRotation(angles);
-	//	}
-	//	if (posDirty)
-	//	{
-	//		indicator.SetPos(pos);
-	//		proj.SetPos(pos);
-	//	}
-	//}
-
 	void Camera::Reset() noexcept
 	{
-		if (!tethered)
-		{
-			position = homePos;
-			//indicator.SetPos(pos);
-			//proj.SetPos(pos);
-		}
-		rotation = homeRot;
-		yaw_ = homeRot.y;
+		attributes = homeAttributes;
+		yaw_ = attributes.rotation.y;
 
+		projection->SetPos(attributes.position);
+		projection->SetRotation(attributes.rotation);
+		projection->Reset();
+
+		//indicator.SetPos(pos);
 		//indicator.SetRotation(homeRot);
-		//proj.SetRotation(homeRot);
-		//proj.Reset(gfx);
 	}
 
 	void Camera::Rotate(const float dx, const float dy) noexcept
 	{
-		rotation.y = wrap_angle(rotation.y + dx * rotationSpeed);
-		//pitch = std::clamp( pitch + dy * rotationSpeed,0.995f * -PI / 2.0f,0.995f * PI / 2.0f );
-		rotation.x = wrap_angle(rotation.x + dy * rotationSpeed);
-		yaw_ = rotation.y;
+		attributes.rotation.y = wrap_angle(attributes.rotation.y + dx * rotationSpeed);
+
+		// no limition for pitch
+		attributes.rotation.x = wrap_angle(attributes.rotation.x + dy * rotationSpeed);
+		yaw_ = attributes.rotation.y;
+
 		//indicator.SetRotation(rotation);
 		//proj.SetRotation(rotation);
 	}
 
 	void Camera::Translate(DirectX::XMFLOAT3 translation) noexcept
 	{
-		if (!tethered)
-		{
-			dx::XMStoreFloat3(&translation, dx::XMVector3Transform(
-				dx::XMLoadFloat3(&translation),
-				dx::XMMatrixRotationRollPitchYaw(rotation.x, rotation.y, rotation.z) *
-				dx::XMMatrixScaling(travelSpeed, travelSpeed, travelSpeed)
-			));
-			position = {
-				position.x + translation.x,
-				position.y + translation.y,
-				position.z + translation.z
-			};
-			//indicator.SetPos(position);
-			//proj.SetPos(position);
-		}
+		dx::XMStoreFloat3(&translation, dx::XMVector3Transform(
+			dx::XMLoadFloat3(&translation),
+			dx::XMMatrixRotationRollPitchYaw(attributes.rotation.x, attributes.rotation.y, attributes.rotation.z) *
+			dx::XMMatrixScaling(travelSpeed, travelSpeed, travelSpeed)
+		));
+
+		attributes.position = {
+			attributes.position.x + translation.x,
+			attributes.position.y + translation.y,
+			attributes.position.z + translation.z
+		};
+
+		//indicator.SetPos(position);
+		//proj.SetPos(position);
 	}
 
 	DirectX::XMFLOAT3 Camera::GetPos() const noexcept
 	{
-		return position;
+		return attributes.position;
 	}
 
 	void Camera::SetPos(const DirectX::XMFLOAT3& inputPos) noexcept
 	{
-		position = inputPos;
+		attributes.position = inputPos;
 		//indicator.SetPos(pos);
 		//proj.SetPos(pos);
 	}
@@ -203,42 +153,48 @@ namespace DiveBomber::DEComponent
 
 	void Camera::LookZero(const DirectX::XMFLOAT3 inputPos) noexcept
 	{
-		DirectX::XMFLOAT3 delta = { position.x - inputPos.x,position.y - inputPos.y, position.z - inputPos.z };
-		rotation.x = wrap_angle(atan2(delta.y, sqrt(delta.x * delta.x + delta.z * delta.z)));
-		rotation.y = wrap_angle(atan2(delta.x, delta.z) + PI);
-		yaw_ = rotation.y;
+		DirectX::XMFLOAT3 delta = { 
+			attributes.position.x - inputPos.x,
+			attributes.position.y - inputPos.y,
+			attributes.position.z - inputPos.z };
+		attributes.rotation.x = wrap_angle(atan2(delta.y, sqrt(delta.x * delta.x + delta.z * delta.z)));
+		attributes.rotation.y = wrap_angle(atan2(delta.x, delta.z) + PI);
+		yaw_ = attributes.rotation.y;
 	}
 
 	void Camera::KeepLookFront(const DirectX::XMFLOAT3 inputPos) noexcept
 	{
-		DirectX::XMFLOAT3 delta = { position.x - inputPos.x,position.y - inputPos.y, position.z - inputPos.z };
-		if (-PI / 2.0f >= rotation.x || rotation.x >= PI / 2.0f)
+		DirectX::XMFLOAT3 delta = {
+			attributes.position.x - inputPos.x,
+			attributes.position.y - inputPos.y,
+			attributes.position.z - inputPos.z };
+		if (-PI / 2.0f >= attributes.rotation.x || attributes.rotation.x >= PI / 2.0f)
 		{
-			if (0.3 * PI < abs(yaw_ - wrap_angle(atan2(delta.x, delta.z))) && abs(yaw_ - wrap_angle(atan2(delta.x, delta.z))) < 0.9 * PI * 2)
+			if (0.3f * PI < abs(yaw_ - wrap_angle(atan2(delta.x, delta.z))) && abs(yaw_ - wrap_angle(atan2(delta.x, delta.z))) < 0.9 * PI * 2)
 			{
-				rotation.x = wrap_angle(atan2(delta.y, sqrt(delta.x * delta.x + delta.z * delta.z)));
-				rotation.y = wrap_angle(atan2(delta.x, delta.z) + PI);
+				attributes.rotation.x = wrap_angle(atan2(delta.y, sqrt(delta.x * delta.x + delta.z * delta.z)));
+				attributes.rotation.y = wrap_angle(atan2(delta.x, delta.z) + PI);
 			}
 			else
 			{
-				rotation.x = wrap_angle(-atan2(delta.y, sqrt(delta.x * delta.x + delta.z * delta.z)) - PI);
-				rotation.y = wrap_angle(atan2(delta.x, delta.z));
+				attributes.rotation.x = wrap_angle(-atan2(delta.y, sqrt(delta.x * delta.x + delta.z * delta.z)) - PI);
+				attributes.rotation.y = wrap_angle(atan2(delta.x, delta.z));
 			}
 		}
 		else
 		{
-			if (0.3 * PI < abs(yaw_ - wrap_angle(atan2(delta.x, delta.z) + PI)) && abs(yaw_ - wrap_angle(atan2(delta.x, delta.z) + PI)) < 0.9 * PI * 2)
+			if (0.3f * PI < abs(yaw_ - wrap_angle(atan2(delta.x, delta.z) + PI)) && abs(yaw_ - wrap_angle(atan2(delta.x, delta.z) + PI)) < 0.9f * PI * 2)
 			{
-				rotation.x = wrap_angle(-atan2(delta.y, sqrt(delta.x * delta.x + delta.z * delta.z)) - PI);
-				rotation.y = wrap_angle(atan2(delta.x, delta.z));
+				attributes.rotation.x = wrap_angle(-atan2(delta.y, sqrt(delta.x * delta.x + delta.z * delta.z)) - PI);
+				attributes.rotation.y = wrap_angle(atan2(delta.x, delta.z));
 			}
 			else
 			{
-				rotation.x = wrap_angle(atan2(delta.y, sqrt(delta.x * delta.x + delta.z * delta.z)));
-				rotation.y = wrap_angle(atan2(delta.x, delta.z) + PI);
+				attributes.rotation.x = wrap_angle(atan2(delta.y, sqrt(delta.x * delta.x + delta.z * delta.z)));
+				attributes.rotation.y = wrap_angle(atan2(delta.x, delta.z) + PI);
 			}
 		}
-		yaw_ = rotation.y;
+		yaw_ = attributes.rotation.y;
 	}
 
 	void Camera::CalculateTransformMatrices() noexcept
@@ -257,13 +213,13 @@ namespace DiveBomber::DEComponent
 		// Rotate camera around a point
 		{
 			DirectX::XMFLOAT3 lookVector, destination;
-			XMVECTOR rotateVector = XMVectorSubtract(XMLoadFloat3(&position), XMLoadFloat3(&centralPoint));
-			XMStoreFloat3(&lookVector, XMVector3Transform(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), XMMatrixRotationRollPitchYaw(rotation.x, rotation.y, rotation.z)));
+			XMVECTOR rotateVector = XMVectorSubtract(XMLoadFloat3(&attributes.position), XMLoadFloat3(&centralPoint));
+			XMStoreFloat3(&lookVector, XMVector3Transform(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), XMMatrixRotationRollPitchYaw(attributes.rotation.x, attributes.rotation.y, attributes.rotation.z)));
 			XMFLOAT3 finalRatationViewVector;
 			XMStoreFloat3(&finalRatationViewVector, XMVector3Transform(rotateVector,
 				XMMatrixTranslation(lookVector.x, lookVector.y, lookVector.z) *
 				XMMatrixRotationQuaternion(XMQuaternionRotationAxis(XMVector3Transform(XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f),
-					XMMatrixRotationRollPitchYaw(0.0f, rotation.y, 0.0f)), dy * rotationSpeed))
+					XMMatrixRotationRollPitchYaw(0.0f, attributes.rotation.y, 0.0f)), dy * rotationSpeed))
 				* XMMatrixRotationQuaternion(XMQuaternionRotationAxis(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), dx * rotationSpeed))
 			));
 			XMStoreFloat3(&destination,
@@ -271,10 +227,10 @@ namespace DiveBomber::DEComponent
 			XMFLOAT3 finalRatationVector;
 			XMStoreFloat3(&finalRatationVector, XMVector3Transform(rotateVector,
 				XMMatrixRotationQuaternion(XMQuaternionRotationAxis(XMVector3Transform(XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f),
-					XMMatrixRotationRollPitchYaw(0.0f, rotation.y, 0.0f)), dy * rotationSpeed))
+					XMMatrixRotationRollPitchYaw(0.0f, attributes.rotation.y, 0.0f)), dy * rotationSpeed))
 				* XMMatrixRotationQuaternion(XMQuaternionRotationAxis(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), dx * rotationSpeed))
 			));
-			XMStoreFloat3(&position,
+			XMStoreFloat3(&attributes.position,
 				XMVector3Transform(XMLoadFloat3(&centralPoint), XMMatrixTranslation(finalRatationVector.x, finalRatationVector.y, finalRatationVector.z)));
 			KeepLookFront(destination);
 		}
@@ -309,9 +265,10 @@ namespace DiveBomber::DEComponent
 
 	void Camera::SetRotation(const float pitch, const float yaw) noexcept
 	{
-		rotation.x = pitch;
-		rotation.y = yaw;
-		yaw_ = rotation.y;
+		attributes.rotation.x = pitch;
+		attributes.rotation.y = yaw;
+		yaw_ = attributes.rotation.y;
+
 		//indicator.SetRotation(rotation);
 		//proj.SetRotation(rotation);
 	}
@@ -384,8 +341,38 @@ namespace DiveBomber::DEComponent
 		ImGui::SetNextItemOpen(true, ImGuiCond_Once);
 		if (ImGui::CollapsingHeader("Camera"))
 		{
-			ImGui::IsPopupOpen("Camera");
-			ImGui::Text("Camera Stuff");
+			bool rotDirty = false;
+			bool posDirty = false;
+			const auto dcheck = [](bool d, bool& carry) { carry = carry || d; };
+			ImGui::Text("Position");
+			dcheck(ImGui::SliderFloat("X", &attributes.position.x, -80.0f, 80.0f, "%.1f"), posDirty);
+			dcheck(ImGui::SliderFloat("Y", &attributes.position.y, -80.0f, 80.0f, "%.1f"), posDirty);
+			dcheck(ImGui::SliderFloat("Z", &attributes.position.z, -80.0f, 80.0f, "%.1f"), posDirty);
+			ImGui::Text("Orientation");
+			dcheck(ImGui::SliderAngle("Pitch", &attributes.rotation.x, 0.995f * -90.0f, 0.995f * 90.0f), rotDirty);
+			dcheck(ImGui::SliderAngle("Yaw", &attributes.rotation.y, -180.0f, 180.0f), rotDirty);
+			dcheck(ImGui::SliderAngle("Roll", &attributes.rotation.z, -180.0f, 180.0f), rotDirty);
+			projection->DrawComponentUI();
+			ImGui::Checkbox("Camera Indicator", &enableCameraIndicator);
+			ImGui::Checkbox("Frustum Indicator", &enableFrustumIndicator);
+			if (ImGui::Button("Reset"))
+			{
+				Reset();
+			}
+
+			if (rotDirty)
+			{
+				yaw_ = attributes.rotation.y;
+				const dx::XMFLOAT3 angles = { attributes.rotation.x,attributes.rotation.y,0.0f };
+
+				// indicator.SetRotation(angles);
+				projection->SetRotation(angles);
+			}
+			if (posDirty)
+			{
+				// indicator.SetPos(attributes.position);
+				projection->SetPos(attributes.position);
+			}
 		}
 	}
 }
