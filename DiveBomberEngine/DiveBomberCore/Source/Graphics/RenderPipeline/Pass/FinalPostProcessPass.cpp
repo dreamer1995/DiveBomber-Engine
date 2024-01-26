@@ -1,7 +1,7 @@
 #include "FinalPostProcessPass.h"
 
 #include "..\..\Graphics.h"
-#include "..\..\Component\Material.h"
+#include "..\..\..\Component\Material.h"
 
 #include "..\..\Resource\ResourceCommonInclude.h"
 #include "..\..\DX\GlobalResourceManager.h"
@@ -13,7 +13,7 @@ namespace DiveBomber::RenderPipeline
 	using namespace DEGraphics;
 	using namespace DEResource;
 	using namespace DX;
-	using namespace Component;
+	using namespace DEComponent;
 
 	FinalPostProcessPass::FinalPostProcessPass(std::shared_ptr<UnorderedAccessBuffer> inputTarget)
 		:

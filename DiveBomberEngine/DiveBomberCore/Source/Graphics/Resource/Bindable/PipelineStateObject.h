@@ -3,7 +3,7 @@
 #include "Bindable.h"
 #include "..\..\GraphicsHeader.h"
 
-namespace DiveBomber::Component
+namespace DiveBomber::DEComponent
 {
 	class Mesh;
 	class Material;
@@ -23,8 +23,8 @@ namespace DiveBomber::DEResource
 		{
 		public:
 			std::shared_ptr<RootSignature> rootSignature;
-			std::shared_ptr<Component::Mesh> mesh;
-			std::shared_ptr<Component::Material> material;
+			std::shared_ptr<DEComponent::Mesh> mesh;
+			std::shared_ptr<DEComponent::Material> material;
 			DXGI_FORMAT dsvFormat = DXGI_FORMAT_UNKNOWN;
 			D3D12_RT_FORMAT_ARRAY rtvFormats{};
 			CD3DX12_RASTERIZER_DESC rasterizerDesc{ D3D12_DEFAULT };

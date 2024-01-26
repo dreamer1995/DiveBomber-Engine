@@ -1,4 +1,5 @@
 #pragma once
+#include "..\Component.h"
 #include "Projection.h"
 //#include "CameraIndicator.h"
 
@@ -11,9 +12,9 @@ namespace DiveBomber::DEResource
 	class ConstantBufferInRootSignature;
 }
 
-namespace DiveBomber::Component
+namespace DiveBomber::DEComponent
 {
-	class Camera final
+	class Camera final : public Component
 	{
 	public:
 		struct CameraAttributes
@@ -62,6 +63,8 @@ namespace DiveBomber::Component
 		void ResizeAspectRatio() noexcept;
 		void ResizeAspectRatio(const UINT width, const UINT height) noexcept;
 		[[nodiscard]] Transforms GetTransforms() const noexcept;
+
+		void DrawComponentUI() override;
 
 	private:
 		struct CameraCBuf

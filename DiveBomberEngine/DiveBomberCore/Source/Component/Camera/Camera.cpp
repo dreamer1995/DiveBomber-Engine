@@ -1,10 +1,10 @@
 #include "Camera.h"
 
-#include "..\Graphics.h"
-#include "..\Resource\Bindable\ConstantBufferInRootSignature.h"
-//#include "imgui/imgui.h"
+#include "..\..\Graphics\Graphics.h"
+#include "..\..\Graphics\Resource\Bindable\ConstantBufferInRootSignature.h"
+#include <..\imgui\imgui.h>
 
-namespace DiveBomber::Component
+namespace DiveBomber::DEComponent
 {
 	using namespace DEGraphics;
 	using namespace Utility;
@@ -377,5 +377,15 @@ namespace DiveBomber::Component
 	Camera::Transforms Camera::GetTransforms() const noexcept
 	{
 		return transforms;
+	}
+
+	void DiveBomber::DEComponent::Camera::DrawComponentUI()
+	{
+		ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+		if (ImGui::CollapsingHeader("Camera"))
+		{
+			ImGui::IsPopupOpen("Camera");
+			ImGui::Text("Camera Stuff");
+		}
 	}
 }

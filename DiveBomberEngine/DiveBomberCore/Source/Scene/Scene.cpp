@@ -3,15 +3,15 @@
 #include "..\Graphics\Graphics.h"
 #include "..\Graphics\DX\CommandQueue.h"
 #include "..\Graphics\Object\SimpleSphere.h"
-#include "..\Graphics\Component\Camera.h"
 #include "..\Graphics\RenderPipeline\DeferredRenderPipeLine.h"
+#include "..\Component\Camera\Camera.h"
 
 namespace DiveBomber::DEScene
 {
 	using namespace DEGraphics;
 	using namespace DEResource;
 	using namespace DEObject;
-	using namespace Component;
+	using namespace DEComponent;
 	using namespace DX;
 	using namespace RenderPipeline;
 

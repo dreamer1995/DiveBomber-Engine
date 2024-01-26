@@ -10,7 +10,7 @@ namespace DiveBomber::DEObject
 	class Object;
 }
 
-namespace DiveBomber::Component
+namespace DiveBomber::DEComponent
 {
 	class Camera;
 }
@@ -30,7 +30,7 @@ namespace DiveBomber::DEScene
 
 		void LoadSceneFromFile(const std::wstring inputName) noexcept;
 		void Render() noxnd;
-		[[nodiscard]] std::shared_ptr<Component::Camera> GetMainCamera() const noexcept;
+		[[nodiscard]] std::shared_ptr<DEComponent::Camera> GetMainCamera() const noexcept;
 		[[nodiscard]] std::shared_ptr<DEObject::Object> FindSceneObjectByName(std::wstring name) const noexcept;
 		[[nodiscard]] std::multimap<std::wstring, std::shared_ptr<DEObject::Object>> GetSceneObjects() const noexcept;
 		[[nodiscard]] std::wstring GetName() const noexcept;
@@ -38,6 +38,6 @@ namespace DiveBomber::DEScene
 		std::wstring name = L"";
 		std::unique_ptr<RenderPipeline::DeferredRenderPipeLine> mainRenderPipeline;
 		std::multimap<std::wstring, std::shared_ptr<DEObject::Object>> drawableObjects;
-		std::shared_ptr<Component::Camera> mainCamera;
+		std::shared_ptr<DEComponent::Camera> mainCamera;
 	};
 }

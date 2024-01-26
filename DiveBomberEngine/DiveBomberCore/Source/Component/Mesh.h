@@ -1,6 +1,7 @@
 #pragma once
-#include "..\GraphicsHeader.h"
-#include "..\Geometry\Vertex.h"
+#include "Component.h"
+#include "..\Graphics\GraphicsHeader.h"
+#include "..\Graphics\Geometry\Vertex.h"
 
 namespace DiveBomber::DEResource
 {
@@ -17,9 +18,9 @@ namespace DiveBomber::DEResource::VertexProcess
 	class VertexData;
 }
 
-namespace DiveBomber::Component
+namespace DiveBomber::DEComponent
 {
-	class Mesh final
+	class Mesh final : public Component
 	{
 	public:
 		Mesh(std::wstring inputName,
@@ -37,6 +38,8 @@ namespace DiveBomber::Component
 		[[nodiscard]] std::wstring GetName() const noexcept;
 
 		void Bind() noxnd;
+
+		void DrawComponentUI() override;
 	private:
 		std::wstring name;
 		DEResource::VertexProcess::VertexData vertexData;

@@ -23,8 +23,8 @@
     <ClCompile Include="Source\Graphics\DX\CommandList.cpp" />
     <ClCompile Include="Source\Graphics\RenderPipeline\RenderPipelineGraph.cpp" />
     <ClCompile Include="Source\Utility\GlobalParameters.cpp" />
-    <ClCompile Include="Source\Graphics\Component\Camera.cpp" />
-    <ClCompile Include="Source\Graphics\Component\Projection.cpp" />
+    <ClCompile Include="Source\Component\Camera\Camera.cpp" />
+    <ClCompile Include="Source\Component\Camera\Projection.cpp" />
     <ClCompile Include="Source\Graphics\DX\UploadBuffer.cpp" />
     <ClCompile Include="Source\Graphics\DX\DescriptorAllocation.cpp" />
     <ClCompile Include="Source\Graphics\DX\DescriptorAllocator.cpp" />
@@ -32,8 +32,8 @@
     <ClCompile Include="Source\Graphics\DX\DynamicDescriptorHeap.cpp" />
     <ClCompile Include="Source\Graphics\DX\ResourceStateTracker.cpp" />
     <ClCompile Include="Source\Scene\Scene.cpp" />
-    <ClCompile Include="Source\Graphics\Component\Mesh.cpp" />
-    <ClCompile Include="Source\Graphics\Component\Material.cpp" />
+    <ClCompile Include="Source\Component\Mesh.cpp" />
+    <ClCompile Include="Source\Component\Material.cpp" />
     <ClCompile Include="Source\Graphics\DX\ShaderManager.cpp" />
     <ClCompile Include="Source\Graphics\DX\GlobalResourceManager.cpp" />
     <ClCompile Include="Source\Graphics\Geometry\Vertex.cpp" />
@@ -90,6 +90,7 @@
     <ClCompile Include="Source\Graphics\UI\SceneOutliner.cpp" />
     <ClCompile Include="Source\Graphics\UI\UIManager.cpp" />
     <ClCompile Include="Source\Graphics\UI\RenderStatusPanel.cpp" />
+    <ClCompile Include="Source\Graphics\UI\SceneCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Utility\Common.h" />
@@ -116,8 +117,8 @@
     <ClInclude Include="Source\Utility\DEMath.h" />
     <ClInclude Include="Source\Graphics\DX\CommandList.h" />
     <ClInclude Include="Source\Graphics\RenderPipeline\RenderPipelineGraph.h" />
-    <ClInclude Include="Source\Graphics\Component\Camera.h" />
-    <ClInclude Include="Source\Graphics\Component\Projection.h" />
+    <ClInclude Include="Source\Component\Camera\Camera.h" />
+    <ClInclude Include="Source\Component\Camera\Projection.h" />
     <ClInclude Include="Source\Exception\GraphicsExceptionEX.h" />
     <ClInclude Include="Source\Graphics\GraphicsHeader.h" />
     <ClInclude Include="Source\Graphics\GraphicsSource.h" />
@@ -130,8 +131,8 @@
     <ClInclude Include="Source\Graphics\DX\ResourceStateTracker.h" />
     <ClInclude Include="Source\Graphics\DEDirextX.h" />
     <ClInclude Include="Source\Scene\Scene.h" />
-    <ClInclude Include="Source\Graphics\Component\Mesh.h" />
-    <ClInclude Include="Source\Graphics\Component\Material.h" />
+    <ClInclude Include="Source\Component\Mesh.h" />
+    <ClInclude Include="Source\Component\Material.h" />
     <ClInclude Include="Source\Graphics\DX\ShaderManager.h" />
     <ClInclude Include="ThirdParty\json.hpp" />
     <ClInclude Include="Source\Utility\DEJson.h" />
@@ -209,10 +210,12 @@
     <ClInclude Include="Source\Graphics\UI\MainMenuBar.h" />
     <ClInclude Include="Source\Graphics\UI\ObjectDetail.h" />
     <ClInclude Include="Source\Graphics\UI\ResourceBrowser.h" />
-    <ClInclude Include="Source\Graphics\UI\SceneOutliner.h" />
     <ClInclude Include="Source\Graphics\UI\UIManager.h" />
     <ClInclude Include="Source\Graphics\UI\UIWidget.h" />
     <ClInclude Include="Source\Graphics\UI\RenderStatusPanel.h" />
+    <ClInclude Include="Source\Graphics\UI\SceneOutliner.h" />
+    <ClInclude Include="Source\Graphics\UI\SceneCamera.h" />
+    <ClInclude Include="Source\Component\Component.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

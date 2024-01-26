@@ -3,8 +3,8 @@
 #include "..\Graphics.h"
 #include "..\Resource\ResourceCommonInclude.h"
 #include "..\Geometry\Sphere.h"
-#include "..\Component\Mesh.h"
-#include "..\Component\Material.h"
+#include "..\..\Component\Mesh.h"
+#include "..\..\Component\Material.h"
 #include "..\DX\CommandQueue.h"
 #include "..\DX\DescriptorAllocator.h"
 #include "..\DX\DescriptorAllocation.h"
@@ -17,7 +17,7 @@ namespace DiveBomber::DEObject
 	using namespace DiveBomber::DEResource;
 	using namespace DiveBomber::DEResource::VertexProcess;
 	using namespace DX;
-	using namespace Component;
+	using namespace DEComponent;
 
 	SimpleSphere::SimpleSphere(const std::wstring inputName)
 	{
@@ -85,7 +85,7 @@ namespace DiveBomber::DEObject
 		}
 	}
 
-	std::unordered_map<std::wstring, std::shared_ptr<Component::Material>> SimpleSphere::GetMaterials() const noexcept
+	std::unordered_map<std::wstring, std::shared_ptr<DEComponent::Material>> SimpleSphere::GetMaterials() const noexcept
 	{
 		return materialMap;
 	}

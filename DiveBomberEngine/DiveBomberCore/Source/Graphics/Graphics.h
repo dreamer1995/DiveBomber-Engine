@@ -12,7 +12,7 @@ namespace DiveBomber::DX
 	class DescriptorAllocator;
 }
 
-namespace DiveBomber::Component
+namespace DiveBomber::DEComponent
 {
 	class Camera;
 }
@@ -45,8 +45,8 @@ namespace DiveBomber::DEGraphics
 		void DrawIndexed(UINT count) noxnd;
 		void DrawInstanced(UINT vertexCount, UINT instanceCount) noxnd;
 		void Dispatch(const UINT x, const UINT y, UINT const group) noxnd;
-		void SetCamera(const std::shared_ptr<Component::Camera> camera) noexcept;
-		[[nodiscard]] std::shared_ptr<Component::Camera> GetCamera() const noexcept;
+		void SetCamera(const std::shared_ptr<DEComponent::Camera> camera) noexcept;
+		[[nodiscard]] std::shared_ptr<DEComponent::Camera> GetCamera() const noexcept;
 		[[nodiscard]] DirectX::XMMATRIX GetCameraMatrix() const noexcept;
 		[[nodiscard]] DirectX::XMMATRIX GetProjetionMatrix() const noexcept;
 		[[nodiscard]] float GetFOV() const noexcept;
@@ -109,7 +109,7 @@ namespace DiveBomber::DEGraphics
 		std::shared_ptr<DX::DescriptorAllocator> dsvDescriptorHeap;
 		std::shared_ptr<DX::DescriptorAllocator> samplerDescriptorHeap;
 
-		std::shared_ptr<Component::Camera> renderCamera;
+		std::shared_ptr<DEComponent::Camera> renderCamera;
 
 		std::shared_ptr<DEResource::DepthStencil> mainDS;
 		std::unique_ptr<DEResource::Viewport> viewport;

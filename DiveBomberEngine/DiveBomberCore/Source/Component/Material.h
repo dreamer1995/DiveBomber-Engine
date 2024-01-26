@@ -1,7 +1,8 @@
 #pragma once
-#include "..\GraphicsHeader.h"
+#include "Component.h"
+#include "..\Graphics\GraphicsHeader.h"
 
-#include "..\..\Utility\DEJson.h"
+#include "..\Utility\DEJson.h"
 
 #include <vector>
 #include <unordered_map>
@@ -17,7 +18,7 @@ namespace DiveBomber::DEResource
 	class ShaderInputable;
 }
 
-namespace DiveBomber::Component
+namespace DiveBomber::DEComponent
 {
 	using json = nlohmann::json;
 	namespace fs = std::filesystem;
@@ -31,7 +32,7 @@ namespace DiveBomber::Component
 		SPT_Texture,
 	};
 
-	class Material final
+	class Material final : public Component
 	{
 	public:
 		Material(const std::wstring inputName, const std::wstring inputDefaultShaderName = L"Default");
@@ -62,6 +63,8 @@ namespace DiveBomber::Component
 		[[nodiscard]] bool IsShaderDirty() noexcept;
 
 		[[nodiscard]] std::shared_ptr<DEResource::ConstantBufferInRootSignature<UINT>> GetIndexConstantBuffer() const noexcept;
+
+		void DrawComponentUI() override;
 	private:
 		void CreateDefaultConfig();
 		[[nodiscard]] int ParamTypeStringToEnum(std::string string) noexcept;

@@ -1,14 +1,14 @@
 #include "Graphics.h"
 
-#include "Component\Camera.h"
+#include "..\Component\Camera\Camera.h"
 #include "Resource\DepthStencil.h"
+#include "Resource\Bindable\Viewport.h"
+#include "Resource\Bindable\ScissorRects.h"
 #include "..\Exception\GraphicsException.h"
 #include "DX\GPUAdapter.h"
 #include "DX\DXDevice.h"
 #include "DX\CommandQueue.h"
 #include "DX\SwapChain.h"
-#include "Resource\Bindable\Viewport.h"
-#include "Resource\Bindable\ScissorRects.h"
 #include "DX\CommandLIst.h"
 #include "DX\DescriptorAllocator.h"
 #include "DX\DescriptorAllocation.h"
@@ -26,7 +26,7 @@ namespace DiveBomber::DEGraphics
 	using namespace DX;
 	using namespace DEException;
 	using namespace DEResource;
-	using namespace Component;
+	using namespace DEComponent;
 	using namespace Utility;
 
 	std::unique_ptr<Graphics> Graphics::instance;

@@ -3,7 +3,7 @@
         {
             "Name": "baseMap",
             "Type": 4,
-            "Value": "panorama_image.png",
+            "Value": "Cubemap.hdr",
             "sRGB": true
         },
         {
@@ -11,7 +11,7 @@
             "Type": 3,
             "Value": [
                 1.0,
-                1.0,    
+                1.0,
                 1.0,
                 1.0
             ],

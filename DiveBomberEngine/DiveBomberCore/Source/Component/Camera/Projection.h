@@ -8,7 +8,7 @@
 #include <memory>
 #include <DirectXMath.h>
 
-namespace DiveBomber::Component
+namespace DiveBomber::DEComponent
 {
 	class Projection final
 	{

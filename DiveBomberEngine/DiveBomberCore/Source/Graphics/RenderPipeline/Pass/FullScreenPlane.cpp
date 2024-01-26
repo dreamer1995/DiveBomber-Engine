@@ -3,8 +3,8 @@
 #include "..\..\Graphics.h"
 #include "..\..\Resource\ResourceCommonInclude.h"
 #include "..\..\Geometry\Vertex.h"
-#include "..\..\Component\Mesh.h"
-#include "..\..\Component\Material.h"
+#include "..\..\..\Component\Mesh.h"
+#include "..\..\..\Component\Material.h"
 #include "..\..\DX\GlobalResourceManager.h"
 
 namespace DiveBomber::RenderPipeline
@@ -13,7 +13,7 @@ namespace DiveBomber::RenderPipeline
 	using namespace DEResource;
 	using namespace DEResource::VertexProcess;
 	using namespace DX;
-	using namespace Component;
+	using namespace DEComponent;
 	namespace dx = DirectX;
 
 	FullScreenPlane::FullScreenPlane(std::string inputName, std::shared_ptr<RenderTarget> inputRenderTarget)

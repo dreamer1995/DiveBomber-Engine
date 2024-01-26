@@ -10,7 +10,7 @@ namespace DiveBomber::DEResource
 	class PipelineStateObject;
 }
 
-namespace DiveBomber::Component
+namespace DiveBomber::DEComponent
 {
 	class Mesh;
 	class Material;
@@ -26,10 +26,10 @@ namespace DiveBomber::DEObject
 
 		void Render() const noxnd override;
 
-		[[nodiscard]] std::shared_ptr<Component::Material> GetMaterialByName(std::wstring name) const noexcept;
-		[[nodiscard]] std::unordered_map<std::wstring, std::shared_ptr<Component::Material>> GetMaterials() const noexcept;
+		[[nodiscard]] std::shared_ptr<DEComponent::Material> GetMaterialByName(std::wstring name) const noexcept;
+		[[nodiscard]] std::unordered_map<std::wstring, std::shared_ptr<DEComponent::Material>> GetMaterials() const noexcept;
 	private:
-		std::unordered_map<std::wstring, std::shared_ptr<Component::Mesh>> meshMap;
-		std::unordered_map<std::wstring, std::shared_ptr<Component::Material>> materialMap;
+		std::unordered_map<std::wstring, std::shared_ptr<DEComponent::Mesh>> meshMap;
+		std::unordered_map<std::wstring, std::shared_ptr<DEComponent::Material>> materialMap;
 	};
 }

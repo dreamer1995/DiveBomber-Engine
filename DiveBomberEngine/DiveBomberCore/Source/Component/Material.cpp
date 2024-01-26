@@ -1,19 +1,19 @@
 #include "Material.h"
 
-#include "..\Resource\Shader.h"
-#include "..\Resource\Bindable\ConstantBufferInRootSignature.h"
-#include "..\Resource\ShaderInputable\DynamicConstantBufferInHeap.h"
-#include "..\Resource\ShaderInputable\Texture.h"
-#include "..\..\Utility\GlobalParameters.h"
-#include "..\DX\ShaderManager.h"
-#include "..\DX\CommandQueue.h"
-#include "..\DX\GlobalResourceManager.h"
+#include "..\Graphics\Resource\Shader.h"
+#include "..\Graphics\Resource\Bindable\ConstantBufferInRootSignature.h"
+#include "..\Graphics\Resource\ShaderInputable\DynamicConstantBufferInHeap.h"
+#include "..\Graphics\Resource\ShaderInputable\Texture.h"
+#include "..\Utility\GlobalParameters.h"
+#include "..\Graphics\DX\ShaderManager.h"
+#include "..\Graphics\DX\CommandQueue.h"
+#include "..\Graphics\DX\GlobalResourceManager.h"
 
 #include <iostream>
 #include <fstream>
 #include <any>
 
-namespace DiveBomber::Component
+namespace DiveBomber::DEComponent
 {
     using namespace DEGraphics;
     using namespace DEResource;
@@ -33,7 +33,7 @@ namespace DiveBomber::Component
         ReloadConfig();
     }
 
-    void DiveBomber::Component::Material::GetConfig()
+    void DiveBomber::DEComponent::Material::GetConfig()
     {
         if (!fs::exists(configFile))
         {
@@ -376,6 +376,10 @@ namespace DiveBomber::Component
     std::shared_ptr<DEResource::ConstantBufferInRootSignature<UINT>> Material::GetIndexConstantBuffer() const noexcept
     {
         return indexConstantBuffer;
+    }
+
+    void Material::DrawComponentUI()
+    {
     }
 
     void Material::SetTexture(const std::string textureName, const std::shared_ptr<ShaderInputable> texture) noexcept

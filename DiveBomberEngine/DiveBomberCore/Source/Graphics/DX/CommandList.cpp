@@ -123,7 +123,7 @@ namespace DiveBomber::DX
 		trackedResource.emplace_back(resource);
 	}
 
-	void CommandList::TrackResource(std::shared_ptr<Component::Material> component) noexcept
+	void CommandList::TrackResource(std::shared_ptr<DEComponent::Material> component) noexcept
 	{
 		trackedComponent.emplace_back(component);
 	}

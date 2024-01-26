@@ -1,6 +1,6 @@
 #include "OpaqueGBufferPass.h"
 #include "..\..\Graphics.h"
-#include "..\..\Component\Camera.h"
+#include "..\..\..\Component\Camera\Camera.h"
 #include "..\..\Resource\ShaderInputable\RenderTargetAsShaderResourceView.h"
 #include "..\..\Resource\DepthStencil.h"
 #include "..\..\Object\Object.h"
@@ -8,7 +8,7 @@
 namespace DiveBomber::RenderPipeline
 {
 	using namespace DEGraphics;
-	using namespace Component;
+	using namespace DEComponent;
 	using namespace DEResource;
 	using namespace DEObject;
 	using namespace DX;

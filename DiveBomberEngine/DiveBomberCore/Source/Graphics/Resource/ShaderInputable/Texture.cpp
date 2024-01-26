@@ -8,7 +8,7 @@
 #include "..\..\DX\CommandList.h"
 #include "..\..\DX\ResourceStateTracker.h"
 #include "..\ResourceCommonInclude.h"
-#include "..\..\Component\Material.h"
+#include "..\..\..\Component\Material.h"
 #include "..\..\DX\CommandQueue.h"
 
 #include <fstream>
@@ -27,7 +27,7 @@ namespace DiveBomber::DEResource
 	using namespace DEGraphics;
 	using namespace DEException;
 	using namespace DX;
-	using namespace Component;
+	using namespace DEComponent;
 	namespace fs = std::filesystem;
 	namespace dx = DirectX;
 

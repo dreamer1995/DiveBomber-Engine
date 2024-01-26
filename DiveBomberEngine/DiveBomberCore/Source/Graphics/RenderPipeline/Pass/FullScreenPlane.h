@@ -8,7 +8,7 @@ namespace DiveBomber::DEResource
 	class ShaderInputable;
 }
 
-namespace DiveBomber::Component
+namespace DiveBomber::DEComponent
 {
 	class Mesh;
 	class Material;
@@ -24,8 +24,8 @@ namespace DiveBomber::RenderPipeline
 		void Execute() noxnd override;
 
 	private:
-		std::shared_ptr<Component::Material> material;
-		std::shared_ptr<Component::Mesh> mesh;
+		std::shared_ptr<DEComponent::Material> material;
+		std::shared_ptr<DEComponent::Mesh> mesh;
 		std::shared_ptr<DEResource::PipelineStateObject> pso;
 	};
 }

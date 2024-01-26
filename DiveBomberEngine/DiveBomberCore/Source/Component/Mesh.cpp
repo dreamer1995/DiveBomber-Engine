@@ -1,13 +1,13 @@
 #include "Mesh.h"
 
-#include "..\Graphics.h"
-#include "..\Resource\Bindable\IndexBuffer.h"
-#include "..\Resource\Bindable\Topology.h"
-#include "..\Resource\Bindable\ConstantBufferInRootSignature.h"
-#include "..\Resource\ShaderInputable\StructuredBufferInHeap.h"
-#include "..\DX\GlobalResourceManager.h"
+#include "..\Graphics\Graphics.h"
+#include "..\Graphics\Resource\Bindable\IndexBuffer.h"
+#include "..\Graphics\Resource\Bindable\Topology.h"
+#include "..\Graphics\Resource\Bindable\ConstantBufferInRootSignature.h"
+#include "..\Graphics\Resource\ShaderInputable\StructuredBufferInHeap.h"
+#include "..\Graphics\DX\GlobalResourceManager.h"
 
-namespace DiveBomber::Component
+namespace DiveBomber::DEComponent
 {
     using namespace DEGraphics;
     using namespace DEResource;
@@ -67,6 +67,10 @@ namespace DiveBomber::Component
     std::wstring Mesh::GetName() const noexcept
     {
         return name;
+    }
+
+    void Mesh::DrawComponentUI()
+    {
     }
 
     void Mesh::Bind() noxnd

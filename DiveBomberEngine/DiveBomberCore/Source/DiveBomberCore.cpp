@@ -2,18 +2,18 @@
 
 #include "Window\Window.h"
 #include "Graphics\Graphics.h"
-#include "Console\Console.h"
-#include "Utility\Timer.h"
-#include "Hardware\Keyboard.h"
-#include "Hardware\Mouse.h"
-#include "Graphics\Component\Camera.h"
-#include "Utility\GlobalParameters.h"
-#include "Scene\Scene.h"
 #include "Graphics\DX\GlobalResourceManager.h"
 #include "Graphics\DX\ShaderManager.h"
 #include "Graphics\Object\SimpleSphere.h"
-#include "Graphics\Component\Material.h"
 #include "Graphics\UI\UIManager.h"
+#include "Console\Console.h"
+#include "Utility\Timer.h"
+#include "Utility\GlobalParameters.h"
+#include "Hardware\Keyboard.h"
+#include "Hardware\Mouse.h"
+#include "Component\Camera\Camera.h"
+#include "Component\Material.h"
+#include "Scene\Scene.h"
 
 #include <..\imgui\imgui.h>
 #include <iostream>
@@ -31,7 +31,7 @@ namespace DiveBomber
 	using namespace DEScene;
 	using namespace DEObject;
 	using namespace DX;
-	using namespace Component;
+	using namespace DEComponent;
 
 	DiveBomberCore::DiveBomberCore()
 	{
@@ -430,7 +430,7 @@ namespace DiveBomber
 		if (elapsedSeconds > 0.5f)
 		{
 			g_FramePerSnd = float(elapsedFrames / elapsedSeconds);
-			std::wcout << g_FramePerSnd << std::endl;
+			// std::wcout << g_FramePerSnd << std::endl;
 			elapsedSeconds = 0.0;
 			elapsedFrames = 0;
 		}

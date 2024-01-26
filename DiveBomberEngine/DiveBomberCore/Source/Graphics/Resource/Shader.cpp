@@ -4,7 +4,7 @@
 #include "..\GraphicsSource.h"
 #include "..\DX\GlobalResourceManager.h"
 #include "..\DX\ShaderManager.h"
-#include "..\Component\Material.h"
+#include "..\..\Component\Material.h"
 
 #include <print>
 #include <iostream>
@@ -130,7 +130,7 @@ namespace DiveBomber::DEResource
 		isDirty = false;
 	}
 
-	void Shader::AddMaterialReference(std::shared_ptr<Component::Material> material)
+	void Shader::AddMaterialReference(std::shared_ptr<DEComponent::Material> material)
 	{
 		materialMap.emplace(material->GetName(), material);
 	}

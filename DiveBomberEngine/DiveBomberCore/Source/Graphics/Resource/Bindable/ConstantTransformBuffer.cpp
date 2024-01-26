@@ -2,14 +2,14 @@
 
 #include "ConstantBufferInRootSignature.h"
 #include "..\..\Object\Object.h"
-#include "..\..\Component\Camera.h"
+#include "..\..\..\Component\Camera\Camera.h"
 
 namespace DiveBomber::DEResource
 {
 	using namespace DEGraphics;
 	using namespace DEException;
 	using namespace DEObject;
-	using namespace Component;
+	using namespace DEComponent;
 
 	ConstantTransformBuffer::ConstantTransformBuffer(std::wstring inputName)
 		:

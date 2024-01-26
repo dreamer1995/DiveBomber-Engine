@@ -6,15 +6,15 @@
 #include "Topology.h"
 #include "..\Shader.h"
 #include "..\..\DX\ShaderManager.h"
-#include "..\..\Component\Mesh.h"
-#include "..\..\Component\Material.h"
+#include "..\..\..\Component\Mesh.h"
+#include "..\..\..\Component\Material.h"
 
 namespace DiveBomber::DEResource
 {
 	using namespace DEGraphics;
 	using namespace DEException;
 	using namespace DX;
-	using namespace Component;
+	using namespace DEComponent;
 
 	PipelineStateObject::PipelineStateObject(const std::wstring& inputName, PipelineStateReference inputPipelineStateReference)
 		:

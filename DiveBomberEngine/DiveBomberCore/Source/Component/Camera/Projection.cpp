@@ -1,10 +1,10 @@
 #include "Projection.h"
 
-#include "..\Graphics.h"
+#include "..\..\Graphics\Graphics.h"
 #include <algorithm>
 //#include "imgui/imgui.h"
 
-namespace DiveBomber::Component
+namespace DiveBomber::DEComponent
 {
 	using namespace DEGraphics;
 

@@ -5,7 +5,7 @@
 #include <filesystem>
 #include <unordered_map>
 
-namespace DiveBomber::Component
+namespace DiveBomber::DEComponent
 {
 	class Material;
 }
@@ -41,7 +41,7 @@ namespace DiveBomber::DEResource
 		void RecompileShader();
 		[[nodiscard]] static std::wstring GetShaderParamsString(const std::wstring name);
 
-		void AddMaterialReference(std::shared_ptr<Component::Material> material);
+		void AddMaterialReference(std::shared_ptr<DEComponent::Material> material);
 		void AddMaterialReference(const std::wstring key);
 
 		[[nodiscard]] fs::file_time_type GetSourceFileLastSaveTime() const noexcept;
@@ -63,6 +63,6 @@ namespace DiveBomber::DEResource
 		ShaderType type;
 		bool isDirty = false;
 
-		std::unordered_map<std::wstring, std::shared_ptr<Component::Material>> materialMap;
+		std::unordered_map<std::wstring, std::shared_ptr<DEComponent::Material>> materialMap;
 	};
 }

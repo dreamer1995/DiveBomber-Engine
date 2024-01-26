@@ -3,9 +3,9 @@
 #include "..\..\Graphics.h"
 #include "..\..\Resource\ResourceCommonInclude.h"
 #include "..\..\Geometry\Cube.h"
-#include "..\..\Component\Mesh.h"
-#include "..\..\Component\Material.h"
-#include "..\..\Component\Camera.h"
+#include "..\..\..\Component\Mesh.h"
+#include "..\..\..\Component\Material.h"
+#include "..\..\..\Component\Camera\Camera.h"
 #include "..\..\DX\GlobalResourceManager.h"
 #include "..\..\Object\Object.h"
 
@@ -15,7 +15,7 @@ namespace DiveBomber::RenderPipeline
 	using namespace DEResource;
 	using namespace DEResource::VertexProcess;
 	using namespace DX;
-	using namespace Component;
+	using namespace DEComponent;
 	using namespace DEObject;
 	namespace dx = DirectX;
 
