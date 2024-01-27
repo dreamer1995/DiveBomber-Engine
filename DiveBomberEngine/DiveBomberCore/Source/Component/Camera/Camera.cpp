@@ -76,7 +76,6 @@ namespace DiveBomber::DEComponent
 	void Camera::Reset() noexcept
 	{
 		attributes = homeAttributes;
-		yaw_ = attributes.rotation.y;
 
 		projection->SetPos(attributes.position);
 		projection->SetRotation(attributes.rotation);
@@ -92,7 +91,6 @@ namespace DiveBomber::DEComponent
 
 		// no limition for pitch
 		attributes.rotation.x = wrap_angle(attributes.rotation.x + dy * rotationSpeed);
-		yaw_ = attributes.rotation.y;
 
 		//indicator.SetRotation(rotation);
 		//proj.SetRotation(rotation);
@@ -159,7 +157,6 @@ namespace DiveBomber::DEComponent
 			attributes.position.z - inputPos.z };
 		attributes.rotation.x = wrap_angle(atan2(delta.y, sqrt(delta.x * delta.x + delta.z * delta.z)));
 		attributes.rotation.y = wrap_angle(atan2(delta.x, delta.z) + PI);
-		yaw_ = attributes.rotation.y;
 	}
 
 	void Camera::KeepLookFront(const DirectX::XMFLOAT3 inputPos) noexcept
@@ -170,7 +167,7 @@ namespace DiveBomber::DEComponent
 			attributes.position.z - inputPos.z };
 		if (-PI / 2.0f >= attributes.rotation.x || attributes.rotation.x >= PI / 2.0f)
 		{
-			if (0.3f * PI < abs(yaw_ - wrap_angle(atan2(delta.x, delta.z))) && abs(yaw_ - wrap_angle(atan2(delta.x, delta.z))) < 0.9 * PI * 2)
+			if (0.3f * PI < abs(attributes.rotation.y - wrap_angle(atan2(delta.x, delta.z))) && abs(attributes.rotation.y - wrap_angle(atan2(delta.x, delta.z))) < 0.9 * PI * 2)
 			{
 				attributes.rotation.x = wrap_angle(atan2(delta.y, sqrt(delta.x * delta.x + delta.z * delta.z)));
 				attributes.rotation.y = wrap_angle(atan2(delta.x, delta.z) + PI);
@@ -183,7 +180,7 @@ namespace DiveBomber::DEComponent
 		}
 		else
 		{
-			if (0.3f * PI < abs(yaw_ - wrap_angle(atan2(delta.x, delta.z) + PI)) && abs(yaw_ - wrap_angle(atan2(delta.x, delta.z) + PI)) < 0.9f * PI * 2)
+			if (0.3f * PI < abs(attributes.rotation.y - wrap_angle(atan2(delta.x, delta.z) + PI)) && abs(attributes.rotation.y - wrap_angle(atan2(delta.x, delta.z) + PI)) < 0.9f * PI * 2)
 			{
 				attributes.rotation.x = wrap_angle(-atan2(delta.y, sqrt(delta.x * delta.x + delta.z * delta.z)) - PI);
 				attributes.rotation.y = wrap_angle(atan2(delta.x, delta.z));
@@ -194,7 +191,6 @@ namespace DiveBomber::DEComponent
 				attributes.rotation.y = wrap_angle(atan2(delta.x, delta.z) + PI);
 			}
 		}
-		yaw_ = attributes.rotation.y;
 	}
 
 	void Camera::CalculateTransformMatrices() noexcept
@@ -267,7 +263,6 @@ namespace DiveBomber::DEComponent
 	{
 		attributes.rotation.x = pitch;
 		attributes.rotation.y = yaw;
-		yaw_ = attributes.rotation.y;
 
 		//indicator.SetRotation(rotation);
 		//proj.SetRotation(rotation);
@@ -351,7 +346,7 @@ namespace DiveBomber::DEComponent
 			ImGui::Text("Orientation");
 			dcheck(ImGui::SliderAngle("Pitch", &attributes.rotation.x, 0.995f * -90.0f, 0.995f * 90.0f), rotDirty);
 			dcheck(ImGui::SliderAngle("Yaw", &attributes.rotation.y, -180.0f, 180.0f), rotDirty);
-			dcheck(ImGui::SliderAngle("Roll", &attributes.rotation.z, -180.0f, 180.0f), rotDirty);
+			// dcheck(ImGui::SliderAngle("Roll", &attributes.rotation.z, -180.0f, 180.0f), rotDirty);
 			projection->DrawComponentUI();
 			ImGui::Checkbox("Camera Indicator", &enableCameraIndicator);
 			ImGui::Checkbox("Frustum Indicator", &enableFrustumIndicator);
@@ -362,8 +357,7 @@ namespace DiveBomber::DEComponent
 
 			if (rotDirty)
 			{
-				yaw_ = attributes.rotation.y;
-				const dx::XMFLOAT3 angles = { attributes.rotation.x,attributes.rotation.y,0.0f };
+				const dx::XMFLOAT3 angles = { attributes.rotation.x,attributes.rotation.y,attributes.rotation.z };
 
 				// indicator.SetRotation(angles);
 				projection->SetRotation(angles);

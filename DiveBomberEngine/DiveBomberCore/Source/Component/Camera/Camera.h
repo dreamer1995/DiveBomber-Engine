@@ -83,7 +83,6 @@ namespace DiveBomber::DEComponent
 
 	private:
 		std::wstring name;
-		float yaw_;
 		CameraAttributes homeAttributes;
 		CameraAttributes attributes;
 		static constexpr float travelSpeed = 12.0f;
