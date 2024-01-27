@@ -65,6 +65,12 @@ namespace DiveBomber::RenderPipeline
 
 	void DeferredRenderPipeLine::SetRenderPasses() noxnd
 	{
+		if (Graphics::GetInstance().CheckResolutionDirty())
+		{
+			HDRTarget->Resize(Graphics::GetInstance().GetWidth(), Graphics::GetInstance().GetHeight());
+			finalTarget->Resize(Graphics::GetInstance().GetWidth(), Graphics::GetInstance().GetHeight());
+		}
+
 		std::shared_ptr<Pass> currentPass = opaqueGBufferPass;
 
 		currentPass = skyDomePass->LinkPass(passesTree, currentPass);

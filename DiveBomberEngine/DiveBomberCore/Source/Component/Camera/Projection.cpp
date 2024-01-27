@@ -1,6 +1,5 @@
 #include "Projection.h"
 
-#include "..\..\Graphics\Graphics.h"
 #include <algorithm>
 #include <..\imgui\imgui.h>
 

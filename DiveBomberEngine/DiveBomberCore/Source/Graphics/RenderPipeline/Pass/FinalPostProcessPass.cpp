@@ -21,6 +21,13 @@ namespace DiveBomber::RenderPipeline
 	{
 		material = std::make_shared<Material>(L"FinalPostProcessMaterial", L"PostProcess");
 
+		postProcessCB.invScreenSize.x = 1.0f / Graphics::GetInstance().GetWidth();
+		postProcessCB.invScreenSize.y = 1.0f / Graphics::GetInstance().GetHeight();
+
+		postProcessCBIndex = std::make_shared<DEResource::ConstantBufferInHeap<PostProcessData>>(L"FinalPostProcessPassCB", postProcessCB);
+
+		material->SetConstant(postProcessCBIndex, 1u);
+
 		std::shared_ptr<RootSignature> rootSignature = GlobalResourceManager::Resolve<RootSignature>(L"StandardFullStageAccess");
 
 		PipelineStateObject::PipelineStateReference pipelineStateReference;
@@ -33,6 +40,13 @@ namespace DiveBomber::RenderPipeline
 	void FinalPostProcessPass::Execute() noxnd
 	{
 		ComputePass::Execute();
+
+		if (Graphics::GetInstance().CheckResolutionDirty())
+		{
+			postProcessCB.invScreenSize.x = 1.0f / Graphics::GetInstance().GetWidth();
+			postProcessCB.invScreenSize.y = 1.0f / Graphics::GetInstance().GetHeight();
+			postProcessCBIndex->Update(postProcessCB);
+		}
 
 		for (auto& inputTexture : inputTexturesMap)
 		{

@@ -1,5 +1,6 @@
 #pragma once
 #include "ComputePass.h"
+#include "..\..\Resource\ResourceCommonInclude.h"
 
 #include <memory>
 
@@ -19,6 +20,12 @@ namespace DiveBomber::RenderPipeline
 	class FinalPostProcessPass final : public ComputePass
 	{
 	public:
+		struct PostProcessData
+		{
+			DirectX::XMFLOAT2 invScreenSize;
+		};
+
+	public:
 		FinalPostProcessPass(std::shared_ptr<DEResource::UnorderedAccessBuffer> inputTarget);
 
 		virtual void Execute() noxnd override;
@@ -26,5 +33,7 @@ namespace DiveBomber::RenderPipeline
 	private:
 		std::shared_ptr<DEComponent::Material> material;
 		std::shared_ptr<DEResource::PipelineStateObject> pso;
+		PostProcessData postProcessCB;
+		std::shared_ptr<DEResource::ConstantBufferInHeap<PostProcessData>> postProcessCBIndex;
 	};
 }

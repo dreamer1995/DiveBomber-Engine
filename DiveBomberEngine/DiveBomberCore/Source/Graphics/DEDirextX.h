@@ -4,12 +4,9 @@
 #pragma warning(disable:26451)
 #pragma warning(disable:26819)
 #pragma warning(disable:26433)
-#pragma warning(disable:26827)
 #include <d3d12.h>
 #include <d3dx12.h>
-#pragma warning(default:26827)
 #pragma warning(default:6001)
 #pragma warning(default:26451)
 #pragma warning(default:26819)
 #pragma warning(default:26433)
-#pragma warning(default:26827)

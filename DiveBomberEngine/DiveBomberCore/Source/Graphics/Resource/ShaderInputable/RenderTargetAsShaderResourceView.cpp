@@ -64,4 +64,15 @@ namespace DiveBomber::DEResource
 
 		device->CreateShaderResourceView(renderTargetBuffer.Get(), nullptr, srvCPUHandle);
 	}
+
+	void DiveBomber::DEResource::RenderTargetAsShaderResourceView::Resize(UINT width, UINT height)
+	{
+		// Don't allow 0 size swap chain back buffers.
+		width = std::max(1u, width);
+		height = std::max(1u, height);
+
+		resourceDesc.Width = width;
+		resourceDesc.Height = height;
+		Resize(resourceDesc);
+	}
 }

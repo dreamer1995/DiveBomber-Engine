@@ -125,6 +125,17 @@ namespace DiveBomber::DEResource
 		device->CreateRenderTargetView(renderTargetBuffer.Get(), &rtvDesc, rtvCPUHandle);
 	}
 
+	void DiveBomber::DEResource::RenderTarget::Resize(UINT width, UINT height)
+	{
+		// Don't allow 0 size swap chain back buffers.
+		width = std::max(1u, width);
+		height = std::max(1u, height);
+
+		resourceDesc.Width = width;
+		resourceDesc.Height = height;
+		Resize(resourceDesc);
+	}
+
 	void RenderTarget::Resize(const wrl::ComPtr<ID3D12Resource> newbuffer)
 	{
 		if (selfManagedBuffer)

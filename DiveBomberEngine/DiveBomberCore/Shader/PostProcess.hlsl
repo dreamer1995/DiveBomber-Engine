@@ -10,9 +10,15 @@
 }
 "/Properties"
 
+struct PostProcessData
+{
+	float2 invScreenSize;
+};
+
 struct MaterialIndex
 {
 	uint constant0Index;
+	uint constant1Index;
 	uint texture0Index;
 	uint texture1Index;
 };
@@ -37,8 +43,9 @@ void CSMain(ComputeShaderInput In)
 	Texture2D<float4> mainRT = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.texture0Index)];
 	RWTexture2D<float4> outRT = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.texture1Index)];
 	ConstantBuffer<BaseShadingParam> baseShadingParam = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.constant0Index)];
+	ConstantBuffer<PostProcessData> postProcessData = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.constant1Index)];
 	
-	float2 uv = (In.dispatchThreadID.xy + 0.5) / float2(1280, 720);
+	float2 uv = (In.dispatchThreadID.xy + 0.5) * postProcessData.invScreenSize;
 	
 	float4 col = SampleTexture(mainRT, samplerStandard, uv) * baseShadingParam.baseColor;
 	

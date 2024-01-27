@@ -16,7 +16,8 @@ namespace DiveBomber::DEResource
 
 		//virtual void Bind() noxnd override;
 		[[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetSRVCPUDescriptorHandle() const noexcept;
-		virtual void Resize(CD3DX12_RESOURCE_DESC inputDesc) override;
+		void Resize(CD3DX12_RESOURCE_DESC inputDesc) override;
+		void Resize(UINT width, UINT height) override;
 		[[nodiscard]] UINT GetSRVDescriptorHeapOffset() const noexcept override;
 		void BindAsShaderResource() noxnd override;
 

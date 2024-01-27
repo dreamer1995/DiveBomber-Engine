@@ -72,6 +72,11 @@ namespace DiveBomber::DEResource
 		return descriptorAllocation->GetBaseOffset();
 	}
 
+	CD3DX12_RESOURCE_DESC DiveBomber::DEResource::UnorderedAccessBuffer::GetResourceDesc() const noexcept
+	{
+		return resourceDesc;
+	}
+
 	void UnorderedAccessBuffer::Resize(const CD3DX12_RESOURCE_DESC inputDesc)
 	{
 		if (!selfManagedBuffer)
@@ -98,6 +103,17 @@ namespace DiveBomber::DEResource
 		ResourceStateTracker::AddGlobalResourceState(uavBuffer, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
 
 		device->CreateUnorderedAccessView(uavBuffer.Get(), nullptr, nullptr, cpuHandle);
+	}
+
+	void DiveBomber::DEResource::UnorderedAccessBuffer::Resize(UINT width, UINT height)
+	{
+		// Don't allow 0 size swap chain back buffers.
+		width = std::max(1u, width);
+		height = std::max(1u, height);
+
+		resourceDesc.Width = width;
+		resourceDesc.Height = height;
+		Resize(resourceDesc);
 	}
 
 	void UnorderedAccessBuffer::Resize(const wrl::ComPtr<ID3D12Resource> inputUAVBuffer)

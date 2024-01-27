@@ -3,6 +3,7 @@
 #include "..\..\Utility\Common.h"
 #include "..\..\Utility\DEMath.h"
 #include "..\..\..\Config\SystemConfig.h"
+#include "..\..\Graphics\Graphics.h"
 //#include "Frustum.h"
 
 #include <memory>
@@ -16,13 +17,13 @@ namespace DiveBomber::DEComponent
 		struct PerspectiveAttributes
 		{
 			float FOV = 60.0f / 180.0f * Utility::PI;
-			float aspectRatio = (float)MainWindowWidth / MainWindowHeight;
+			float aspectRatio = (float)DEGraphics::Graphics::GetInstance().GetWidth() / DEGraphics::Graphics::GetInstance().GetHeight();
 		};
 
 		struct OrthographicAttributes
 		{
-			float width = MainWindowWidth;
-			float height = MainWindowHeight;
+			float width = (float)DEGraphics::Graphics::GetInstance().GetWidth();
+			float height = (float)DEGraphics::Graphics::GetInstance().GetHeight();
 		};
 
 		struct ProjectionAttributes

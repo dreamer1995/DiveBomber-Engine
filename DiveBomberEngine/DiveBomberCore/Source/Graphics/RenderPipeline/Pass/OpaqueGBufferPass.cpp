@@ -74,6 +74,14 @@ namespace DiveBomber::RenderPipeline
 
 	void OpaqueGBufferPass::Execute() noxnd
 	{
+		if (Graphics::GetInstance().CheckResolutionDirty())
+		{
+			for (std::shared_ptr<RenderTarget> target : GBufferSet)
+			{
+				target->Resize(Graphics::GetInstance().GetWidth(), Graphics::GetInstance().GetHeight());
+			}
+		}
+
 		Graphics::GetInstance().GetCamera()->Bind();
 
 		auto dsvHandle = depthStencil->GetDSVCPUDescriptorHandle();

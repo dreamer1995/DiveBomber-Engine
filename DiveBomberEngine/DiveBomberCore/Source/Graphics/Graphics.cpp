@@ -126,6 +126,8 @@ namespace DiveBomber::DEGraphics
 
 	void Graphics::EndFrame()
 	{
+		resolutionDirty = false;
+
 		auto currentBackBufferIndex = swapChain->GetSwapChain()->GetCurrentBackBufferIndex();
 		auto backBuffer = swapChain->GetBackBuffer(currentBackBufferIndex);
 
@@ -190,6 +192,8 @@ namespace DiveBomber::DEGraphics
 		renderCamera->ResizeAspectRatio(width, height);
 
 		viewport->ResizeViewport(width, height);
+
+		resolutionDirty = true;
 	}
 
 	UINT Graphics::GetWidth() const noexcept
@@ -435,5 +439,10 @@ namespace DiveBomber::DEGraphics
 		{
 			instance.reset();
 		}
+	}
+
+	bool Graphics::CheckResolutionDirty()
+	{
+		return resolutionDirty;
 	}
 }

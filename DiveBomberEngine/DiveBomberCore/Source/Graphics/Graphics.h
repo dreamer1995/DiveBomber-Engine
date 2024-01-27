@@ -83,6 +83,9 @@ namespace DiveBomber::DEGraphics
 
 		[[nodiscard]] static Graphics& GetInstance();
 		static void Destructor() noexcept;
+
+		[[nodiscard]] bool CheckResolutionDirty();
+
 	private:
 		UINT width = 0;
 		UINT height = 0;
@@ -116,6 +119,8 @@ namespace DiveBomber::DEGraphics
 		std::unique_ptr<DEResource::ScissorRects> scissorRects;
 
 		static std::unique_ptr<Graphics> instance;
+
+		bool resolutionDirty = false;
 
 	public:
 		bool isWireFrame = false;

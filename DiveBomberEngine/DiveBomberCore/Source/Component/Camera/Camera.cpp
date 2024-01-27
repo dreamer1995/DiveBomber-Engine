@@ -321,6 +321,7 @@ namespace DiveBomber::DEComponent
 	{
 		ResizeAspectRatio(Graphics::GetInstance().GetWidth(), Graphics::GetInstance().GetHeight());
 	}
+
 	void Camera::ResizeAspectRatio(const UINT width, const UINT height) noexcept
 	{
 		projection->ResizeAspectRatio(width, height);

@@ -37,6 +37,7 @@ namespace DiveBomber::DEResource
 		[[nodiscard]] wrl::ComPtr<ID3D12Resource> GetRenderTargetBuffer() const noexcept;
 		[[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetRTVCPUDescriptorHandle() const noexcept;
 		virtual void Resize(CD3DX12_RESOURCE_DESC inputDesc);
+		virtual void Resize(UINT width, UINT height);
 		void Resize(const wrl::ComPtr<ID3D12Resource> newbuffer);
 		void ReleaseBuffer();
 		void TransitStateToRT() noxnd;

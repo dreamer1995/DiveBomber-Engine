@@ -11,7 +11,7 @@ namespace DiveBomber::DEResource
         :
         Resource(inputName),
         viewport(CD3DX12_VIEWPORT(0.0f, 0.0f,
-            static_cast<float>(MainWindowWidth), static_cast<float>(MainWindowHeight)))
+            static_cast<float>(Graphics::GetInstance().GetWidth()), static_cast<float>(Graphics::GetInstance().GetHeight())))
     {
     }
 

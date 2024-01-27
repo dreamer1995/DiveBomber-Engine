@@ -56,4 +56,16 @@ namespace DiveBomber::DEResource
 		auto device = Graphics::GetInstance().GetDevice();
 		device->CreateShaderResourceView(uavPointer->GetUnorderedAccessBuffer().Get(), nullptr, cpuHandle);
 	}
+
+	void DiveBomber::DEResource::UnorderedAccessBufferAsShaderResourceView::Resize(UINT width, UINT height)
+	{
+		// Don't allow 0 size swap chain back buffers.
+		width = std::max(1u, width);
+		height = std::max(1u, height);
+
+		CD3DX12_RESOURCE_DESC resourceDesc = uavPointer->GetResourceDesc();
+		resourceDesc.Width = width;
+		resourceDesc.Height = height;
+		Resize(resourceDesc);
+	}
 }

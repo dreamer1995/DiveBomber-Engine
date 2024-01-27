@@ -29,11 +29,14 @@ namespace DiveBomber::DEResource
 		[[nodiscard]] wrl::ComPtr<ID3D12Resource> GetUnorderedAccessBuffer() const noexcept;
 		[[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetUAVCPUDescriptorHandle() const noexcept;
 		void Resize(const CD3DX12_RESOURCE_DESC inputDesc);
+		void Resize(UINT width, UINT height);
 		void Resize(const wrl::ComPtr<ID3D12Resource> inputUAVBuffer);
 
 		void BindAsTarget() noxnd;
 
 		[[nodiscard]] UINT GetSRVDescriptorHeapOffset() const noexcept override;
+
+		[[nodiscard]] CD3DX12_RESOURCE_DESC GetResourceDesc() const noexcept;
 	private:
 		bool selfManagedBuffer;
 		wrl::ComPtr<ID3D12Resource> uavBuffer;
