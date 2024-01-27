@@ -49,11 +49,12 @@ namespace DiveBomber::DEObject
 		std::shared_ptr<RootSignature> rootSignature = GlobalResourceManager::Resolve<RootSignature>(L"StandardFullStageAccess");
 
 		D3D12_RT_FORMAT_ARRAY rtvFormats = {};
-		rtvFormats.NumRenderTargets = 4;
+		rtvFormats.NumRenderTargets = 5;
 		rtvFormats.RTFormats[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		rtvFormats.RTFormats[1] = DXGI_FORMAT_R8G8B8A8_UNORM;
-		rtvFormats.RTFormats[2] = DXGI_FORMAT_R10G10B10A2_UNORM;
-		rtvFormats.RTFormats[3] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		rtvFormats.RTFormats[2] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		rtvFormats.RTFormats[3] = DXGI_FORMAT_R10G10B10A2_UNORM;
+		rtvFormats.RTFormats[4] = DXGI_FORMAT_R8G8B8A8_UNORM;
 
 		auto dsvFormat = DXGI_FORMAT_D32_FLOAT;
 

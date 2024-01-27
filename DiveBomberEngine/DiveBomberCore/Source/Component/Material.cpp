@@ -460,7 +460,7 @@ namespace DiveBomber::DEComponent
         {
             std::wstring shaderName = Utility::ToWide(config["ShaderName"]);
 
-            UploadConfig(shaderName);
+            GetConfig();
             ReloadConfig();
 
             //not a good idea, should be re-considered

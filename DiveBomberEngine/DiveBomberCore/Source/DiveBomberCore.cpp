@@ -356,7 +356,7 @@ namespace DiveBomber
 			{
 				// temp strategy 
 				Sleep(100);
-				ShaderManager::GetInstance().ReCompileShader();
+				ShaderManager::GetInstance().ReLoadShader();
 			}
 			lastLoadTime = tickCount;
 		}
@@ -377,7 +377,7 @@ namespace DiveBomber
 				{
 					// temp strategy 
 					Sleep(100);
-					ShaderManager::GetInstance().ReCompileShader();
+					ShaderManager::GetInstance().ReLoadShader();
 				}
 
 				if (command == L"refresh material")

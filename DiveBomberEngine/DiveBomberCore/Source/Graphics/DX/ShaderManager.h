@@ -26,7 +26,7 @@ namespace DiveBomber::DX
 
 		[[nodiscard]] wrl::ComPtr<ID3DBlob> Compile(const std::string& hlslFile, const std::wstring shaderDirectory, const std::wstring shaderName, DEResource::ShaderType shaderType);
 		void AddToUsingPool(std::shared_ptr<DEResource::Shader> shader) noexcept;
-		void ReCompileShader();
+		void ReLoadShader();
 		void ResetAllShaderDirtyState() noexcept;
 		void DeleteShaderInUsingPool(const std::string key) noexcept;
 

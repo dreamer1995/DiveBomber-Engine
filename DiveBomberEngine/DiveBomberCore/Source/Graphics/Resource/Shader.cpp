@@ -30,11 +30,38 @@ namespace DiveBomber::DEResource
 		directory = sourceFile.parent_path();
 
 		LoadShader();
+
+		isDirty = false;
 	}
 
 	wrl::ComPtr<ID3DBlob> Shader::GetBytecode() const noexcept
 	{
 		return bytecodeBlob;
+	}
+
+	void Shader::LoadShader()
+	{
+		bool needRecompile = true;
+		if (fs::exists(builtFile))
+		{
+			sourceLastSaveTime = fs::last_write_time(sourceFile);
+			builtLastSaveTime = fs::last_write_time(builtFile);
+			if (builtLastSaveTime > sourceLastSaveTime)
+			{
+				needRecompile = false;
+			}
+		}
+
+		if (needRecompile)
+		{
+			RecompileShader();
+		}
+
+		if (!isDirty && (bytecodeBlob == nullptr))
+		{
+			HRESULT hr;
+			GFX_THROW_INFO(D3DReadFileToBlob(builtFile.c_str(), &bytecodeBlob));
+		}
 	}
 
 	void Shader::RecompileShader()
@@ -101,33 +128,6 @@ namespace DiveBomber::DEResource
 		rawFile.close();
 
 		return paramsFile;
-	}
-
-	void Shader::LoadShader()
-	{
-		bool needRecompile = true;
-		if (fs::exists(builtFile))
-		{
-			sourceLastSaveTime = fs::last_write_time(sourceFile);
-			builtLastSaveTime = fs::last_write_time(builtFile);
-			if (builtLastSaveTime > sourceLastSaveTime)
-			{
-				needRecompile = false;
-			}
-		}
-
-		if (needRecompile)
-		{
-			RecompileShader();
-		}
-
-		if (!isDirty)
-		{
-			HRESULT hr;
-			GFX_THROW_INFO(D3DReadFileToBlob(builtFile.c_str(), &bytecodeBlob));
-		}
-
-		isDirty = false;
 	}
 
 	void Shader::AddMaterialReference(std::shared_ptr<DEComponent::Material> material)

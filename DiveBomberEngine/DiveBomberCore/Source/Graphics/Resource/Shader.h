@@ -38,6 +38,7 @@ namespace DiveBomber::DEResource
 
 		[[nodiscard]] ShaderType GetShaderType() const noexcept;
 
+		void LoadShader();
 		void RecompileShader();
 		[[nodiscard]] static std::wstring GetShaderParamsString(const std::wstring name);
 
@@ -51,7 +52,6 @@ namespace DiveBomber::DEResource
 		[[nodiscard]] fs::path FindSourceFilePath() noexcept;
 		[[nodiscard]] static fs::path FindSourceFilePath(const std::wstring name) noexcept;
 		[[nodiscard]] std::wstring GetShaderTypeAbbreviation() const noexcept;
-		void LoadShader();
 
 	private:
 		std::wstring directory;

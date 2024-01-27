@@ -11,7 +11,7 @@ namespace DiveBomber::DEConsole
 		~Console();
 		Console(const Console&) = delete;
 		Console& operator=(const Console&) = delete;
-		void GetInput(std::wstring command);
+		void GetInput(std::wstring& command);
 		[[nodiscard]] bool GetWaitForInput() const noexcept;
 		void SetWaitForInput(bool inputWaitForInput) noexcept;
 

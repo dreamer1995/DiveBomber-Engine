@@ -18,7 +18,7 @@ namespace DiveBomber::RenderPipeline
 		:
 		RenderPass("OpaqueGBufferPass", inputRenderTarget, inputDepthStencil)
 	{
-		auto baseColorBufferDesc = CD3DX12_RESOURCE_DESC::Tex2D(DXGI_FORMAT_R32G32B32A32_FLOAT,
+		auto baseColorBufferDesc = CD3DX12_RESOURCE_DESC::Tex2D(DXGI_FORMAT_R8G8B8A8_UNORM,
 			Graphics::GetInstance().GetWidth(), Graphics::GetInstance().GetHeight(),
 			1, 1, 1, 0, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET);
 
@@ -66,6 +66,7 @@ namespace DiveBomber::RenderPipeline
 			customDataBuffer
 		};
 
+		targetHandles.emplace_back(renderTarget->GetRTVCPUDescriptorHandle());
 		for (std::shared_ptr<RenderTarget> target : GBufferSet)
 		{
 			targetHandles.emplace_back(target->GetRTVCPUDescriptorHandle());
@@ -84,8 +85,6 @@ namespace DiveBomber::RenderPipeline
 
 		Graphics::GetInstance().GetCamera()->Bind();
 
-		auto dsvHandle = depthStencil->GetDSVCPUDescriptorHandle();
-
 		for (std::shared_ptr<RenderTarget> target : GBufferSet)
 		{
 			target->TransitStateToRT();
@@ -93,6 +92,9 @@ namespace DiveBomber::RenderPipeline
 			FLOAT clearColor[] = ClearMainRTColor;
 			target->Clear(clearColor);
 		}
+
+		renderTarget->TransitStateToRT();
+		auto dsvHandle = depthStencil->GetDSVCPUDescriptorHandle();
 
 		Graphics::GetInstance().GetGraphicsCommandList()->OMSetRenderTargets((UINT)targetHandles.size(), targetHandles.data(), FALSE, &dsvHandle);
 

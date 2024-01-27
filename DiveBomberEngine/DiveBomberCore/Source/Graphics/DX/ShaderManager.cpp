@@ -161,14 +161,14 @@ namespace DiveBomber::DX
         shaderPool[shader->GetUID()] = shader;
     }
 
-    void ShaderManager::ReCompileShader()
+    void ShaderManager::ReLoadShader()
     {
         auto it = shaderPool.begin();
         while (it != shaderPool.end())
         {
             if (it->second)
             {
-                it->second->RecompileShader();
+                it->second->LoadShader();
                 it++;
             }
             else

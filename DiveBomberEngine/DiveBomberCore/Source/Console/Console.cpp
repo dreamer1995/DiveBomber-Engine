@@ -72,7 +72,7 @@ namespace DiveBomber::DEConsole
 
 	}
 
-	void Console::GetInput(std::wstring command)
+	void Console::GetInput(std::wstring& command)
 	{
 		if (!waitForInput)
 			return;

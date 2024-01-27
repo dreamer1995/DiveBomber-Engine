@@ -45,10 +45,11 @@ struct ProcessData
 
 struct GBufferOutput
 {
-	float4 GBuffer0 	: SV_Target0;	// GBufferA[R16G16B16A16F]	: Emission.rgb(Obsolete) BaseColor.rgb, Metallic
-	float4 GBuffer1 	: SV_Target1;	// GBufferB[R8G8B8A8]		: Roughness, AO, Specular, InShadow(Obsolete), ShadingModelID
-	float4 GBuffer2 	: SV_Target2;	// GBufferC[R10G10B10A2]	: N.xyz, Temp
-	float4 GBuffer3 	: SV_Target3;	// GBufferD[R8G8B8A8]		: CustomData
+	float4 GBuffer0		: SV_Target0;	// GBufferA[R32G32B32A32F]	: MainTarget, include Emission.rgb/forward rendered GI
+	float4 GBuffer1		: SV_Target1;	// GBufferA[R8G8B8A8]		: BaseColor.rgb, Metallic
+	float4 GBuffer2 	: SV_Target2;	// GBufferB[R8G8B8A8]		: Roughness, AO, Specular, InShadow(Obsolete), ShadingModelID
+	float4 GBuffer3 	: SV_Target3;	// GBufferC[R10G10B10A2]	: N.xyz, Temp
+	float4 GBuffer4 	: SV_Target4;	// GBufferD[R8G8B8A8]		: CustomData
 //#if USE_PIXEL_OFFSET
 //	float  PixelDepth : SV_Depth;     // For pixel offset
 //#endif
@@ -82,6 +83,7 @@ GBufferOutput PSMain(ProcessData In)
 	finalOut.GBuffer1 = float4(1, 0, 0, 1);
 	finalOut.GBuffer2 = float4(0, 1, 0, 1);
 	finalOut.GBuffer3 = float4(0, 0, 1, 1);
+	finalOut.GBuffer4 = float4(1, 1, 0, 1);
 
 	return finalOut;
 }
