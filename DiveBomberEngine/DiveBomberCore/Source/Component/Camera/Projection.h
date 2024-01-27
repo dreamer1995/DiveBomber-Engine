@@ -21,8 +21,8 @@ namespace DiveBomber::DEComponent
 
 		struct OrthographicAttributes
 		{
-			float width = 512.0f;
-			float height = 512.0f;
+			float width = MainWindowWidth;
+			float height = MainWindowHeight;
 		};
 
 		struct ProjectionAttributes
