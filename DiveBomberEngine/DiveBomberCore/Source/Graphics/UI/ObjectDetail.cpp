@@ -16,12 +16,11 @@ namespace DiveBomber::UI
 			std::shared_ptr<DEObject::Object> object = DiveBomberCore::GetInstance().GetCurrentSelectedObject();
 			if (object)
 			{
-				ImGui::Text("Here is %s", Utility::ToNarrow(object->GetName()).c_str());
+				ImGui::Text(Utility::ToNarrow(object->GetName()).c_str());
+
+				object->DrawDetailPanel();
 			}
-			else
-			{
-				ImGui::Text("Here is null");
-			}
+
 			ImGui::End();
 		}
 	}

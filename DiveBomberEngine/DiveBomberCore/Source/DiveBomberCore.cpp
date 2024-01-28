@@ -453,14 +453,14 @@ namespace DiveBomber
 
 	void DiveBomberCore::GameLogic()
 	{
-		// Update the model matrix.
-		float angle = (float)Utility::g_GameTime;
-
 		{
 			auto drawable = currentScene->FindSceneObjectByName(L"Sphere01");
 			auto sphere = std::dynamic_pointer_cast<SimpleSphere>(drawable);
 			if (sphere)
-				sphere->SetRotation({ 0, angle ,0 });
+			{
+				auto rotation = sphere->GetRotation();
+				sphere->SetRotation({ rotation.x, rotation.y + (float)Utility::g_DeltaTime ,rotation.z });
+			}
 			std::shared_ptr<Material> material = sphere->GetMaterialByName(sphere->GetName() + L"Material");
 			material->SetMaterialParameterVector(Utility::ToNarrow(sphere->GetName()) + "BaseMat0", "baseColor", { std::abs(std::sinf((float)g_GameTime * 2)),0.0f,0.0f,0.0f });
 		}
@@ -468,7 +468,10 @@ namespace DiveBomber
 			auto drawable = currentScene->FindSceneObjectByName(L"Sphere02");
 			auto sphere = std::dynamic_pointer_cast<SimpleSphere>(drawable);
 			if (sphere)
-				sphere->SetRotation({ 0, -angle ,0 });
+			{
+				auto rotation = sphere->GetRotation();
+				sphere->SetRotation({ rotation.x, rotation.y - (float)Utility::g_DeltaTime ,rotation.z });
+			}
 		}
 	}
 }

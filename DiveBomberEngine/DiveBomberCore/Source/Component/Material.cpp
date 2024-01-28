@@ -12,6 +12,7 @@
 #include <iostream>
 #include <fstream>
 #include <any>
+#include <..\imgui\imgui.h>
 
 namespace DiveBomber::DEComponent
 {
@@ -380,6 +381,11 @@ namespace DiveBomber::DEComponent
 
     void Material::DrawComponentUI()
     {
+        ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+        if (ImGui::CollapsingHeader("Material"))
+        {
+
+        }
     }
 
     void Material::SetTexture(const std::string textureName, const std::shared_ptr<ShaderInputable> texture) noexcept

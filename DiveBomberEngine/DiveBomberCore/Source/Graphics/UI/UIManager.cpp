@@ -15,11 +15,12 @@ namespace DiveBomber::UI
 	{
 		mainMenuBar = std::make_shared<MainMenuBar>();
 
+		//todo add a priority for display them
+		AddToUIDrawList(std::make_shared<SceneCamera>());
 		AddToUIDrawList(std::make_shared<ObjectDetail>());
 		AddToUIDrawList(std::make_shared<ResourceBrowser>());
 		AddToUIDrawList(std::make_shared<SceneOutliner>());
 		AddToUIDrawList(std::make_shared<RenderStatusPanel>());
-		AddToUIDrawList(std::make_shared<SceneCamera>());
 	}
 
 	UIManager& UIManager::GetInstance()

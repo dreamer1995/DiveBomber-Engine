@@ -7,6 +7,8 @@
 #include "..\Graphics\Resource\ShaderInputable\StructuredBufferInHeap.h"
 #include "..\Graphics\DX\GlobalResourceManager.h"
 
+#include <..\imgui\imgui.h>
+
 namespace DiveBomber::DEComponent
 {
     using namespace DEGraphics;
@@ -71,6 +73,11 @@ namespace DiveBomber::DEComponent
 
     void Mesh::DrawComponentUI()
     {
+        ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+        if (ImGui::CollapsingHeader("Mesh"))
+        {
+            ImGui::Text("ModelFile Path");
+        }
     }
 
     void Mesh::Bind() noxnd

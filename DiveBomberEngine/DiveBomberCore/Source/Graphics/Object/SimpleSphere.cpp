@@ -38,9 +38,11 @@ namespace DiveBomber::DEObject
 
 		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(name, sphere.vertices, indexBuffer);
 		meshMap.emplace(mesh->GetName(), mesh);
+		attachedComponents.emplace_back(mesh);
 
 		std::shared_ptr<Material> material = std::make_shared<Material>(name + L"Material", L"PBR");
 		materialMap.emplace(material->GetName(), material);
+		attachedComponents.emplace_back(material);
 
 		std::shared_ptr<ConstantTransformBuffer> transformBuffer = std::make_shared<ConstantTransformBuffer>(name + L"Transforms");
 		transformBuffer->InitializeParentReference(*this);
