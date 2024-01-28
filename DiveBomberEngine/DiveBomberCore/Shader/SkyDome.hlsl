@@ -58,7 +58,7 @@ float4 PSMain(ProcessData In) : SV_Target
 	
 	float4 baseColor = SampleSRGBCubeTextureLevel(baseMap, samplerStandard, normalize(In.uv), 0u);
 	
-	float4 color = baseColor * baseShadingParamCB0.baseColor;
+	float4 color = baseColor * DecodeGamma(baseShadingParamCB0.baseColor);
 	
 	return color;
 }

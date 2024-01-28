@@ -67,14 +67,18 @@ namespace DiveBomber::DEObject
 
 	void DiveBomber::DEObject::Object::DrawDetailPanel()
 	{
-		ImGui::Text("Position");
-		ImGui::SliderFloat("X", &position.x, -80.0f, 80.0f, "%.1f");
-		ImGui::SliderFloat("Y", &position.y, -80.0f, 80.0f, "%.1f");
-		ImGui::SliderFloat("Z", &position.z, -80.0f, 80.0f, "%.1f");
-		ImGui::Text("Orientation");
-		ImGui::SliderAngle("Pitch", &rotation.x, -180.0f, 180.0f);
-		ImGui::SliderAngle("Yaw", &rotation.y, -180.0f, 180.0f);
-		ImGui::SliderAngle("Roll", &rotation.z, -180.0f, 180.0f);
+		ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+		if (ImGui::CollapsingHeader("Transform"))
+		{
+			ImGui::Text("Position");
+			ImGui::SliderFloat("X", &position.x, -80.0f, 80.0f, "%.1f");
+			ImGui::SliderFloat("Y", &position.y, -80.0f, 80.0f, "%.1f");
+			ImGui::SliderFloat("Z", &position.z, -80.0f, 80.0f, "%.1f");
+			ImGui::Text("Orientation");
+			ImGui::SliderAngle("Pitch", &rotation.x, -180.0f, 180.0f);
+			ImGui::SliderAngle("Yaw", &rotation.y, -180.0f, 180.0f);
+			ImGui::SliderAngle("Roll", &rotation.z, -180.0f, 180.0f);
+		}
 
 		for (std::shared_ptr<Component> component : attachedComponents)
 		{

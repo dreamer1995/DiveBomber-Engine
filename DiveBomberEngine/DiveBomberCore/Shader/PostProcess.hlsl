@@ -47,7 +47,7 @@ void CSMain(ComputeShaderInput In)
 	
 	float2 uv = (In.dispatchThreadID.xy + 0.5) * postProcessData.invScreenSize;
 	
-	float4 col = SampleTexture(mainRT, samplerStandard, uv) * baseShadingParam.baseColor;
+	float4 col = SampleTexture(mainRT, samplerStandard, uv) * DecodeGamma(baseShadingParam.baseColor);
 	
 	col.rgb = EncodeGamma(col.rgb);
 		

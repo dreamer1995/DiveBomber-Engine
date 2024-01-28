@@ -1,3 +1,5 @@
+#include "Include\Algorithm\Common.hlsli"
+
 "Properties"
 {
 	"Stage":[ "VS","PS" ],
@@ -47,5 +49,5 @@ float4 PSMain(ProcessData In) : SV_Target
 {
 	ConstantBuffer<BaseShadingParam> baseShadingParamCB0 = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.constant0Index)];
 	
-	return baseShadingParamCB0.baseColor;
+	return DecodeGamma(baseShadingParamCB0.baseColor);
 }

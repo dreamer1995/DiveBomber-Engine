@@ -76,7 +76,7 @@ namespace DiveBomber::DEComponent
         ImGui::SetNextItemOpen(true, ImGuiCond_Once);
         if (ImGui::CollapsingHeader("Mesh"))
         {
-            ImGui::Text("ModelFile Path");
+            ImGui::Text(Utility::ToNarrow(name).c_str());
         }
     }
 

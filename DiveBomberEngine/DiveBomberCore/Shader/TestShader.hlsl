@@ -64,7 +64,8 @@ float4 PSMain(ProcessData In) : SV_Target
 	float4 baseColor = SampleSRGBTexture(baseMap, samplerStandard, In.uv);
 	float4 rustColor = SampleSRGBTexture(rustMap, samplerStandard, In.uv);
 	
-	float4 color = lerp(baseColor, rustColor, rustColor.g) * (baseShadingParamCB0.baseColor + baseShadingParamCB0.baseColor2);
+	float4 color = lerp(baseColor, rustColor, rustColor.g) *
+	(DecodeGamma(baseShadingParamCB0.baseColor) + DecodeGamma(baseShadingParamCB0.baseColor2));
 	
 	return color;
 }

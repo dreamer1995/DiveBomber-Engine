@@ -50,7 +50,7 @@ float4 PSMain(ProcessData In) : SV_Target
 	Texture2D<float4> mainRT = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.texture0Index)];
 	ConstantBuffer<BaseShadingParam> baseShadingParam = ResourceDescriptorHeap[NonUniformResourceIndex(MaterialIndexCB.constant0Index)];
 	
-	float4 col = SampleSRGBTexture(mainRT, samplerStandard, In.uv) * baseShadingParam.baseColor;
+	float4 col = SampleSRGBTexture(mainRT, samplerStandard, In.uv) * DecodeGamma(baseShadingParam.baseColor);
 	
 	return col;
 }

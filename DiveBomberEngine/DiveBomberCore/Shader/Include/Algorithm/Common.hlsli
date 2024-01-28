@@ -15,6 +15,12 @@ float3 DecodeGamma(in float3 sRGBCol)
 	return linearRGB;
 }
 
+float4 DecodeGamma(in float4 sRGBCol)
+{
+	sRGBCol.rgb = DecodeGamma(sRGBCol.rgb);
+	return sRGBCol;
+}
+
 float3 EncodeGamma(in float3 linearCol)
 {
 	float3 sRGBLo = linearCol * 12.92f;
@@ -24,6 +30,12 @@ float3 EncodeGamma(in float3 linearCol)
 	sRGB.g = (linearCol.g <= 0.0031308f) ? sRGBLo.g : sRGBHi.g;
 	sRGB.b = (linearCol.b <= 0.0031308f) ? sRGBLo.b : sRGBHi.b;
 	return sRGB;
+}
+
+float4 EncodeGamma(in float4 linearCol)
+{
+	linearCol.rgb = EncodeGamma(linearCol.rgb);
+	return linearCol;
 }
 
 //Texture2D smap : register(t14);//PS

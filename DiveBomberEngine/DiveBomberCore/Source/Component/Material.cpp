@@ -384,7 +384,24 @@ namespace DiveBomber::DEComponent
         ImGui::SetNextItemOpen(true, ImGuiCond_Once);
         if (ImGui::CollapsingHeader("Material"))
         {
+            auto buf = dynamicConstantMap[Utility::ToNarrow(name)]->GetBuffer();
 
+            for (auto& param : config["Param"])
+            {
+                float dirty = false;
+                const auto dcheck = [&dirty](bool changed) {dirty = dirty || changed; };
+
+                if (param["Type"] == ShaderParamType::SPT_Color)
+                {
+                    auto value = buf[param["Name"]];
+                    dcheck(ImGui::ColorPicker4(param["Name"].get<std::string>().c_str(), reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(value))));
+                }
+
+                if (dirty)
+                {
+                    dynamicConstantMap[Utility::ToNarrow(name)]->Update(buf);
+                }
+            }
         }
     }
 
