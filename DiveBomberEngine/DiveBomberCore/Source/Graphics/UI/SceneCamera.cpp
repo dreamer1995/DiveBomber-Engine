@@ -17,6 +17,7 @@ namespace DiveBomber::UI
 			std::string captionChar = GetCaption() + (id == 1 ? "" : " " + std::to_string(id));
 			ImGui::Begin(captionChar.c_str(), &isShown);
 				Graphics::GetInstance().GetCamera()->DrawComponentUI();
+				ImGui::SliderFloat("Camera Speed", &DiveBomberCore::GetInstance().GetSceneCameraSpeed(), 0.3f, 9.9f, "%.1f");
 			ImGui::End();
 		}
 	}

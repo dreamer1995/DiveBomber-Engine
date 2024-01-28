@@ -41,6 +41,7 @@ namespace DiveBomber::DEScene
 		Camera::CameraAttributes cameraAttr{};
 		cameraAttr.position.z = -6.0f;
 		cameraAttr.projectionAttributes.isPerspective = true;
+		cameraAttr.isSceneCamera = true;
 		mainCamera = std::make_shared<Camera>(L"Main Camera", cameraAttr);
 		mainCamera->BindToGraphics(mainCamera);
 	}

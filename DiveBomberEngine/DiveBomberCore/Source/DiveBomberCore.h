@@ -54,6 +54,8 @@ namespace DiveBomber
 		[[nodiscard]] std::shared_ptr<DEObject::Object> GetCurrentSelectedObject();
 		void SetCurrentSelectedObject(std::shared_ptr<DEObject::Object> object);
 
+		[[nodiscard]] float& GetSceneCameraSpeed() noexcept;
+
 	private:
 		void Start();
 		void Update();
@@ -71,5 +73,7 @@ namespace DiveBomber
 
 		std::shared_ptr<DEScene::Scene> currentScene;
 		std::shared_ptr<DEObject::Object> currentSelectedObject;
+
+		float sceneCameraSpeed = 1.0f;
 	};
 }

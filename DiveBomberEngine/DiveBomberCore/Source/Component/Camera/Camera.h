@@ -22,6 +22,7 @@ namespace DiveBomber::DEComponent
 			DirectX::XMFLOAT3 position = { 0.0f,0.0f,0.0f };
 			DirectX::XMFLOAT3 rotation = { 0.0f,0.0f,0.0f };
 			Projection::ProjectionAttributes projectionAttributes;
+			bool isSceneCamera = false;
 		};
 
 		struct alignas(16) Transforms

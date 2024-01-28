@@ -210,7 +210,6 @@ namespace DiveBomber
 		std::shared_ptr<Camera> mainCamera = currentScene->GetMainCamera();
 		float deltaTime = (float)g_RawDeltaTime;
 
-		static float cameraSpeed = 1.0f;
 		while (!wnd.mouse->IsEmpty())
 		{
 			const auto e = wnd.mouse->Read();
@@ -257,7 +256,7 @@ namespace DiveBomber
 			{
 				if (wnd.mouse->RightIsDown())
 				{
-					cameraSpeed += 0.3;
+					sceneCameraSpeed += 0.3;
 				}
 				else
 				{
@@ -269,7 +268,7 @@ namespace DiveBomber
 			{
 				if (wnd.mouse->RightIsDown())
 				{
-					cameraSpeed -= 0.3;
+					sceneCameraSpeed -= 0.3;
 				}
 				else
 				{
@@ -290,34 +289,34 @@ namespace DiveBomber
 				break;
 			}
 			}
-			cameraSpeed = std::clamp(cameraSpeed, 0.3f, 9.9f);
+			sceneCameraSpeed = std::clamp(sceneCameraSpeed, 0.3f, 9.9f);
 		}
 
 		if (!wnd.CursorEnabled())
 		{
 			if (wnd.kbd->KeyIsDown('W'))
 			{
-				mainCamera->Translate({ 0.0f,0.0f,deltaTime * cameraSpeed });
+				mainCamera->Translate({ 0.0f,0.0f,deltaTime * sceneCameraSpeed });
 			}
 			if (wnd.kbd->KeyIsDown('A'))
 			{
-				mainCamera->Translate({ -deltaTime * cameraSpeed,0.0f,0.0f });
+				mainCamera->Translate({ -deltaTime * sceneCameraSpeed,0.0f,0.0f });
 			}
 			if (wnd.kbd->KeyIsDown('S'))
 			{
-				mainCamera->Translate({ 0.0f,0.0f,-deltaTime * cameraSpeed });
+				mainCamera->Translate({ 0.0f,0.0f,-deltaTime * sceneCameraSpeed });
 			}
 			if (wnd.kbd->KeyIsDown('D'))
 			{
-				mainCamera->Translate({ deltaTime * cameraSpeed,0.0f,0.0f });
+				mainCamera->Translate({ deltaTime * sceneCameraSpeed,0.0f,0.0f });
 			}
 			if (wnd.kbd->KeyIsDown('E'))
 			{
-				mainCamera->Translate({ 0.0f,deltaTime * cameraSpeed,0.0f });
+				mainCamera->Translate({ 0.0f,deltaTime * sceneCameraSpeed,0.0f });
 			}
 			if (wnd.kbd->KeyIsDown('Q'))
 			{
-				mainCamera->Translate({ 0.0f,-deltaTime * cameraSpeed,0.0f });
+				mainCamera->Translate({ 0.0f,-deltaTime * sceneCameraSpeed,0.0f });
 			}
 		}
 
@@ -450,6 +449,11 @@ namespace DiveBomber
 	void DiveBomberCore::SetCurrentSelectedObject(std::shared_ptr<Object> object)
 	{
 		currentSelectedObject = object;
+	}
+
+	float& DiveBomberCore::GetSceneCameraSpeed() noexcept
+	{
+		return sceneCameraSpeed;
 	}
 
 	void DiveBomberCore::GameLogic()

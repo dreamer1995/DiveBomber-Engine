@@ -23,7 +23,11 @@ namespace DiveBomber::DEComponent
 
 		projection->SetPos(attributes.position);
 		projection->SetRotation(attributes.rotation);
-		//indicator.SetPos(pos);
+
+		if (!attributes.isSceneCamera)
+		{
+			//indicator.SetPos(pos);
+		}
 	}
 
 	void Camera::BindToGraphics(std::shared_ptr<Camera> camera) const
@@ -349,8 +353,11 @@ namespace DiveBomber::DEComponent
 			dcheck(ImGui::SliderAngle("Yaw", &attributes.rotation.y, -180.0f, 180.0f), rotDirty);
 			// dcheck(ImGui::SliderAngle("Roll", &attributes.rotation.z, -180.0f, 180.0f), rotDirty);
 			projection->DrawComponentUI();
-			ImGui::Checkbox("Camera Indicator", &enableCameraIndicator);
-			ImGui::Checkbox("Frustum Indicator", &enableFrustumIndicator);
+			if (!attributes.isSceneCamera)
+			{
+				ImGui::Checkbox("Camera Indicator", &enableCameraIndicator);
+				ImGui::Checkbox("Frustum Indicator", &enableFrustumIndicator);
+			}
 			if (ImGui::Button("Reset"))
 			{
 				Reset();
