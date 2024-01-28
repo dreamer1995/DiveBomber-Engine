@@ -1,38 +1,34 @@
 {
     "Param": [
         {
-            "Name": "baseMap",
+            "Name": "BaseMap",
             "Type": 4,
-            "Value": "earth.dds",
-            "sRGB": true
+            "Value": "earth.dds"
         },
         {
-            "Name": "rustMap",
+            "Name": "RustMap",
             "Type": 4,
-            "Value": "black.dds",
-            "sRGB": false
+            "Value": "black.dds"
         },
         {
-            "Name": "baseColor",
+            "Name": "BaseColor",
             "Type": 3,
             "Value": [
                 1.0,
                 1.0,
                 1.0,
                 1.0
-            ],
-            "sRGB": true
+            ]
         },
         {
-            "Name": "baseColor2",
+            "Name": "BaseColor2",
             "Type": 3,
             "Value": [
                 0.0,
                 0.0,
                 0.0,
                 1.0
-            ],
-            "sRGB": true
+            ]
         }
     ],
     "ShaderName": "PBR",

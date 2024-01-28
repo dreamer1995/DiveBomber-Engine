@@ -1,15 +1,14 @@
 {
     "Param": [
         {
-            "Name": "baseColor",
+            "Name": "BaseColor",
             "Type": 3,
             "Value": [
                 1.0,
                 1.0,
                 1.0,
                 1.0
-            ],
-            "sRGB": true
+            ]
         }
     ],
     "ShaderName": "PostProcess",

@@ -1,17 +1,5 @@
 {
-    "Param": [
-        {
-            "Name": "baseColor",
-            "Type": 3,
-            "Value": [
-                1.0,
-                0.0,
-                1.0,
-                1.0
-            ],
-            "sRGB": true
-        }
-    ],
+    "Param": null,
     "ShaderName": "GenerateDiffuseIrradiance",
     "Stage": [
         5

@@ -4,8 +4,8 @@ namespace DiveBomber::Config
 {
 // Render Settings
 #define MainWindowTitle L"DiveBomber Engine"
-#define MainWindowWidth 1280
-#define MainWindowHeight 720
+#define MainWindowWidth 1600
+#define MainWindowHeight 900
 #define UseWARP false
 #define VSync false;
 #define SwapChainBufferCount 3

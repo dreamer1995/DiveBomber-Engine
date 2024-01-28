@@ -67,9 +67,11 @@ namespace DiveBomber::DEComponent
 		void DrawComponentUI() override;
 	private:
 		void CreateDefaultConfig();
-		[[nodiscard]] int ParamTypeStringToEnum(std::string string) noexcept;
-		[[nodiscard]] int ShaderStageStringToEnum(std::string string) noexcept;
-		[[nodiscard]] int ParamTypeToDynamicConstantType(ShaderParamType type) noexcept;
+		[[nodiscard]] int ParamTypeStringToEnum(std::string string) const noexcept;
+		[[nodiscard]] int ShaderStageStringToEnum(std::string string) const noexcept;
+		[[nodiscard]] int ParamTypeToDynamicConstantType(ShaderParamType type) const noexcept;
+		[[nodiscard]] json::value_t ParamTypeEnumToJsonTypeEnum(ShaderParamType type) const noexcept;
+		[[nodiscard]] std::string TextureDefaultToTexturePath(std::string) const noexcept;
 
 		std::wstring name;
 		std::shared_ptr<DEResource::ConstantBufferInRootSignature<UINT>> indexConstantBuffer;

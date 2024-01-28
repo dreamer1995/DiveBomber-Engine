@@ -1,21 +1,19 @@
 {
     "Param": [
         {
-            "Name": "baseMap",
+            "Name": "BaseMap",
             "Type": 4,
-            "Value": "Cubemap.hdr",
-            "sRGB": true
+            "Value": "Cubemap.hdr"
         },
         {
-            "Name": "baseColor",
+            "Name": "BaseColor",
             "Type": 3,
             "Value": [
                 1.0,
                 1.0,
                 1.0,
                 1.0
-            ],
-            "sRGB": true
+            ]
         }
     ],
     "ShaderName": "SkyDome",

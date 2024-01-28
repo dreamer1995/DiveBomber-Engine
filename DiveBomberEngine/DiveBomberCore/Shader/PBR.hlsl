@@ -5,11 +5,11 @@
 	"Stage":[ "VS","PS" ],
 	"Param":
 	[
-		{"Name":"baseMap", "Type":"Texture", "sRGB":true},
-		{"Name":"rustMap", "Type":"Texture", "sRGB":false, "Default":"Gray"},
+		{"Name":"BaseMap", "Type":"Texture"},
+		{"Name":"RustMap", "Type":"Texture", "Default":"Gray"},
 
-		{"Name":"baseColor", "Type":"Color", "sRGB":true, "Default":[1.0, 0.0, 0.0, 1.0]},
-		{"Name":"baseColor2", "Type":"Color", "sRGB":true, "Default":[0.0, 1.0, 0.0, 1.0]}
+		{"Name":"BaseColor", "Type":"Color", "Default":[1.0, 1.0, 1.0, 1.0]},
+		{"Name":"BaseColor2", "Type":"Color", "Default":[0.0, 0.0, 0.0, 1.0]}
 	]
 }
 "/Properties"

@@ -75,7 +75,7 @@ namespace DiveBomber::DEComponent
         UploadConfig(defaultShaderName);
     }
 
-    int Material::ParamTypeStringToEnum(std::string string) noexcept
+    int Material::ParamTypeStringToEnum(std::string string) const noexcept
     {
         if (string == "Float")
         {
@@ -93,6 +93,10 @@ namespace DiveBomber::DEComponent
         {
             return (int)ShaderParamType::SPT_Texture;
         }
+        else if (string == "Bool")
+        {
+            return (int)ShaderParamType::SPT_Bool;
+        }
         else
         {
             std::cout << "Unknow parameter type " + string + " in shader!" << std::endl;
@@ -100,7 +104,7 @@ namespace DiveBomber::DEComponent
         }
     }
 
-    int Material::ShaderStageStringToEnum(std::string string) noexcept
+    int Material::ShaderStageStringToEnum(std::string string) const noexcept
     {
         if (string == "VS")
         {
@@ -133,7 +137,7 @@ namespace DiveBomber::DEComponent
         }
     }
 
-    int Material::ParamTypeToDynamicConstantType(ShaderParamType type) noexcept
+    int Material::ParamTypeToDynamicConstantType(ShaderParamType type) const noexcept
     {
         switch (type)
         {
@@ -147,6 +151,45 @@ namespace DiveBomber::DEComponent
         default:
             std::cout << "Unknow shader param type: " + std::to_string((int)type) + "!" << std::endl;
             return -1;
+        }
+    }
+
+    json::value_t Material::ParamTypeEnumToJsonTypeEnum(ShaderParamType type) const noexcept
+    {
+        switch (type)
+        {
+        case ShaderParamType::SPT_Float:
+            return json::value_t::number_float;
+        case ShaderParamType::SPT_Color:
+        case ShaderParamType::SPT_Float4:
+            return json::value_t::array;
+        case ShaderParamType::SPT_Bool:
+            return json::value_t::boolean;
+        case ShaderParamType::SPT_Texture:
+            return json::value_t::string;
+        default:
+            std::cout << "Unknow shader param type: " + std::to_string((int)type) + "!" << std::endl;
+            return json::value_t::null;
+        }
+    }
+
+    std::string Material::TextureDefaultToTexturePath(std::string defaultTexture) const noexcept
+    {
+        if (defaultTexture == "Black")
+        {
+            return "black.dds";
+        }
+        if (defaultTexture == "Gray")
+        {
+            return "gray.dds";
+        }
+        else if (defaultTexture == "White")
+        {
+            return "white.dds";
+        }
+        else if (defaultTexture == "Normal")
+        {
+            return "normal.dds";
         }
     }
 
@@ -180,12 +223,16 @@ namespace DiveBomber::DEComponent
         {
             json materialData;
 
+            // check if already set default, for exsist value resolve.
+            bool hasDefault = param.find("Default") != param.end();
+
+            // check if already exist in cache.
             bool existed = false;
             for (const auto& existedParam : config["Param"])
             {
                 if (existedParam["Name"] == param["Name"])
                 {
-                    if (existedParam["Type"] == param["Type"])
+                    if (existedParam["Type"] == param["Type"] && hasDefault)
                     {
                         materialData = existedParam;
                         existed = true;
@@ -194,6 +241,7 @@ namespace DiveBomber::DEComponent
                 }
             }
 
+            // if exist, just keep cache value, change rest elements.
             if (existed)
             {
                 json comparedSource = materialData;
@@ -203,37 +251,38 @@ namespace DiveBomber::DEComponent
                 if (comparedSource != comparedDestination)
                 {
                     comparedSource = comparedDestination;
-                    comparedSource["Value"] = materialData["Value"];
+                    // if type not match, set back to default.
+                    if (ParamTypeEnumToJsonTypeEnum(param["Type"]) != materialData["Value"].type())
+                    {
+                        if (param["Type"] != ShaderParamType::SPT_Texture)
+                        {
+                            comparedSource["Value"] = param["Default"];
+                        }
+                        else
+                        {
+                            materialData["Value"] = TextureDefaultToTexturePath(materialData["Default"]);
+                        }
+                    }
+                    else
+                    {
+                        comparedSource["Value"] = materialData["Value"];
+                    }
                     materialData = comparedSource;
                 }
             }
+            // if not exist, create a new element, set appropriate default value.
             else
             {
                 materialData["Name"] = param["Name"];
                 materialData = param;
-                materialData.erase("Default");
 
-                auto defaultVal = param.find("Default");
-                if (defaultVal != param.end())
+                if (hasDefault)
                 {
+                    materialData.erase("Default");
+
                     if (materialData["Type"] == ShaderParamType::SPT_Texture)
                     {
-                        if (param["Default"] == "Black")
-                        {
-                            materialData["Value"] = "black.dds";
-                        }
-                        if (param["Default"] == "Gray")
-                        {
-                            materialData["Value"] = "gray.dds";
-                        }
-                        else if (param["Default"] == "White")
-                        {
-                            materialData["Value"] = "white.dds";
-                        }
-                        else if (param["Default"] == "Normal")
-                        {
-                            materialData["Value"] = "normal.dds";
-                        }
+                        materialData["Value"] = TextureDefaultToTexturePath(materialData["Default"]);
                     }
                     else
                     {
@@ -254,6 +303,39 @@ namespace DiveBomber::DEComponent
                     {
                         materialData["Value"] = { 1.0f,1.0f,1.0f,1.0f };
                     }
+                    else if (materialData["Type"] == ShaderParamType::SPT_Bool)
+                    {
+                        materialData["Value"] = true;
+                    }
+                }
+            }
+
+            // for min/max,power in float case.
+            if (materialData["Type"] == ShaderParamType::SPT_Float ||
+                materialData["Type"] == ShaderParamType::SPT_Float4)
+            {
+                auto minExsist = materialData.find("Min");
+                if (minExsist == materialData.end())
+                {
+                    materialData["Min"] = -10000.0f;
+                }
+
+                auto maxExsist = materialData.find("Max");
+                if (maxExsist == materialData.end())
+                {
+                    materialData["Max"] = 10000.0f;
+                }
+
+                auto powerExsist = materialData.find("PowerStep");
+                if (powerExsist == materialData.end())
+                {
+                    materialData["PowerStep"] = false;
+                }
+
+                auto formatExsist = materialData.find("Format");
+                if (formatExsist == materialData.end())
+                {
+                    materialData["Format"] = "%.2f";
                 }
             }
 
@@ -323,7 +405,10 @@ namespace DiveBomber::DEComponent
                 DCBLayout.Add<DynamicConstantProcess::Bool>(param["Name"]);
             }
         }
-
+        if (config["Param"].size() == 0)
+        {
+            DCBLayout.Add<DynamicConstantProcess::Integer>("PlaceHolder");
+        }
         DynamicConstantProcess::Buffer DXBBuffer = DynamicConstantProcess::Buffer(std::move(DCBLayout));
         for (auto& param : config["Param"])
         {
@@ -391,10 +476,36 @@ namespace DiveBomber::DEComponent
                 float dirty = false;
                 const auto dcheck = [&dirty](bool changed) {dirty = dirty || changed; };
 
-                if (param["Type"] == ShaderParamType::SPT_Color)
+                if (param["Type"] == ShaderParamType::SPT_Float)
+                {
+                    auto value = buf[param["Name"]];
+                    dcheck(ImGui::SliderFloat(param["Name"].get<std::string>().c_str(), &value,
+                        param["Min"].get<float>(), param["Max"].get<float>(),
+                        param["Format"].get<std::string>().c_str(),
+                        param["PowerStep"].get<bool>() ? ImGuiSliderFlags_Logarithmic : ImGuiSliderFlags_None));
+                }
+                else if (param["Type"] == ShaderParamType::SPT_Float4)
+                {
+                    auto value = buf[param["Name"]];
+                    dcheck(ImGui::SliderFloat4(param["Name"].get<std::string>().c_str(), reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(value)),
+                        param["Min"].get<float>(), param["Max"].get<float>(),
+                        param["Format"].get<std::string>().c_str(),
+                        param["PowerStep"].get<bool>() ? ImGuiSliderFlags_Logarithmic : ImGuiSliderFlags_None));
+                }
+                else if (param["Type"] == ShaderParamType::SPT_Color)
                 {
                     auto value = buf[param["Name"]];
                     dcheck(ImGui::ColorPicker4(param["Name"].get<std::string>().c_str(), reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(value))));
+                }
+                else if (param["Type"] == ShaderParamType::SPT_Bool)
+                {
+                    auto value = buf[param["Name"]];
+                    dcheck(ImGui::Checkbox(param["Name"].get<std::string>().c_str(), &value));
+                }
+                else if (param["Type"] == ShaderParamType::SPT_Texture)
+                {
+                    // todo
+                    ImGui::Text(param["Name"].get<std::string>().c_str());
                 }
 
                 if (dirty)

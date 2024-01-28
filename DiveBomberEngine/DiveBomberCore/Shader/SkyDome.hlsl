@@ -5,9 +5,9 @@
 	"Stage":[ "VS","PS" ],
 	"Param":
 	[
-		{"Name":"baseMap", "Type":"Texture", "sRGB":true},
+		{"Name":"BaseMap", "Type":"Texture"},
 
-		{"Name":"baseColor", "Type":"Color", "sRGB":true, "Default":[1.0, 0.0, 0.0, 1.0]}
+		{"Name":"BaseColor", "Type":"Color", "Default":[1.0, 1.0, 1.0, 1.0]}
 	]
 }
 "/Properties"

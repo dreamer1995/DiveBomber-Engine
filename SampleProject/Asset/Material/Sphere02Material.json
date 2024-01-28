@@ -1,38 +1,34 @@
 {
     "Param": [
         {
-            "Name": "baseMap",
+            "Name": "BaseMap",
             "Type": 4,
-            "Value": "rustediron2_basecolor.png",
-            "sRGB": true
+            "Value": "rustediron2_basecolor.png"
         },
         {
-            "Name": "rustMap",
+            "Name": "RustMap",
             "Type": 4,
-            "Value": "gray.dds",
-            "sRGB": false
+            "Value": "gray.dds"
         },
         {
-            "Name": "baseColor",
+            "Name": "BaseColor",
             "Type": 3,
             "Value": [
                 0.0,
                 1.0,
                 0.0,
                 1.0
-            ],
-            "sRGB": true
+            ]
         },
         {
-            "Name": "baseColor2",
+            "Name": "BaseColor2",
             "Type": 3,
             "Value": [
                 0.0,
                 0.0,
                 1.0,
                 1.0
-            ],
-            "sRGB": true
+            ]
         }
     ],
     "ShaderName": "PBR",

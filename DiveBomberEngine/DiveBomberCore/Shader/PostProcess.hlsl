@@ -5,7 +5,7 @@
 	"Stage":[ "CS" ],
 	"Param":
 	[
-		{"Name":"baseColor", "Type":"Color", "sRGB":true, "Default":[1.0, 0.0, 1.0, 1.0]}
+		{"Name":"BaseColor", "Type":"Color", "Default":[1.0, 1.0, 1.0, 1.0]}
 	]
 }
 "/Properties"

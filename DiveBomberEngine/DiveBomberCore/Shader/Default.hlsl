@@ -5,7 +5,7 @@
 	"Stage":[ "VS","PS" ],
 	"Param":
 	[
-		{"Name":"baseColor", "Type":"Color", "sRGB":true}
+		{"Name":"BaseColor", "Type":"Color"}
 	]
 }
 "/Properties"
