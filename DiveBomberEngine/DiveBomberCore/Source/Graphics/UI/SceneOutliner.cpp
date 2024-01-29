@@ -22,9 +22,7 @@ namespace DiveBomber::UI
 			std::string captionChar = GetCaption() + (id == 1 ? "" : " " + std::to_string(id));
 			ImGui::Begin(captionChar.c_str(), &isShown);
 
-			ImVec2 regionMin = ImGui::GetWindowContentRegionMin();
-			ImVec2 regionMax = ImGui::GetWindowContentRegionMax();
-			ImVec2 listBoxSize = ImVec2(regionMax.x - regionMin.x, regionMax.y - regionMin.y);
+			ImVec2 listBoxSize = ImGui::GetContentRegionAvail();
 
 			ImGui::Text(Utility::ToNarrow(currentScene->GetName()).c_str());
 			listBoxSize.y -= ImGui::GetTextLineHeightWithSpacing();

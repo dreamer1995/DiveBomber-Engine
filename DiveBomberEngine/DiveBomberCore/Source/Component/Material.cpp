@@ -191,6 +191,8 @@ namespace DiveBomber::DEComponent
         {
             return "normal.dds";
         }
+
+        return "";
     }
 
     void Material::UploadConfig(const std::wstring shaderName)
@@ -471,6 +473,14 @@ namespace DiveBomber::DEComponent
         {
             auto buf = dynamicConstantMap[Utility::ToNarrow(name)]->GetBuffer();
 
+            using namespace std::string_literals;
+            auto tag = [tagScratch = std::string{}, tagString = "##"s + Utility::ToNarrow(name)]
+            (std::string label) mutable
+            {
+                tagScratch = label + tagString;
+                return tagScratch.c_str();
+            };
+
             for (auto& param : config["Param"])
             {
                 float dirty = false;
@@ -479,7 +489,7 @@ namespace DiveBomber::DEComponent
                 if (param["Type"] == ShaderParamType::SPT_Float)
                 {
                     auto value = buf[param["Name"]];
-                    dcheck(ImGui::SliderFloat(param["Name"].get<std::string>().c_str(), &value,
+                    dcheck(ImGui::SliderFloat(tag(param["Name"].get<std::string>()), &value,
                         param["Min"].get<float>(), param["Max"].get<float>(),
                         param["Format"].get<std::string>().c_str(),
                         param["PowerStep"].get<bool>() ? ImGuiSliderFlags_Logarithmic : ImGuiSliderFlags_None));
@@ -487,7 +497,7 @@ namespace DiveBomber::DEComponent
                 else if (param["Type"] == ShaderParamType::SPT_Float4)
                 {
                     auto value = buf[param["Name"]];
-                    dcheck(ImGui::SliderFloat4(param["Name"].get<std::string>().c_str(), reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(value)),
+                    dcheck(ImGui::SliderFloat4(tag(param["Name"].get<std::string>()), reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(value)),
                         param["Min"].get<float>(), param["Max"].get<float>(),
                         param["Format"].get<std::string>().c_str(),
                         param["PowerStep"].get<bool>() ? ImGuiSliderFlags_Logarithmic : ImGuiSliderFlags_None));
@@ -495,17 +505,17 @@ namespace DiveBomber::DEComponent
                 else if (param["Type"] == ShaderParamType::SPT_Color)
                 {
                     auto value = buf[param["Name"]];
-                    dcheck(ImGui::ColorPicker4(param["Name"].get<std::string>().c_str(), reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(value))));
+                    dcheck(ImGui::ColorPicker4(tag(param["Name"].get<std::string>()), reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(value))));
                 }
                 else if (param["Type"] == ShaderParamType::SPT_Bool)
                 {
                     auto value = buf[param["Name"]];
-                    dcheck(ImGui::Checkbox(param["Name"].get<std::string>().c_str(), &value));
+                    dcheck(ImGui::Checkbox(tag(param["Name"].get<std::string>()), &value));
                 }
                 else if (param["Type"] == ShaderParamType::SPT_Texture)
                 {
                     // todo
-                    ImGui::Text(param["Name"].get<std::string>().c_str());
+                    ImGui::Text(tag(param["Name"].get<std::string>()));
                 }
 
                 if (dirty)

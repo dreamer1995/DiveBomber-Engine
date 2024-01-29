@@ -83,8 +83,8 @@ namespace DiveBomber::DEComponent
 		std::unordered_map<std::string, std::pair<std::shared_ptr<DEResource::Texture>, UINT>> textureMap;
 
 		json config;
-		std::filesystem::path configFile;
-		std::filesystem::file_time_type configFileLastSaveTime;
+		fs::path configFile;
+		fs::file_time_type configFileLastSaveTime;
 
 		std::vector<std::shared_ptr<DEResource::Shader>> shaders;
 

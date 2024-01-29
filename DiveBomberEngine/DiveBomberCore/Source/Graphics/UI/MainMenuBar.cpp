@@ -5,6 +5,7 @@
 #include "ResourceBrowser.h"
 #include "SceneOutliner.h"
 #include "RenderStatusPanel.h"
+#include "SceneCamera.h"
 
 #include <..\imgui\imgui.h>
 
@@ -48,6 +49,10 @@ namespace DiveBomber::UI
 				if (ImGui::MenuItem("Render Status"))
 				{
 					UIManager::GetInstance().AddToUIDrawList(std::make_shared<RenderStatusPanel>());
+				}
+				if (ImGui::MenuItem("Scene Camera"))
+				{
+					UIManager::GetInstance().AddToUIDrawList(std::make_shared<SceneCamera>());
 				}
 				ImGui::EndMenu();
 			}
