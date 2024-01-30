@@ -12,6 +12,7 @@ namespace DiveBomber::UI
 	{
 	public:
 		ResourceBrowser();
+		~ResourceBrowser();
 
 		void DrawUI() override;
 		[[nodiscard]] std::string GetCaption() const noexcept override
@@ -40,7 +41,8 @@ namespace DiveBomber::UI
 	private:
 		UINT fileTreeIDCounter = 0;
 		FileTreeNode fileTree;
-		FileTreeNode currentSelectedTreeNode;
+		FileTreeNode* currentSelectedTreeNode;
 		std::unordered_set<UINT> currentSelectedFileIDs;
+		bool browserFileIconMode = true;
 	};
 }

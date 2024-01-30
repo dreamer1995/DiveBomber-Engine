@@ -15,8 +15,14 @@ namespace DiveBomber::UI
 	ResourceBrowser::ResourceBrowser()
 	{
 		RecursiveFilePath(ProjectDirectoryW, fileTree);
-		currentSelectedTreeNode = fileTree;
+		currentSelectedTreeNode = &fileTree;
 		fileTree.expanded = true;
+	}
+
+	ResourceBrowser::~ResourceBrowser()
+	{
+		currentSelectedTreeNode = nullptr;
+		delete currentSelectedTreeNode;
 	}
 
 	void ResourceBrowser::DrawUI()
@@ -27,49 +33,44 @@ namespace DiveBomber::UI
 			ImGui::ShowDemoWindow();
 			ImGui::Begin(captionChar.c_str(), &isShown);
 
-			if (ImGui::BeginChild("ContentInfo", ImVec2(ImGui::GetContentRegionAvail().x, 0),
-				ImGuiChildFlags_Border | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_AlwaysAutoResize))
-			{
+			ImGui::BeginChild("ContentInfo", ImVec2(ImGui::GetContentRegionAvail().x, 0),
+				ImGuiChildFlags_Border | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_AlwaysAutoResize);
 				ImGui::Button("Prev");
 				ImGui::SameLine();
 				ImGui::Button("New");
+				ImGui::SameLine(); 
+				if (ImGui::Button(browserFileIconMode ? "Icon Mode" : "List Mode"))
+				{
+					browserFileIconMode = !browserFileIconMode;
+				}
 				ImGui::SameLine();
-				std::string displayedPath = fs::absolute(currentSelectedTreeNode.path).string();
+				std::string displayedPath = fs::absolute(currentSelectedTreeNode->path).string();
 				ImGui::Text(displayedPath.c_str());
-				ImGui::EndChild();
-			}
+			ImGui::EndChild();
 
-			ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
-			if (ImGui::BeginChild("ContentTree",
+			ImGui::BeginChild("ContentTree",
 				ImVec2(ImGui::GetContentRegionAvail().x * 0.5f, ImGui::GetContentRegionAvail().y),
-				ImGuiChildFlags_Border | ImGuiChildFlags_ResizeX))
-			{
-				ImVec2 listBoxSize = ImGui::GetContentRegionAvail();
+				ImGuiChildFlags_Border | ImGuiChildFlags_ResizeX);
 
-				if (ImGui::BeginListBox("##ContentTree", listBoxSize))
+				if (ImGui::BeginListBox("##ContentTree", ImGui::GetContentRegionAvail()))
 				{
 					DrawContentTree(fileTree, 0u);
 					ImGui::EndListBox();
 				}
-				ImGui::EndChild();
-			}
-			ImGui::PopStyleVar();
+			ImGui::EndChild();
 
 			ImGui::SameLine();
 
-			if (ImGui::BeginChild("Contents",
+			ImGui::BeginChild("Contents",
 				ImVec2(0, ImGui::GetContentRegionAvail().y),
-				ImGuiChildFlags_Border))
-			{
-				ImVec2 listBoxSize = ImGui::GetContentRegionAvail();
+				ImGuiChildFlags_Border);
 
-				if (ImGui::BeginListBox("##Contents", listBoxSize))
+				if (ImGui::BeginListBox("##Contents", ImGui::GetContentRegionAvail()))
 				{
-					DrawContents(currentSelectedTreeNode);
+					DrawContents(*currentSelectedTreeNode);
 					ImGui::EndListBox();
 				}
-				ImGui::EndChild();
-			}
+			ImGui::EndChild();
 
 			ImGui::End();
 		}
@@ -87,14 +88,14 @@ namespace DiveBomber::UI
 				return tagScratch.c_str();
 			};
 
-			bool selected = inputTree.id == currentSelectedTreeNode.id;
+			bool selected = inputTree.id == currentSelectedTreeNode->id;
 			std::string displayedName = inputTree.path.filename().empty() ? "Content" : inputTree.path.filename().string();
 			
 			const float indentSpace = 20.0f;
 			ImGui::Indent(indentLevel * indentSpace);
 			if (ImGui::Selectable(tag(displayedName), selected))
 			{
-				currentSelectedTreeNode = inputTree;
+				currentSelectedTreeNode = &inputTree;
 				if (selected)
 				{
 					inputTree.expanded = !inputTree.expanded;
@@ -118,6 +119,7 @@ namespace DiveBomber::UI
 		float window_visible_x2 = ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x;
 		ImVec2 itemSize = ImVec2(80, 80);
 		ImVec2 iconSize = ImVec2(45, 45);
+		ImVec2 selectBGSize = ImVec2(0, 0);
 
 		bool checkSelect = false;
 		for (int i = 0; i < inputTree.children.size(); i++)
@@ -132,59 +134,81 @@ namespace DiveBomber::UI
 				return tagScratch.c_str();
 			};
 
-			if (ImGui::BeginChild(tag("FileOutFrame"), itemSize, ImGuiChildFlags_None))
+			if (browserFileIconMode)
 			{
-				ImVec2 BGSize = ImGui::GetContentRegionAvail();
+				ImGui::BeginChild(tag("FileOutFrame"), itemSize, ImGuiChildFlags_None);
+				selectBGSize = ImGui::GetContentRegionAvail();
 				ImGui::SetNextItemAllowOverlap();
-				if(ImGui::BeginChild(tag("SelectableFrame"), ImGui::GetContentRegionAvail(), ImGuiChildFlags_Border, ImGuiWindowFlags_NoMouseInputs))
-				{
+				ImGui::BeginChild(tag("SelectableFrame"), ImGui::GetContentRegionAvail(), ImGuiChildFlags_Border, ImGuiWindowFlags_NoMouseInputs);
 					ImGui::BeginChild(tag("IconFrame"), iconSize, ImGuiChildFlags_None, ImGuiWindowFlags_NoMouseInputs);
 						ImDrawList* draw_list = ImGui::GetWindowDrawList();
 						ImVec2 pos = ImGui::GetWindowPos();
 						draw_list->AddRectFilledMultiColor(pos, ImVec2(pos.x + iconSize.x, pos.y + iconSize.y), IM_COL32(0, 0, 0, 255), IM_COL32(255, 0, 0, 255), IM_COL32(255, 255, 0, 255), IM_COL32(0, 255, 0, 255));
 					ImGui::EndChild();
 					
-					ImGui::Text(child.path.filename().string().c_str());
-					ImGui::EndChild();
-				}
+					ImGui::Text(child.path.stem().string().c_str());
+				ImGui::EndChild();
+
 				ImGui::SameLine();
-				bool selected = currentSelectedFileIDs.find(child.id) != currentSelectedFileIDs.end();
-				if (ImGui::Selectable(tag("##ItemSelectable"), selected,
-					ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap,
-					BGSize))
-				{
-					if (selected)
+			}
+					bool selected = currentSelectedFileIDs.find(child.id) != currentSelectedFileIDs.end();
+					if (ImGui::Selectable(browserFileIconMode? tag("##ItemSelectable") : tag(child.path.filename().string()),
+						selected,
+						ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap | ImGuiSelectableFlags_AllowDoubleClick,
+						selectBGSize))
 					{
-						// aware !
-						if (!Window::GetInstance().kbd->KeyIsDown(VK_CONTROL))
+						if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 						{
-							currentSelectedFileIDs.clear();
-							currentSelectedFileIDs.emplace(child.id);
-							checkSelect = true;
+							if (child.children.size() > 0)
+							{
+								currentSelectedFileIDs.clear();
+								currentSelectedTreeNode = &child;
+								inputTree.expanded = true;
+								currentSelectedTreeNode->expanded = true;
+								if (browserFileIconMode)
+								{
+									ImGui::EndChild();
+								}
+								return;
+							}
 						}
 						else
 						{
-							currentSelectedFileIDs.erase(child.id);
+							if (selected)
+							{
+								// aware !
+								if (!Window::GetInstance().kbd->KeyIsDown(VK_CONTROL))
+								{
+									currentSelectedFileIDs.clear();
+									currentSelectedFileIDs.emplace(child.id);
+									checkSelect = true;
+								}
+								else
+								{
+									currentSelectedFileIDs.erase(child.id);
+								}
+							}
+							else
+							{
+								if (!Window::GetInstance().kbd->KeyIsDown(VK_CONTROL))
+								{
+									currentSelectedFileIDs.clear();
+								}
+								currentSelectedFileIDs.emplace(child.id);
+								checkSelect = true;
+							}
 						}
 					}
-					else
-					{
-						if (!Window::GetInstance().kbd->KeyIsDown(VK_CONTROL))
-						{
-							currentSelectedFileIDs.clear();
-						}
-						currentSelectedFileIDs.emplace(child.id);
-						checkSelect = true;
-					}
-				}
-				ImGui::EndChild();
-			}
-
-			float last_button_x2 = ImGui::GetItemRectMax().x;
-			float next_button_x2 = last_button_x2 + ImGui::GetStyle().ItemSpacing.x + itemSize.x;
-			if ((i + 1) < inputTree.children.size() && next_button_x2 < window_visible_x2)
+			if (browserFileIconMode)
 			{
-				ImGui::SameLine();
+				ImGui::EndChild();
+
+				float last_button_x2 = ImGui::GetItemRectMax().x;
+				float next_button_x2 = last_button_x2 + ImGui::GetStyle().ItemSpacing.x + itemSize.x;
+				if ((i + 1) < inputTree.children.size() && next_button_x2 < window_visible_x2)
+				{
+					ImGui::SameLine();
+				}
 			}
 		}
 
