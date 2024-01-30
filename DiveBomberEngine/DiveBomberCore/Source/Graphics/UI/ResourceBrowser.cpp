@@ -54,7 +54,12 @@ namespace DiveBomber::UI
 
 			ImGui::BeginChild("ContentTree",
 				ImVec2(ImGui::GetContentRegionAvail().x * 0.5f, ImGui::GetContentRegionAvail().y),
-				ImGuiChildFlags_Border | ImGuiChildFlags_ResizeX);
+				ImGuiChildFlags_Border | ImGuiChildFlags_ResizeX, ImGuiWindowFlags_MenuBar);
+				if (ImGui::BeginMenuBar())
+				{
+					ImGui::TextUnformatted("ContentTree");
+					ImGui::EndMenuBar();
+				}
 
 				if (ImGui::BeginListBox("##ContentTree", ImGui::GetContentRegionAvail()))
 				{
@@ -67,10 +72,16 @@ namespace DiveBomber::UI
 
 			ImGui::BeginChild("Contents",
 				ImVec2(0, ImGui::GetContentRegionAvail().y),
-				ImGuiChildFlags_Border);
+				ImGuiChildFlags_Border, ImGuiWindowFlags_MenuBar);
+				if (ImGui::BeginMenuBar())
+				{
+					ImGui::TextUnformatted("Contents");
+					ImGui::EndMenuBar();
+				}
 
 				if (ImGui::BeginListBox("##Contents", ImGui::GetContentRegionAvail()))
 				{
+					
 					DrawContents(*selectedTreeNodeStack.top());
 					ImGui::EndListBox();
 				}
@@ -144,19 +155,29 @@ namespace DiveBomber::UI
 			if (browserFileIconMode)
 			{
 				ImGui::BeginChild(tag("FileOutFrame"), itemSize, ImGuiChildFlags_None);
-				selectBGSize = ImGui::GetContentRegionAvail();
-				ImGui::SetNextItemAllowOverlap();
-				ImGui::BeginChild(tag("SelectableFrame"), ImGui::GetContentRegionAvail(), ImGuiChildFlags_Border, ImGuiWindowFlags_NoMouseInputs);
-					ImGui::BeginChild(tag("IconFrame"), iconSize, ImGuiChildFlags_None, ImGuiWindowFlags_NoMouseInputs);
-						ImDrawList* draw_list = ImGui::GetWindowDrawList();
-						ImVec2 pos = ImGui::GetWindowPos();
-						draw_list->AddRectFilledMultiColor(pos, ImVec2(pos.x + iconSize.x, pos.y + iconSize.y), IM_COL32(0, 0, 0, 255), IM_COL32(255, 0, 0, 255), IM_COL32(255, 255, 0, 255), IM_COL32(0, 255, 0, 255));
-					ImGui::EndChild();
+					selectBGSize = ImGui::GetContentRegionAvail();
+					ImGui::SetNextItemAllowOverlap();
+					ImGui::BeginChild(tag("SelectableFrame"), ImGui::GetContentRegionAvail(), ImGuiChildFlags_None, ImGuiWindowFlags_NoMouseInputs);
+						float windowWidth = ImGui::GetWindowSize().x;
+						float windowHeight = ImGui::GetWindowSize().y;
+						float textWidth = ImGui::CalcTextSize(child.path.stem().string().c_str()).x;
+						float textHeight = ImGui::CalcTextSize(child.path.stem().string().c_str()).y;
+						ImGui::SetCursorPosX((windowWidth - iconSize.x) * 0.5f);
+						ImGui::SetCursorPosY((windowHeight - iconSize.y - textHeight) * 0.5f);
+						ImGui::BeginChild(tag("IconFrame"), iconSize, ImGuiChildFlags_None, ImGuiWindowFlags_NoMouseInputs);
+							ImDrawList* draw_list = ImGui::GetWindowDrawList();
+							ImVec2 pos = ImGui::GetWindowPos();
+							draw_list->AddRectFilledMultiColor(pos, ImVec2(pos.x + iconSize.x, pos.y + iconSize.y), IM_COL32(0, 0, 0, 255), IM_COL32(255, 0, 0, 255), IM_COL32(255, 255, 0, 255), IM_COL32(0, 255, 0, 255));
+						ImGui::EndChild();
 					
-					ImGui::Text(child.path.stem().string().c_str());
-				ImGui::EndChild();
+						if (textWidth < itemSize.x)
+						{
+							ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
+						}
+						ImGui::Text(child.path.stem().string().c_str());
+					ImGui::EndChild();
 
-				ImGui::SameLine();
+					ImGui::SameLine();
 			}
 					bool selected = currentSelectedFileIDs.find(child.id) != currentSelectedFileIDs.end();
 					if (ImGui::Selectable(browserFileIconMode? tag("##ItemSelectable") : tag(child.path.filename().string()),
