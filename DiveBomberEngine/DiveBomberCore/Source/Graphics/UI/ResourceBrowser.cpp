@@ -15,14 +15,12 @@ namespace DiveBomber::UI
 	ResourceBrowser::ResourceBrowser()
 	{
 		RecursiveFilePath(ProjectDirectoryW, fileTree);
-		currentSelectedTreeNode = &fileTree;
+		selectedTreeNodeStack.push(&fileTree);
 		fileTree.expanded = true;
 	}
 
 	ResourceBrowser::~ResourceBrowser()
 	{
-		currentSelectedTreeNode = nullptr;
-		delete currentSelectedTreeNode;
 	}
 
 	void ResourceBrowser::DrawUI()
@@ -35,7 +33,13 @@ namespace DiveBomber::UI
 
 			ImGui::BeginChild("ContentInfo", ImVec2(ImGui::GetContentRegionAvail().x, 0),
 				ImGuiChildFlags_Border | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_AlwaysAutoResize);
-				ImGui::Button("Prev");
+				if (ImGui::Button("Prev"))
+				{
+					if (selectedTreeNodeStack.size() > 1)
+					{
+						selectedTreeNodeStack.pop();
+					}
+				}
 				ImGui::SameLine();
 				ImGui::Button("New");
 				ImGui::SameLine(); 
@@ -44,7 +48,7 @@ namespace DiveBomber::UI
 					browserFileIconMode = !browserFileIconMode;
 				}
 				ImGui::SameLine();
-				std::string displayedPath = fs::absolute(currentSelectedTreeNode->path).string();
+				std::string displayedPath = fs::absolute(selectedTreeNodeStack.top()->path).string();
 				ImGui::Text(displayedPath.c_str());
 			ImGui::EndChild();
 
@@ -67,7 +71,7 @@ namespace DiveBomber::UI
 
 				if (ImGui::BeginListBox("##Contents", ImGui::GetContentRegionAvail()))
 				{
-					DrawContents(*currentSelectedTreeNode);
+					DrawContents(*selectedTreeNodeStack.top());
 					ImGui::EndListBox();
 				}
 			ImGui::EndChild();
@@ -88,14 +92,17 @@ namespace DiveBomber::UI
 				return tagScratch.c_str();
 			};
 
-			bool selected = inputTree.id == currentSelectedTreeNode->id;
+			bool selected = inputTree.id == selectedTreeNodeStack.top()->id;
 			std::string displayedName = inputTree.path.filename().empty() ? "Content" : inputTree.path.filename().string();
 			
 			const float indentSpace = 20.0f;
 			ImGui::Indent(indentLevel * indentSpace);
 			if (ImGui::Selectable(tag(displayedName), selected))
 			{
-				currentSelectedTreeNode = &inputTree;
+				if (selectedTreeNodeStack.top() != &inputTree)
+				{
+					selectedTreeNodeStack.push(&inputTree);
+				}
 				if (selected)
 				{
 					inputTree.expanded = !inputTree.expanded;
@@ -162,9 +169,12 @@ namespace DiveBomber::UI
 							if (child.children.size() > 0)
 							{
 								currentSelectedFileIDs.clear();
-								currentSelectedTreeNode = &child;
+								if (selectedTreeNodeStack.top() != &child)
+								{
+									selectedTreeNodeStack.push(&child);
+								}
 								inputTree.expanded = true;
-								currentSelectedTreeNode->expanded = true;
+								child.expanded = true;
 								if (browserFileIconMode)
 								{
 									ImGui::EndChild();

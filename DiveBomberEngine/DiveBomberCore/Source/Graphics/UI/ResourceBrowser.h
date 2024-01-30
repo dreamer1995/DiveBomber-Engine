@@ -3,6 +3,7 @@
 
 #include <filesystem>
 #include <unordered_set>
+#include <stack>
 
 namespace DiveBomber::UI
 {
@@ -41,7 +42,8 @@ namespace DiveBomber::UI
 	private:
 		UINT fileTreeIDCounter = 0;
 		FileTreeNode fileTree;
-		FileTreeNode* currentSelectedTreeNode;
+
+		std::stack<FileTreeNode*> selectedTreeNodeStack;
 		std::unordered_set<UINT> currentSelectedFileIDs;
 		bool browserFileIconMode = true;
 	};
