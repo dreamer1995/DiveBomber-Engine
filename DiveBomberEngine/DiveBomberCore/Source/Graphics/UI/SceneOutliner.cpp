@@ -26,7 +26,7 @@ namespace DiveBomber::UI
 
 			ImGui::Text(Utility::ToNarrow(currentScene->GetName()).c_str());
 			listBoxSize.y -= ImGui::GetTextLineHeightWithSpacing();
-			if (ImGui::BeginListBox("##", listBoxSize))
+			if (ImGui::BeginListBox("##SceneOutliner", listBoxSize))
 			{
 				bool checkSelect = false;
 				for (int i = 0; i < sceneObjectNames.size(); i++)

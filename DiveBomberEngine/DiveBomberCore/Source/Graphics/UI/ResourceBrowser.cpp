@@ -27,6 +27,18 @@ namespace DiveBomber::UI
 			ImGui::ShowDemoWindow();
 			ImGui::Begin(captionChar.c_str(), &isShown);
 
+			if (ImGui::BeginChild("ContentInfo", ImVec2(ImGui::GetContentRegionAvail().x, 0),
+				ImGuiChildFlags_Border | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_AlwaysAutoResize))
+			{
+				ImGui::Button("Prev");
+				ImGui::SameLine();
+				ImGui::Button("New");
+				ImGui::SameLine();
+				std::string displayedPath = fs::absolute(currentSelectedTreeNode.path).string();
+				ImGui::Text(displayedPath.c_str());
+				ImGui::EndChild();
+			}
+
 			ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
 			if (ImGui::BeginChild("ContentTree",
 				ImVec2(ImGui::GetContentRegionAvail().x * 0.5f, ImGui::GetContentRegionAvail().y),
@@ -34,7 +46,7 @@ namespace DiveBomber::UI
 			{
 				ImVec2 listBoxSize = ImGui::GetContentRegionAvail();
 
-				if (ImGui::BeginListBox("##", listBoxSize))
+				if (ImGui::BeginListBox("##ContentTree", listBoxSize))
 				{
 					DrawContentTree(fileTree, 0u);
 					ImGui::EndListBox();
@@ -51,7 +63,7 @@ namespace DiveBomber::UI
 			{
 				ImVec2 listBoxSize = ImGui::GetContentRegionAvail();
 
-				if (ImGui::BeginListBox("##", listBoxSize))
+				if (ImGui::BeginListBox("##Contents", listBoxSize))
 				{
 					DrawContents(currentSelectedTreeNode);
 					ImGui::EndListBox();
@@ -83,7 +95,11 @@ namespace DiveBomber::UI
 			if (ImGui::Selectable(tag(displayedName), selected))
 			{
 				currentSelectedTreeNode = inputTree;
-				inputTree.expanded = !inputTree.expanded;
+				if (selected)
+				{
+					inputTree.expanded = !inputTree.expanded;
+				}
+				currentSelectedFileIDs.clear();
 			}
 			ImGui::Unindent(indentLevel * indentSpace);
 
@@ -99,8 +115,15 @@ namespace DiveBomber::UI
 
 	void ResourceBrowser::DrawContents(FileTreeNode& inputTree)
 	{
-		for (auto& child : inputTree.children)
+		float window_visible_x2 = ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x;
+		ImVec2 itemSize = ImVec2(80, 80);
+		ImVec2 iconSize = ImVec2(45, 45);
+
+		bool checkSelect = false;
+		for (int i = 0; i < inputTree.children.size(); i++)
 		{
+			FileTreeNode& child = inputTree.children[i];
+
 			using namespace std::string_literals;
 			auto tag = [tagScratch = std::string{}, tagString = "##"s + std::to_string(child.id)]
 			(std::string label) mutable
@@ -109,23 +132,66 @@ namespace DiveBomber::UI
 				return tagScratch.c_str();
 			};
 
-			bool selected = currentSelectedFileIDs.find(child.id) != currentSelectedFileIDs.end();
-			if (ImGui::Selectable(tag(child.path.filename().string()), selected))
+			if (ImGui::BeginChild(tag("FileOutFrame"), itemSize, ImGuiChildFlags_None))
 			{
-				if (selected)
+				ImVec2 BGSize = ImGui::GetContentRegionAvail();
+				ImGui::SetNextItemAllowOverlap();
+				if(ImGui::BeginChild(tag("SelectableFrame"), ImGui::GetContentRegionAvail(), ImGuiChildFlags_Border, ImGuiWindowFlags_NoMouseInputs))
 				{
-					currentSelectedFileIDs.erase(child.id);
+					ImGui::BeginChild(tag("IconFrame"), iconSize, ImGuiChildFlags_None, ImGuiWindowFlags_NoMouseInputs);
+						ImDrawList* draw_list = ImGui::GetWindowDrawList();
+						ImVec2 pos = ImGui::GetWindowPos();
+						draw_list->AddRectFilledMultiColor(pos, ImVec2(pos.x + iconSize.x, pos.y + iconSize.y), IM_COL32(0, 0, 0, 255), IM_COL32(255, 0, 0, 255), IM_COL32(255, 255, 0, 255), IM_COL32(0, 255, 0, 255));
+					ImGui::EndChild();
+					
+					ImGui::Text(child.path.filename().string().c_str());
+					ImGui::EndChild();
 				}
-				else
+				ImGui::SameLine();
+				bool selected = currentSelectedFileIDs.find(child.id) != currentSelectedFileIDs.end();
+				if (ImGui::Selectable(tag("##ItemSelectable"), selected,
+					ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap,
+					BGSize))
 				{
-					#define	wnd Window::GetInstance()
-					if (!wnd.kbd->KeyIsDown(VK_CONTROL))
+					if (selected)
 					{
-						currentSelectedFileIDs.clear();
+						// aware !
+						if (!Window::GetInstance().kbd->KeyIsDown(VK_CONTROL))
+						{
+							currentSelectedFileIDs.clear();
+							currentSelectedFileIDs.emplace(child.id);
+							checkSelect = true;
+						}
+						else
+						{
+							currentSelectedFileIDs.erase(child.id);
+						}
 					}
-					currentSelectedFileIDs.emplace(child.id);
+					else
+					{
+						if (!Window::GetInstance().kbd->KeyIsDown(VK_CONTROL))
+						{
+							currentSelectedFileIDs.clear();
+						}
+						currentSelectedFileIDs.emplace(child.id);
+						checkSelect = true;
+					}
 				}
+				ImGui::EndChild();
 			}
+
+			float last_button_x2 = ImGui::GetItemRectMax().x;
+			float next_button_x2 = last_button_x2 + ImGui::GetStyle().ItemSpacing.x + itemSize.x;
+			if ((i + 1) < inputTree.children.size() && next_button_x2 < window_visible_x2)
+			{
+				ImGui::SameLine();
+			}
+		}
+
+		// When mouse within window, mouse released on nothing.
+		if (ImGui::IsMouseReleased(0) && ImGui::IsWindowHovered() && !checkSelect)
+		{
+			currentSelectedFileIDs.clear();
 		}
 	}
 
