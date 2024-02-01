@@ -5,6 +5,11 @@
 #include <unordered_set>
 #include <stack>
 
+namespace DiveBomber::DEResource
+{
+	class Texture;
+}
+
 namespace DiveBomber::UI
 {
 	namespace fs = std::filesystem;
@@ -46,5 +51,6 @@ namespace DiveBomber::UI
 		std::stack<FileTreeNode*> selectedTreeNodeStack;
 		std::unordered_set<UINT> currentSelectedFileIDs;
 		bool browserFileIconMode = true;
+		std::shared_ptr<DEResource::Texture> iconAtlas;
 	};
 }

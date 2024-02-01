@@ -51,6 +51,21 @@ namespace DiveBomber::DEResource
 		return descriptorAllocation->GetBaseOffset();
 	}
 
+	D3D12_CPU_DESCRIPTOR_HANDLE Texture::GetSRVDescriptorCPUHandle() const noexcept
+	{
+		return descriptorAllocation->GetCPUDescriptorHandle();
+	}
+
+	D3D12_GPU_DESCRIPTOR_HANDLE Texture::GetSRVDescriptorGPUHandle() const noexcept
+	{
+		return descriptorAllocation->GetGPUDescriptorHandle();
+	}
+
+	wrl::ComPtr<ID3D12Resource> Texture::GetTextureBuffer() const noexcept
+	{
+		return textureBuffer;
+	}
+
 	std::wstring Texture::GetName() const noexcept
 	{
 		return name;
@@ -414,7 +429,7 @@ namespace DiveBomber::DEResource
 		Graphics::GetInstance().GetDevice()->CreateShaderResourceView(textureBuffer.Get(), &srvDesc, descriptorAllocation->GetCPUDescriptorHandle());
 	}
 
-	void Texture::GenerateMipMaps(wrl::ComPtr<ID3D12Resource> uavBuffer)
+	void Texture::GenerateMipMaps(wrl::ComPtr<ID3D12Resource>& uavBuffer)
 	{
 		const std::wstring generateMipName(L"GenerateMipLinear");
 		D3D12_RESOURCE_DESC resDesc = uavBuffer->GetDesc();
@@ -514,12 +529,13 @@ namespace DiveBomber::DEResource
 				(UINT)resDesc.DepthOrArraySize);
 
 			srcMip += mipCount;
+
 		}
 
 		Graphics::GetInstance().ExecuteAllCurrentCommandLists();
 	}
 
-	void Texture::GenerateDiffuseIrradiance(wrl::ComPtr<ID3D12Resource> uavBuffer, const std::filesystem::path& outputPath)
+	void Texture::GenerateDiffuseIrradiance(wrl::ComPtr<ID3D12Resource>& uavBuffer, const std::filesystem::path& outputPath)
 	{
 		HRESULT hr;
 
@@ -603,7 +619,7 @@ namespace DiveBomber::DEResource
 		GenerateCache(outputCubeTarget, outputPath);
 	}
 
-	void Texture::GenerateSpecularIBLMipMaps(wrl::ComPtr<ID3D12Resource> uavBuffer, const std::filesystem::path& outputPath)
+	void Texture::GenerateSpecularIBLMipMaps(wrl::ComPtr<ID3D12Resource>& uavBuffer, const std::filesystem::path& outputPath)
 	{
 		HRESULT hr;
 		
@@ -692,7 +708,7 @@ namespace DiveBomber::DEResource
 		GenerateCache(outputCubeTarget, outputPath);
 	}
 
-	void Texture::GenerateCubeMap(wrl::ComPtr<ID3D12Resource> uavBuffer, bool readSRGB)
+	void Texture::GenerateCubeMap(wrl::ComPtr<ID3D12Resource>& uavBuffer, bool readSRGB)
 	{
 		HRESULT hr;
 

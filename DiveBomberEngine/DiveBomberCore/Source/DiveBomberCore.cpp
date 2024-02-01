@@ -32,6 +32,7 @@ namespace DiveBomber
 	using namespace DEObject;
 	using namespace DX;
 	using namespace DEComponent;
+	using namespace UI;
 
 	DiveBomberCore::DiveBomberCore()
 	{
@@ -80,6 +81,7 @@ namespace DiveBomber
 		Graphics::Destructor();
 		if (EditorMode)
 		{
+			UIManager::Destructor();
 			ImGui::DestroyContext();
 		}
 	}
@@ -142,7 +144,7 @@ namespace DiveBomber
 		// Need more consideration
 		if (EditorMode && g_EnableEditorUI)
 		{
-			UI::UIManager::GetInstance().DrawUI();
+			UIManager::GetInstance().DrawUI();
 		}
 		currentScene->Render();
 

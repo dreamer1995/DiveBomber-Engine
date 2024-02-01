@@ -64,6 +64,9 @@ namespace DiveBomber::DEResource
 
 		void ChangeTexture(const std::wstring& inputName);
 		[[nodiscard]] UINT GetSRVDescriptorHeapOffset() const noexcept override;
+		[[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetSRVDescriptorCPUHandle() const noexcept;
+		[[nodiscard]] D3D12_GPU_DESCRIPTOR_HANDLE GetSRVDescriptorGPUHandle() const noexcept;
+		[[nodiscard]] wrl::ComPtr<ID3D12Resource> GetTextureBuffer() const noexcept;
 		
 		std::wstring GetName() const noexcept;
 		template<typename...Ignore>
@@ -80,10 +83,10 @@ namespace DiveBomber::DEResource
 		void LoadTexture();
 		void GenerateCache(const wrl::ComPtr<ID3D12Resource> outputTextureBuffer, const std::filesystem::path& outputPath);
 		void LoadScratchImage(const std::filesystem::path& filePath);
-		void GenerateMipMaps(wrl::ComPtr<ID3D12Resource> uavBuffer);
-		void GenerateDiffuseIrradiance(wrl::ComPtr<ID3D12Resource> uavBuffer, const std::filesystem::path& outputPath);
-		void GenerateSpecularIBLMipMaps(wrl::ComPtr<ID3D12Resource> uavBuffer, const std::filesystem::path& outputPath);
-		void GenerateCubeMap(wrl::ComPtr<ID3D12Resource> uavBuffer, bool readSRGB);
+		void GenerateMipMaps(wrl::ComPtr<ID3D12Resource>& uavBuffer);
+		void GenerateDiffuseIrradiance(wrl::ComPtr<ID3D12Resource>& uavBuffer, const std::filesystem::path& outputPath);
+		void GenerateSpecularIBLMipMaps(wrl::ComPtr<ID3D12Resource>& uavBuffer, const std::filesystem::path& outputPath);
+		void GenerateCubeMap(wrl::ComPtr<ID3D12Resource>& uavBuffer, bool readSRGB);
 		[[nodiscard]] DXGI_FORMAT GetUAVCompatableFormat(DXGI_FORMAT format);
 		[[nodiscard]] bool CheckSRGBFormat(DXGI_FORMAT format);
 

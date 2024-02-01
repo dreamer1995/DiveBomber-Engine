@@ -4,6 +4,9 @@
 #include "..\..\Utility\Common.h"
 #include "..\..\Window\Window.h"
 #include "..\..\Hardware\Keyboard.h"
+#include "..\Resource\ShaderInputable\Texture.h"
+#include "..\DX\GlobalResourceManager.h"
+#include "..\Graphics.h"
 
 #include <..\imgui\imgui.h>
 #include <iostream>
@@ -11,12 +14,17 @@
 namespace DiveBomber::UI
 {
 	using namespace DEWindow;
+	using namespace DEResource;
+	using namespace DX;
+	using namespace DEGraphics;
 
 	ResourceBrowser::ResourceBrowser()
 	{
 		RecursiveFilePath(ProjectDirectoryW, fileTree);
 		selectedTreeNodeStack.push(&fileTree);
 		fileTree.expanded = true;
+
+		iconAtlas = GlobalResourceManager::Resolve<Texture>(L"MyImage01.jpg");
 	}
 
 	ResourceBrowser::~ResourceBrowser()
@@ -27,6 +35,15 @@ namespace DiveBomber::UI
 	{
 		if (isShown)
 		{
+			ImGui::Begin("DirectX12 Texture Test");
+			ImGui::Text("CPU handle = %p", iconAtlas->GetSRVDescriptorCPUHandle());
+			ImGui::Text("GPU handle = %p", iconAtlas->GetSRVDescriptorGPUHandle());
+			auto texDesc = iconAtlas->GetTextureBuffer()->GetDesc();
+			ImGui::Text("size = %d x %d", texDesc.Width, texDesc.Height);
+			// Note that we pass the GPU SRV handle here, *not* the CPU handle. We're passing the internal pointer value, cast to an ImTextureID
+			ImGui::Image((ImTextureID)iconAtlas->GetSRVDescriptorGPUHandle().ptr, ImVec2((float)texDesc.Width, (float)texDesc.Height));
+			ImGui::End();
+
 			std::string captionChar = GetCaption() + (id == 1 ? "" : " " + std::to_string(id));
 			ImGui::ShowDemoWindow();
 			ImGui::Begin(captionChar.c_str(), &isShown);
@@ -236,7 +253,7 @@ namespace DiveBomber::UI
 
 				float last_button_x2 = ImGui::GetItemRectMax().x;
 				float next_button_x2 = last_button_x2 + ImGui::GetStyle().ItemSpacing.x + itemSize.x;
-				if ((i + 1) < inputTree.children.size() && next_button_x2 < window_visible_x2)
+				if ((i + 1) < (int)inputTree.children.size() && next_button_x2 < window_visible_x2)
 				{
 					ImGui::SameLine();
 				}
