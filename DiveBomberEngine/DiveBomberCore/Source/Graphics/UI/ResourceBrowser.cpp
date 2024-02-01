@@ -24,7 +24,8 @@ namespace DiveBomber::UI
 		selectedTreeNodeStack.push(&fileTree);
 		fileTree.expanded = true;
 
-		iconAtlas = GlobalResourceManager::Resolve<Texture>(L"MyImage01.jpg");
+		iconAtlas = GlobalResourceManager::Resolve<Texture>(L"IIDXLogo.png");
+		Graphics::GetInstance().ExecuteAllCurrentCommandLists();
 	}
 
 	ResourceBrowser::~ResourceBrowser()
