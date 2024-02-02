@@ -60,6 +60,7 @@ namespace DiveBomber::DEResource
 			const CD3DX12_HEAP_PROPERTIES heapProp{ D3D12_HEAP_TYPE_DEFAULT };
 			const CD3DX12_RESOURCE_DESC resDes = CD3DX12_RESOURCE_DESC::Buffer(initBufferSize, D3D12_RESOURCE_FLAG_NONE);
 
+			// Track once for safety.
 			DEGraphics::Graphics::GetInstance().GetCommandList()->TrackResource(constantBuffer);
 
 			// Create a committed resource for the GPU resource in a default heap.
