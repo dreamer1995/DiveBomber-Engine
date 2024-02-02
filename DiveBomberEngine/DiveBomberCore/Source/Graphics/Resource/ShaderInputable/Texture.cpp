@@ -623,6 +623,7 @@ namespace DiveBomber::DEResource
 
 			mipGenCBIndex->Update(mipGenCB);
 
+			Graphics::GetInstance().BindShaderDescriptorHeaps();
 			for (uint32_t mip = 0; mip < mipCount; ++mip)
 			{
 				D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc{};
@@ -638,7 +639,6 @@ namespace DiveBomber::DEResource
 				material->SetTexture(mipTarget, mip + 1);
 			}
 
-			Graphics::GetInstance().BindShaderDescriptorHeaps();
 			rootSignature->Bind();
 			material->Bind();
 			pipelineStateObject->Bind();
@@ -649,10 +649,9 @@ namespace DiveBomber::DEResource
 				(UINT)resDesc.DepthOrArraySize);
 
 			srcMip += mipCount;
-
-			Graphics::GetInstance().ExecuteAllCurrentCommandLists();
 		}
 
+		Graphics::GetInstance().ExecuteAllCurrentCommandLists();
 	}
 
 	void Texture::GenerateDiffuseIrradiance(wrl::ComPtr<ID3D12Resource>& uavBuffer, const std::filesystem::path& outputPath)
