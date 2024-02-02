@@ -6,6 +6,7 @@
 #include "..\Hardware\Mouse.h"
 #include "..\Graphics\Graphics.h"
 #include "..\DiveBomberCore.h"
+#include "..\Utility\GlobalParameters.h"
 
 #include <..\imgui\backends\imgui_impl_win32.h>
 #include <shellapi.h> // For CommandLineToArgvW
@@ -182,7 +183,7 @@ namespace DiveBomber::DEWindow
 		//OutputDebugString(wMM(msg, lParam, wParam).c_str());
 		ImGuiIO imio;
 
-		if (EditorMode && EnableEditorUI)
+		if (EditorMode && Utility::g_EnableEditorUI)
 		{
 			if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
 			{
@@ -243,7 +244,7 @@ namespace DiveBomber::DEWindow
 			// syskey commands need to be handled to track ALT key (VK_MENU) and F10
 		case WM_SYSKEYDOWN:
 			// stifle this keyboard message if imgui wants to capture
-			if (EditorMode && EnableEditorUI && imio.WantCaptureKeyboard)
+			if (EditorMode && Utility::g_EnableEditorUI && imio.WantCaptureKeyboard)
 			{
 				break;
 			}
@@ -255,7 +256,7 @@ namespace DiveBomber::DEWindow
 		case WM_KEYUP:
 		case WM_SYSKEYUP:
 			// stifle this keyboard message if imgui wants to capture
-			if (EditorMode && EnableEditorUI && imio.WantCaptureKeyboard)
+			if (EditorMode && Utility::g_EnableEditorUI && imio.WantCaptureKeyboard)
 			{
 				break;
 			}
@@ -263,7 +264,7 @@ namespace DiveBomber::DEWindow
 			break;
 		case WM_CHAR:
 			// stifle this keyboard message if imgui wants to capture
-			if (EditorMode && EnableEditorUI && imio.WantCaptureKeyboard)
+			if (EditorMode && Utility::g_EnableEditorUI && imio.WantCaptureKeyboard)
 			{
 				break;
 			}
@@ -287,7 +288,7 @@ namespace DiveBomber::DEWindow
 				break;
 			}
 			// stifle this mouse message if imgui wants to capture
-			if (EditorMode && EnableEditorUI && imio.WantCaptureMouse)
+			if (EditorMode && Utility::g_EnableEditorUI && imio.WantCaptureMouse)
 			{
 				break;
 			}
@@ -326,7 +327,7 @@ namespace DiveBomber::DEWindow
 				HideCursor();
 			}
 			// stifle this mouse message if imgui wants to capture
-			if (EditorMode && EnableEditorUI && imio.WantCaptureMouse)
+			if (EditorMode && Utility::g_EnableEditorUI && imio.WantCaptureMouse)
 			{
 				break;
 			}
@@ -336,7 +337,7 @@ namespace DiveBomber::DEWindow
 		case WM_RBUTTONDOWN:
 		{
 			// stifle this mouse message if imgui wants to capture
-			if (EditorMode && EnableEditorUI && imio.WantCaptureMouse)
+			if (EditorMode && Utility::g_EnableEditorUI && imio.WantCaptureMouse)
 			{
 				break;
 			}
@@ -346,7 +347,7 @@ namespace DiveBomber::DEWindow
 		case WM_MBUTTONDOWN:
 		{
 			// stifle this mouse message if imgui wants to capture
-			if (EditorMode && EnableEditorUI && imio.WantCaptureMouse)
+			if (EditorMode && Utility::g_EnableEditorUI && imio.WantCaptureMouse)
 			{
 				break;
 			}
@@ -356,7 +357,7 @@ namespace DiveBomber::DEWindow
 		case WM_LBUTTONUP:
 		{
 			// stifle this mouse message if imgui wants to capture
-			if (EditorMode && EnableEditorUI && imio.WantCaptureMouse)
+			if (EditorMode && Utility::g_EnableEditorUI && imio.WantCaptureMouse)
 			{
 				break;
 			}
@@ -373,7 +374,7 @@ namespace DiveBomber::DEWindow
 		case WM_RBUTTONUP:
 		{
 			// stifle this mouse message if imgui wants to capture
-			if (EditorMode && EnableEditorUI && imio.WantCaptureMouse)
+			if (EditorMode && Utility::g_EnableEditorUI && imio.WantCaptureMouse)
 			{
 				break;
 			}
@@ -390,7 +391,7 @@ namespace DiveBomber::DEWindow
 		case WM_MBUTTONUP:
 		{
 			// stifle this mouse message if imgui wants to capture
-			if (EditorMode && EnableEditorUI && imio.WantCaptureMouse)
+			if (EditorMode && Utility::g_EnableEditorUI && imio.WantCaptureMouse)
 			{
 				break;
 			}
@@ -407,7 +408,7 @@ namespace DiveBomber::DEWindow
 		case WM_MOUSEWHEEL:
 		{
 			// stifle this mouse message if imgui wants to capture
-			if (EditorMode && EnableEditorUI && imio.WantCaptureMouse)
+			if (EditorMode && Utility::g_EnableEditorUI && imio.WantCaptureMouse)
 			{
 				break;
 			}

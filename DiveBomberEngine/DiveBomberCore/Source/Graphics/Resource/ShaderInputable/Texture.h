@@ -81,12 +81,13 @@ namespace DiveBomber::DEResource
 		void GetConfig();
 		void UpdateConfig(const TextureParam inputTextureParam);
 		void LoadTexture();
-		void GenerateCache(const wrl::ComPtr<ID3D12Resource> outputTextureBuffer, const std::filesystem::path& outputPath);
-		void LoadScratchImage(const std::filesystem::path& filePath);
+		void GenerateCache(const wrl::ComPtr<ID3D12Resource>& outputTextureBuffer, const std::filesystem::path& outputPath, bool cubemap = false);
+		void GenerateCache(const dx::Image* images, size_t numImages, const dx::TexMetadata texMetaData, const std::filesystem::path& outputPath);
 		void GenerateMipMaps(wrl::ComPtr<ID3D12Resource>& uavBuffer);
 		void GenerateDiffuseIrradiance(wrl::ComPtr<ID3D12Resource>& uavBuffer, const std::filesystem::path& outputPath);
 		void GenerateSpecularIBLMipMaps(wrl::ComPtr<ID3D12Resource>& uavBuffer, const std::filesystem::path& outputPath);
-		void GenerateCubeMap(wrl::ComPtr<ID3D12Resource>& uavBuffer, bool readSRGB);
+		void GenerateCubeMap(wrl::ComPtr<ID3D12Resource>& uavBuffer, wrl::ComPtr<ID3D12Resource>& cubeSourceTextureBuffer, bool readSRGB);
+		void GenerateIconMap(wrl::ComPtr<ID3D12Resource>& uavBuffer, const std::filesystem::path& outputPath);
 		[[nodiscard]] DXGI_FORMAT GetUAVCompatableFormat(DXGI_FORMAT format);
 		[[nodiscard]] bool CheckSRGBFormat(DXGI_FORMAT format);
 
