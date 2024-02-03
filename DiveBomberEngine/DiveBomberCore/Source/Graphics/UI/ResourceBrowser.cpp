@@ -24,7 +24,7 @@ namespace DiveBomber::UI
 		selectedTreeNodeStack.push(&fileTree);
 		fileTree.expanded = true;
 
-		iconAtlas = GlobalResourceManager::Resolve<Texture>(L"IIDXLogo.png");
+		iconAtlas = GlobalResourceManager::Resolve<Texture>(L"MyImage01.jpg");
 		Graphics::GetInstance().ExecuteAllCurrentCommandLists();
 	}
 
@@ -36,15 +36,6 @@ namespace DiveBomber::UI
 	{
 		if (isShown)
 		{
-			ImGui::Begin("DirectX12 Texture Test");
-			ImGui::Text("CPU handle = %p", iconAtlas->GetSRVDescriptorCPUHandle());
-			ImGui::Text("GPU handle = %p", iconAtlas->GetSRVDescriptorGPUHandle());
-			auto texDesc = iconAtlas->GetTextureBuffer()->GetDesc();
-			ImGui::Text("size = %d x %d", texDesc.Width, texDesc.Height);
-			// Note that we pass the GPU SRV handle here, *not* the CPU handle. We're passing the internal pointer value, cast to an ImTextureID
-			ImGui::Image((ImTextureID)iconAtlas->GetSRVDescriptorGPUHandle().ptr, ImVec2((float)texDesc.Width, (float)texDesc.Height));
-			ImGui::End();
-
 			std::string captionChar = GetCaption() + (id == 1 ? "" : " " + std::to_string(id));
 			ImGui::ShowDemoWindow();
 			ImGui::Begin(captionChar.c_str(), &isShown);
@@ -154,7 +145,7 @@ namespace DiveBomber::UI
 	{
 		float window_visible_x2 = ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x;
 		ImVec2 itemSize = ImVec2(80, 80);
-		ImVec2 iconSize = ImVec2(45, 45);
+		ImVec2 iconBlockSize = ImVec2(45, 45);
 		ImVec2 selectBGSize = ImVec2(0, 0);
 
 		bool checkSelect = false;
@@ -180,12 +171,25 @@ namespace DiveBomber::UI
 						float windowHeight = ImGui::GetWindowSize().y;
 						float textWidth = ImGui::CalcTextSize(child.path.stem().string().c_str()).x;
 						float textHeight = ImGui::CalcTextSize(child.path.stem().string().c_str()).y;
-						ImGui::SetCursorPosX((windowWidth - iconSize.x) * 0.5f);
-						ImGui::SetCursorPosY((windowHeight - iconSize.y - textHeight) * 0.5f);
-						ImGui::BeginChild(tag("IconFrame"), iconSize, ImGuiChildFlags_None, ImGuiWindowFlags_NoMouseInputs);
-							ImDrawList* draw_list = ImGui::GetWindowDrawList();
-							ImVec2 pos = ImGui::GetWindowPos();
-							draw_list->AddRectFilledMultiColor(pos, ImVec2(pos.x + iconSize.x, pos.y + iconSize.y), IM_COL32(0, 0, 0, 255), IM_COL32(255, 0, 0, 255), IM_COL32(255, 255, 0, 255), IM_COL32(0, 255, 0, 255));
+						ImGui::SetCursorPosX((windowWidth - iconBlockSize.x) * 0.5f);
+						ImGui::SetCursorPosY((windowHeight - iconBlockSize.y - textHeight) * 0.5f);
+						ImGui::BeginChild(tag("IconFrame"), iconBlockSize, ImGuiChildFlags_None, ImGuiWindowFlags_NoMouseInputs);
+							const D3D12_RESOURCE_DESC texDesc = iconAtlas->GetTextureBuffer()->GetDesc();
+							const float XYRatio = texDesc.Width / (float)texDesc.Height;
+							ImVec2 iconSize = iconBlockSize;
+							if (XYRatio > 1)
+							{
+								iconSize.y /= XYRatio;
+							}
+							else
+							{
+								iconSize.x *= XYRatio;
+							}
+
+							ImGui::SetCursorPosX((ImGui::GetWindowSize().x - iconSize.x) * 0.5f);
+							ImGui::SetCursorPosY((ImGui::GetWindowSize().y - iconSize.y) * 0.5f);
+							ImGui::Image((ImTextureID)iconAtlas->GetSRVDescriptorGPUHandle().ptr,
+								ImVec2(iconSize.x, iconSize.y));
 						ImGui::EndChild();
 					
 						if (textWidth < itemSize.x)
