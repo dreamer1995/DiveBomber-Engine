@@ -24,7 +24,7 @@ namespace DiveBomber::UI
 		selectedTreeNodeStack.push(&fileTree);
 		fileTree.expanded = true;
 
-		iconAtlas = GlobalResourceManager::Resolve<Texture>(L"MyImage01.jpg");
+		iconAtlas = GlobalResourceManager::Resolve<Texture>(L"earth.dds");
 		Graphics::GetInstance().ExecuteAllCurrentCommandLists();
 	}
 
@@ -145,6 +145,7 @@ namespace DiveBomber::UI
 	{
 		float window_visible_x2 = ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x;
 		ImVec2 itemSize = ImVec2(80, 80);
+		ImVec2 listSize = ImVec2(0, 20);
 		ImVec2 iconBlockSize = ImVec2(45, 45);
 		ImVec2 selectBGSize = ImVec2(0, 0);
 
@@ -161,6 +162,11 @@ namespace DiveBomber::UI
 				return tagScratch.c_str();
 			};
 
+			const D3D12_RESOURCE_DESC texDesc = iconAtlas->GetTextureBuffer()->GetDesc();
+			const float XYRatio = texDesc.Width / (float)texDesc.Height;						
+			float textWidth = ImGui::CalcTextSize(child.path.stem().string().c_str()).x;
+			float textHeight = ImGui::CalcTextSize(child.path.stem().string().c_str()).y;
+
 			if (browserFileIconMode)
 			{
 				ImGui::BeginChild(tag("FileOutFrame"), itemSize, ImGuiChildFlags_None);
@@ -169,13 +175,9 @@ namespace DiveBomber::UI
 					ImGui::BeginChild(tag("SelectableFrame"), ImGui::GetContentRegionAvail(), ImGuiChildFlags_None, ImGuiWindowFlags_NoMouseInputs);
 						float windowWidth = ImGui::GetWindowSize().x;
 						float windowHeight = ImGui::GetWindowSize().y;
-						float textWidth = ImGui::CalcTextSize(child.path.stem().string().c_str()).x;
-						float textHeight = ImGui::CalcTextSize(child.path.stem().string().c_str()).y;
 						ImGui::SetCursorPosX((windowWidth - iconBlockSize.x) * 0.5f);
 						ImGui::SetCursorPosY((windowHeight - iconBlockSize.y - textHeight) * 0.5f);
 						ImGui::BeginChild(tag("IconFrame"), iconBlockSize, ImGuiChildFlags_None, ImGuiWindowFlags_NoMouseInputs);
-							const D3D12_RESOURCE_DESC texDesc = iconAtlas->GetTextureBuffer()->GetDesc();
-							const float XYRatio = texDesc.Width / (float)texDesc.Height;
 							ImVec2 iconSize = iconBlockSize;
 							if (XYRatio > 1)
 							{
@@ -201,8 +203,34 @@ namespace DiveBomber::UI
 
 					ImGui::SameLine();
 			}
+			else
+			{
+					selectBGSize = listSize;
+					ImGui::BeginChild(tag("FileOutFrame"), listSize, ImGuiChildFlags_ResizeX | ImGuiChildFlags_AutoResizeX, ImGuiWindowFlags_NoMouseInputs);
+						ImVec2 iconSize = ImVec2(textHeight, textHeight);
+						if (XYRatio > 1)
+						{
+							iconSize.y /= XYRatio;
+						}
+						else
+						{
+							iconSize.x *= XYRatio;
+						}
+
+						ImGui::SetCursorPosY((ImGui::GetWindowSize().y - iconSize.y) * 0.5f);
+						ImGui::Image((ImTextureID)iconAtlas->GetSRVDescriptorGPUHandle().ptr,
+							ImVec2(iconSize.x, iconSize.y));
+
+						ImGui::SameLine();
+
+						ImGui::SetCursorPosY((ImGui::GetWindowSize().y - textHeight) * 0.5f);
+						ImGui::Text(child.path.filename().string().c_str());
+					ImGui::EndChild();
+					ImGui::SameLine();
+			}
+
 					bool selected = currentSelectedFileIDs.find(child.id) != currentSelectedFileIDs.end();
-					if (ImGui::Selectable(browserFileIconMode? tag("##ItemSelectable") : tag(child.path.filename().string()),
+					if (ImGui::Selectable(tag("##ItemSelectable"),
 						selected,
 						ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap | ImGuiSelectableFlags_AllowDoubleClick,
 						selectBGSize))
