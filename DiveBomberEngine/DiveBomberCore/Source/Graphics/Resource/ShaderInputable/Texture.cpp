@@ -448,7 +448,7 @@ namespace DiveBomber::DEResource
 
 		if (generateIconCache)
 		{
-			if (metadata.arraySize == 1)
+			if (!generateMip || (textureParam.cubeMap && metadata.arraySize == 1))
 			{
 				wrl::ComPtr<ID3D12Resource> iconBuffer;
 				D3D12_RESOURCE_DESC iconResDesc = resDesc;
@@ -467,41 +467,48 @@ namespace DiveBomber::DEResource
 					IID_PPV_ARGS(&iconBuffer)
 				));
 
+				iconResDesc = iconBuffer->GetDesc();
+				if (metadata.mipLevels < iconResDesc.MipLevels)
 				{
-					wrl::ComPtr<ID3D12Resource> textureUploadBuffer;
+					{
+						wrl::ComPtr<ID3D12Resource> textureUploadBuffer;
 
-					const CD3DX12_HEAP_PROPERTIES heapProps{ D3D12_HEAP_TYPE_UPLOAD };
-					const auto uploadBufferSize = GetRequiredIntermediateSize(iconBuffer.Get(), 0u, (UINT)subresourceData.size());
-					const auto resourceDesc = CD3DX12_RESOURCE_DESC::Buffer(uploadBufferSize);
-					GFX_THROW_INFO(Graphics::GetInstance().GetDevice()->CreateCommittedResource(
-						&heapProps,
-						D3D12_HEAP_FLAG_NONE,
-						&resourceDesc,
-						D3D12_RESOURCE_STATE_GENERIC_READ,
-						nullptr,
-						IID_PPV_ARGS(&textureUploadBuffer)
-					));
+						const CD3DX12_HEAP_PROPERTIES heapProps{ D3D12_HEAP_TYPE_UPLOAD };
+						const auto uploadBufferSize = GetRequiredIntermediateSize(iconBuffer.Get(), 0u, (UINT)subresourceData.size());
+						const auto resourceDesc = CD3DX12_RESOURCE_DESC::Buffer(uploadBufferSize);
+						GFX_THROW_INFO(Graphics::GetInstance().GetDevice()->CreateCommittedResource(
+							&heapProps,
+							D3D12_HEAP_FLAG_NONE,
+							&resourceDesc,
+							D3D12_RESOURCE_STATE_GENERIC_READ,
+							nullptr,
+							IID_PPV_ARGS(&textureUploadBuffer)
+						));
 
-					std::shared_ptr<CommandList> copyCommandList = Graphics::GetInstance().GetCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
+						std::shared_ptr<CommandList> copyCommandList = Graphics::GetInstance().GetCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
 
-					UpdateSubresources(
-						copyCommandList->GetGraphicsCommandList().Get(),
-						iconBuffer.Get(),
-						textureUploadBuffer.Get(),
-						0, 0u,
-						(UINT)subresourceData.size(),
-						subresourceData.data()
-					);
+						UpdateSubresources(
+							copyCommandList->GetGraphicsCommandList().Get(),
+							iconBuffer.Get(),
+							textureUploadBuffer.Get(),
+							0, 0u,
+							(UINT)subresourceData.size(),
+							subresourceData.data()
+						);
 
-					copyCommandList->TrackResource(textureUploadBuffer);
+						copyCommandList->TrackResource(textureUploadBuffer);
 
-					ResourceStateTracker::AddGlobalResourceState(iconBuffer, D3D12_RESOURCE_STATE_COMMON);
+						ResourceStateTracker::AddGlobalResourceState(iconBuffer, D3D12_RESOURCE_STATE_COMMON);
+					}
+
+					GenerateMipMaps(iconBuffer);
+					GenerateIconMap(iconBuffer, iconPath);
+					ResourceStateTracker::RemoveGlobalResourceState(iconBuffer);
 				}
-
-				GenerateMipMaps(iconBuffer);
-				GenerateIconMap(iconBuffer, iconPath);
-
-				ResourceStateTracker::RemoveGlobalResourceState(iconBuffer);
+				else
+				{
+					GenerateIconMap(uavBuffer, iconPath);
+				}
 			}
 			else
 			{

@@ -218,7 +218,12 @@ namespace DiveBomber::UI
 			{
 				fileIconTexture = GlobalResourceManager::Resolve<Texture>
 					(child.path.stem().wstring() + L"#DERBIcon" + child.path.extension().wstring());
-				Graphics::GetInstance().ExecuteAllCurrentCommandLists();
+				Graphics::GetInstance().ExecuteCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
+			}
+			else if (child.path.stem().wstring().contains(L"#DERBIcon"))
+			{
+				fileIconTexture = GlobalResourceManager::Resolve<Texture>(child.path.filename());
+				Graphics::GetInstance().ExecuteCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
 			}
 			else
 			{
@@ -226,6 +231,7 @@ namespace DiveBomber::UI
 				iconIndex = 2u;
 				isFolderNode = true;
 			}
+
 			const D3D12_RESOURCE_DESC texDesc = fileIconTexture->GetTextureBuffer()->GetDesc();
 			const float XYRatio = texDesc.Width / (float)texDesc.Height;
 			const float textWidth = ImGui::CalcTextSize(child.path.stem().string().c_str()).x;
