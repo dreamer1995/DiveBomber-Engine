@@ -105,15 +105,18 @@ namespace DiveBomber::DEResource
 			}
 			rawFile >> config;
 
-			// update config file version until all config files have been updated.
-			if (config.find("ConfigFileType") == config.end())
+			if (RefreshAllResources)
 			{
-				config["ConfigFileType"] = 1u;
+				// update config file version until all config files have been updated.
+				if (config.find("ConfigFileType") == config.end())
+				{
+					config["ConfigFileType"] = 1u;
 
-				// write prettified JSON to another file
-				std::ofstream outFile(configFilePath);
-				outFile << std::setw(4) << config << std::endl;
-				outFile.close();
+					// write prettified JSON to another file
+					std::ofstream outFile(configFilePath);
+					outFile << std::setw(4) << config << std::endl;
+					outFile.close();
+				}
 			}
 
 			textureParam.sRGB = config["sRGB"];

@@ -1,4 +1,5 @@
 {
+    "ConfigFileType": 1,
     "CubeMap": true,
     "GenerateMip": true,
     "GlobalIllumination": true,

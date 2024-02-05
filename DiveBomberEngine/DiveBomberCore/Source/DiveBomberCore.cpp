@@ -14,6 +14,7 @@
 #include "Component\Camera\Camera.h"
 #include "Component\Material.h"
 #include "Scene\Scene.h"
+#include "Graphics\Resource\ShaderInputable\Texture.h"
 
 #include <..\imgui\imgui.h>
 #include <iostream>
@@ -126,6 +127,20 @@ namespace DiveBomber
 		currentScene = std::make_shared<Scene>();
 
 		currentScene->LoadSceneFromFile(L"Test Scene");
+
+		if (RefreshAllResources)
+		{
+			// Update config file version.
+			const fs::path textureFolder(ProjectDirectoryW L"Asset\\Texture");
+			for (auto const& dir_entry : fs::directory_iterator(textureFolder))
+			{
+				if (dir_entry.path().extension() != ".json")
+				{
+					std::shared_ptr<DEResource::Texture> texture = GlobalResourceManager::Resolve<Texture>(dir_entry.path().filename());
+				}
+			}
+			Graphics::GetInstance().ExecuteAllCurrentCommandLists();
+		}
 	}
 
 	void DiveBomberCore::Update()

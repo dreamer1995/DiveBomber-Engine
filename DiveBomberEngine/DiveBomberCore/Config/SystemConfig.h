@@ -23,4 +23,6 @@ namespace DiveBomber::Config
 #define EnableConsole true
 #define EditorMode true
 #define EnableEditorUI true
+
+#define RefreshAllResources false
 }

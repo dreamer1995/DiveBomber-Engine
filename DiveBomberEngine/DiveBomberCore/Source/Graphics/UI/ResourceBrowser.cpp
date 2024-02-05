@@ -214,7 +214,13 @@ namespace DiveBomber::UI
 				iconIndex = 1u;
 				isFolderNode = true;
 			}
-			else if (!child.path.stem().wstring().contains(L"#") && child.path.extension() == L".dds")
+			else if (!child.path.stem().wstring().contains(L"#") && (
+				child.path.extension() == L".dds" || 
+				child.path.extension() == L".png" || 
+				child.path.extension() == L".jpg" || 
+				child.path.extension() == L".tga" || 
+				child.path.extension() == L".hdr" || 
+				child.path.extension() == L".exr"))
 			{
 				fileIconTexture = GlobalResourceManager::Resolve<Texture>
 					(child.path.stem().wstring() + L"#DERBIcon" + child.path.extension().wstring());
