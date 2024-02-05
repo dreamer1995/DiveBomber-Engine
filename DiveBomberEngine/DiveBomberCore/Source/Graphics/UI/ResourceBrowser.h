@@ -18,6 +18,12 @@ namespace DiveBomber::UI
 	class ResourceBrowser final : public UIWidget
 	{
 	public:
+		enum class ConfigFileType
+		{
+			CFT_Material,
+			CFT_Texture,
+		};
+	public:
 		ResourceBrowser();
 		~ResourceBrowser();
 
