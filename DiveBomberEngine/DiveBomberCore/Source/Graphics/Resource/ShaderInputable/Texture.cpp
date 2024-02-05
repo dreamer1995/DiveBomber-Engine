@@ -91,7 +91,7 @@ namespace DiveBomber::DEResource
 	void Texture::GetConfig()
 	{
 		configFilePath = ProjectDirectoryW L"Asset\\Texture\\" + name;
-		configFilePath.replace_extension(".json");
+		configFilePath.replace_extension(".deasset");
 		if (!fs::exists(configFilePath))
 		{
 			UpdateConfig(textureParam);
