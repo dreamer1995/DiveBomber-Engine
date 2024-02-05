@@ -1,0 +1,8 @@
+{
+    "CubeMap": true,
+    "GenerateMip": true,
+    "GlobalIllumination": true,
+    "Texture3D": false,
+    "TextureArray": false,
+    "sRGB": true
+}

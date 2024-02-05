@@ -37,7 +37,19 @@ namespace DiveBomber::DEResource
 		textureParam(inputTextureDesc),
 		descriptorAllocation(Graphics::GetInstance().GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)->Allocate(1u))
 	{
-		GetConfig();
+		if (name.contains(L"#DERBIcon"))
+		{
+			iconLoadMode = true;
+		}
+		if (iconLoadMode)
+		{
+			textureParam.generateMip = false;
+			textureParam.sRGB = true;
+		}
+		else
+		{
+			GetConfig();
+		}
 		LoadTexture();
 	}
 
@@ -156,7 +168,7 @@ namespace DiveBomber::DEResource
 		fs::path filePath(ProjectDirectoryW L"Asset\\Texture\\" + name);
 		fs::path cachePath(ProjectDirectoryW L"Cache\\Texture\\" + name);
 		cachePath.replace_extension(".dds");
-		if (!fs::exists(cachePath))
+		if (!fs::exists(cachePath) && !iconLoadMode)
 		{
 			generateCache = true;
 		}
@@ -167,19 +179,19 @@ namespace DiveBomber::DEResource
 
 		fs::path iconPath(cachePath);
 		iconPath.replace_filename(fs::path(name).stem().wstring() + L"#DERBIcon" + cachePath.extension().wstring());
-		if (!cachePath.stem().wstring().contains(L"#DERBIcon") && !fs::exists(iconPath))
+		if (!fs::exists(iconPath) && !iconLoadMode)
 		{
 			generateIconCache = true;
 		}
 
 		fs::path diffuseIrradiancePath(ProjectDirectoryW L"Cache\\Texture\\" + cachePath.stem().wstring() + L"#DiffuseIrradiance.dds");
-		if (textureParam.globalIllumination && !fs::exists(diffuseIrradiancePath))
+		if (textureParam.globalIllumination && !fs::exists(diffuseIrradiancePath) && !iconLoadMode)
 		{
 			generateDiffuseIrradiance = true;
 		}
 
 		fs::path specularMipPath(ProjectDirectoryW L"Cache\\Texture\\" + cachePath.stem().wstring() + L"#SpecularIBL.dds");
-		if (textureParam.globalIllumination && !fs::exists(specularMipPath))
+		if (textureParam.globalIllumination && !fs::exists(specularMipPath) && !iconLoadMode)
 		{
 			generateSpecularMip = true;
 		}
@@ -311,7 +323,7 @@ namespace DiveBomber::DEResource
 
 		wrl::ComPtr<ID3D12Resource> cubeSourceTextureBuffer;
 		// second round, check if should generate mipmap / cubemap
-		if (textureParam.cubeMap && metadata.arraySize == 1)
+		if (textureParam.cubeMap && metadata.arraySize == 1 && !iconLoadMode)
 		{
 			generateCube = true;
 			generateCache = true;
@@ -339,7 +351,7 @@ namespace DiveBomber::DEResource
 		}
 
 		// second round, check if should generate mipmap / cubemap
-		if (textureParam.generateMip && (metadata.mipLevels < resDesc.MipLevels))
+		if (textureParam.generateMip && (metadata.mipLevels < resDesc.MipLevels) && !iconLoadMode)
 		{
 			generateMip = true;
 			generateCache = true;

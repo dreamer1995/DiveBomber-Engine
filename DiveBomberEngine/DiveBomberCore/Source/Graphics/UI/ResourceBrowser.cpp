@@ -8,7 +8,6 @@
 #include "..\DX\GlobalResourceManager.h"
 #include "..\Graphics.h"
 
-#include <..\imgui\imgui.h>
 #include <iostream>
 
 namespace DiveBomber::UI
@@ -24,7 +23,7 @@ namespace DiveBomber::UI
 		selectedTreeNodeStack.push(&fileTree);
 		fileTree.expanded = true;
 
-		iconAtlas = GlobalResourceManager::Resolve<Texture>(L"earth.dds");
+		iconAtlas = GlobalResourceManager::Resolve<Texture>(L"UIIcons.png");
 		Graphics::GetInstance().ExecuteAllCurrentCommandLists();
 	}
 
@@ -42,22 +41,42 @@ namespace DiveBomber::UI
 
 			ImGui::BeginChild("ContentInfo", ImVec2(ImGui::GetContentRegionAvail().x, 0),
 				ImGuiChildFlags_Border | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_AlwaysAutoResize);
-				if (ImGui::Button("Prev"))
+				ImVec2 buttonSize = ImVec2(20, 20);
 				{
-					if (selectedTreeNodeStack.size() > 1)
+					ImVec2 uv0;
+					ImVec2 uv1;
+					GetSpecificIconUVFromAtlas(0u, (UINT)buttonSize.x, uv0, uv1);
+					if (ImGui::ImageButton("##Prev", (ImTextureID)iconAtlas->GetSRVDescriptorGPUHandle().ptr, buttonSize, uv0, uv1))
 					{
-						selectedTreeNodeStack.pop();
+						if (selectedTreeNodeStack.size() > 1)
+						{
+							selectedTreeNodeStack.pop();
+						}
 					}
 				}
 				ImGui::SameLine();
-				ImGui::Button("New");
-				ImGui::SameLine(); 
-				if (ImGui::Button(browserFileIconMode ? "Icon Mode" : "List Mode"))
 				{
-					browserFileIconMode = !browserFileIconMode;
+					ImVec2 uv0;
+					ImVec2 uv1;
+					GetSpecificIconUVFromAtlas(3u, (UINT)buttonSize.x, uv0, uv1);
+					if (ImGui::ImageButton("##New", (ImTextureID)iconAtlas->GetSRVDescriptorGPUHandle().ptr, buttonSize, uv0, uv1))
+					{
+					}
+				}
+				ImGui::SameLine(); 
+				{
+					UINT iconIndex = browserFileIconMode ? 5u : 4u;
+					ImVec2 uv0;
+					ImVec2 uv1;
+					GetSpecificIconUVFromAtlas(iconIndex, (UINT)buttonSize.x, uv0, uv1);
+					if (ImGui::ImageButton("##DisplayMode", (ImTextureID)iconAtlas->GetSRVDescriptorGPUHandle().ptr, buttonSize, uv0, uv1))
+					{
+						browserFileIconMode = !browserFileIconMode;
+					}
 				}
 				ImGui::SameLine();
 				std::string displayedPath = fs::absolute(selectedTreeNodeStack.top()->path).string();
+				ImGui::SetCursorPosY((ImGui::GetWindowSize().y - ImGui::GetTextLineHeight()) * 0.5f);
 				ImGui::Text(displayedPath.c_str());
 			ImGui::EndChild();
 
@@ -117,7 +136,31 @@ namespace DiveBomber::UI
 			
 			const float indentSpace = 20.0f;
 			ImGui::Indent(indentLevel * indentSpace);
-			if (ImGui::Selectable(tag(displayedName), selected))
+
+			const ImVec2 listSize = ImVec2(0, 20);
+			ImGui::SetNextItemAllowOverlap();
+			ImGui::BeginChild(tag("TreeListOutFrame"), listSize, ImGuiChildFlags_ResizeX | ImGuiChildFlags_AutoResizeX, ImGuiWindowFlags_NoMouseInputs);
+				const ImVec2 iconSize = ImVec2(listSize.y, listSize.y);
+
+				UINT imageIndex = inputTree.expanded ? 2u : 1u;
+				ImVec2 uv0;
+				ImVec2 uv1;
+				GetSpecificIconUVFromAtlas(imageIndex, (UINT)iconSize.x, uv0, uv1);
+
+				ImGui::Image((ImTextureID)iconAtlas->GetSRVDescriptorGPUHandle().ptr,
+					ImVec2(iconSize.x, iconSize.y), uv0, uv1);
+
+				ImGui::SameLine();
+
+				ImGui::SetCursorPosY((ImGui::GetWindowSize().y - ImGui::GetTextLineHeight()) * 0.5f);
+				ImGui::Text(displayedName.c_str());
+			ImGui::EndChild();
+
+			ImGui::SameLine();
+
+			if (ImGui::Selectable(tag("##TreeList"), selected,
+				ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap | ImGuiSelectableFlags_AllowDoubleClick,
+				listSize))
 			{
 				if (selectedTreeNodeStack.top() != &inputTree)
 				{
@@ -144,9 +187,9 @@ namespace DiveBomber::UI
 	void ResourceBrowser::DrawContents(FileTreeNode& inputTree)
 	{
 		float window_visible_x2 = ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x;
-		ImVec2 itemSize = ImVec2(80, 80);
-		ImVec2 listSize = ImVec2(0, 20);
-		ImVec2 iconBlockSize = ImVec2(45, 45);
+		const ImVec2 itemSize = ImVec2(80, 80);
+		const ImVec2 listSize = ImVec2(0, 20);
+		const ImVec2 iconBlockSize = ImVec2(45, 45);
 		ImVec2 selectBGSize = ImVec2(0, 0);
 
 		bool checkSelect = false;
@@ -161,11 +204,31 @@ namespace DiveBomber::UI
 				tagScratch = label + tagString;
 				return tagScratch.c_str();
 			};
-
-			const D3D12_RESOURCE_DESC texDesc = iconAtlas->GetTextureBuffer()->GetDesc();
-			const float XYRatio = texDesc.Width / (float)texDesc.Height;						
-			float textWidth = ImGui::CalcTextSize(child.path.stem().string().c_str()).x;
-			float textHeight = ImGui::CalcTextSize(child.path.stem().string().c_str()).y;
+			
+			UINT iconIndex = 0u;
+			std::shared_ptr<DEResource::Texture> fileIconTexture;
+			bool isFolderNode = false;
+			if (child.children.size() > 0)
+			{
+				fileIconTexture = iconAtlas;
+				iconIndex = 1u;
+				isFolderNode = true;
+			}
+			else if (!child.path.stem().wstring().contains(L"#") && child.path.extension() == L".dds")
+			{
+				fileIconTexture = GlobalResourceManager::Resolve<Texture>
+					(child.path.stem().wstring() + L"#DERBIcon" + child.path.extension().wstring());
+				Graphics::GetInstance().ExecuteAllCurrentCommandLists();
+			}
+			else
+			{
+				fileIconTexture = iconAtlas;
+				iconIndex = 2u;
+				isFolderNode = true;
+			}
+			const D3D12_RESOURCE_DESC texDesc = fileIconTexture->GetTextureBuffer()->GetDesc();
+			const float XYRatio = texDesc.Width / (float)texDesc.Height;
+			const float textWidth = ImGui::CalcTextSize(child.path.stem().string().c_str()).x;
 
 			if (browserFileIconMode)
 			{
@@ -176,22 +239,31 @@ namespace DiveBomber::UI
 						float windowWidth = ImGui::GetWindowSize().x;
 						float windowHeight = ImGui::GetWindowSize().y;
 						ImGui::SetCursorPosX((windowWidth - iconBlockSize.x) * 0.5f);
-						ImGui::SetCursorPosY((windowHeight - iconBlockSize.y - textHeight) * 0.5f);
+						ImGui::SetCursorPosY((windowHeight - iconBlockSize.y - ImGui::GetTextLineHeight()) * 0.5f);
 						ImGui::BeginChild(tag("IconFrame"), iconBlockSize, ImGuiChildFlags_None, ImGuiWindowFlags_NoMouseInputs);
 							ImVec2 iconSize = iconBlockSize;
-							if (XYRatio > 1)
+							ImVec2 uv0 = ImVec2(0, 0);
+							ImVec2 uv1 = ImVec2(1, 1);
+							if (!isFolderNode)
 							{
-								iconSize.y /= XYRatio;
+								if (XYRatio > 1)
+								{
+									iconSize.y /= XYRatio;
+								}
+								else
+								{
+									iconSize.x *= XYRatio;
+								}
 							}
 							else
 							{
-								iconSize.x *= XYRatio;
+								GetSpecificIconUVFromAtlas(iconIndex, (UINT)iconSize.x, uv0, uv1);
 							}
 
 							ImGui::SetCursorPosX((ImGui::GetWindowSize().x - iconSize.x) * 0.5f);
 							ImGui::SetCursorPosY((ImGui::GetWindowSize().y - iconSize.y) * 0.5f);
-							ImGui::Image((ImTextureID)iconAtlas->GetSRVDescriptorGPUHandle().ptr,
-								ImVec2(iconSize.x, iconSize.y));
+							ImGui::Image((ImTextureID)fileIconTexture->GetSRVDescriptorGPUHandle().ptr,
+								ImVec2(iconSize.x, iconSize.y), uv0, uv1);
 						ImGui::EndChild();
 					
 						if (textWidth < itemSize.x)
@@ -206,26 +278,36 @@ namespace DiveBomber::UI
 			else
 			{
 					selectBGSize = listSize;
+					ImGui::SetNextItemAllowOverlap();
 					ImGui::BeginChild(tag("FileOutFrame"), listSize, ImGuiChildFlags_ResizeX | ImGuiChildFlags_AutoResizeX, ImGuiWindowFlags_NoMouseInputs);
-						ImVec2 iconSize = ImVec2(textHeight, textHeight);
-						if (XYRatio > 1)
+						ImVec2 iconSize = ImVec2(listSize.y, listSize.y);
+						ImVec2 uv0 = ImVec2(0, 0);
+						ImVec2 uv1 = ImVec2(1, 1);
+						if (!isFolderNode)
 						{
-							iconSize.y /= XYRatio;
+							if (XYRatio > 1)
+							{
+								iconSize.y /= XYRatio;
+							}
+							else
+							{
+								iconSize.x *= XYRatio;
+							}
 						}
 						else
 						{
-							iconSize.x *= XYRatio;
+							GetSpecificIconUVFromAtlas(iconIndex, (UINT)iconSize.x, uv0, uv1);
 						}
 
-						ImGui::SetCursorPosY((ImGui::GetWindowSize().y - iconSize.y) * 0.5f);
-						ImGui::Image((ImTextureID)iconAtlas->GetSRVDescriptorGPUHandle().ptr,
-							ImVec2(iconSize.x, iconSize.y));
+						ImGui::Image((ImTextureID)fileIconTexture->GetSRVDescriptorGPUHandle().ptr,
+							ImVec2(iconSize.x, iconSize.y), uv0, uv1);
 
 						ImGui::SameLine();
 
-						ImGui::SetCursorPosY((ImGui::GetWindowSize().y - textHeight) * 0.5f);
+						ImGui::SetCursorPosY((ImGui::GetWindowSize().y - ImGui::GetTextLineHeight()) * 0.5f);
 						ImGui::Text(child.path.filename().string().c_str());
 					ImGui::EndChild();
+
 					ImGui::SameLine();
 			}
 
@@ -297,6 +379,36 @@ namespace DiveBomber::UI
 		if (ImGui::IsMouseReleased(0) && ImGui::IsWindowHovered() && !checkSelect)
 		{
 			currentSelectedFileIDs.clear();
+		}
+	}
+
+	void ResourceBrowser::GetSpecificIconUVFromAtlas(UINT index, UINT iconSize, ImVec2& uv0, ImVec2& uv1) noexcept
+	{
+
+		const UINT xNumIcons = 2;
+		const UINT yNumIcons = 4;
+		const UINT baseMipSize = 128u;
+		const ImVec2 baseMipUVSize = ImVec2((2.0f / 3.0f) / xNumIcons, 1.0f / yNumIcons);
+
+		float xStart = (index / yNumIcons) / (float)xNumIcons;
+		float yStart = (index % yNumIcons) / (float)yNumIcons;
+
+		UINT mipLevel = 0;
+		while (iconSize < (baseMipSize >> (mipLevel + 1)))
+		{
+			mipLevel++;
+		}
+		mipLevel = mipLevel > 2 ? 2 : mipLevel;
+
+		if (mipLevel < 1)
+		{
+			uv0 = ImVec2(xStart, yStart);
+			uv1 = ImVec2(uv0.x + baseMipUVSize.x, uv0.y + baseMipUVSize.y);
+		}
+		else
+		{
+			uv0 = ImVec2(xStart + baseMipUVSize.x, yStart + baseMipUVSize.y / 2 * (mipLevel - 1));
+			uv1 = ImVec2(uv0.x + baseMipUVSize.x / 2 / mipLevel, uv0.y + baseMipUVSize.y / 2 / mipLevel);
 		}
 	}
 

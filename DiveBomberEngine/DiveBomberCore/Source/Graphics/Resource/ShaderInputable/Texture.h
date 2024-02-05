@@ -97,5 +97,6 @@ namespace DiveBomber::DEResource
 		std::shared_ptr<DX::DescriptorAllocation> descriptorAllocation;
 		wrl::ComPtr<ID3D12Resource> textureBuffer;
 		TextureParam textureParam;
+		bool iconLoadMode = false;
 	};
 }

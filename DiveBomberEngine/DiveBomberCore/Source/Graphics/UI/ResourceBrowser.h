@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <unordered_set>
 #include <stack>
+#include <..\imgui\imgui.h>
 
 namespace DiveBomber::DEResource
 {
@@ -43,6 +44,7 @@ namespace DiveBomber::UI
 		void RecursiveFilePath(fs::path path, FileTreeNode& inputFileTree) noexcept;
 		void DrawContentTree(FileTreeNode& inputTree, UINT indentLevel);
 		void DrawContents(FileTreeNode& inputTree);
+		void GetSpecificIconUVFromAtlas(UINT index, UINT iconSize, ImVec2& uv0, ImVec2& uv1) noexcept;
 
 	private:
 		UINT fileTreeIDCounter = 0;
