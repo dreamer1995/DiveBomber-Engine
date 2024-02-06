@@ -197,6 +197,7 @@ namespace DiveBomber::DEComponent
 
     void Material::UploadConfig(const std::wstring shaderName)
     {
+        config["ConfigFileType"] = 0u;
         std::wstring paramString = Shader::GetShaderParamsString(shaderName);
 
         json paramsData;
