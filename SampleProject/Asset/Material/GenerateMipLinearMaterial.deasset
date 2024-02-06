@@ -1,4 +1,5 @@
 {
+    "ConfigFileType": 0,
     "Param": null,
     "ShaderName": "GenerateMipLinear",
     "Stage": [
