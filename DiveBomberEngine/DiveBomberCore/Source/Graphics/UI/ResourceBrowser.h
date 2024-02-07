@@ -43,6 +43,7 @@ namespace DiveBomber::UI
 			std::shared_ptr<DEResource::Texture> iconTexture;
 			ImVec2 uv0 = ImVec2(0, 0);
 			ImVec2 uv1 = ImVec2(1, 1);
+			ImVec2 XYRatio = ImVec2(1, 1);
 		};
 
 		struct FileTreeNode
@@ -51,15 +52,15 @@ namespace DiveBomber::UI
 			fs::path path;
 			std::vector<FileTreeNode> children;
 			bool expanded = false;
-			Icon icon;
+			std::shared_ptr<Icon> icon;
 		};
 
 	private:
-		void RecursiveFilePath(fs::path path, FileTreeNode& inputFileTree) noexcept;
+		void RecursiveFilePath(fs::path path, FileTreeNode& inputFileTree);
 		void DrawContentTree(FileTreeNode& inputTree, UINT indentLevel);
 		void DrawContents(FileTreeNode& inputTree);
 		void GetSpecificIconUVFromAtlas(UINT index, UINT iconSize, ImVec2& uv0, ImVec2& uv1) noexcept;
-		void SetIcon(Icon& icon, UINT iconIndex, UINT size) noexcept;
+		void SetIcon(std::shared_ptr<Icon> icon, UINT iconIndex, UINT size) noexcept;
 
 	private:
 		UINT fileTreeIDCounter = 0;
@@ -71,16 +72,17 @@ namespace DiveBomber::UI
 		std::shared_ptr<DEResource::Texture> iconAtlasTexture;
 
 		const ImVec2 buttonSize = ImVec2(20, 20);
-		Icon backArrow;
-		Icon addNew;
-		Icon listMode;
-		Icon iconMode;
+		std::shared_ptr<Icon> backArrow;
+		std::shared_ptr<Icon> addNew;
+		std::shared_ptr<Icon> listMode;
+		std::shared_ptr<Icon> iconMode;
 
 		const ImVec2 listSize = ImVec2(0, 20);
-		Icon closedFolder;
-		Icon openedFolder;
+		std::shared_ptr<Icon> closedFolder;
+		std::shared_ptr<Icon> openedFolder;
 
 		const ImVec2 iconModeIconSize = ImVec2(45, 45);
-		Icon iconModeClosedFolder;
+		std::shared_ptr<Icon> fileIconClosedFolder;
+		std::shared_ptr<Icon> fileIconMaterial;
 	};
 }

@@ -2,6 +2,7 @@
 
 #include "..\..\Utility\GlobalParameters.h"
 #include "..\..\Utility\Common.h"
+#include "..\..\Utility\DEJson.h"
 #include "..\..\Window\Window.h"
 #include "..\..\Hardware\Keyboard.h"
 #include "..\Resource\ShaderInputable\Texture.h"
@@ -9,6 +10,7 @@
 #include "..\Graphics.h"
 
 #include <iostream>
+#include <fstream>
 
 namespace DiveBomber::UI
 {
@@ -17,10 +19,21 @@ namespace DiveBomber::UI
 	using namespace DX;
 	using namespace DEGraphics;
 
+	using json = nlohmann::json;
+
 	ResourceBrowser::ResourceBrowser()
 	{
 		iconAtlasTexture = GlobalResourceManager::Resolve<Texture>(L"UIIcons.png");
 		Graphics::GetInstance().ExecuteAllCurrentCommandLists();
+
+		backArrow = std::make_shared<Icon>();
+		addNew = std::make_shared<Icon>();
+		listMode = std::make_shared<Icon>();
+		iconMode = std::make_shared<Icon>();
+		closedFolder = std::make_shared<Icon>();
+		openedFolder = std::make_shared<Icon>();
+		fileIconClosedFolder = std::make_shared<Icon>();
+		fileIconMaterial = std::make_shared<Icon>();
 
 		SetIcon(backArrow, 0u, (UINT)buttonSize.x);
 		SetIcon(addNew, 3u, (UINT)buttonSize.x);
@@ -29,8 +42,6 @@ namespace DiveBomber::UI
 
 		SetIcon(closedFolder, 1u, (UINT)listSize.y);
 		SetIcon(openedFolder, 2u, (UINT)listSize.y);
-
-		SetIcon(iconModeClosedFolder, 1u, (UINT)iconModeIconSize.x);
 
 		RecursiveFilePath(ProjectDirectoryW, fileTree);
 		selectedTreeNodeStack.push(&fileTree);
@@ -52,7 +63,7 @@ namespace DiveBomber::UI
 			ImGui::BeginChild("ContentInfo", ImVec2(ImGui::GetContentRegionAvail().x, 0),
 				ImGuiChildFlags_Border | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_AlwaysAutoResize);
 				{
-					if (ImGui::ImageButton("##Prev", (ImTextureID)backArrow.iconTexture->GetSRVDescriptorGPUHandle().ptr, buttonSize, backArrow.uv0, backArrow.uv1))
+					if (ImGui::ImageButton("##Prev", (ImTextureID)backArrow->iconTexture->GetSRVDescriptorGPUHandle().ptr, buttonSize, backArrow->uv0, backArrow->uv1))
 					{
 						if (selectedTreeNodeStack.size() > 1)
 						{
@@ -62,14 +73,14 @@ namespace DiveBomber::UI
 				}
 				ImGui::SameLine();
 				{
-					if (ImGui::ImageButton("##New", (ImTextureID)addNew.iconTexture->GetSRVDescriptorGPUHandle().ptr, buttonSize, addNew.uv0, addNew.uv1))
+					if (ImGui::ImageButton("##New", (ImTextureID)addNew->iconTexture->GetSRVDescriptorGPUHandle().ptr, buttonSize, addNew->uv0, addNew->uv1))
 					{
 					}
 				}
 				ImGui::SameLine(); 
 				{
-					Icon icon = browserFileIconMode ? iconMode : listMode;
-					if (ImGui::ImageButton("##DisplayMode", (ImTextureID)icon.iconTexture->GetSRVDescriptorGPUHandle().ptr, buttonSize, icon.uv0, icon.uv1))
+					std::shared_ptr<Icon> icon = browserFileIconMode ? iconMode : listMode;
+					if (ImGui::ImageButton("##DisplayMode", (ImTextureID)icon->iconTexture->GetSRVDescriptorGPUHandle().ptr, buttonSize, icon->uv0, icon->uv1))
 					{
 						browserFileIconMode = !browserFileIconMode;
 					}
@@ -121,7 +132,7 @@ namespace DiveBomber::UI
 
 	void ResourceBrowser::DrawContentTree(FileTreeNode& inputTree, UINT indentLevel)
 	{
-		if (inputTree.children.size() > 0)
+		if (fs::is_directory(inputTree.path))
 		{
 			using namespace std::string_literals;
 			auto tag = [tagScratch = std::string{}, tagString = "##"s +std::to_string(inputTree.id)]
@@ -141,10 +152,10 @@ namespace DiveBomber::UI
 			ImGui::BeginChild(tag("TreeListOutFrame"), listSize, ImGuiChildFlags_ResizeX | ImGuiChildFlags_AutoResizeX, ImGuiWindowFlags_NoMouseInputs);
 				const ImVec2 iconSize = ImVec2(listSize.y, listSize.y);
 
-				Icon icon = inputTree.expanded ? openedFolder : closedFolder;
+				std::shared_ptr<Icon> icon = inputTree.expanded ? openedFolder : closedFolder;
 
-				ImGui::Image((ImTextureID)icon.iconTexture->GetSRVDescriptorGPUHandle().ptr,
-					ImVec2(listSize.y, listSize.y), icon.uv0, icon.uv1);
+				ImGui::Image((ImTextureID)icon->iconTexture->GetSRVDescriptorGPUHandle().ptr,
+					ImVec2(listSize.y, listSize.y), icon->uv0, icon->uv1);
 
 				ImGui::SameLine();
 
@@ -187,6 +198,10 @@ namespace DiveBomber::UI
 		const ImVec2 listSize = ImVec2(0, 20);
 		ImVec2 selectBGSize = ImVec2(0, 0);
 
+		UINT iconFrameSize = browserFileIconMode ? (UINT)iconModeIconSize.x : (UINT)listSize.y;
+		SetIcon(fileIconClosedFolder, 1u, iconFrameSize);
+		SetIcon(fileIconMaterial, 7u, iconFrameSize);
+
 		bool checkSelect = false;
 		for (int i = 0; i < inputTree.children.size(); i++)
 		{
@@ -202,22 +217,7 @@ namespace DiveBomber::UI
 
 			const float textWidth = ImGui::CalcTextSize(child.path.stem().string().c_str()).x;
 
-			ImVec2 iconSize = ImVec2(1, 1);
-			if (child.icon.iconTexture != iconAtlasTexture)
-			{
-				const D3D12_RESOURCE_DESC texDesc = child.icon.iconTexture->GetTextureBuffer()->GetDesc();
-				const float XYRatio = texDesc.Width / (float)texDesc.Height;
-
-				if (XYRatio > 1)
-				{
-					iconSize.y /= XYRatio;
-				}
-				else
-				{
-					iconSize.x *= XYRatio;
-				}
-			}
-
+			ImVec2 iconSize = child.icon->XYRatio;
 
 			if (browserFileIconMode)
 			{
@@ -234,8 +234,8 @@ namespace DiveBomber::UI
 
 							ImGui::SetCursorPosX((ImGui::GetWindowSize().x - iconSize.x) * 0.5f);
 							ImGui::SetCursorPosY((ImGui::GetWindowSize().y - iconSize.y) * 0.5f);
-							ImGui::Image((ImTextureID)child.icon.iconTexture->GetSRVDescriptorGPUHandle().ptr,
-								ImVec2(iconSize.x, iconSize.y), child.icon.uv0, child.icon.uv1);
+							ImGui::Image((ImTextureID)child.icon->iconTexture->GetSRVDescriptorGPUHandle().ptr,
+								ImVec2(iconSize.x, iconSize.y), child.icon->uv0, child.icon->uv1);
 						ImGui::EndChild();
 					
 						if (textWidth < itemSize.x)
@@ -255,8 +255,8 @@ namespace DiveBomber::UI
 						iconSize = ImVec2(iconSize.x * listSize.y, iconSize.y * listSize.y);
 
 						ImGui::SetCursorPosY((ImGui::GetWindowSize().y - iconSize.y) * 0.5f);
-						ImGui::Image((ImTextureID)child.icon.iconTexture->GetSRVDescriptorGPUHandle().ptr,
-							ImVec2(iconSize.x, iconSize.y), child.icon.uv0, child.icon.uv1);
+						ImGui::Image((ImTextureID)child.icon->iconTexture->GetSRVDescriptorGPUHandle().ptr,
+							ImVec2(iconSize.x, iconSize.y), child.icon->uv0, child.icon->uv1);
 
 						ImGui::SameLine();
 
@@ -275,7 +275,7 @@ namespace DiveBomber::UI
 					{
 						if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 						{
-							if (child.children.size() > 0)
+							if (fs::is_directory(child.path))
 							{
 								currentSelectedFileIDs.clear();
 								if (selectedTreeNodeStack.top() != &child)
@@ -368,27 +368,27 @@ namespace DiveBomber::UI
 		}
 	}
 
-	void ResourceBrowser::SetIcon(Icon& icon, UINT iconIndex, UINT size) noexcept
+	void ResourceBrowser::SetIcon(std::shared_ptr<Icon> icon, UINT iconIndex, UINT size) noexcept
 	{
-		icon.iconTexture = iconAtlasTexture;
-		GetSpecificIconUVFromAtlas(iconIndex, size, icon.uv0, icon.uv1);
+		icon->iconTexture = iconAtlasTexture;
+		GetSpecificIconUVFromAtlas(iconIndex, size, icon->uv0, icon->uv1);
 	}
 
-	void ResourceBrowser::RecursiveFilePath(fs::path path, FileTreeNode& inputFileTree) noexcept
+	void ResourceBrowser::RecursiveFilePath(fs::path path, FileTreeNode& inputFileTree)
 	{
 		inputFileTree.id = fileTreeIDCounter++;
 		inputFileTree.path = path;
-		inputFileTree.icon = iconModeClosedFolder;
+		inputFileTree.icon = fileIconClosedFolder;
 		for (auto const& dir_entry : fs::directory_iterator(path))
 		{
 			FileTreeNode childFileNode;
 
 			if (dir_entry.is_directory())
 			{
-				//if (dir_entry.path().filename() == L"Cache")
-				//{
-				//	continue;
-				//}
+				if (dir_entry.path().filename() == L"Cache")
+				{
+					continue;
+				}
 				RecursiveFilePath(dir_entry, childFileNode);
 			}
 			else
@@ -396,26 +396,42 @@ namespace DiveBomber::UI
 				childFileNode.id = fileTreeIDCounter++;
 				childFileNode.path = dir_entry;
 
-				if (!childFileNode.path.stem().wstring().contains(L"#") && (
-					childFileNode.path.extension() == L".dds" ||
-					childFileNode.path.extension() == L".png" ||
-					childFileNode.path.extension() == L".jpg" ||
-					childFileNode.path.extension() == L".tga" ||
-					childFileNode.path.extension() == L".hdr" ||
-					childFileNode.path.extension() == L".exr"))
+				if (childFileNode.path.extension() == L".deasset")
 				{
-					childFileNode.icon.iconTexture = GlobalResourceManager::Resolve<Texture>
-						(childFileNode.path.stem().wstring() + L"#DERBIcon" + childFileNode.path.extension().wstring());
-					Graphics::GetInstance().ExecuteCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
-				}
-				else if (childFileNode.path.stem().wstring().contains(L"#DERBIcon"))
-				{
-					childFileNode.icon.iconTexture = GlobalResourceManager::Resolve<Texture>(childFileNode.path.filename());
-					Graphics::GetInstance().ExecuteCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
+					json config;
+					std::ifstream rawFile(childFileNode.path);
+					if (!rawFile.is_open())
+					{
+						throw std::exception("Unable to open config file");
+					}
+					rawFile >> config;
+					rawFile.close();
+					switch ((ConfigFileType)config["ConfigFileType"])
+					{
+					case ConfigFileType::CFT_Material:
+						childFileNode.icon = fileIconMaterial;
+						break;
+					case ConfigFileType::CFT_Texture:
+						childFileNode.icon = std::make_shared<Icon>();
+						childFileNode.icon->iconTexture = GlobalResourceManager::Resolve<Texture>
+							(childFileNode.path.stem().wstring() + L"#DERBIcon" + childFileNode.path.extension().wstring());
+						Graphics::GetInstance().ExecuteCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
+						const D3D12_RESOURCE_DESC texDesc = childFileNode.icon->iconTexture->GetTextureBuffer()->GetDesc();
+						const float XYRatio = texDesc.Width / (float)texDesc.Height;
+						if (XYRatio > 1)
+						{
+							childFileNode.icon->XYRatio.y /= XYRatio;
+						}
+						else
+						{
+							childFileNode.icon->XYRatio.x *= XYRatio;
+						}
+						break;
+					}
 				}
 				else
 				{
-					childFileNode.icon = iconModeClosedFolder;
+					continue;
 				}
 			}
 
