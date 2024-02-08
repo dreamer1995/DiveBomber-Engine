@@ -31,10 +31,10 @@ namespace DiveBomber::DEResource
 	namespace fs = std::filesystem;
 	namespace dx = DirectX;
 
-	Texture::Texture(const std::wstring& inputName, TextureParam inputTextureDesc)
+	Texture::Texture(const std::wstring& inputName)
 		:
 		Resource(inputName),
-		textureParam(inputTextureDesc),
+		textureParam(TextureParam{}),
 		descriptorAllocation(Graphics::GetInstance().GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)->Allocate(1u))
 	{
 		if (name.contains(L"#DERBIcon"))
@@ -56,6 +56,13 @@ namespace DiveBomber::DEResource
 	Texture::~Texture()
 	{
 		ResourceStateTracker::RemoveGlobalResourceState(textureBuffer);
+	}
+
+	void Texture::ReloadTexture(const std::wstring& inputName)
+	{
+		name = inputName;
+		GetConfig();
+		LoadTexture();
 	}
 
 	UINT Texture::GetSRVDescriptorHeapOffset() const noexcept

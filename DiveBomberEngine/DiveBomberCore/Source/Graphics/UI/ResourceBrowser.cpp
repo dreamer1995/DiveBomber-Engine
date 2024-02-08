@@ -322,7 +322,20 @@ namespace DiveBomber::UI
 					{
 						currentSelectedFileIDs.clear();
 						currentSelectedFileIDs.emplace(child.id);
-						ImGui::Text("This a popup for \"%d\"!", child.id);
+						switch (child.fileNodeType)
+						{
+						case (UINT)ConfigFileType::CFT_Material:
+							MaterialResourcePopup();
+							break;
+						case (UINT)ConfigFileType::CFT_Texture:
+							TextureResourcePopup();
+							break;
+						}
+						ImGui::SeparatorText("Standard");
+						if (ImGui::MenuItem("Delete", NULL))
+						{
+							std::cout << "Delete " + child.path.stem().string() << std::endl;
+						}
 						ImGui::EndPopup();
 					}
 			if (browserFileIconMode)
@@ -381,6 +394,24 @@ namespace DiveBomber::UI
 		GetSpecificIconUVFromAtlas(iconIndex, size, icon->uv0, icon->uv1);
 	}
 
+	void ResourceBrowser::MaterialResourcePopup()
+	{
+		ImGui::SeparatorText("Material");
+		if (ImGui::MenuItem("Refresh", NULL))
+		{
+			std::cout << "Refresh Material!" << std::endl;
+		}
+	}
+
+	void ResourceBrowser::TextureResourcePopup()
+	{
+		ImGui::SeparatorText("Texture");
+		if (ImGui::MenuItem("Refresh", NULL))
+		{
+			std::cout << "Refresh Texture!" << std::endl;
+		}
+	}
+
 	void ResourceBrowser::RecursiveFilePath(fs::path path, FileTreeNode& inputFileTree)
 	{
 		inputFileTree.id = fileTreeIDCounter++;
@@ -417,6 +448,7 @@ namespace DiveBomber::UI
 					{
 					case ConfigFileType::CFT_Material:
 						childFileNode.icon = fileIconMaterial;
+						childFileNode.fileNodeType = (UINT)ConfigFileType::CFT_Material;
 						break;
 					case ConfigFileType::CFT_Texture:
 						childFileNode.icon = std::make_shared<Icon>();
@@ -433,6 +465,7 @@ namespace DiveBomber::UI
 						{
 							childFileNode.icon->XYRatio.x *= XYRatio;
 						}
+						childFileNode.fileNodeType = (UINT)ConfigFileType::CFT_Texture;
 						break;
 					}
 				}

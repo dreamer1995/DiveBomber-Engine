@@ -53,6 +53,7 @@ namespace DiveBomber::UI
 			std::vector<FileTreeNode> children;
 			bool expanded = false;
 			std::shared_ptr<Icon> icon;
+			UINT fileNodeType = 99u;
 		};
 
 	private:
@@ -61,6 +62,8 @@ namespace DiveBomber::UI
 		void DrawContents(FileTreeNode& inputTree);
 		void GetSpecificIconUVFromAtlas(UINT index, UINT iconSize, ImVec2& uv0, ImVec2& uv1) noexcept;
 		void SetIcon(std::shared_ptr<Icon> icon, UINT iconIndex, UINT size) noexcept;
+		void MaterialResourcePopup();
+		void TextureResourcePopup();
 
 	private:
 		UINT fileTreeIDCounter = 0;

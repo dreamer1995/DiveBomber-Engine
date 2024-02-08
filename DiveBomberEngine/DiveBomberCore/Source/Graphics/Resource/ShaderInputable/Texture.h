@@ -59,10 +59,10 @@ namespace DiveBomber::DEResource
 		};
 
 	public:
-		Texture(const std::wstring& inputName, TextureParam inputTextureDesc = TextureParam{});
+		Texture(const std::wstring& inputName);
 		~Texture();
 
-		void ChangeTexture(const std::wstring& inputName);
+		void ReloadTexture(const std::wstring& inputName);
 		[[nodiscard]] UINT GetSRVDescriptorHeapOffset() const noexcept override;
 		[[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetSRVDescriptorCPUHandle() const noexcept;
 		[[nodiscard]] D3D12_GPU_DESCRIPTOR_HANDLE GetSRVDescriptorGPUHandle() const noexcept;
