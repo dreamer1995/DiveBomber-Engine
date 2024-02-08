@@ -318,6 +318,13 @@ namespace DiveBomber::UI
 							}
 						}
 					}
+					if (ImGui::BeginPopupContextItem(NULL, ImGuiPopupFlags_MouseButtonRight)) // <-- use last item id as popup id
+					{
+						currentSelectedFileIDs.clear();
+						currentSelectedFileIDs.emplace(child.id);
+						ImGui::Text("This a popup for \"%d\"!", child.id);
+						ImGui::EndPopup();
+					}
 			if (browserFileIconMode)
 			{
 				ImGui::EndChild();
@@ -332,7 +339,7 @@ namespace DiveBomber::UI
 		}
 
 		// When mouse within window, mouse released on nothing.
-		if (ImGui::IsMouseReleased(0) && ImGui::IsWindowHovered() && !checkSelect)
+		if (ImGui::IsMouseReleased(ImGuiMouseButton_Left) && ImGui::IsWindowHovered() && !checkSelect)
 		{
 			currentSelectedFileIDs.clear();
 		}

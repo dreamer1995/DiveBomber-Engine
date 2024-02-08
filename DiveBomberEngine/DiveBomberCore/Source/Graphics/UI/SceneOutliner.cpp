@@ -39,7 +39,7 @@ namespace DiveBomber::UI
 					}
 				}
 				// When mouse within window, mouse released on nothing.
-				if (ImGui::IsMouseReleased(0) && ImGui::IsWindowHovered() && !checkSelect)
+				if (ImGui::IsMouseReleased(ImGuiMouseButton_Left) && ImGui::IsWindowHovered() && !checkSelect)
 				{
 					currentSelectedIndex = -1;
 				}
