@@ -134,7 +134,7 @@ namespace DiveBomber
 			const fs::path textureFolder(ProjectDirectoryW L"Asset\\Texture");
 			for (auto const& dir_entry : fs::directory_iterator(textureFolder))
 			{
-				if (dir_entry.path().extension() == ".deasset")
+				if (dir_entry.path().extension() != ".deasset")
 				{
 					std::shared_ptr<DEResource::Texture> texture = GlobalResourceManager::Resolve<Texture>(dir_entry.path().filename());
 				}
