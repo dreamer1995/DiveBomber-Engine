@@ -4,7 +4,7 @@
         {
             "Name": "BaseMap",
             "Type": 4,
-            "Value": "rustediron2_basecolor.png"
+            "Value": "Texture/rustediron2_basecolor.png"
         },
         {
             "Name": "RustMap",

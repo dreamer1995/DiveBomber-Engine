@@ -282,7 +282,7 @@
     <None Include="Shader\Include\Struct\Lighting.hlsli" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Resource\Resource.rc" />
+    <ResourceCompile Include="Resource\Icon\Resource.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

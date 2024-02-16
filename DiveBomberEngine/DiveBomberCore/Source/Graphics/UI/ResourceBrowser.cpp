@@ -328,7 +328,7 @@ namespace DiveBomber::UI
 							MaterialResourcePopup();
 							break;
 						case (UINT)ConfigFileType::CFT_Texture:
-							TextureResourcePopup();
+							TextureResourcePopup(child);
 							break;
 						}
 						ImGui::SeparatorText("Standard");
@@ -403,12 +403,14 @@ namespace DiveBomber::UI
 		}
 	}
 
-	void ResourceBrowser::TextureResourcePopup()
+	void ResourceBrowser::TextureResourcePopup(FileTreeNode& inputTree)
 	{
 		ImGui::SeparatorText("Texture");
 		if (ImGui::MenuItem("Refresh", NULL))
 		{
-			std::cout << "Refresh Texture!" << std::endl;
+
+			std::shared_ptr<DEResource::Texture> texture = GlobalResourceManager::Resolve<Texture>(inputTree.path.filename());
+			texture->ReloadTexture(inputTree.path.filename());
 		}
 	}
 

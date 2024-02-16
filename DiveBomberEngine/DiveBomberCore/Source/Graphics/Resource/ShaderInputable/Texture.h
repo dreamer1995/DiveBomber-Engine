@@ -20,14 +20,30 @@ namespace DiveBomber::DEResource
 	class Texture : public Resource, public ShaderInputable
 	{
 	public:
+		enum class TextureDimension
+		{
+			TDS_Texture1D = 2,
+			TDS_Texture1D_Array = 3,
+			TDS_Texture2D = 4,
+			TDS_Texture2D_Array = 5,
+			TDS_Texture3D = 8,
+			TDS_TextureCube = 9,
+			TDS_TextureCube_Array = 10,
+		};
+
 		struct TextureParam
 		{
 			bool sRGB = false;
-			bool generateMip = true;
-			bool cubeMap = false;
-			bool globalIllumination = false;
-			bool textureArray = false;
-			bool texture3D = false;
+			bool generateMip = false;
+			TextureDimension textureDimension = TextureDimension::TDS_Texture2D;
+		};
+
+		enum class TextureLoadType
+		{
+			TLT_Standard,
+			TLT_Icon,
+			TLT_DiffuseIrradiance,
+			TLT_SpecularMip
 		};
 
 		struct alignas(16) TextureMipMapGenerateConstant
@@ -59,27 +75,27 @@ namespace DiveBomber::DEResource
 		};
 
 	public:
-		Texture(const std::wstring& inputName);
+		Texture(const fs::path& inputPath, TextureLoadType inputTextureLoadType = TextureLoadType::TLT_Standard);
 		~Texture();
 
-		void ReloadTexture(const std::wstring& inputName);
+		void ReloadTexture(const fs::path& inputPath);
 		[[nodiscard]] UINT GetSRVDescriptorHeapOffset() const noexcept override;
 		[[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetSRVDescriptorCPUHandle() const noexcept;
 		[[nodiscard]] D3D12_GPU_DESCRIPTOR_HANDLE GetSRVDescriptorGPUHandle() const noexcept;
 		[[nodiscard]] wrl::ComPtr<ID3D12Resource> GetTextureBuffer() const noexcept;
+		static void UpdateConfig(const fs::path& outputPath, const TextureParam inputTextureParam);
 		
 		std::wstring GetName() const noexcept;
 		template<typename...Ignore>
-		[[nodiscard]] static std::string GenerateUID(const std::wstring& name, Ignore&&...ignore)
+		[[nodiscard]] static std::string GenerateUID(const std::wstring& name, TextureLoadType textureLoadType, Ignore&&...ignore)
 		{
 			using namespace std::string_literals;
-			return typeid(Texture).name() + "#"s + Utility::ToNarrow(name);
+			return typeid(Texture).name() + "#"s + Utility::ToNarrow(name) + textureLoadType;
 		}
 		[[nodiscard]] std::string GetUID() const noexcept override;
 
 	protected:
 		void GetConfig();
-		void UpdateConfig(const TextureParam inputTextureParam);
 		void LoadTexture();
 		void GenerateCache(const wrl::ComPtr<ID3D12Resource>& outputTextureBuffer, const std::filesystem::path& outputPath, bool cubemap = false);
 		void GenerateCache(const dx::Image* images, size_t numImages, const dx::TexMetadata texMetaData, const std::filesystem::path& outputPath);
@@ -90,13 +106,16 @@ namespace DiveBomber::DEResource
 		void GenerateIconMap(wrl::ComPtr<ID3D12Resource>& uavBuffer, const std::filesystem::path& outputPath);
 		[[nodiscard]] DXGI_FORMAT GetUAVCompatableFormat(DXGI_FORMAT format);
 		[[nodiscard]] bool CheckSRGBFormat(DXGI_FORMAT format);
+		void GetConfigFilePath();
+		[[nodiscard]] D3D12_RESOURCE_DIMENSION SRVDimensionToResourceDimension(TextureDimension textureDimension) noexcept;
 
 	protected:
 		json config;
+		fs::path filePath;
 		fs::path configFilePath;
 		std::shared_ptr<DX::DescriptorAllocation> descriptorAllocation;
 		wrl::ComPtr<ID3D12Resource> textureBuffer;
 		TextureParam textureParam;
-		bool iconLoadMode = false;
+		TextureLoadType textureLoadType;
 	};
 }

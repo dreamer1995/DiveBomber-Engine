@@ -1,8 +1,0 @@
-{
-    "ConfigFileType": 0,
-    "Param": null,
-    "ShaderName": "GenerateCubeMap",
-    "Stage": [
-        5
-    ]
-}

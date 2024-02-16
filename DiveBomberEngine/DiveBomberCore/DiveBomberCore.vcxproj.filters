@@ -222,11 +222,11 @@
     <None Include="Shader\Include\Struct\Lighting.hlsli" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Resource\Resource.rc" />
-  </ItemGroup>
-  <ItemGroup>
     <Filter Include="imgui">
       <UniqueIdentifier>{404f5749-9791-4b56-ab44-657bcbba4c7d}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource\Icon\Resource.rc" />
   </ItemGroup>
 </Project>

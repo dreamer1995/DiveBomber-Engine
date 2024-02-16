@@ -12,6 +12,7 @@
 #include "..\..\DX\CommandQueue.h"
 
 #include <fstream>
+#include <format>
 #include <..\DirectXTex\Auxiliary\DirectXTexEXR.h>
 #pragma comment(lib,"DirectXTex.lib")
 
@@ -31,25 +32,16 @@ namespace DiveBomber::DEResource
 	namespace fs = std::filesystem;
 	namespace dx = DirectX;
 
-	Texture::Texture(const std::wstring& inputName)
+	Texture::Texture(const fs::path& inputPath, TextureLoadType inputTextureLoadType)
 		:
-		Resource(inputName),
+		Resource(inputPath.filename()),
+		filePath(ProjectDirectoryW L"Asset\\" + inputPath.wstring()),
+		textureLoadType(inputTextureLoadType),
 		textureParam(TextureParam{}),
 		descriptorAllocation(Graphics::GetInstance().GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)->Allocate(1u))
 	{
-		if (name.contains(L"#DERBIcon"))
-		{
-			iconLoadMode = true;
-		}
-		if (iconLoadMode)
-		{
-			textureParam.generateMip = false;
-			textureParam.sRGB = true;
-		}
-		else
-		{
-			GetConfig();
-		}
+		GetConfigFilePath();
+		GetConfig();
 		LoadTexture();
 	}
 
@@ -58,9 +50,12 @@ namespace DiveBomber::DEResource
 		ResourceStateTracker::RemoveGlobalResourceState(textureBuffer);
 	}
 
-	void Texture::ReloadTexture(const std::wstring& inputName)
+	void Texture::ReloadTexture(const fs::path& inputPath)
 	{
-		name = inputName;
+		name = inputPath.filename();
+		filePath = ProjectDirectoryW L"Asset\\" + inputPath.wstring();
+
+		GetConfigFilePath();
 		GetConfig();
 		LoadTexture();
 	}
@@ -92,50 +87,48 @@ namespace DiveBomber::DEResource
 
 	std::string Texture::GetUID() const noexcept
 	{
-		return GenerateUID(ProjectDirectoryW L"Asset\\Texture\\" + name);
+		return GenerateUID(filePath, textureLoadType);
 	}
 
 	void Texture::GetConfig()
 	{
-		configFilePath = ProjectDirectoryW L"Asset\\Texture\\" + name;
-		configFilePath.replace_extension(".deasset");
-		if (!fs::exists(configFilePath))
+		std::ifstream rawFile(configFilePath);
+		if (!rawFile.is_open())
 		{
-			UpdateConfig(textureParam);
+			throw std::exception(std::format("Unable to open config file {}", name).c_str());
 		}
-		else
-		{
-			std::ifstream rawFile(configFilePath);
-			if (!rawFile.is_open())
-			{
-				throw std::exception("Unable to open script file");
-			}
-			rawFile >> config;
+		rawFile >> config;
 
-			textureParam.sRGB = config["sRGB"];
+		textureParam.sRGB = config["sRGB"];
+		switch (textureLoadType)
+		{
+		case DiveBomber::DEResource::Texture::TextureLoadType::TLT_Icon:
+			textureParam.generateMip = true;
+			textureParam.textureDimension = TextureDimension::TDS_Texture2D;
+			break;
+		case DiveBomber::DEResource::Texture::TextureLoadType::TLT_DiffuseIrradiance:
+		case DiveBomber::DEResource::Texture::TextureLoadType::TLT_SpecularMip:
+			textureParam.generateMip = true;
+			textureParam.textureDimension = TextureDimension::TDS_TextureCube;
+			break;
+		default:
 			textureParam.generateMip = config["GenerateMip"];
-			textureParam.cubeMap = config["CubeMap"];
-			textureParam.globalIllumination = config["GlobalIllumination"];
-			textureParam.textureArray = config["TextureArray"];
-			textureParam.texture3D = config["Texture3D"];
-			rawFile.close();
+			textureParam.textureDimension = config["TextureParam"];
+			break;
 		}
+		rawFile.close();
 	}
 
-	void Texture::UpdateConfig(const TextureParam inputTextureParam)
+	void Texture::UpdateConfig(const fs::path& outputPath, const TextureParam inputTextureParam)
 	{
-		textureParam = inputTextureParam;
-
+		json config;
 		config["ConfigFileType"] = 1u;
 		config["sRGB"] = inputTextureParam.sRGB;
 		config["GenerateMip"] = inputTextureParam.generateMip;
-		config["CubeMap"] = inputTextureParam.cubeMap;
-		config["GlobalIllumination"] = inputTextureParam.globalIllumination;
-		config["TextureArray"] = inputTextureParam.textureArray;
-		config["Texture3D"] = inputTextureParam.texture3D;
+		config["TextureParam"] = inputTextureParam.textureDimension;
 
 		// write prettified JSON to another file
-		std::ofstream outFile(configFilePath);
+		std::ofstream outFile(outputPath);
 		outFile << std::setw(4) << config << std::endl;
 		outFile.close();
 	}
@@ -166,6 +159,28 @@ namespace DiveBomber::DEResource
 
 	void Texture::LoadTexture()
 	{
+		fs::path cachePath(ProjectDirectoryW L"Cache\\Texture\\" + name);
+		cachePath.replace_extension(".dds");
+		fs::path loadPath;
+
+		switch (textureLoadType)
+		{
+		case DiveBomber::DEResource::Texture::TextureLoadType::TLT_Standard:
+			loadPath = cachePath;
+			break;
+		case DiveBomber::DEResource::Texture::TextureLoadType::TLT_Icon:
+			loadPath = cachePath.parent_path().wstring() + cachePath.stem().wstring() + L"#DERBIcon" + cachePath.extension().wstring();
+			break;
+		case DiveBomber::DEResource::Texture::TextureLoadType::TLT_DiffuseIrradiance:
+			loadPath = cachePath.parent_path().wstring() + cachePath.stem().wstring() + L"#DiffuseIrradiance" + cachePath.extension().wstring();
+			break;
+		case DiveBomber::DEResource::Texture::TextureLoadType::TLT_SpecularMip:
+			loadPath = cachePath.parent_path().wstring() + cachePath.stem().wstring() + L"#SpecularIBL" + cachePath.extension().wstring();
+			break;
+		}
+
+		// check what should be load
+#if EditorMode
 		bool generateCache = false;
 		bool generateIconCache = false;
 		bool generateMip = false;
@@ -173,41 +188,69 @@ namespace DiveBomber::DEResource
 		bool generateDiffuseIrradiance = false;
 		bool generateSpecularMip = false;
 
-		// check what should be load
-		fs::path filePath(ProjectDirectoryW L"Asset\\Texture\\" + name);
-		fs::path cachePath(ProjectDirectoryW L"Cache\\Texture\\" + name);
-		cachePath.replace_extension(".dds");
-		if (!fs::exists(cachePath) && !iconLoadMode)
+		fs::path outPutPath;
+		switch (textureLoadType)
 		{
-			generateCache = true;
+		case DiveBomber::DEResource::Texture::TextureLoadType::TLT_Standard:
+			if (!fs::exists(loadPath))
+			{
+				generateCache = true;
+				outPutPath = loadPath;
+				loadPath = filePath;
+			}
+			break;
+		case DiveBomber::DEResource::Texture::TextureLoadType::TLT_Icon:
+			if (!fs::exists(loadPath))
+			{
+				generateIconCache = true;
+				outPutPath = loadPath;
+				// if cache can generate icon, use cache, not for cube map
+				if ((UINT)textureParam.textureDimension < 9u && fs::exists(cachePath))
+				{
+					loadPath = cachePath;
+				}
+				else
+				{
+					loadPath = filePath;
+				}
+			}
+			break;
+		case DiveBomber::DEResource::Texture::TextureLoadType::TLT_DiffuseIrradiance:
+			if (!fs::exists(loadPath))
+			{
+				generateDiffuseIrradiance = true;
+				outPutPath = loadPath;
+				if (fs::exists(cachePath))
+				{
+					loadPath = cachePath;
+				}
+				else
+				{
+					loadPath = filePath;
+				}
+			}
+			break;
+		case DiveBomber::DEResource::Texture::TextureLoadType::TLT_SpecularMip:
+			if (!fs::exists(loadPath))
+			{
+				generateSpecularMip = true;
+				outPutPath = loadPath;
+				if (fs::exists(cachePath))
+				{
+					loadPath = cachePath;
+				}
+				else
+				{
+					loadPath = filePath;
+				}
+			}
+			break;
 		}
-		else
-		{
-			filePath = cachePath;
-		}
+#endif // EditorMode
 
-		fs::path iconPath(cachePath);
-		iconPath.replace_filename(fs::path(name).stem().wstring() + L"#DERBIcon" + cachePath.extension().wstring());
-		if (!fs::exists(iconPath) && !iconLoadMode)
+		if (!fs::exists(loadPath))
 		{
-			generateIconCache = true;
-		}
-
-		fs::path diffuseIrradiancePath(ProjectDirectoryW L"Cache\\Texture\\" + cachePath.stem().wstring() + L"#DiffuseIrradiance.dds");
-		if (textureParam.globalIllumination && !fs::exists(diffuseIrradiancePath) && !iconLoadMode)
-		{
-			generateDiffuseIrradiance = true;
-		}
-
-		fs::path specularMipPath(ProjectDirectoryW L"Cache\\Texture\\" + cachePath.stem().wstring() + L"#SpecularIBL.dds");
-		if (textureParam.globalIllumination && !fs::exists(specularMipPath) && !iconLoadMode)
-		{
-			generateSpecularMip = true;
-		}
-
-		if (!fs::exists(filePath))
-		{
-			throw std::exception("File not found.");
+			throw std::exception(std::format("Texture File {} not found.", name).c_str());
 		}
 
 		dx::TexMetadata metadata;
@@ -215,61 +258,58 @@ namespace DiveBomber::DEResource
 
 		HRESULT hr;
 
-		if (filePath.extension() == ".dds")
+		bool readSRGB = false;
+		if (loadPath.extension() == ".dds")
 		{
 			GFX_THROW_INFO(LoadFromDDSFile(
-				filePath.c_str(),
+				loadPath.c_str(),
 				dx::DDS_FLAGS_NONE,
 				&metadata,
 				scratchImage));
 		}
-		else if (filePath.extension() == ".hdr")
+		else if (loadPath.extension() == ".hdr")
 		{
 			GFX_THROW_INFO(LoadFromHDRFile(
-				filePath.c_str(),
+				loadPath.c_str(),
 				&metadata,
 				scratchImage));
+			readSRGB = true;
 		}
-		else if (filePath.extension() == ".tga")
+		else if (loadPath.extension() == ".tga")
 		{
 			GFX_THROW_INFO(LoadFromTGAFile(
-				filePath.c_str(),
+				loadPath.c_str(),
 				&metadata,
 				scratchImage));
 		}
-		else if (filePath.extension() == ".exr")
+		else if (loadPath.extension() == ".exr")
 		{
 			GFX_THROW_INFO(LoadFromEXRFile(
-				filePath.c_str(),
+				loadPath.c_str(),
 				&metadata,
 				scratchImage));
+			readSRGB = true;
 		}
 		else
 		{
 			GFX_THROW_INFO(LoadFromWICFile(
-				filePath.c_str(),
+				loadPath.c_str(),
 				dx::WIC_FLAGS_NONE,
 				&metadata,
 				scratchImage));
 		}
 
 		D3D12_RESOURCE_DESC texDesc{
-			.Dimension = textureParam.texture3D ? D3D12_RESOURCE_DIMENSION_TEXTURE3D : D3D12_RESOURCE_DIMENSION_TEXTURE2D,
+			.Dimension = SRVDimensionToResourceDimension(textureParam.textureDimension),
 			.Width = (UINT)metadata.width,
 			.Height = (UINT)metadata.height,
-			.DepthOrArraySize = (UINT16)metadata.arraySize,
+			.DepthOrArraySize = (UINT16)std::max(metadata.arraySize, metadata.depth),
 			.MipLevels = textureParam.generateMip ? 0u : 1u,
 			.Format = CheckSRGBFormat(metadata.format) ? DXGI_FORMAT_R8G8B8A8_UNORM : metadata.format,
 			.SampleDesc = {.Count = 1 },
 			.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN,
 			.Flags = D3D12_RESOURCE_FLAG_NONE,
 		};
-
-		bool readSRGB = false;
-		if(texDesc.Format == DXGI_FORMAT_R16G16B16A16_FLOAT || texDesc.Format == DXGI_FORMAT_R32G32B32_FLOAT || texDesc.Format == DXGI_FORMAT_R32G32B32A32_FLOAT)
-		{
-			readSRGB = true;
-		}
 
 		const CD3DX12_HEAP_PROPERTIES heapProps{ D3D12_HEAP_TYPE_DEFAULT };
 		GFX_THROW_INFO(Graphics::GetInstance().GetDevice()->CreateCommittedResource(
@@ -330,12 +370,12 @@ namespace DiveBomber::DEResource
 
 		D3D12_RESOURCE_DESC resDesc = textureBuffer->GetDesc();
 
+#if EditorMode
 		wrl::ComPtr<ID3D12Resource> cubeSourceTextureBuffer;
 		// second round, check if should generate mipmap / cubemap
-		if (textureParam.cubeMap && metadata.arraySize == 1 && !iconLoadMode)
+		if ((UINT)textureParam.textureDimension > 8u && metadata.arraySize == 1)
 		{
 			generateCube = true;
-			generateCache = true;
 
 			cubeSourceTextureBuffer = textureBuffer;
 
@@ -344,7 +384,6 @@ namespace DiveBomber::DEResource
 			cubeResDesc.Width = cubeResDesc.Height / 2;
 			cubeResDesc.Height = (UINT)cubeResDesc.Width;
 			cubeResDesc.DepthOrArraySize = 6u;
-			cubeResDesc.MipLevels = textureParam.generateMip ? 0u : 1u;
 
 			const CD3DX12_HEAP_PROPERTIES heapProps{ D3D12_HEAP_TYPE_DEFAULT };
 			GFX_THROW_INFO(Graphics::GetInstance().GetDevice()->CreateCommittedResource(
@@ -360,10 +399,9 @@ namespace DiveBomber::DEResource
 		}
 
 		// second round, check if should generate mipmap / cubemap
-		if (textureParam.generateMip && (metadata.mipLevels < resDesc.MipLevels) && !iconLoadMode)
+		if (textureParam.generateMip && (metadata.mipLevels < resDesc.MipLevels))
 		{
 			generateMip = true;
-			generateCache = true;
 		}
 
 		wrl::ComPtr<ID3D12Resource> aliasBuffer;
@@ -371,10 +409,8 @@ namespace DiveBomber::DEResource
 		// make a saperate uav buffer
 		if (generateCube || generateMip)
 		{
-			D3D12_RESOURCE_DESC resDesc = textureBuffer->GetDesc();
-
 			// Describe an alias resource that is used to copy the original texture.
-			D3D12_RESOURCE_DESC aliasDesc = resDesc;
+			D3D12_RESOURCE_DESC aliasDesc = textureBuffer->GetDesc();
 			// Placed resources can't be render targets or depth-stencil views.
 			aliasDesc.Flags &= ~(D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET | D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL);
 
@@ -382,7 +418,7 @@ namespace DiveBomber::DEResource
 			// mipmapping of the original texture.
 			D3D12_RESOURCE_DESC uavDesc = aliasDesc;   
 			// The flags for the UAV description must match that of the alias description.
-			uavDesc.Format = GetUAVCompatableFormat(resDesc.Format);
+			uavDesc.Format = GetUAVCompatableFormat(aliasDesc.Format);
 			uavDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
 
 			D3D12_RESOURCE_DESC resourceDescs[] = {
@@ -450,6 +486,8 @@ namespace DiveBomber::DEResource
 			GenerateCubeMap(uavBuffer, cubeSourceTextureBuffer, readSRGB);
 		}
 
+		ResourceStateTracker::RemoveGlobalResourceState(cubeSourceTextureBuffer);
+
 		if (generateMip)
 		{
 			GenerateMipMaps(uavBuffer);
@@ -457,87 +495,85 @@ namespace DiveBomber::DEResource
 
 		if (generateIconCache)
 		{
-			if (!generateMip || (textureParam.cubeMap && metadata.arraySize == 1))
+			//if (generateCube)
+			//{
+			//	wrl::ComPtr<ID3D12Resource> iconBuffer;
+			//	D3D12_RESOURCE_DESC iconResDesc = resDesc;
+			//	iconResDesc.Alignment = 0u;
+			//	iconResDesc.MipLevels = 0u;
+			//	iconResDesc.Format = GetUAVCompatableFormat(resDesc.Format);
+			//	iconResDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
+
+			//	const CD3DX12_HEAP_PROPERTIES heapProps{ D3D12_HEAP_TYPE_DEFAULT };
+			//	GFX_THROW_INFO(Graphics::GetInstance().GetDevice()->CreateCommittedResource(
+			//		&heapProps,
+			//		D3D12_HEAP_FLAG_NONE,
+			//		&iconResDesc,
+			//		D3D12_RESOURCE_STATE_COMMON,
+			//		nullptr,
+			//		IID_PPV_ARGS(&iconBuffer)
+			//	));
+
+			//	iconResDesc = iconBuffer->GetDesc();
+			//	if (metadata.mipLevels < iconResDesc.MipLevels)
+			//	{
+			//		{
+			//			wrl::ComPtr<ID3D12Resource> textureUploadBuffer;
+
+			//			const CD3DX12_HEAP_PROPERTIES heapProps{ D3D12_HEAP_TYPE_UPLOAD };
+			//			const auto uploadBufferSize = GetRequiredIntermediateSize(iconBuffer.Get(), 0u, (UINT)subresourceData.size());
+			//			const auto resourceDesc = CD3DX12_RESOURCE_DESC::Buffer(uploadBufferSize);
+			//			GFX_THROW_INFO(Graphics::GetInstance().GetDevice()->CreateCommittedResource(
+			//				&heapProps,
+			//				D3D12_HEAP_FLAG_NONE,
+			//				&resourceDesc,
+			//				D3D12_RESOURCE_STATE_GENERIC_READ,
+			//				nullptr,
+			//				IID_PPV_ARGS(&textureUploadBuffer)
+			//			));
+
+			//			std::shared_ptr<CommandList> copyCommandList = Graphics::GetInstance().GetCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
+
+			//			UpdateSubresources(
+			//				copyCommandList->GetGraphicsCommandList().Get(),
+			//				iconBuffer.Get(),
+			//				textureUploadBuffer.Get(),
+			//				0, 0u,
+			//				(UINT)subresourceData.size(),
+			//				subresourceData.data()
+			//			);
+
+			//			copyCommandList->TrackResource(textureUploadBuffer);
+
+			//			ResourceStateTracker::AddGlobalResourceState(iconBuffer, D3D12_RESOURCE_STATE_COMMON);
+			//		}
+
+			//		GenerateMipMaps(iconBuffer);
+			//		GenerateIconMap(iconBuffer, outPutPath);
+			//		ResourceStateTracker::RemoveGlobalResourceState(iconBuffer);
+			//	}
+			//	else
+			//	{
+			//		GenerateIconMap(uavBuffer, outPutPath);
+			//	}
+			//}
+			//else
 			{
-				wrl::ComPtr<ID3D12Resource> iconBuffer;
-				D3D12_RESOURCE_DESC iconResDesc = resDesc;
-				iconResDesc.Alignment = 0u;
-				iconResDesc.MipLevels = 0u;
-				iconResDesc.Format = GetUAVCompatableFormat(resDesc.Format);
-				iconResDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
-
-				const CD3DX12_HEAP_PROPERTIES heapProps{ D3D12_HEAP_TYPE_DEFAULT };
-				GFX_THROW_INFO(Graphics::GetInstance().GetDevice()->CreateCommittedResource(
-					&heapProps,
-					D3D12_HEAP_FLAG_NONE,
-					&iconResDesc,
-					D3D12_RESOURCE_STATE_COMMON,
-					nullptr,
-					IID_PPV_ARGS(&iconBuffer)
-				));
-
-				iconResDesc = iconBuffer->GetDesc();
-				if (metadata.mipLevels < iconResDesc.MipLevels)
-				{
-					{
-						wrl::ComPtr<ID3D12Resource> textureUploadBuffer;
-
-						const CD3DX12_HEAP_PROPERTIES heapProps{ D3D12_HEAP_TYPE_UPLOAD };
-						const auto uploadBufferSize = GetRequiredIntermediateSize(iconBuffer.Get(), 0u, (UINT)subresourceData.size());
-						const auto resourceDesc = CD3DX12_RESOURCE_DESC::Buffer(uploadBufferSize);
-						GFX_THROW_INFO(Graphics::GetInstance().GetDevice()->CreateCommittedResource(
-							&heapProps,
-							D3D12_HEAP_FLAG_NONE,
-							&resourceDesc,
-							D3D12_RESOURCE_STATE_GENERIC_READ,
-							nullptr,
-							IID_PPV_ARGS(&textureUploadBuffer)
-						));
-
-						std::shared_ptr<CommandList> copyCommandList = Graphics::GetInstance().GetCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
-
-						UpdateSubresources(
-							copyCommandList->GetGraphicsCommandList().Get(),
-							iconBuffer.Get(),
-							textureUploadBuffer.Get(),
-							0, 0u,
-							(UINT)subresourceData.size(),
-							subresourceData.data()
-						);
-
-						copyCommandList->TrackResource(textureUploadBuffer);
-
-						ResourceStateTracker::AddGlobalResourceState(iconBuffer, D3D12_RESOURCE_STATE_COMMON);
-					}
-
-					GenerateMipMaps(iconBuffer);
-					GenerateIconMap(iconBuffer, iconPath);
-					ResourceStateTracker::RemoveGlobalResourceState(iconBuffer);
-				}
-				else
-				{
-					GenerateIconMap(uavBuffer, iconPath);
-				}
-			}
-			else
-			{
-				GenerateIconMap(uavBuffer, iconPath);
+				GenerateIconMap(uavBuffer, outPutPath);
 			}
 		}
 
-		ResourceStateTracker::RemoveGlobalResourceState(cubeSourceTextureBuffer);
-
 		if (generateDiffuseIrradiance)
 		{
-			GenerateDiffuseIrradiance(uavBuffer, diffuseIrradiancePath);
+			GenerateDiffuseIrradiance(uavBuffer, outPutPath);
 		}
 
 		if (generateSpecularMip)
 		{
-			GenerateSpecularIBLMipMaps(uavBuffer, specularMipPath);
+			GenerateSpecularIBLMipMaps(uavBuffer, outPutPath);
 		}
 
-		if (aliasBuffer)
+		if (aliasBuffer && textureLoadType == TextureLoadType::TLT_Standard)
 		{
 			Graphics::GetInstance().GetCommandList()->AliasingBarrier(uavBuffer, aliasBuffer);
 			// Copy the alias resource back to the original resource.
@@ -552,26 +588,33 @@ namespace DiveBomber::DEResource
 			ResourceStateTracker::RemoveGlobalResourceState(uavBuffer);
 		}
 
-		if (generateCache)
+		if (generateCache || generateIconCache || generateDiffuseIrradiance || generateSpecularMip)
 		{
-			GenerateCache(textureBuffer, cachePath, textureParam.cubeMap);
+			GenerateCache(textureBuffer, outPutPath, (UINT)textureParam.textureDimension > 8u);
 		}
+#endif // EditorMode
 
 		resDesc = textureBuffer->GetDesc();
 
 		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 		srvDesc.Format = resDesc.Format;
 		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+		srvDesc.ViewDimension = (D3D12_SRV_DIMENSION)textureParam.textureDimension;
 
-		if (textureParam.cubeMap)
+		switch(srvDesc.ViewDimension)
 		{
-			srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURECUBE;
-			srvDesc.TextureCube.MipLevels = resDesc.MipLevels;
-		}
-		else
-		{
-			srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+		case D3D12_SRV_DIMENSION_TEXTURE2D:
 			srvDesc.Texture2D.MipLevels = resDesc.MipLevels;
+		case D3D12_SRV_DIMENSION_TEXTURE2DARRAY:
+			srvDesc.Texture2DArray.MipLevels = resDesc.MipLevels;
+			srvDesc.Texture2DArray.ArraySize = resDesc.DepthOrArraySize;
+			break;
+		case D3D12_SRV_DIMENSION_TEXTURE3D:
+			srvDesc.Texture3D.MipLevels = resDesc.MipLevels;
+			break;
+		case D3D12_SRV_DIMENSION_TEXTURECUBE:
+			srvDesc.TextureCube.MipLevels = resDesc.MipLevels;
+			break;
 		}
 
 		Graphics::GetInstance().GetDevice()->CreateShaderResourceView(textureBuffer.Get(), &srvDesc, descriptorAllocation->GetCPUDescriptorHandle());
@@ -765,9 +808,9 @@ namespace DiveBomber::DEResource
 			((UINT)resDesc.Height + 7u) / 8u,
 			6u);
 
-		GenerateCache(outputCubeTarget, outputPath, true);
+		ResourceStateTracker::RemoveGlobalResourceState(textureBuffer);
 
-		ResourceStateTracker::RemoveGlobalResourceState(outputCubeTarget);
+		textureBuffer = outputCubeTarget;
 	}
 
 	void Texture::GenerateSpecularIBLMipMaps(wrl::ComPtr<ID3D12Resource>& uavBuffer, const std::filesystem::path& outputPath)
@@ -858,9 +901,9 @@ namespace DiveBomber::DEResource
 				6u);
 		}
 
-		GenerateCache(outputCubeTarget, outputPath, true);
+		ResourceStateTracker::RemoveGlobalResourceState(textureBuffer);
 
-		ResourceStateTracker::RemoveGlobalResourceState(outputCubeTarget);
+		textureBuffer = outputCubeTarget;
 	}
 
 	void Texture::GenerateCubeMap(wrl::ComPtr<ID3D12Resource>& uavBuffer, wrl::ComPtr<ID3D12Resource>& cubeSourceTextureBuffer, bool readSRGB)
@@ -871,7 +914,7 @@ namespace DiveBomber::DEResource
 		// Create render request resource
 		const std::wstring generateCubeName(L"GenerateCubeMap");
 
-		std::shared_ptr<Material> material = std::make_shared<Material>(generateCubeName, generateCubeName);
+		std::shared_ptr<Material> material = std::make_shared<Material>(generateCubeName + L"Material", generateCubeName);
 
 		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 		srvDesc.Format = cubeSourceTextureBuffer->GetDesc().Format;
@@ -952,15 +995,62 @@ namespace DiveBomber::DEResource
 
 		iconImage = scratchImage.GetImage(dstMip, 0, 0);
 
-		DirectX::TexMetadata iconTexMetaData = scratchImage.GetMetadata();
-		iconTexMetaData.width = iconImage->width;
-		iconTexMetaData.height = iconImage->height;
-		iconTexMetaData.arraySize = 1u;
-		iconTexMetaData.depth = 1u;
-		iconTexMetaData.mipLevels = 1u;
-		iconTexMetaData.dimension = dx::TEX_DIMENSION_TEXTURE2D;
+		ResourceStateTracker::RemoveGlobalResourceState(textureBuffer);
 
-		GenerateCache(iconImage, 1u, iconTexMetaData, outputPath);
+		resDesc = textureBuffer->GetDesc();
+		resDesc.Alignment = 0;
+		resDesc.MipLevels = 1u;
+
+		HRESULT hr;
+		const CD3DX12_HEAP_PROPERTIES heapProps{ D3D12_HEAP_TYPE_DEFAULT };
+		GFX_THROW_INFO(Graphics::GetInstance().GetDevice()->CreateCommittedResource(
+			&heapProps,
+			D3D12_HEAP_FLAG_NONE,
+			&resDesc,
+			D3D12_RESOURCE_STATE_COMMON,
+			nullptr,
+			IID_PPV_ARGS(&textureBuffer)
+		));
+
+		std::vector<D3D12_SUBRESOURCE_DATA> subresourceData;
+
+		D3D12_SUBRESOURCE_DATA subresourceDataClip = D3D12_SUBRESOURCE_DATA{
+			.pData = iconImage->pixels,
+			.RowPitch = (LONG_PTR)iconImage->rowPitch,
+			.SlicePitch = (LONG_PTR)iconImage->slicePitch,
+		};
+		subresourceData.emplace_back(subresourceDataClip);
+
+		{
+			wrl::ComPtr<ID3D12Resource> textureUploadBuffer;
+
+			const CD3DX12_HEAP_PROPERTIES heapProps{ D3D12_HEAP_TYPE_UPLOAD };
+			const auto uploadBufferSize = GetRequiredIntermediateSize(textureBuffer.Get(), 0u, (UINT)subresourceData.size());
+			const auto resourceDesc = CD3DX12_RESOURCE_DESC::Buffer(uploadBufferSize);
+			GFX_THROW_INFO(Graphics::GetInstance().GetDevice()->CreateCommittedResource(
+				&heapProps,
+				D3D12_HEAP_FLAG_NONE,
+				&resourceDesc,
+				D3D12_RESOURCE_STATE_GENERIC_READ,
+				nullptr,
+				IID_PPV_ARGS(&textureUploadBuffer)
+			));
+
+			std::shared_ptr<CommandList> copyCommandList = Graphics::GetInstance().GetCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
+
+			UpdateSubresources(
+				copyCommandList->GetGraphicsCommandList().Get(),
+				textureBuffer.Get(),
+				textureUploadBuffer.Get(),
+				0, 0u,
+				(UINT)subresourceData.size(),
+				subresourceData.data()
+			);
+
+			copyCommandList->TrackResource(textureUploadBuffer);
+
+			ResourceStateTracker::AddGlobalResourceState(textureBuffer, D3D12_RESOURCE_STATE_COMMON);
+		}
 	}
 
 	DXGI_FORMAT Texture::GetUAVCompatableFormat(DXGI_FORMAT format)
@@ -1031,4 +1121,65 @@ namespace DiveBomber::DEResource
 
 		return isSRGB;
 	}
-}
+
+	void Texture::GetConfigFilePath()
+	{
+		//auto findSourceConfig = [&]()
+		//	{
+		//		configFilePath = filePath;
+		//		configFilePath.append(".deasset");
+		//		if (!fs::exists(configFilePath))
+		//		{
+		//			configFilePath = EngineDirectoryW L"Resource\\Texture\\" + name + L".deasset";
+		//		}
+		//	};
+
+		fs::path configFileCachePath(ProjectDirectoryW L"Asset\\Texture\\" + name + L".deasset");
+#if EditorMode
+		bool needCopyToCache = false;
+		if (!fs::exists(configFileCachePath))
+		{
+			needCopyToCache = true;
+		}
+		else
+		{
+			configFilePath = filePath;
+			configFilePath.append(".deasset");
+			if (!fs::exists(configFilePath))
+			{
+				configFilePath = EngineDirectoryW L"Resource\\Texture\\" + name + L".deasset";
+				if (!fs::exists(configFilePath))
+				{
+					throw std::exception(std::format("Unable to open config file {}.", name).c_str());
+				}
+			}
+			if (fs::last_write_time(configFileCachePath) < fs::last_write_time(configFilePath))
+			{
+				needCopyToCache = true;
+			}
+		}
+
+		if (needCopyToCache)
+		{
+			fs::copy(configFilePath, configFileCachePath);
+		}
+#endif // EditorMode
+		configFilePath = configFileCachePath;
+	}
+
+	D3D12_RESOURCE_DIMENSION Texture::SRVDimensionToResourceDimension(TextureDimension textureDimension) noexcept
+	{
+		switch (textureDimension)
+		{
+		case DiveBomber::DEResource::Texture::TextureDimension::TDS_Texture1D:
+		case DiveBomber::DEResource::Texture::TextureDimension::TDS_Texture1D_Array:
+			return D3D12_RESOURCE_DIMENSION_TEXTURE1D;
+		case DiveBomber::DEResource::Texture::TextureDimension::TDS_Texture2D:
+		case DiveBomber::DEResource::Texture::TextureDimension::TDS_Texture2D_Array:
+		case DiveBomber::DEResource::Texture::TextureDimension::TDS_TextureCube:
+		case DiveBomber::DEResource::Texture::TextureDimension::TDS_TextureCube_Array:
+			return D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+		case DiveBomber::DEResource::Texture::TextureDimension::TDS_Texture3D:
+			return D3D12_RESOURCE_DIMENSION_TEXTURE3D;
+		}
+	}
