@@ -409,8 +409,8 @@ namespace DiveBomber::UI
 		if (ImGui::MenuItem("Refresh", NULL))
 		{
 
-			std::shared_ptr<DEResource::Texture> texture = GlobalResourceManager::Resolve<Texture>(inputTree.path.filename());
-			texture->ReloadTexture(inputTree.path.filename());
+			//std::shared_ptr<DEResource::Texture> texture = GlobalResourceManager::Resolve<Texture>(inputTree.path.filename());
+			//texture->ReloadTexture(inputTree.path.filename());
 		}
 	}
 
@@ -455,7 +455,7 @@ namespace DiveBomber::UI
 					case ConfigFileType::CFT_Texture:
 						childFileNode.icon = std::make_shared<Icon>();
 						childFileNode.icon->iconTexture = GlobalResourceManager::Resolve<Texture>
-							(childFileNode.path.stem().wstring() + L"#DERBIcon" + childFileNode.path.extension().wstring());
+							(childFileNode.path, Texture::TextureLoadType::TLT_Icon);
 						Graphics::GetInstance().ExecuteCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
 						const D3D12_RESOURCE_DESC texDesc = childFileNode.icon->iconTexture->GetTextureBuffer()->GetDesc();
 						const float XYRatio = texDesc.Width / (float)texDesc.Height;
