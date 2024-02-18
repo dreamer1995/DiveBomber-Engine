@@ -1,6 +1,6 @@
 {
     "ConfigFileType": 1,
     "GenerateMip": false,
-    "TextureParam": 4,
+    "textureDimension": 4,
     "sRGB": true
 }

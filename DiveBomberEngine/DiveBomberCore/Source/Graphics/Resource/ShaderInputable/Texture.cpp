@@ -35,7 +35,7 @@ namespace DiveBomber::DEResource
 	Texture::Texture(const fs::path& inputPath, TextureLoadType inputTextureLoadType)
 		:
 		Resource(inputPath.filename()),
-		filePath(ProjectDirectoryW L"Asset\\" + inputPath.wstring()),
+		filePath(inputPath.wstring()),
 		textureLoadType(inputTextureLoadType),
 		textureParam(TextureParam{}),
 		descriptorAllocation(Graphics::GetInstance().GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)->Allocate(1u))
@@ -53,7 +53,7 @@ namespace DiveBomber::DEResource
 	void Texture::ReloadTexture(const fs::path& inputPath)
 	{
 		name = inputPath.filename();
-		filePath = ProjectDirectoryW L"Asset\\" + inputPath.wstring();
+		filePath = inputPath.wstring();
 
 		GetConfigFilePath();
 		GetConfig();
@@ -95,7 +95,7 @@ namespace DiveBomber::DEResource
 		std::ifstream rawFile(configFilePath);
 		if (!rawFile.is_open())
 		{
-			throw std::exception(std::format("Unable to open config file {}", name).c_str());
+			throw std::exception(std::format("Unable to open config file {}", Utility::ToNarrow(name)).c_str());
 		}
 		rawFile >> config;
 
@@ -103,17 +103,20 @@ namespace DiveBomber::DEResource
 		switch (textureLoadType)
 		{
 		case DiveBomber::DEResource::Texture::TextureLoadType::TLT_Icon:
-			textureParam.generateMip = true;
-			textureParam.textureDimension = TextureDimension::TDS_Texture2D;
+			textureParam.generateMip = false;
+			textureParam.textureDimension = config["textureDimension"];
 			break;
 		case DiveBomber::DEResource::Texture::TextureLoadType::TLT_DiffuseIrradiance:
+			textureParam.generateMip = false;
+			textureParam.textureDimension = TextureDimension::TDS_TextureCube;
+			break;
 		case DiveBomber::DEResource::Texture::TextureLoadType::TLT_SpecularMip:
 			textureParam.generateMip = true;
 			textureParam.textureDimension = TextureDimension::TDS_TextureCube;
 			break;
 		default:
 			textureParam.generateMip = config["GenerateMip"];
-			textureParam.textureDimension = config["TextureParam"];
+			textureParam.textureDimension = config["textureDimension"];
 			break;
 		}
 		rawFile.close();
@@ -125,7 +128,7 @@ namespace DiveBomber::DEResource
 		config["ConfigFileType"] = 1u;
 		config["sRGB"] = inputTextureParam.sRGB;
 		config["GenerateMip"] = inputTextureParam.generateMip;
-		config["TextureParam"] = inputTextureParam.textureDimension;
+		config["textureDimension"] = inputTextureParam.textureDimension;
 
 		// write prettified JSON to another file
 		std::ofstream outFile(outputPath);
@@ -162,21 +165,22 @@ namespace DiveBomber::DEResource
 		fs::path cachePath(ProjectDirectoryW L"Cache\\Texture\\" + name);
 		cachePath.replace_extension(".dds");
 		fs::path loadPath;
-
 		switch (textureLoadType)
 		{
 		case DiveBomber::DEResource::Texture::TextureLoadType::TLT_Standard:
 			loadPath = cachePath;
 			break;
 		case DiveBomber::DEResource::Texture::TextureLoadType::TLT_Icon:
-			loadPath = cachePath.parent_path().wstring() + cachePath.stem().wstring() + L"#DERBIcon" + cachePath.extension().wstring();
+			loadPath = cachePath.parent_path().wstring() + L"\\" + cachePath.stem().wstring() + L"#DERBIcon" + cachePath.extension().wstring();
 			break;
 		case DiveBomber::DEResource::Texture::TextureLoadType::TLT_DiffuseIrradiance:
-			loadPath = cachePath.parent_path().wstring() + cachePath.stem().wstring() + L"#DiffuseIrradiance" + cachePath.extension().wstring();
+			loadPath = cachePath.parent_path().wstring() + L"\\" + cachePath.stem().wstring() + L"#DiffuseIrradiance" + cachePath.extension().wstring();
 			break;
 		case DiveBomber::DEResource::Texture::TextureLoadType::TLT_SpecularMip:
-			loadPath = cachePath.parent_path().wstring() + cachePath.stem().wstring() + L"#SpecularIBL" + cachePath.extension().wstring();
+			loadPath = cachePath.parent_path().wstring() + L"\\" + cachePath.stem().wstring() + L"#SpecularIBL" + cachePath.extension().wstring();
 			break;
+		default:
+			throw std::exception("Unknow texture load type");
 		}
 
 		// check what should be load
@@ -203,6 +207,7 @@ namespace DiveBomber::DEResource
 			if (!fs::exists(loadPath))
 			{
 				generateIconCache = true;
+				textureParam.generateMip = true;
 				outPutPath = loadPath;
 				// if cache can generate icon, use cache, not for cube map
 				if ((UINT)textureParam.textureDimension < 9u && fs::exists(cachePath))
@@ -214,11 +219,14 @@ namespace DiveBomber::DEResource
 					loadPath = filePath;
 				}
 			}
+			// for pre-filte cubemap
+			textureParam.textureDimension = TextureDimension::TDS_Texture2D;
 			break;
 		case DiveBomber::DEResource::Texture::TextureLoadType::TLT_DiffuseIrradiance:
 			if (!fs::exists(loadPath))
 			{
 				generateDiffuseIrradiance = true;
+				textureParam.generateMip = true;
 				outPutPath = loadPath;
 				if (fs::exists(cachePath))
 				{
@@ -245,12 +253,14 @@ namespace DiveBomber::DEResource
 				}
 			}
 			break;
+		default:
+			throw std::exception("Unknow texture load type");
 		}
 #endif // EditorMode
 
 		if (!fs::exists(loadPath))
 		{
-			throw std::exception(std::format("Texture File {} not found.", name).c_str());
+			throw std::exception(std::format("Texture File {} not found.", Utility::ToNarrow(name)).c_str());
 		}
 
 		dx::TexMetadata metadata;
@@ -605,6 +615,7 @@ namespace DiveBomber::DEResource
 		{
 		case D3D12_SRV_DIMENSION_TEXTURE2D:
 			srvDesc.Texture2D.MipLevels = resDesc.MipLevels;
+			break;
 		case D3D12_SRV_DIMENSION_TEXTURE2DARRAY:
 			srvDesc.Texture2DArray.MipLevels = resDesc.MipLevels;
 			srvDesc.Texture2DArray.ArraySize = resDesc.DepthOrArraySize;
@@ -615,7 +626,15 @@ namespace DiveBomber::DEResource
 		case D3D12_SRV_DIMENSION_TEXTURECUBE:
 			srvDesc.TextureCube.MipLevels = resDesc.MipLevels;
 			break;
+		case D3D12_SRV_DIMENSION_TEXTURECUBEARRAY:
+			srvDesc.TextureCubeArray.MipLevels = resDesc.MipLevels;
+			srvDesc.TextureCubeArray.NumCubes = (resDesc.DepthOrArraySize + 5u) / 6u;
+			break;
+		default:
+			throw std::exception("Unknow texture dimension");
 		}
+
+		textureBuffer->SetName(name.c_str());
 
 		Graphics::GetInstance().GetDevice()->CreateShaderResourceView(textureBuffer.Get(), &srvDesc, descriptorAllocation->GetCPUDescriptorHandle());
 	}
@@ -995,11 +1014,15 @@ namespace DiveBomber::DEResource
 
 		iconImage = scratchImage.GetImage(dstMip, 0, 0);
 
+		Graphics::GetInstance().ExecuteAllCurrentCommandLists();
+
 		ResourceStateTracker::RemoveGlobalResourceState(textureBuffer);
 
 		resDesc = textureBuffer->GetDesc();
 		resDesc.Alignment = 0;
 		resDesc.MipLevels = 1u;
+		resDesc.Width = (UINT64)iconImage->width;
+		resDesc.Height = (UINT)iconImage->height;
 
 		HRESULT hr;
 		const CD3DX12_HEAP_PROPERTIES heapProps{ D3D12_HEAP_TYPE_DEFAULT };
@@ -1134,40 +1157,36 @@ namespace DiveBomber::DEResource
 		//		}
 		//	};
 
-		fs::path configFileCachePath(ProjectDirectoryW L"Asset\\Texture\\" + name + L".deasset");
+		fs::path configFileCachePath(ProjectDirectoryW L"Cache\\Texture\\" + name + L".deasset");
 #if EditorMode
-		bool needCopyToCache = false;
-		if (!fs::exists(configFileCachePath))
+		configFilePath = filePath;
+		configFilePath = configFilePath.wstring() + L".deasset";
+		if (!fs::exists(configFilePath))
 		{
-			needCopyToCache = true;
-		}
-		else
-		{
-			configFilePath = filePath;
-			configFilePath.append(".deasset");
+			configFilePath = EngineDirectoryW L"Resource\\Texture\\" + name + L".deasset";
 			if (!fs::exists(configFilePath))
 			{
-				configFilePath = EngineDirectoryW L"Resource\\Texture\\" + name + L".deasset";
-				if (!fs::exists(configFilePath))
-				{
-					throw std::exception(std::format("Unable to open config file {}.", name).c_str());
-				}
-			}
-			if (fs::last_write_time(configFileCachePath) < fs::last_write_time(configFilePath))
-			{
-				needCopyToCache = true;
+				throw std::exception(std::format("Unable to open config file {}.", Utility::ToNarrow(name)).c_str());
 			}
 		}
-
-		if (needCopyToCache)
+		
+		// if no cache or cache obsoleted
+		if (!fs::exists(configFileCachePath) || fs::last_write_time(configFileCachePath) < fs::last_write_time(configFilePath))
 		{
+			if(!fs::exists(configFileCachePath.parent_path()))
+			{
+				fs::create_directories(configFileCachePath.parent_path());
+			}
 			fs::copy(configFilePath, configFileCachePath);
 		}
-#endif // EditorMode
+#else
 		configFilePath = configFileCachePath;
+#endif // EditorMode
+		filePath = configFilePath;
+		filePath.replace_extension(L"");
 	}
 
-	D3D12_RESOURCE_DIMENSION Texture::SRVDimensionToResourceDimension(TextureDimension textureDimension) noexcept
+	D3D12_RESOURCE_DIMENSION Texture::SRVDimensionToResourceDimension(TextureDimension textureDimension) noxnd
 	{
 		switch (textureDimension)
 		{
@@ -1181,5 +1200,8 @@ namespace DiveBomber::DEResource
 			return D3D12_RESOURCE_DIMENSION_TEXTURE2D;
 		case DiveBomber::DEResource::Texture::TextureDimension::TDS_Texture3D:
 			return D3D12_RESOURCE_DIMENSION_TEXTURE3D;
+		default:
+			throw std::exception("Unknow texture dimension");
 		}
 	}
+}

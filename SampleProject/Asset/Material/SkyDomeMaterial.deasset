@@ -4,7 +4,7 @@
         {
             "Name": "BaseMap",
             "Type": 4,
-            "Value": "Texture/Cubemap.hdr"
+            "Value": "..\\..\\..\\SampleProject\\Asset\\Texture\\Cubemap.hdr"
         },
         {
             "Name": "BaseColor",

@@ -87,10 +87,10 @@ namespace DiveBomber::DEResource
 		
 		std::wstring GetName() const noexcept;
 		template<typename...Ignore>
-		[[nodiscard]] static std::string GenerateUID(const std::wstring& name, TextureLoadType textureLoadType, Ignore&&...ignore)
+		[[nodiscard]] static std::string GenerateUID(const std::wstring& name, TextureLoadType textureLoadType = TextureLoadType::TLT_Standard, Ignore&&...ignore)
 		{
 			using namespace std::string_literals;
-			return typeid(Texture).name() + "#"s + Utility::ToNarrow(name) + textureLoadType;
+			return typeid(Texture).name() + "#"s + Utility::ToNarrow(name) + std::to_string((UINT)textureLoadType);
 		}
 		[[nodiscard]] std::string GetUID() const noexcept override;
 
@@ -107,7 +107,7 @@ namespace DiveBomber::DEResource
 		[[nodiscard]] DXGI_FORMAT GetUAVCompatableFormat(DXGI_FORMAT format);
 		[[nodiscard]] bool CheckSRGBFormat(DXGI_FORMAT format);
 		void GetConfigFilePath();
-		[[nodiscard]] D3D12_RESOURCE_DIMENSION SRVDimensionToResourceDimension(TextureDimension textureDimension) noexcept;
+		[[nodiscard]] D3D12_RESOURCE_DIMENSION SRVDimensionToResourceDimension(TextureDimension textureDimension) noxnd;
 
 	protected:
 		json config;

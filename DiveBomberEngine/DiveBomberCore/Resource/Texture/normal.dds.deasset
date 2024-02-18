@@ -1,9 +1,6 @@
 {
     "ConfigFileType": 1,
-    "CubeMap": false,
     "GenerateMip": true,
-    "GlobalIllumination": false,
-    "Texture3D": false,
-    "TextureArray": false,
+    "textureDimension": 4,
     "sRGB": false
 }

@@ -454,8 +454,10 @@ namespace DiveBomber::UI
 						break;
 					case ConfigFileType::CFT_Texture:
 						childFileNode.icon = std::make_shared<Icon>();
+						fs::path texturePath = childFileNode.path;
+						texturePath.replace_extension(L"");
 						childFileNode.icon->iconTexture = GlobalResourceManager::Resolve<Texture>
-							(childFileNode.path, Texture::TextureLoadType::TLT_Icon);
+							(texturePath, Texture::TextureLoadType::TLT_Icon);
 						Graphics::GetInstance().ExecuteCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
 						const D3D12_RESOURCE_DESC texDesc = childFileNode.icon->iconTexture->GetTextureBuffer()->GetDesc();
 						const float XYRatio = texDesc.Width / (float)texDesc.Height;
@@ -479,5 +481,7 @@ namespace DiveBomber::UI
 
 			inputFileTree.children.emplace_back(childFileNode);
 		}
+
+		Graphics::GetInstance().ExecuteAllCurrentCommandLists();
 	}
 }
