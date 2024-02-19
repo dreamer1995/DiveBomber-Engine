@@ -40,7 +40,6 @@ namespace DiveBomber::DEResource
 		textureParam(TextureParam{}),
 		descriptorAllocation(Graphics::GetInstance().GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)->Allocate(1u))
 	{
-		GetConfigFilePath();
 		GetConfig();
 		LoadTexture();
 	}
@@ -50,12 +49,13 @@ namespace DiveBomber::DEResource
 		ResourceStateTracker::RemoveGlobalResourceState(textureBuffer);
 	}
 
-	void Texture::ReloadTexture(const fs::path& inputPath)
+	void Texture::ReloadTexture()
 	{
-		name = inputPath.filename();
-		filePath = inputPath.wstring();
+		fs::path configFileCachePath(ProjectDirectoryW L"Cache\\Texture\\" + name + L".deasset");
 
-		GetConfigFilePath();
+		fs::remove(cachePath);
+		fs::remove(configFileCachePath);
+		
 		GetConfig();
 		LoadTexture();
 	}
@@ -92,10 +92,32 @@ namespace DiveBomber::DEResource
 
 	void Texture::GetConfig()
 	{
+		fs::path configFilePath;
+		fs::path configFileCachePath(ProjectDirectoryW L"Cache\\Texture\\" + name + L".deasset");
+#if EditorMode
+		configFilePath = filePath;
+		configFilePath = configFilePath.wstring() + L".deasset";
+		if (!fs::exists(configFilePath))
+		{
+			throw std::exception(std::format("Unable to open source config file {}.", configFilePath.string()).c_str());
+		}
+
+		// if no cache or cache obsoleted
+		if (!fs::exists(configFileCachePath) || fs::last_write_time(configFileCachePath) < fs::last_write_time(configFilePath))
+		{
+			if (!fs::exists(configFileCachePath.parent_path()))
+			{
+				fs::create_directories(configFileCachePath.parent_path());
+			}
+			fs::copy(configFilePath, configFileCachePath);
+		}
+#endif // EditorMode
+		configFilePath = configFileCachePath;
+
 		std::ifstream rawFile(configFilePath);
 		if (!rawFile.is_open())
 		{
-			throw std::exception(std::format("Unable to open config file {}", Utility::ToNarrow(name)).c_str());
+			throw std::exception(std::format("Unable to open config file {}", configFilePath.string()).c_str());
 		}
 		rawFile >> config;
 
@@ -151,10 +173,10 @@ namespace DiveBomber::DEResource
 	void Texture::GenerateCache(const DirectX::Image* images, size_t numImages, const dx::TexMetadata texMetaData, const std::filesystem::path& outputPath)
 	{
 		HRESULT hr;
-		fs::path cachePath(ProjectDirectoryW L"Cache\\Texture\\");
-		if (!fs::exists(cachePath))
+		fs::path cacheDirectory(ProjectDirectoryW L"Cache\\Texture\\");
+		if (!fs::exists(cacheDirectory))
 		{
-			fs::create_directories(cachePath);
+			fs::create_directories(cacheDirectory);
 		}
 
 		GFX_THROW_INFO(dx::SaveToDDSFile(images, numImages, texMetaData, dx::DDS_FLAGS_NONE, outputPath.c_str()));
@@ -162,7 +184,7 @@ namespace DiveBomber::DEResource
 
 	void Texture::LoadTexture()
 	{
-		fs::path cachePath(ProjectDirectoryW L"Cache\\Texture\\" + name);
+		cachePath = ProjectDirectoryW L"Cache\\Texture\\" + name;
 		cachePath.replace_extension(".dds");
 		fs::path loadPath;
 		switch (textureLoadType)
@@ -260,7 +282,7 @@ namespace DiveBomber::DEResource
 
 		if (!fs::exists(loadPath))
 		{
-			throw std::exception(std::format("Texture File {} not found.", Utility::ToNarrow(name)).c_str());
+			throw std::exception(std::format("Texture File {} not found.", loadPath.string()).c_str());
 		}
 
 		dx::TexMetadata metadata;
@@ -505,72 +527,7 @@ namespace DiveBomber::DEResource
 
 		if (generateIconCache)
 		{
-			//if (generateCube)
-			//{
-			//	wrl::ComPtr<ID3D12Resource> iconBuffer;
-			//	D3D12_RESOURCE_DESC iconResDesc = resDesc;
-			//	iconResDesc.Alignment = 0u;
-			//	iconResDesc.MipLevels = 0u;
-			//	iconResDesc.Format = GetUAVCompatableFormat(resDesc.Format);
-			//	iconResDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
-
-			//	const CD3DX12_HEAP_PROPERTIES heapProps{ D3D12_HEAP_TYPE_DEFAULT };
-			//	GFX_THROW_INFO(Graphics::GetInstance().GetDevice()->CreateCommittedResource(
-			//		&heapProps,
-			//		D3D12_HEAP_FLAG_NONE,
-			//		&iconResDesc,
-			//		D3D12_RESOURCE_STATE_COMMON,
-			//		nullptr,
-			//		IID_PPV_ARGS(&iconBuffer)
-			//	));
-
-			//	iconResDesc = iconBuffer->GetDesc();
-			//	if (metadata.mipLevels < iconResDesc.MipLevels)
-			//	{
-			//		{
-			//			wrl::ComPtr<ID3D12Resource> textureUploadBuffer;
-
-			//			const CD3DX12_HEAP_PROPERTIES heapProps{ D3D12_HEAP_TYPE_UPLOAD };
-			//			const auto uploadBufferSize = GetRequiredIntermediateSize(iconBuffer.Get(), 0u, (UINT)subresourceData.size());
-			//			const auto resourceDesc = CD3DX12_RESOURCE_DESC::Buffer(uploadBufferSize);
-			//			GFX_THROW_INFO(Graphics::GetInstance().GetDevice()->CreateCommittedResource(
-			//				&heapProps,
-			//				D3D12_HEAP_FLAG_NONE,
-			//				&resourceDesc,
-			//				D3D12_RESOURCE_STATE_GENERIC_READ,
-			//				nullptr,
-			//				IID_PPV_ARGS(&textureUploadBuffer)
-			//			));
-
-			//			std::shared_ptr<CommandList> copyCommandList = Graphics::GetInstance().GetCommandList(D3D12_COMMAND_LIST_TYPE_COPY);
-
-			//			UpdateSubresources(
-			//				copyCommandList->GetGraphicsCommandList().Get(),
-			//				iconBuffer.Get(),
-			//				textureUploadBuffer.Get(),
-			//				0, 0u,
-			//				(UINT)subresourceData.size(),
-			//				subresourceData.data()
-			//			);
-
-			//			copyCommandList->TrackResource(textureUploadBuffer);
-
-			//			ResourceStateTracker::AddGlobalResourceState(iconBuffer, D3D12_RESOURCE_STATE_COMMON);
-			//		}
-
-			//		GenerateMipMaps(iconBuffer);
-			//		GenerateIconMap(iconBuffer, outPutPath);
-			//		ResourceStateTracker::RemoveGlobalResourceState(iconBuffer);
-			//	}
-			//	else
-			//	{
-			//		GenerateIconMap(uavBuffer, outPutPath);
-			//	}
-			//}
-			//else
-			{
-				GenerateIconMap(uavBuffer, outPutPath);
-			}
+			GenerateIconMap(uavBuffer, outPutPath);
 		}
 
 		if (generateDiffuseIrradiance)
@@ -602,6 +559,17 @@ namespace DiveBomber::DEResource
 		{
 			GenerateCache(textureBuffer, outPutPath, (UINT)textureParam.textureDimension > 8u);
 		}
+
+		if (outPutPath.wstring().size() > 0)
+		{
+			cachePath = outPutPath;
+		}
+		else
+		{
+			cachePath = loadPath;
+		}
+#else
+		cachePath = loadPath;
 #endif // EditorMode
 
 		resDesc = textureBuffer->GetDesc();
@@ -1143,47 +1111,6 @@ namespace DiveBomber::DEResource
 		}
 
 		return isSRGB;
-	}
-
-	void Texture::GetConfigFilePath()
-	{
-		//auto findSourceConfig = [&]()
-		//	{
-		//		configFilePath = filePath;
-		//		configFilePath.append(".deasset");
-		//		if (!fs::exists(configFilePath))
-		//		{
-		//			configFilePath = EngineDirectoryW L"Resource\\Texture\\" + name + L".deasset";
-		//		}
-		//	};
-
-		fs::path configFileCachePath(ProjectDirectoryW L"Cache\\Texture\\" + name + L".deasset");
-#if EditorMode
-		configFilePath = filePath;
-		configFilePath = configFilePath.wstring() + L".deasset";
-		if (!fs::exists(configFilePath))
-		{
-			configFilePath = EngineDirectoryW L"Resource\\Texture\\" + name + L".deasset";
-			if (!fs::exists(configFilePath))
-			{
-				throw std::exception(std::format("Unable to open config file {}.", Utility::ToNarrow(name)).c_str());
-			}
-		}
-		
-		// if no cache or cache obsoleted
-		if (!fs::exists(configFileCachePath) || fs::last_write_time(configFileCachePath) < fs::last_write_time(configFilePath))
-		{
-			if(!fs::exists(configFileCachePath.parent_path()))
-			{
-				fs::create_directories(configFileCachePath.parent_path());
-			}
-			fs::copy(configFilePath, configFileCachePath);
-		}
-#else
-		configFilePath = configFileCachePath;
-#endif // EditorMode
-		filePath = configFilePath;
-		filePath.replace_extension(L"");
 	}
 
 	D3D12_RESOURCE_DIMENSION Texture::SRVDimensionToResourceDimension(TextureDimension textureDimension) noxnd

@@ -9,7 +9,7 @@
         {
             "Name": "RustMap",
             "Type": 4,
-            "Value": "gray.dds"
+            "Value": "..\\..\\DiveBomberCore\\Resource\\Texture\\gray.dds"
         },
         {
             "Name": "BaseColor",

@@ -78,7 +78,7 @@ namespace DiveBomber::DEResource
 		Texture(const fs::path& inputPath, TextureLoadType inputTextureLoadType = TextureLoadType::TLT_Standard);
 		~Texture();
 
-		void ReloadTexture(const fs::path& inputPath);
+		void ReloadTexture();
 		[[nodiscard]] UINT GetSRVDescriptorHeapOffset() const noexcept override;
 		[[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetSRVDescriptorCPUHandle() const noexcept;
 		[[nodiscard]] D3D12_GPU_DESCRIPTOR_HANDLE GetSRVDescriptorGPUHandle() const noexcept;
@@ -106,13 +106,12 @@ namespace DiveBomber::DEResource
 		void GenerateIconMap(wrl::ComPtr<ID3D12Resource>& uavBuffer, const std::filesystem::path& outputPath);
 		[[nodiscard]] DXGI_FORMAT GetUAVCompatableFormat(DXGI_FORMAT format);
 		[[nodiscard]] bool CheckSRGBFormat(DXGI_FORMAT format);
-		void GetConfigFilePath();
 		[[nodiscard]] D3D12_RESOURCE_DIMENSION SRVDimensionToResourceDimension(TextureDimension textureDimension) noxnd;
 
 	protected:
 		json config;
 		fs::path filePath;
-		fs::path configFilePath;
+		fs::path cachePath;
 		std::shared_ptr<DX::DescriptorAllocation> descriptorAllocation;
 		wrl::ComPtr<ID3D12Resource> textureBuffer;
 		TextureParam textureParam;

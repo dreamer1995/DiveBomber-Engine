@@ -23,7 +23,8 @@ namespace DiveBomber::UI
 
 	ResourceBrowser::ResourceBrowser()
 	{
-		iconAtlasTexture = GlobalResourceManager::Resolve<Texture>(L"UIIcons.png");
+		iconAtlasTexture = GlobalResourceManager::Resolve<Texture>(
+			L"..\\..\\DiveBomberCore\\Resource\\Texture\\UIIcons.png");
 		Graphics::GetInstance().ExecuteAllCurrentCommandLists();
 
 		backArrow = std::make_shared<Icon>();
@@ -408,10 +409,20 @@ namespace DiveBomber::UI
 		ImGui::SeparatorText("Texture");
 		if (ImGui::MenuItem("Refresh", NULL))
 		{
+			fs::path texturePath = inputTree.path;
+			texturePath.replace_extension(L"");
 
-			//std::shared_ptr<DEResource::Texture> texture = GlobalResourceManager::Resolve<Texture>(inputTree.path.filename());
-			//texture->ReloadTexture(inputTree.path.filename());
+			std::shared_ptr<DEResource::Texture> texture = GlobalResourceManager::Resolve<Texture>(
+				texturePath);
+			std::shared_ptr<DEResource::Texture> textureIcon = GlobalResourceManager::Resolve<Texture>(
+				texturePath, Texture::TextureLoadType::TLT_Icon);
+
+			texture->ReloadTexture();
+			textureIcon->ReloadTexture();
+
+			Graphics::GetInstance().ExecuteAllCurrentCommandLists();
 		}
+
 	}
 
 	void ResourceBrowser::RecursiveFilePath(fs::path path, FileTreeNode& inputFileTree)
