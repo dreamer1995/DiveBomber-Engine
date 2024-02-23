@@ -12,6 +12,7 @@
 #include <iostream>
 #include <fstream>
 #include <any>
+#include <format>
 #include <..\imgui\imgui.h>
 
 namespace DiveBomber::DEComponent
@@ -20,15 +21,14 @@ namespace DiveBomber::DEComponent
     using namespace DEResource;
     using namespace DX;
 
-    Material::Material(const std::wstring inputName, const std::wstring inputDefaultShaderName)
+    Material::Material(const fs::path inputPath, const std::wstring inputDefaultShaderName)
         :
-        name(inputName),
+        name(inputPath.stem()),
+        configFilePath(inputPath.wstring() + L".deasset"),
         defaultShaderName(inputDefaultShaderName)
     {
         using namespace std::string_literals;
         indexConstantBuffer = std::make_shared<ConstantBufferInRootSignature<UINT>>(name + L"#"s + L"IndexConstant", 7u);
-
-        configFile = ProjectDirectoryW L"Asset\\Material\\" + name + L".deasset";
 
         GetConfig();
         ReloadConfig();
@@ -36,30 +36,76 @@ namespace DiveBomber::DEComponent
 
     void DiveBomber::DEComponent::Material::GetConfig()
     {
-        if (!fs::exists(configFile))
+        fs::path configFileCachePath(ProjectDirectoryW L"Cache\\Material\\" + configFilePath.filename().wstring());
+#if EditorMode
+        if (!fs::exists(configFileCachePath))
         {
-            fs::path builtShaderDirectory(ProjectDirectoryW L"Asset\\Material\\");
-            if (!fs::exists(builtShaderDirectory))
+            if (!fs::exists(configFileCachePath.parent_path()))
             {
-                fs::create_directories(builtShaderDirectory);
+                fs::create_directories(configFileCachePath.parent_path());
+            }
+
+            GetConfigFromRaw();
+
+            fs::copy(configFilePath, configFileCachePath);
+        }
+        else
+        {
+            if (!fs::exists(configFilePath))
+            {
+                GetConfigFromRaw();
+
+                fs::copy(configFilePath, configFileCachePath);
+            }
+            else
+            {
+                fs::file_time_type configFileLastSaveTime = fs::last_write_time(configFilePath);
+                fs::file_time_type configCacheFileLastSaveTime = fs::last_write_time(configFileCachePath);
+                if (configCacheFileLastSaveTime < configFileLastSaveTime)
+                {
+                    GetConfigFromRaw();
+
+                    fs::copy(configFilePath, configFileCachePath);
+                }
+            }
+        }
+#endif //EditorMode
+        configFilePath = configFileCachePath;
+
+        std::ifstream rawFile(configFilePath);
+        if (!rawFile.is_open())
+        {
+            throw std::exception(std::format("Unable to open script file {}", configFilePath.string()).c_str());
+        }
+        rawFile >> config;
+        rawFile.close();
+    }
+
+    void Material::GetConfigFromRaw()
+    {
+        if (!fs::exists(configFilePath))
+        {
+            if (!fs::exists(configFilePath.parent_path()))
+            {
+                fs::create_directories(configFilePath.parent_path());
             }
 
             CreateDefaultConfig();
         }
         else
         {
-            std::ifstream rawFile(configFile);
+            std::ifstream rawFile(configFilePath);
             if (!rawFile.is_open())
             {
-                throw std::exception("Unable to open script file");
+                throw std::exception(std::format("Unable to open script file {}", configFilePath.string()).c_str());
             }
             rawFile >> config;
             rawFile.close();
 
-            configFileLastSaveTime = fs::last_write_time(configFile);
 
             std::wstring shaderName = Utility::ToWide(config["ShaderName"]);
-            
+
+            fs::file_time_type configFileLastSaveTime = fs::last_write_time(configFilePath);
             fs::file_time_type builtLastSaveTime = Shader::GetSourceFileLastSaveTime(shaderName);
             if (builtLastSaveTime > configFileLastSaveTime)
             {
@@ -177,19 +223,19 @@ namespace DiveBomber::DEComponent
     {
         if (defaultTexture == "Black")
         {
-            return "black.dds";
+            return EngineTextureDirectory "black.dds";
         }
         if (defaultTexture == "Gray")
         {
-            return "gray.dds";
+            return EngineTextureDirectory "gray.dds";
         }
         else if (defaultTexture == "White")
         {
-            return "white.dds";
+            return EngineTextureDirectory "white.dds";
         }
         else if (defaultTexture == "Normal")
         {
-            return "normal.dds";
+            return EngineTextureDirectory "normal.dds";
         }
 
         return "";
@@ -296,7 +342,7 @@ namespace DiveBomber::DEComponent
                 {
                     if (materialData["Type"] == ShaderParamType::SPT_Texture)
                     {
-                        materialData["Value"] = "white.dds";
+                        materialData["Value"] = EngineTextureDirectory "white.dds";
                     }
                     else if (materialData["Type"] == ShaderParamType::SPT_Float)
                     {
@@ -348,11 +394,9 @@ namespace DiveBomber::DEComponent
         config["Param"] = newConifgParams;
 
         // write prettified JSON to another file
-        std::ofstream outFile(configFile);
+        std::ofstream outFile(configFilePath);
         outFile << std::setw(4) << config << std::endl;
         outFile.close();
-
-        configFileLastSaveTime = fs::last_write_time(configFile);
     }
 
     void Material::ReloadConfig()

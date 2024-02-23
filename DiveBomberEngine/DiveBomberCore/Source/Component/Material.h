@@ -35,7 +35,7 @@ namespace DiveBomber::DEComponent
 	class Material final : public Component
 	{
 	public:
-		Material(const std::wstring inputName, const std::wstring inputDefaultShaderName = L"Default");
+		Material(const fs::path inputPath, const std::wstring inputDefaultShaderName = L"Default");
 		void SetTexture(const std::shared_ptr<DEResource::ShaderInputable> texture) noexcept;
 		void SetTexture(const std::shared_ptr<DEResource::ShaderInputable> texture, UINT slot) noexcept;
 		void SetTexture(const std::string textureName, const std::shared_ptr<DEResource::ShaderInputable> texture) noexcept;
@@ -66,6 +66,7 @@ namespace DiveBomber::DEComponent
 
 		void DrawComponentUI() override;
 	private:
+		void GetConfigFromRaw();
 		void CreateDefaultConfig();
 		[[nodiscard]] int ParamTypeStringToEnum(std::string string) const noexcept;
 		[[nodiscard]] int ShaderStageStringToEnum(std::string string) const noexcept;
@@ -83,8 +84,7 @@ namespace DiveBomber::DEComponent
 		std::unordered_map<std::string, std::pair<std::shared_ptr<DEResource::Texture>, UINT>> textureMap;
 
 		json config;
-		fs::path configFile;
-		fs::file_time_type configFileLastSaveTime;
+		fs::path configFilePath;
 
 		std::vector<std::shared_ptr<DEResource::Shader>> shaders;
 

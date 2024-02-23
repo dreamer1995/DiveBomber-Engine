@@ -1,0 +1,19 @@
+{
+    "ConfigFileType": 0,
+    "Param": [
+        {
+            "Name": "baseColor",
+            "Type": 3,
+            "Value": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ]
+        }
+    ],
+    "ShaderName": "PostProcess",
+    "Stage": [
+        5
+    ]
+}

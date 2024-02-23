@@ -28,6 +28,7 @@ namespace DiveBomber::DX
 		void AddToUsingPool(std::shared_ptr<DEResource::Shader> shader) noexcept;
 		void ReLoadShader();
 		void ResetAllShaderDirtyState() noexcept;
+		// May not needed because of detecting null
 		void DeleteShaderInUsingPool(const std::string key) noexcept;
 
 		[[nodiscard]] static ShaderManager& GetInstance();

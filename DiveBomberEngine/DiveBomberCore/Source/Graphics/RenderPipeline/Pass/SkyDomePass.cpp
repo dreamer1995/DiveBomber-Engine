@@ -8,6 +8,7 @@
 #include "..\..\..\Component\Camera\Camera.h"
 #include "..\..\DX\GlobalResourceManager.h"
 #include "..\..\Object\Object.h"
+#include "..\..\..\Utility\GlobalParameters.h"
 
 namespace DiveBomber::RenderPipeline
 {
@@ -34,7 +35,7 @@ namespace DiveBomber::RenderPipeline
 
 		mesh = std::make_shared<Mesh>(wName, cube.vertices, indexBuffer);
 
-		material = std::make_shared<Material>(wName + L"Material", L"SkyDome");
+		material = std::make_shared<Material>(EngineMaterialDirectoryW + wName + L"Material", L"SkyDome");
 
 		std::shared_ptr<RootSignature> rootSignature = GlobalResourceManager::Resolve<RootSignature>(L"StandardFullStageAccess");
 

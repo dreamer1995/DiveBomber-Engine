@@ -5,6 +5,7 @@
 
 #include "..\..\Resource\ResourceCommonInclude.h"
 #include "..\..\DX\GlobalResourceManager.h"
+#include "..\..\..\Utility\GlobalParameters.h"
 
 #include <iostream>
 
@@ -19,7 +20,7 @@ namespace DiveBomber::RenderPipeline
 		:
 		ComputePass("FinalPostProcessPass", inputTarget)
 	{
-		material = std::make_shared<Material>(L"FinalPostProcessMaterial", L"PostProcess");
+		material = std::make_shared<Material>(EngineMaterialDirectoryW L"FinalPostProcessMaterial", L"PostProcess");
 
 		postProcessCB.invScreenSize.x = 1.0f / Graphics::GetInstance().GetWidth();
 		postProcessCB.invScreenSize.y = 1.0f / Graphics::GetInstance().GetHeight();

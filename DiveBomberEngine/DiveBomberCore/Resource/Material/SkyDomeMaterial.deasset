@@ -2,6 +2,11 @@
     "ConfigFileType": 0,
     "Param": [
         {
+            "Name": "baseMap",
+            "Type": 4,
+            "Value": "..\\..\\..\\SampleProject\\Asset\\Texture\\Cubemap.hdr"
+        },
+        {
             "Name": "BaseColor",
             "Type": 3,
             "Value": [
@@ -12,8 +17,9 @@
             ]
         }
     ],
-    "ShaderName": "PostProcess",
+    "ShaderName": "SkyDome",
     "Stage": [
-        5
+        0,
+        4
     ]
 }

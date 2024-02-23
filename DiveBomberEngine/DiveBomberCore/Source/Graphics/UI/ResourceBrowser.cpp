@@ -414,11 +414,9 @@ namespace DiveBomber::UI
 
 			std::shared_ptr<DEResource::Texture> texture = GlobalResourceManager::Resolve<Texture>(
 				texturePath);
-			std::shared_ptr<DEResource::Texture> textureIcon = GlobalResourceManager::Resolve<Texture>(
-				texturePath, Texture::TextureLoadType::TLT_Icon);
 
 			texture->ReloadTexture();
-			textureIcon->ReloadTexture();
+			inputTree.icon->iconTexture->ReloadTexture();
 
 			Graphics::GetInstance().ExecuteAllCurrentCommandLists();
 		}

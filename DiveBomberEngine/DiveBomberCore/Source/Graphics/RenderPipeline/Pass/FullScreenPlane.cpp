@@ -6,6 +6,7 @@
 #include "..\..\..\Component\Mesh.h"
 #include "..\..\..\Component\Material.h"
 #include "..\..\DX\GlobalResourceManager.h"
+#include "..\..\..\Utility\GlobalParameters.h"
 
 namespace DiveBomber::RenderPipeline
 {
@@ -34,7 +35,7 @@ namespace DiveBomber::RenderPipeline
 		
 		mesh = std::make_shared<Mesh>(L"FullScreenPlane", bufFull, indexBuffer);
 
-		material = std::make_shared<Material>(L"FullScreenPlaneMaterial", L"FullScreen");
+		material = std::make_shared<Material>(EngineMaterialDirectoryW L"FullScreenPlaneMaterial", L"FullScreen");
 
 		std::shared_ptr<RootSignature> rootSignature = GlobalResourceManager::Resolve<RootSignature>(L"StandardFullStageAccess");
 
