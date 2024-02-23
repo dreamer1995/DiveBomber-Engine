@@ -37,47 +37,27 @@ namespace DiveBomber::DEComponent
     {
         fs::path configFileCachePath(ProjectDirectoryW L"Cache\\Material\\" + configFilePath.filename().wstring());
 #if EditorMode
-        if (!fs::exists(configFileCachePath))
+        GetConfigFromRaw();
+
+        if (!fs::exists(configFileCachePath) || fs::last_write_time(configFileCachePath) < fs::last_write_time(configFilePath))
         {
             if (!fs::exists(configFileCachePath.parent_path()))
             {
                 fs::create_directories(configFileCachePath.parent_path());
             }
 
-            GetConfigFromRaw();
-
-            fs::copy(configFilePath, configFileCachePath);
-        }
-        else
-        {
-            if (!fs::exists(configFilePath))
-            {
-                GetConfigFromRaw();
-
-                fs::copy(configFilePath, configFileCachePath);
-            }
-            else
-            {
-                fs::file_time_type configFileLastSaveTime = fs::last_write_time(configFilePath);
-                fs::file_time_type configCacheFileLastSaveTime = fs::last_write_time(configFileCachePath);
-                if (configCacheFileLastSaveTime < configFileLastSaveTime)
-                {
-                    GetConfigFromRaw();
-
-                    fs::copy(configFilePath, configFileCachePath);
-                }
-            }
+            fs::copy(configFilePath, configFileCachePath, fs::copy_options::update_existing);
         }
 #endif //EditorMode
-        configFilePath = configFileCachePath;
-
-        std::ifstream rawFile(configFilePath);
-        if (!rawFile.is_open())
         {
-            throw std::exception(std::format("Unable to open script file {}", configFilePath.string()).c_str());
+            std::ifstream rawFile(configFileCachePath);
+            if (!rawFile.is_open())
+            {
+                throw std::exception(std::format("Unable to open script file {}", configFilePath.string()).c_str());
+            }
+            rawFile >> config;
+            rawFile.close();
         }
-        rawFile >> config;
-        rawFile.close();
     }
 
     void Material::GetConfigFromRaw()
@@ -401,7 +381,7 @@ namespace DiveBomber::DEComponent
     void Material::ReloadConfig()
     {
         std::wstring shaderPath = Utility::ToWide(config["ShaderPath"]);
-
+        shaders.clear();
         for (auto& shaderStage : config["Stage"])
         {
             //std::cout << shaderStage << std::endl;

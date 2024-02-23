@@ -109,7 +109,7 @@ namespace DiveBomber::DEResource
 			{
 				fs::create_directories(configFileCachePath.parent_path());
 			}
-			fs::copy(configFilePath, configFileCachePath);
+			fs::copy(configFilePath, configFileCachePath, fs::copy_options::update_existing);
 		}
 #endif // EditorMode
 		configFilePath = configFileCachePath;

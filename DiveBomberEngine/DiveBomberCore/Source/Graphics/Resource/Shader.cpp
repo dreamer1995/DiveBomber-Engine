@@ -23,9 +23,10 @@ namespace DiveBomber::DEResource
 		:
 		Resource(inputPath.stem()),
 		sourceFile(inputPath),
-		builtFile(ProjectDirectoryW L"Cache\\BuiltShader\\" + name + GetShaderTypeAbbreviation() + L".cso"),
 		type(inputType)
 	{
+		// Do not move to constructor because we need abbreviation
+		builtFile = ProjectDirectoryW L"Cache\\BuiltShader\\" + name + GetShaderTypeAbbreviation() + L".cso";
 		directory = sourceFile.parent_path();
 
 		LoadShader();
