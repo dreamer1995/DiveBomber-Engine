@@ -32,7 +32,7 @@
             ]
         }
     ],
-    "ShaderName": "PBR",
+    "ShaderPath": "..\\..\\DiveBomberCore\\Resource\\Shader\\PBR.hlsl",
     "Stage": [
         0,
         4

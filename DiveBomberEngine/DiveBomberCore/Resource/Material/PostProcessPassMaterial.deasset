@@ -13,7 +13,7 @@
             "sRGB": true
         }
     ],
-    "ShaderName": "PostProcess",
+    "ShaderName": "..\\..\\DiveBomberCore\\Resource\\Shader\\PostProcess.hlsl",
     "Stage": [
         5
     ]

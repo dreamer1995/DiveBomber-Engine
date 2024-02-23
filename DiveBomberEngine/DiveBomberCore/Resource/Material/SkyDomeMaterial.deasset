@@ -17,7 +17,7 @@
             ]
         }
     ],
-    "ShaderName": "SkyDome",
+    "ShaderPath": "..\\..\\DiveBomberCore\\Resource\\Shader\\SkyDome.hlsl",
     "Stage": [
         0,
         4

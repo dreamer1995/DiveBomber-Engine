@@ -1,6 +1,7 @@
 #pragma once
 #include "Component.h"
 #include "..\Graphics\GraphicsHeader.h"
+#include "..\Utility\GlobalParameters.h"
 
 #include "..\Utility\DEJson.h"
 
@@ -35,7 +36,7 @@ namespace DiveBomber::DEComponent
 	class Material final : public Component
 	{
 	public:
-		Material(const fs::path inputPath, const std::wstring inputDefaultShaderName = L"Default");
+		Material(const fs::path inputPath, const fs::path inputDefaultShaderPath = EngineShaderDirectoryW L"Default");
 		void SetTexture(const std::shared_ptr<DEResource::ShaderInputable> texture) noexcept;
 		void SetTexture(const std::shared_ptr<DEResource::ShaderInputable> texture, UINT slot) noexcept;
 		void SetTexture(const std::string textureName, const std::shared_ptr<DEResource::ShaderInputable> texture) noexcept;
@@ -56,7 +57,7 @@ namespace DiveBomber::DEComponent
 		void SetMaterialParameterVector(std::string constantName, std::string key, DirectX::XMFLOAT4 vector) const noexcept;
 
 		void GetConfig();
-		void UploadConfig(const std::wstring shaderName);
+		void UploadConfig(const fs::path shaderPath);
 		void ReloadConfig();
 
 		[[nodiscard]] std::vector<std::shared_ptr<DEResource::Shader>> GetShaders() const noexcept;
@@ -88,6 +89,6 @@ namespace DiveBomber::DEComponent
 
 		std::vector<std::shared_ptr<DEResource::Shader>> shaders;
 
-		std::wstring defaultShaderName;
+		fs::path defaultShaderPath;
 	};
 }

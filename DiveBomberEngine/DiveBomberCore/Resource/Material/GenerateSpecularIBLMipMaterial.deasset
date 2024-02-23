@@ -1,7 +1,7 @@
 {
     "ConfigFileType": 0,
     "Param": null,
-    "ShaderName": "GenerateSpecularIBLMip",
+    "ShaderPath": "..\\..\\DiveBomberCore\\Resource\\Shader\\GenerateSpecularIBLMip.hlsl",
     "Stage": [
         5
     ]

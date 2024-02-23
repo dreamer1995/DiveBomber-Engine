@@ -12,7 +12,7 @@
             ]
         }
     ],
-    "ShaderName": "PostProcess",
+    "ShaderPath": "..\\..\\DiveBomberCore\\Resource\\Shader\\PostProcess.hlsl",
     "Stage": [
         5
     ]

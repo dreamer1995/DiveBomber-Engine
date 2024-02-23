@@ -5,7 +5,8 @@
 	"Stage":[ "CS" ],
 	"Param":
 	[
-		{"Name":"baseColor", "Type":"Color", "Default":[1.0, 1.0, 1.0, 1.0]}
+		{"Name":"baseColor", "Type":"Color", "Default":[1.0, 1.0, 1.0, 1.0]},
+		{"Name":"baseColor2", "Type":"Color", "Default":[1.0, 0.0, 0.0, 1.0]}
 	]
 }
 "/Properties"
@@ -27,6 +28,7 @@ struct MaterialIndex
 struct BaseShadingParam
 {
 	float4 baseColor;
+	float4 baseColor2;
 };
 
 struct ComputeShaderInput
@@ -49,7 +51,7 @@ void CSMain(ComputeShaderInput In)
 	
 	float4 col = SampleTexture(mainRT, samplerStandard, uv) * DecodeGamma(baseShadingParam.baseColor);
 	
-	col.rgb = EncodeGamma(col.rgb);
+	col.rgb = EncodeGamma(col.rgb) * baseShadingParam.baseColor2.rgb;
 		
 	outRT[In.dispatchThreadID.xy] = col;
 }

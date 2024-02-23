@@ -19,14 +19,13 @@ namespace DiveBomber::DEResource
 	using namespace DX;
 	namespace fs = std::filesystem;
 
-	Shader::Shader(const std::wstring inputName, ShaderType inputType)
+	Shader::Shader(const fs::path inputPath, ShaderType inputType)
 		:
-		Resource(inputName),
+		Resource(inputPath.stem()),
+		sourceFile(inputPath),
+		builtFile(ProjectDirectoryW L"Cache\\BuiltShader\\" + name + GetShaderTypeAbbreviation() + L".cso"),
 		type(inputType)
 	{
-		builtFile = ProjectDirectoryW L"Cache\\BuiltShader\\" + name + GetShaderTypeAbbreviation() + L".cso";
-
-		sourceFile = FindSourceFilePath();
 		directory = sourceFile.parent_path();
 
 		LoadShader();
@@ -101,15 +100,13 @@ namespace DiveBomber::DEResource
 		}
 	}
 
-	std::wstring Shader::GetShaderParamsString(const std::wstring name)
+	std::wstring Shader::GetShaderParamsString(const fs::path path)
 	{
-		fs::path sourceFilePath = FindSourceFilePath(name);
-
 		std::wstring line;
 		std::wstring paramsFile;
 
 		std::wifstream rawFile;
-		rawFile.open(sourceFilePath);
+		rawFile.open(path);
 
 		while (std::getline(rawFile, line)) {
 			if (line == L"\"Properties\"")
@@ -137,39 +134,6 @@ namespace DiveBomber::DEResource
 
 	void Shader::AddMaterialReference(const std::wstring key)
 	{
-	}
-
-	fs::file_time_type Shader::GetSourceFileLastSaveTime() const noexcept
-	{
-		return sourceLastSaveTime;
-	}
-
-	fs::file_time_type Shader::GetSourceFileLastSaveTime(const std::wstring name) noexcept
-	{
-		std::wstring sourceFilePath = FindSourceFilePath(name);
-		return fs::last_write_time(sourceFilePath);
-	}
-
-	fs::path Shader::FindSourceFilePath() noexcept
-	{
-		return FindSourceFilePath(name);
-	}
-
-	fs::path Shader::FindSourceFilePath(const std::wstring name) noexcept
-	{
-		fs::path sourceFilePath;
-		fs::path filePath = EngineDirectoryW L"Shader\\" + name + L".hlsl";
-		if (fs::exists(filePath))
-		{
-			sourceFilePath = filePath;
-		}
-		filePath = ProjectDirectoryW L"Asset\\Shader\\" + name + L".hlsl";
-		if (fs::exists(filePath))
-		{
-			sourceFilePath = filePath;
-		}
-
-		return sourceFilePath;
 	}
 
 	std::string Shader::GenerateUID(const std::wstring name, ShaderType type)

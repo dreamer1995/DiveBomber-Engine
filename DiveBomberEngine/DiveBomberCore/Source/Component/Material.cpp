@@ -4,7 +4,6 @@
 #include "..\Graphics\Resource\Bindable\ConstantBufferInRootSignature.h"
 #include "..\Graphics\Resource\ShaderInputable\DynamicConstantBufferInHeap.h"
 #include "..\Graphics\Resource\ShaderInputable\Texture.h"
-#include "..\Utility\GlobalParameters.h"
 #include "..\Graphics\DX\ShaderManager.h"
 #include "..\Graphics\DX\CommandQueue.h"
 #include "..\Graphics\DX\GlobalResourceManager.h"
@@ -21,11 +20,11 @@ namespace DiveBomber::DEComponent
     using namespace DEResource;
     using namespace DX;
 
-    Material::Material(const fs::path inputPath, const std::wstring inputDefaultShaderName)
+    Material::Material(const fs::path inputPath, const fs::path inputDefaultShaderPath)
         :
         name(inputPath.stem()),
         configFilePath(inputPath.wstring() + L".deasset"),
-        defaultShaderName(inputDefaultShaderName)
+        defaultShaderPath(inputDefaultShaderPath)
     {
         using namespace std::string_literals;
         indexConstantBuffer = std::make_shared<ConstantBufferInRootSignature<UINT>>(name + L"#"s + L"IndexConstant", 7u);
@@ -103,22 +102,22 @@ namespace DiveBomber::DEComponent
             rawFile.close();
 
 
-            std::wstring shaderName = Utility::ToWide(config["ShaderName"]);
+            fs::path shaderPath(Utility::ToWide(config["ShaderPath"]));
 
             fs::file_time_type configFileLastSaveTime = fs::last_write_time(configFilePath);
-            fs::file_time_type builtLastSaveTime = Shader::GetSourceFileLastSaveTime(shaderName);
-            if (builtLastSaveTime > configFileLastSaveTime)
+            fs::file_time_type builtShaderLastSaveTime = fs::last_write_time(shaderPath);
+            if (builtShaderLastSaveTime > configFileLastSaveTime)
             {
-                UploadConfig(shaderName);
+                UploadConfig(shaderPath);
             }
         }
     }
 
     void Material::CreateDefaultConfig()
     {
-        config["ShaderName"] = Utility::ToNarrow(defaultShaderName);
+        config["ShaderPath"] = Utility::ToNarrow(defaultShaderPath);
 
-        UploadConfig(defaultShaderName);
+        UploadConfig(defaultShaderPath);
     }
 
     int Material::ParamTypeStringToEnum(std::string string) const noexcept
@@ -241,10 +240,10 @@ namespace DiveBomber::DEComponent
         return "";
     }
 
-    void Material::UploadConfig(const std::wstring shaderName)
+    void Material::UploadConfig(const fs::path shaderPath)
     {
         config["ConfigFileType"] = 0u;
-        std::wstring paramString = Shader::GetShaderParamsString(shaderName);
+        std::wstring paramString = Shader::GetShaderParamsString(shaderPath);
 
         json paramsData;
         paramsData = json::parse(paramString, nullptr, false);
@@ -401,13 +400,13 @@ namespace DiveBomber::DEComponent
 
     void Material::ReloadConfig()
     {
-        std::wstring shaderName = Utility::ToWide(config["ShaderName"]);
+        std::wstring shaderPath = Utility::ToWide(config["ShaderPath"]);
 
         for (auto& shaderStage : config["Stage"])
         {
             //std::cout << shaderStage << std::endl;
 
-            std::shared_ptr<Shader> shader = GlobalResourceManager::Resolve<Shader>(shaderName, shaderStage);
+            std::shared_ptr<Shader> shader = GlobalResourceManager::Resolve<Shader>(shaderPath, shaderStage);
             ShaderManager::GetInstance().AddToUsingPool(shader);
 
             shaders.emplace_back(shader);
@@ -647,8 +646,6 @@ namespace DiveBomber::DEComponent
     {
         if (IsShaderDirty())
         {
-            std::wstring shaderName = Utility::ToWide(config["ShaderName"]);
-
             GetConfig();
             ReloadConfig();
 

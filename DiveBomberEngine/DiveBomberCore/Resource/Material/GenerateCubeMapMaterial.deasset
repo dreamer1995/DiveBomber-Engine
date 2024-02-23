@@ -1,7 +1,7 @@
 {
     "ConfigFileType": 0,
     "Param": null,
-    "ShaderName": "GenerateCubeMap",
+    "ShaderPath": "..\\..\\DiveBomberCore\\Resource\\Shader\\GenerateCubeMap.hlsl",
     "Stage": [
         5
     ]

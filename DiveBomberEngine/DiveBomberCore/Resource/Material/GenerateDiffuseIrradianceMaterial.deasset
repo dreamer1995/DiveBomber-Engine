@@ -1,7 +1,7 @@
 {
     "ConfigFileType": 0,
     "Param": null,
-    "ShaderName": "GenerateDiffuseIrradiance",
+    "ShaderName": "..\\..\\DiveBomberCore\\Resource\\Shader\\GenerateDiffuseIrradiance.hlsl",
     "Stage": [
         5
     ]
