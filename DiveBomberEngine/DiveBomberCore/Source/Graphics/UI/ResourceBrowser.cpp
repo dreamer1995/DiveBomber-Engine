@@ -43,8 +43,10 @@ namespace DiveBomber::UI
 		SetIcon(closedFolder, 1u, (UINT)listSize.y);
 		SetIcon(openedFolder, 2u, (UINT)listSize.y);
 
-		fs::path assetPath = fs::path(ProjectDirectoryW).parent_path();
+		fs::path engineResourcePath = fs::path(EngineDirectoryW L"EngineResource");
+		RecursiveFilePath(engineResourcePath, engineResourceTree);
 
+		fs::path assetPath = fs::path(ProjectDirectoryW).parent_path();
 		RecursiveFilePath(assetPath, assetTree);
 		selectedTreeNodeStack.push(&assetTree);
 		assetTree.expanded = true;
@@ -104,6 +106,7 @@ namespace DiveBomber::UI
 
 				if (ImGui::BeginListBox("##ContentTree", ImGui::GetContentRegionAvail()))
 				{
+					DrawContentTree(engineResourceTree, 0u);
 					DrawContentTree(assetTree, 0u);
 					ImGui::EndListBox();
 				}
