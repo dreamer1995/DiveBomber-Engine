@@ -23,8 +23,7 @@ namespace DiveBomber::UI
 
 	ResourceBrowser::ResourceBrowser()
 	{
-		iconAtlasTexture = GlobalResourceManager::Resolve<Texture>(
-			L"..\\..\\DiveBomberCore\\Resource\\Texture\\UIIcons.png");
+		iconAtlasTexture = GlobalResourceManager::Resolve<Texture>(EngineTextureDirectoryW "UIIcons.png");
 		Graphics::GetInstance().ExecuteAllCurrentCommandLists();
 
 		backArrow = std::make_shared<Icon>();
@@ -44,9 +43,11 @@ namespace DiveBomber::UI
 		SetIcon(closedFolder, 1u, (UINT)listSize.y);
 		SetIcon(openedFolder, 2u, (UINT)listSize.y);
 
-		RecursiveFilePath(ProjectDirectoryW, fileTree);
-		selectedTreeNodeStack.push(&fileTree);
-		fileTree.expanded = true;
+		fs::path assetPath = fs::path(ProjectDirectoryW).parent_path();
+
+		RecursiveFilePath(assetPath, assetTree);
+		selectedTreeNodeStack.push(&assetTree);
+		assetTree.expanded = true;
 	}
 
 	ResourceBrowser::~ResourceBrowser()
@@ -103,7 +104,7 @@ namespace DiveBomber::UI
 
 				if (ImGui::BeginListBox("##ContentTree", ImGui::GetContentRegionAvail()))
 				{
-					DrawContentTree(fileTree, 0u);
+					DrawContentTree(assetTree, 0u);
 					ImGui::EndListBox();
 				}
 			ImGui::EndChild();
@@ -144,8 +145,7 @@ namespace DiveBomber::UI
 			};
 
 			bool selected = inputTree.id == selectedTreeNodeStack.top()->id;
-			std::string displayedName = inputTree.path.filename().empty() ? "Content" : inputTree.path.filename().string();
-			
+
 			const float indentSpace = 20.0f;
 			ImGui::Indent(indentLevel * indentSpace);
 
@@ -161,7 +161,7 @@ namespace DiveBomber::UI
 				ImGui::SameLine();
 
 				ImGui::SetCursorPosY((ImGui::GetWindowSize().y - ImGui::GetTextLineHeight()) * 0.5f);
-				ImGui::Text(displayedName.c_str());
+				ImGui::Text(inputTree.path.filename().string().c_str());
 			ImGui::EndChild();
 
 			ImGui::SameLine();

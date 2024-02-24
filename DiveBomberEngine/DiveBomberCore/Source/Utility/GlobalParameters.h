@@ -6,14 +6,14 @@ namespace DiveBomber
 #define EngineDirectory "..\\..\\DiveBomberCore\\"
 #define EngineDirectoryW L"..\\..\\DiveBomberCore\\"
 
-#define EngineTextureDirectory "..\\..\\DiveBomberCore\\Resource\\Texture\\"
-#define EngineTextureDirectoryW L"..\\..\\DiveBomberCore\\Resource\\Texture\\"
+#define EngineTextureDirectory "..\\..\\DiveBomberCore\\EngineResource\\Texture\\"
+#define EngineTextureDirectoryW L"..\\..\\DiveBomberCore\\EngineResource\\Texture\\"
 
-#define EngineMaterialDirectory "..\\..\\DiveBomberCore\\Resource\\Material\\"
-#define EngineMaterialDirectoryW L"..\\..\\DiveBomberCore\\Resource\\Material\\"
+#define EngineMaterialDirectory "..\\..\\DiveBomberCore\\EngineResource\\Material\\"
+#define EngineMaterialDirectoryW L"..\\..\\DiveBomberCore\\EngineResource\\Material\\"
 
-#define EngineShaderDirectory "..\\..\\DiveBomberCore\\Resource\\Shader\\"
-#define EngineShaderDirectoryW L"..\\..\\DiveBomberCore\\Resource\\Shader\\"
+#define EngineShaderDirectory "..\\..\\DiveBomberCore\\EngineResource\\Shader\\"
+#define EngineShaderDirectoryW L"..\\..\\DiveBomberCore\\EngineResource\\Shader\\"
 
 #define ProjectDirectory "..\\..\\..\\SampleProject\\"
 #define ProjectDirectoryW L"..\\..\\..\\SampleProject\\"

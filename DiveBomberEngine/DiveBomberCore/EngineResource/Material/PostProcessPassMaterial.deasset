@@ -6,13 +6,14 @@
             "Type": 3,
             "Value": [
                 1.0,
-                1.0,
+                0.0,
                 1.0,
                 1.0
-            ]
+            ],
+            "sRGB": true
         }
     ],
-    "ShaderPath": "..\\..\\DiveBomberCore\\Resource\\Shader\\PostProcess.hlsl",
+    "ShaderName": "..\\..\\DiveBomberCore\\EngineResource\\Shader\\PostProcess.hlsl",
     "Stage": [
         5
     ]

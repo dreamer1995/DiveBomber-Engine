@@ -9,7 +9,7 @@
         {
             "Name": "RustMap",
             "Type": 4,
-            "Value": "..\\..\\DiveBomberCore\\Resource\\Texture\\black.dds"
+            "Value": "..\\..\\DiveBomberCore\\EngineResource\\Texture\\black.dds"
         },
         {
             "Name": "BaseColor",
@@ -32,7 +32,7 @@
             ]
         }
     ],
-    "ShaderPath": "..\\..\\DiveBomberCore\\Resource\\Shader\\PBR.hlsl",
+    "ShaderPath": "..\\..\\DiveBomberCore\\EngineResource\\Shader\\PBR.hlsl",
     "Stage": [
         0,
         4

@@ -13,7 +13,7 @@
             "sRGB": true
         }
     ],
-    "ShaderName": "..\\..\\DiveBomberCore\\Resource\\Shader\\FullScreen.hlsl",
+    "ShaderName": "..\\..\\DiveBomberCore\\EngineResource\\Shader\\FullScreen.hlsl",
     "Stage": [
         0,
         4

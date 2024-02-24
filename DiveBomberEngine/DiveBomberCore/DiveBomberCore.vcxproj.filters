@@ -216,6 +216,7 @@
     <ClInclude Include="Source\Graphics\UI\SceneOutliner.h" />
     <ClInclude Include="Source\Graphics\UI\SceneCamera.h" />
     <ClInclude Include="Source\Component\Component.h" />
+    <ClInclude Include="EngineResource\Icon\resource.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -227,6 +228,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Resource\Icon\Resource.rc" />
+    <ResourceCompile Include="EngineResource\Icon\Resource.rc" />
   </ItemGroup>
 </Project>

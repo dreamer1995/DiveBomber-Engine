@@ -67,7 +67,8 @@ namespace DiveBomber::UI
 
 	private:
 		UINT fileTreeIDCounter = 0;
-		FileTreeNode fileTree;
+		FileTreeNode engineResourceTree;
+		FileTreeNode assetTree;
 
 		std::stack<FileTreeNode*> selectedTreeNodeStack;
 		std::unordered_set<UINT> currentSelectedFileIDs;

@@ -1,8 +1,0 @@
-{
-    "ConfigFileType": 0,
-    "Param": null,
-    "ShaderPath": "..\\..\\DiveBomberCore\\Resource\\Shader\\GenerateCubeMap.hlsl",
-    "Stage": [
-        5
-    ]
-}
