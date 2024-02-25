@@ -490,6 +490,11 @@ namespace DiveBomber::DEComponent
         return indexConstantBuffer;
     }
 
+    void Material::DrawDetailPanel()
+    {
+        DrawComponentUI();
+    }
+
     void Material::DrawComponentUI()
     {
         ImGui::SetNextItemOpen(true, ImGuiCond_Once);

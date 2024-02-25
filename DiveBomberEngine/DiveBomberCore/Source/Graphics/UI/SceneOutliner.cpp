@@ -2,6 +2,7 @@
 
 #include "..\..\DiveBomberCore.h"
 #include "..\..\Scene\Scene.h"
+#include "..\..\Graphics\Object\Object.h"
 
 #include <..\imgui\imgui.h>
 
@@ -49,11 +50,11 @@ namespace DiveBomber::UI
 
 			if (currentSelectedIndex != -1)
 			{
-				DiveBomberCore::GetInstance().SetCurrentSelectedObject(std::next(sceneObjects.begin(), currentSelectedIndex)->second);
+				DiveBomberCore::GetInstance().SetCurrentSelectedDetail(std::next(sceneObjects.begin(), currentSelectedIndex)->second);
 			}
 			else
 			{
-				DiveBomberCore::GetInstance().SetCurrentSelectedObject(nullptr);
+				DiveBomberCore::GetInstance().SetCurrentSelectedDetail(nullptr);
 			}
 		}
 	}

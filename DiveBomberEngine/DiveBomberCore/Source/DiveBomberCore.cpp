@@ -6,6 +6,7 @@
 #include "Graphics\DX\ShaderManager.h"
 #include "Graphics\Object\SimpleSphere.h"
 #include "Graphics\UI\UIManager.h"
+#include "Graphics\UI\DetailModifier.h"
 #include "Console\Console.h"
 #include "Utility\Timer.h"
 #include "Utility\GlobalParameters.h"
@@ -459,14 +460,14 @@ namespace DiveBomber
 		return currentScene;
 	}
 
-	std::shared_ptr<Object> DiveBomberCore::GetCurrentSelectedObject()
+	std::shared_ptr<DetailModifier> DiveBomberCore::GetCurrentSelectedDetail()
 	{
-		return currentSelectedObject;
+		return currentSelectedDetail;
 	}
 
-	void DiveBomberCore::SetCurrentSelectedObject(std::shared_ptr<Object> object)
+	void DiveBomberCore::SetCurrentSelectedDetail(std::shared_ptr<DetailModifier> detail)
 	{
-		currentSelectedObject = object;
+		currentSelectedDetail = detail;
 	}
 
 	float& DiveBomberCore::GetSceneCameraSpeed() noexcept

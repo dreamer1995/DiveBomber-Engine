@@ -85,7 +85,7 @@
       <Filter>imgui</Filter>
     </ClCompile>
     <ClCompile Include="Source\Graphics\UI\MainMenuBar.cpp" />
-    <ClCompile Include="Source\Graphics\UI\ObjectDetail.cpp" />
+    <ClCompile Include="Source\Graphics\UI\DetailPanel.cpp" />
     <ClCompile Include="Source\Graphics\UI\ResourceBrowser.cpp" />
     <ClCompile Include="Source\Graphics\UI\SceneOutliner.cpp" />
     <ClCompile Include="Source\Graphics\UI\UIManager.cpp" />
@@ -208,7 +208,7 @@
       <Filter>imgui</Filter>
     </ClInclude>
     <ClInclude Include="Source\Graphics\UI\MainMenuBar.h" />
-    <ClInclude Include="Source\Graphics\UI\ObjectDetail.h" />
+    <ClInclude Include="Source\Graphics\UI\DetailPanel.h" />
     <ClInclude Include="Source\Graphics\UI\ResourceBrowser.h" />
     <ClInclude Include="Source\Graphics\UI\UIManager.h" />
     <ClInclude Include="Source\Graphics\UI\UIWidget.h" />
@@ -217,6 +217,7 @@
     <ClInclude Include="Source\Graphics\UI\SceneCamera.h" />
     <ClInclude Include="Source\Component\Component.h" />
     <ClInclude Include="EngineResource\Icon\resource.h" />
+    <ClInclude Include="Source\Graphics\UI\DetailModifier.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -1,7 +1,7 @@
 #include "MainMenuBar.h"
 
 #include "UIManager.h"
-#include "ObjectDetail.h"
+#include "DetailPanel.h"
 #include "ResourceBrowser.h"
 #include "SceneOutliner.h"
 #include "RenderStatusPanel.h"
@@ -36,7 +36,7 @@ namespace DiveBomber::UI
 			{
 				if (ImGui::MenuItem("Object Detail"))
 				{
-					UIManager::GetInstance().AddToUIDrawList(std::make_shared<ObjectDetail>());
+					UIManager::GetInstance().AddToUIDrawList(std::make_shared<DetailPanel>());
 				}
 				if (ImGui::MenuItem("Resource Browser"))
 				{

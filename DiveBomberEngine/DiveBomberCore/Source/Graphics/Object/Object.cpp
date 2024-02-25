@@ -67,6 +67,7 @@ namespace DiveBomber::DEObject
 
 	void DiveBomber::DEObject::Object::DrawDetailPanel()
 	{
+		ImGui::Text(Utility::ToNarrow(name).c_str());
 		ImGui::SetNextItemOpen(true, ImGuiCond_Once);
 		if (ImGui::CollapsingHeader("Transform"))
 		{

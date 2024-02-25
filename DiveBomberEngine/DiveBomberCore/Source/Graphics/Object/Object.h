@@ -1,5 +1,6 @@
 #pragma once
 #include "..\..\Utility\Common.h"
+#include "..\..\Graphics\UI\DetailModifier.h"
 
 #include <DirectXMath.h>
 #include <string>
@@ -18,7 +19,7 @@ namespace DiveBomber::DEComponent
 
 namespace DiveBomber::DEObject
 {
-	class Object
+	class Object : public UI::DetailModifier
 	{
 	public:
 		Object() = default;
@@ -36,7 +37,7 @@ namespace DiveBomber::DEObject
 
 		[[nodiscard]] std::wstring GetName() const noexcept;
 
-		virtual void DrawDetailPanel();
+		void virtual DrawDetailPanel() override;
 	protected:
 		std::wstring name;
 

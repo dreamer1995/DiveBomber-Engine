@@ -2,8 +2,8 @@
 #include "Component.h"
 #include "..\Graphics\GraphicsHeader.h"
 #include "..\Utility\GlobalParameters.h"
-
 #include "..\Utility\DEJson.h"
+#include "..\Graphics\UI\DetailModifier.h"
 
 #include <vector>
 #include <unordered_map>
@@ -33,7 +33,7 @@ namespace DiveBomber::DEComponent
 		SPT_Texture,
 	};
 
-	class Material final : public Component
+	class Material final : public Component, public UI::DetailModifier
 	{
 	public:
 		Material(const fs::path inputPath, const fs::path inputDefaultShaderPath = EngineShaderDirectoryW L"Default");
@@ -65,6 +65,7 @@ namespace DiveBomber::DEComponent
 
 		[[nodiscard]] std::shared_ptr<DEResource::ConstantBufferInRootSignature<UINT>> GetIndexConstantBuffer() const noexcept;
 
+		void DrawDetailPanel() override;
 		void DrawComponentUI() override;
 	private:
 		void GetConfigFromRaw();

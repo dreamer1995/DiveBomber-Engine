@@ -1,7 +1,7 @@
 #include "UIManager.h"
 
 #include "MainMenuBar.h"
-#include "ObjectDetail.h"
+#include "DetailPanel.h"
 #include "ResourceBrowser.h"
 #include "SceneOutliner.h"
 #include "RenderStatusPanel.h"
@@ -17,7 +17,7 @@ namespace DiveBomber::UI
 
 		//todo add a priority for display them
 		AddToUIDrawList(std::make_shared<SceneCamera>());
-		AddToUIDrawList(std::make_shared<ObjectDetail>());
+		AddToUIDrawList(std::make_shared<DetailPanel>());
 		AddToUIDrawList(std::make_shared<ResourceBrowser>());
 		AddToUIDrawList(std::make_shared<SceneOutliner>());
 		AddToUIDrawList(std::make_shared<RenderStatusPanel>());

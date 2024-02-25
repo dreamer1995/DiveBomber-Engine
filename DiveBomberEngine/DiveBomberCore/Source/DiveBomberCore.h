@@ -31,9 +31,9 @@ namespace DiveBomber::DX
 	class GlobalResourceManager;
 }
 
-namespace DiveBomber::DEObject
+namespace DiveBomber::UI
 {
-	class Object;
+	class DetailModifier;
 }
 
 namespace DiveBomber
@@ -51,8 +51,8 @@ namespace DiveBomber
 		void ExecuteConsoleCommand();
 		void UpdateRenderStatus();
 		[[nodiscard]] std::shared_ptr<DEScene::Scene> GetCurrentScene();
-		[[nodiscard]] std::shared_ptr<DEObject::Object> GetCurrentSelectedObject();
-		void SetCurrentSelectedObject(std::shared_ptr<DEObject::Object> object);
+		[[nodiscard]] std::shared_ptr<UI::DetailModifier> GetCurrentSelectedDetail();
+		void SetCurrentSelectedDetail(std::shared_ptr<UI::DetailModifier> detail);
 
 		[[nodiscard]] float& GetSceneCameraSpeed() noexcept;
 
@@ -72,7 +72,7 @@ namespace DiveBomber
 		std::unique_ptr<Utility::Timer> coreTimer;
 
 		std::shared_ptr<DEScene::Scene> currentScene;
-		std::shared_ptr<DEObject::Object> currentSelectedObject;
+		std::shared_ptr<UI::DetailModifier> currentSelectedDetail;
 
 		float sceneCameraSpeed = 1.0f;
 	};
