@@ -41,7 +41,7 @@ namespace DiveBomber::DEObject
 		meshMap.emplace(mesh->GetName(), mesh);
 		attachedComponents.emplace_back(mesh);
 
-		std::shared_ptr<Material> material = std::make_shared<Material>(ProjectDirectoryW L"Asset\\Material\\" + name + L"Material", EngineShaderDirectoryW L"PBR");
+		std::shared_ptr<Material> material = GlobalResourceManager::Resolve<Material>(ProjectDirectoryW L"Asset\\Material\\" + name + L"Material", EngineShaderDirectoryW L"PBR");
 		materialMap.emplace(material->GetName(), material);
 		attachedComponents.emplace_back(material);
 

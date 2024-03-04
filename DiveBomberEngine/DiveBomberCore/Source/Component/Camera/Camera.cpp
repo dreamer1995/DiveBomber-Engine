@@ -13,7 +13,7 @@ namespace DiveBomber::DEComponent
 
 	Camera::Camera(std::wstring inputName, CameraAttributes inputAttributes) noexcept
 		:
-		name(std::move(inputName)),
+		Component(inputName),
 		homeAttributes(inputAttributes),
 		attributes(homeAttributes)
 	{

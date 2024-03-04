@@ -41,7 +41,6 @@ namespace DiveBomber::DEComponent
 
 		void DrawComponentUI() override;
 	private:
-		std::wstring name;
 		DEResource::VertexProcess::VertexData vertexData;
 		std::shared_ptr<DEResource::IndexBuffer> indexBuffer;
 		std::shared_ptr<DEResource::Topology> topology;

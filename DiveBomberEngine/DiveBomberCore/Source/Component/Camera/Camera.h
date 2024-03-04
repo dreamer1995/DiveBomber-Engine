@@ -83,7 +83,6 @@ namespace DiveBomber::DEComponent
 		void CalculateTransformMatrices() noexcept;
 
 	private:
-		std::wstring name;
 		CameraAttributes homeAttributes;
 		CameraAttributes attributes;
 		static constexpr float travelSpeed = 12.0f;

@@ -24,7 +24,7 @@ namespace DiveBomber::DEComponent
 
     Mesh::Mesh(std::wstring inputName, VertexData& inputVertexbuffer, std::shared_ptr<IndexBuffer> inputIndexBuffer, std::shared_ptr<Topology> inputTopology)
         :
-        name(inputName),
+        Component(inputName),
         vertexData(inputVertexbuffer),
         indexBuffer(inputIndexBuffer),
         topology(inputTopology)

@@ -8,6 +8,8 @@
 #include "..\Resource\ShaderInputable\Texture.h"
 #include "..\DX\GlobalResourceManager.h"
 #include "..\Graphics.h"
+#include "..\..\DiveBomberCore.h"
+#include "..\..\Component\Material.h"
 
 #include <iostream>
 #include <fstream>
@@ -18,6 +20,7 @@ namespace DiveBomber::UI
 	using namespace DEResource;
 	using namespace DX;
 	using namespace DEGraphics;
+	using namespace DEComponent;
 
 	using json = nlohmann::json;
 
@@ -316,6 +319,15 @@ namespace DiveBomber::UI
 								if (!Window::GetInstance().kbd->KeyIsDown(VK_CONTROL))
 								{
 									currentSelectedFileIDs.clear();
+									switch (child.fileType)
+									{
+									case FileType::CFT_Material:
+										fs::path materialPath = child.path;
+										materialPath.replace_extension();
+										std::shared_ptr<Material> material = GlobalResourceManager::Resolve<Material>(materialPath);
+										DiveBomberCore::GetInstance().SetCurrentSelectedDetail(material);
+										break;
+									}
 								}
 								currentSelectedFileIDs.emplace(child.id);
 								checkSelect = true;
@@ -326,12 +338,12 @@ namespace DiveBomber::UI
 					{
 						currentSelectedFileIDs.clear();
 						currentSelectedFileIDs.emplace(child.id);
-						switch (child.fileNodeType)
+						switch (child.fileType)
 						{
-						case (UINT)ConfigFileType::CFT_Material:
+						case FileType::CFT_Material:
 							MaterialResourcePopup();
 							break;
-						case (UINT)ConfigFileType::CFT_Texture:
+						case FileType::CFT_Texture:
 							TextureResourcePopup(child);
 							break;
 						}
@@ -458,13 +470,13 @@ namespace DiveBomber::UI
 					}
 					rawFile >> config;
 					rawFile.close();
-					switch ((ConfigFileType)config["ConfigFileType"])
+					switch ((FileType)config["ConfigFileType"])
 					{
-					case ConfigFileType::CFT_Material:
+					case FileType::CFT_Material:
 						childFileNode.icon = fileIconMaterial;
-						childFileNode.fileNodeType = (UINT)ConfigFileType::CFT_Material;
+						childFileNode.fileType = FileType::CFT_Material;
 						break;
-					case ConfigFileType::CFT_Texture:
+					case FileType::CFT_Texture:
 						childFileNode.icon = std::make_shared<Icon>();
 						fs::path texturePath = childFileNode.path;
 						texturePath.replace_extension(L"");
@@ -481,7 +493,7 @@ namespace DiveBomber::UI
 						{
 							childFileNode.icon->XYRatio.x *= XYRatio;
 						}
-						childFileNode.fileNodeType = (UINT)ConfigFileType::CFT_Texture;
+						childFileNode.fileType = FileType::CFT_Texture;
 						break;
 					}
 				}

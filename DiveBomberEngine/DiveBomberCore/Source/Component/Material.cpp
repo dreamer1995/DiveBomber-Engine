@@ -22,7 +22,7 @@ namespace DiveBomber::DEComponent
 
     Material::Material(const fs::path inputPath, const fs::path inputDefaultShaderPath)
         :
-        name(inputPath.stem()),
+        Component(inputPath.stem()),
         configFilePath(inputPath.wstring() + L".deasset"),
         defaultShaderPath(inputDefaultShaderPath)
     {

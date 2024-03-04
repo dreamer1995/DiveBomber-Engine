@@ -1,5 +1,6 @@
 #pragma once
 #include "UIWidget.h"
+#include "DetailModifier.h"
 
 #include <filesystem>
 #include <unordered_set>
@@ -13,15 +14,17 @@ namespace DiveBomber::DEResource
 
 namespace DiveBomber::UI
 {
+	class DetailModifier;
 	namespace fs = std::filesystem;
 
 	class ResourceBrowser final : public UIWidget
 	{
 	public:
-		enum class ConfigFileType
+		enum class FileType
 		{
 			CFT_Material,
 			CFT_Texture,
+			CFT_Folder,
 		};
 	public:
 		ResourceBrowser();
@@ -53,7 +56,7 @@ namespace DiveBomber::UI
 			std::vector<FileTreeNode> children;
 			bool expanded = false;
 			std::shared_ptr<Icon> icon;
-			UINT fileNodeType = 99u;
+			FileType fileType = FileType::CFT_Folder;
 		};
 
 	private:

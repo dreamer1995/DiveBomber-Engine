@@ -67,6 +67,13 @@ namespace DiveBomber::DEComponent
 
 		void DrawDetailPanel() override;
 		void DrawComponentUI() override;
+
+		template<typename...Ignore>
+		[[nodiscard]] static std::string GenerateUID(const fs::path& name, Ignore&&...ignore)
+		{
+			using namespace std::string_literals;
+			return typeid(Resource).name() + "#"s + name.string();
+		}
 	private:
 		void GetConfigFromRaw();
 		void CreateDefaultConfig();
@@ -76,7 +83,6 @@ namespace DiveBomber::DEComponent
 		[[nodiscard]] json::value_t ParamTypeEnumToJsonTypeEnum(ShaderParamType type) const noexcept;
 		[[nodiscard]] std::string TextureDefaultToTexturePath(std::string) const noexcept;
 
-		std::wstring name;
 		std::shared_ptr<DEResource::ConstantBufferInRootSignature<UINT>> indexConstantBuffer;
 		UINT numConstantIndices = 0;
 		UINT numTextureIndices = 0;
