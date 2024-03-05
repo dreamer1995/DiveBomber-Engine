@@ -319,15 +319,7 @@ namespace DiveBomber::UI
 								if (!Window::GetInstance().kbd->KeyIsDown(VK_CONTROL))
 								{
 									currentSelectedFileIDs.clear();
-									switch (child.fileType)
-									{
-									case FileType::CFT_Material:
-										fs::path materialPath = child.path;
-										materialPath.replace_extension();
-										std::shared_ptr<Material> material = GlobalResourceManager::Resolve<Material>(materialPath);
-										DiveBomberCore::GetInstance().SetCurrentSelectedDetail(material);
-										break;
-									}
+									SetDetailPanelDisplay(child);
 								}
 								currentSelectedFileIDs.emplace(child.id);
 								checkSelect = true;
@@ -341,7 +333,7 @@ namespace DiveBomber::UI
 						switch (child.fileType)
 						{
 						case FileType::CFT_Material:
-							MaterialResourcePopup();
+							MaterialResourcePopup(child);
 							break;
 						case FileType::CFT_Texture:
 							TextureResourcePopup(child);
@@ -410,12 +402,15 @@ namespace DiveBomber::UI
 		GetSpecificIconUVFromAtlas(iconIndex, size, icon->uv0, icon->uv1);
 	}
 
-	void ResourceBrowser::MaterialResourcePopup()
+	void ResourceBrowser::MaterialResourcePopup(FileTreeNode& inputTree)
 	{
 		ImGui::SeparatorText("Material");
-		if (ImGui::MenuItem("Refresh", NULL))
+		if (ImGui::MenuItem("Save", NULL))
 		{
-			std::cout << "Refresh Material!" << std::endl;
+			fs::path materialPath = inputTree.path;
+			materialPath.replace_extension();
+			std::shared_ptr<Material> material = GlobalResourceManager::Resolve<Material>(materialPath);
+			material->SaveConfig();
 		}
 	}
 
@@ -436,6 +431,19 @@ namespace DiveBomber::UI
 			Graphics::GetInstance().ExecuteAllCurrentCommandLists();
 		}
 
+	}
+
+	void ResourceBrowser::SetDetailPanelDisplay(FileTreeNode& inputTree)
+	{
+		switch (inputTree.fileType)
+		{
+		case FileType::CFT_Material:
+			fs::path materialPath = inputTree.path;
+			materialPath.replace_extension();
+			std::shared_ptr<Material> material = GlobalResourceManager::Resolve<Material>(materialPath);
+			DiveBomberCore::GetInstance().SetCurrentSelectedDetail(material);
+			break;
+		}
 	}
 
 	void ResourceBrowser::RecursiveFilePath(fs::path path, FileTreeNode& inputFileTree)

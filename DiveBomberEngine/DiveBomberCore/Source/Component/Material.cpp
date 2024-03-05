@@ -319,21 +319,21 @@ namespace DiveBomber::DEComponent
                 }
                 else
                 {
-                    if (materialData["Type"] == ShaderParamType::SPT_Texture)
+                    switch ((ShaderParamType)materialData["Type"])
                     {
+                    case ShaderParamType::SPT_Texture:
                         materialData["Value"] = EngineTextureDirectory "white.dds";
-                    }
-                    else if (materialData["Type"] == ShaderParamType::SPT_Float)
-                    {
+                        break;
+                    case ShaderParamType::SPT_Float:
                         materialData["Value"] = 1.0;
-                    }
-                    else if (materialData["Type"] == ShaderParamType::SPT_Color || materialData["Type"] == ShaderParamType::SPT_Float4)
-                    {
+                        break;
+                    case ShaderParamType::SPT_Color:
+                    case ShaderParamType::SPT_Float4:
                         materialData["Value"] = { 1.0f,1.0f,1.0f,1.0f };
-                    }
-                    else if (materialData["Type"] == ShaderParamType::SPT_Bool)
-                    {
+                        break;
+                    case ShaderParamType::SPT_Bool:
                         materialData["Value"] = true;
+                        break;
                     }
                 }
             }
@@ -396,7 +396,9 @@ namespace DiveBomber::DEComponent
         UINT textureCounter = 0;
         for (auto& param : config["Param"])
         {
-            if (param["Type"] == ShaderParamType::SPT_Texture)
+            switch ((ShaderParamType)param["Type"])
+            {
+            case ShaderParamType::SPT_Texture:
             {
                 auto matExsists = textureMap.find(param["Name"]);
 
@@ -406,7 +408,7 @@ namespace DiveBomber::DEComponent
                     {
                         SetTexture(param["Name"].get<std::string>(), GlobalResourceManager::Resolve<Texture>(Utility::ToWide(param["Value"])), textureCounter);
                     }
-                    else if(textureCounter != matExsists->second.second)
+                    else if (textureCounter != matExsists->second.second)
                     {
                         matExsists->second.second = textureCounter;
                         SetTexture(param["Name"].get<std::string>(), GlobalResourceManager::Resolve<Texture>(Utility::ToWide(param["Value"])), textureCounter);
@@ -417,18 +419,18 @@ namespace DiveBomber::DEComponent
                     SetTexture(param["Name"], GlobalResourceManager::Resolve<Texture>(Utility::ToWide(param["Value"])), textureCounter);
                 }
                 textureCounter++;
+                break;
             }
-            else if(param["Type"] == ShaderParamType::SPT_Float)
-            {
+            case ShaderParamType::SPT_Float:
                 DCBLayout.Add<DynamicConstantProcess::Float>(param["Name"]);
-            }
-            else if (param["Type"] == ShaderParamType::SPT_Float4 || param["Type"] == ShaderParamType::SPT_Color)
-            {
+                break;
+            case ShaderParamType::SPT_Float4:
+            case ShaderParamType::SPT_Color:
                 DCBLayout.Add<DynamicConstantProcess::Float4>(param["Name"]);
-            }
-            else if (param["Type"] == ShaderParamType::SPT_Bool)
-            {
+                break;
+            case ShaderParamType::SPT_Bool:
                 DCBLayout.Add<DynamicConstantProcess::Bool>(param["Name"]);
+                break;
             }
         }
         if (config["Param"].size() == 0)
@@ -438,18 +440,19 @@ namespace DiveBomber::DEComponent
         DynamicConstantProcess::Buffer DXBBuffer = DynamicConstantProcess::Buffer(std::move(DCBLayout));
         for (auto& param : config["Param"])
         {
-            if (param["Type"] == ShaderParamType::SPT_Float)
+            switch ((ShaderParamType)param["Type"])
             {
+            case ShaderParamType::SPT_Float:
                 DXBBuffer[param["Name"]] = param["Value"].get<float>();
-            }
-            else if (param["Type"] == ShaderParamType::SPT_Float4 || param["Type"] == ShaderParamType::SPT_Color)
-            {
+                break;
+            case ShaderParamType::SPT_Float4:
+            case ShaderParamType::SPT_Color:
                 dx::XMFLOAT4 float4 = { param["Value"][0],param["Value"][1],param["Value"][2],param["Value"][3] };
                 DXBBuffer[param["Name"]] = float4;
-            }
-            else if (param["Type"] == ShaderParamType::SPT_Bool)
-            {
+                break;
+            case ShaderParamType::SPT_Bool:
                 DXBBuffer[param["Name"]] = param["Value"].get<bool>();
+                break;
             }
         }
 
@@ -464,6 +467,35 @@ namespace DiveBomber::DEComponent
             std::shared_ptr<DynamicConstantBufferInHeap> baseMat = std::make_shared<DynamicConstantBufferInHeap>(name, DXBBuffer);
             SetConstant(Utility::ToNarrow(name), baseMat);
         }
+    }
+
+    void Material::SaveConfig()
+    {
+        auto buf = dynamicConstantMap[Utility::ToNarrow(name)]->GetBuffer();
+
+        for (auto& param : config["Param"])
+        {
+            switch ((ShaderParamType)param["Type"])
+            {
+            case ShaderParamType::SPT_Float:
+                param["Value"] = (float)buf[param["Name"]];
+                break;
+            case ShaderParamType::SPT_Float4:
+            case ShaderParamType::SPT_Color:
+                dx::XMFLOAT4 float4 = buf[param["Name"]];
+                param["Value"] = { float4.x,float4.y,float4.z,float4.w };
+                std::cout << param["Value"][1] << std::endl;
+                break;
+            case ShaderParamType::SPT_Bool:
+                param["Value"] = (bool)buf[param["Name"]];
+                break;
+            }
+        }
+
+        // write prettified JSON to another file
+        std::ofstream outFile(configFilePath);
+        outFile << std::setw(4) << config << std::endl;
+        outFile.close();
     }
 
     std::vector<std::shared_ptr<GraphicResource::Shader>> Material::GetShaders() const noexcept
@@ -515,36 +547,44 @@ namespace DiveBomber::DEComponent
                 float dirty = false;
                 const auto dcheck = [&dirty](bool changed) {dirty = dirty || changed; };
 
-                if (param["Type"] == ShaderParamType::SPT_Float)
+                switch ((ShaderParamType)param["Type"])
+                {
+                case ShaderParamType::SPT_Float:
                 {
                     auto value = buf[param["Name"]];
                     dcheck(ImGui::SliderFloat(tag(param["Name"].get<std::string>()), &value,
                         param["Min"].get<float>(), param["Max"].get<float>(),
                         param["Format"].get<std::string>().c_str(),
                         param["PowerStep"].get<bool>() ? ImGuiSliderFlags_Logarithmic : ImGuiSliderFlags_None));
+                    break;
                 }
-                else if (param["Type"] == ShaderParamType::SPT_Float4)
+                case ShaderParamType::SPT_Float4:
                 {
                     auto value = buf[param["Name"]];
                     dcheck(ImGui::SliderFloat4(tag(param["Name"].get<std::string>()), reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(value)),
                         param["Min"].get<float>(), param["Max"].get<float>(),
                         param["Format"].get<std::string>().c_str(),
                         param["PowerStep"].get<bool>() ? ImGuiSliderFlags_Logarithmic : ImGuiSliderFlags_None));
+                    break;
                 }
-                else if (param["Type"] == ShaderParamType::SPT_Color)
+                case ShaderParamType::SPT_Color:
                 {
                     auto value = buf[param["Name"]];
                     dcheck(ImGui::ColorPicker4(tag(param["Name"].get<std::string>()), reinterpret_cast<float*>(&static_cast<dx::XMFLOAT4&>(value))));
+                    break;
                 }
-                else if (param["Type"] == ShaderParamType::SPT_Bool)
+                case ShaderParamType::SPT_Bool:
                 {
                     auto value = buf[param["Name"]];
                     dcheck(ImGui::Checkbox(tag(param["Name"].get<std::string>()), &value));
+                    break;
                 }
-                else if (param["Type"] == ShaderParamType::SPT_Texture)
+                case ShaderParamType::SPT_Texture:
                 {
                     // todo
                     ImGui::Text(tag(param["Name"].get<std::string>()));
+                    break;
+                }
                 }
 
                 if (dirty)

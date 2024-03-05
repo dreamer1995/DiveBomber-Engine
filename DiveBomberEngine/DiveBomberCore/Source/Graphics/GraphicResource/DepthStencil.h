@@ -11,7 +11,7 @@ namespace DiveBomber::DX
 namespace DiveBomber::GraphicResource
 {
 	class RenderTarget;
-	class DepthStencil final: public Resource
+	class DepthStencil final: public DiveBomber::Resource
 	{
 	public:
 		DepthStencil(UINT inputWidth, UINT inputHeight,

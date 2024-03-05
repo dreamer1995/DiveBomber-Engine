@@ -3,7 +3,7 @@
 
 namespace DiveBomber::DEComponent
 {
-	class Component : public Resource
+	class Component : public DiveBomber::Resource
 	{
 	public:
 		Component(std::wstring inputName)

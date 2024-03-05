@@ -59,6 +59,7 @@ namespace DiveBomber::DEComponent
 		void GetConfig();
 		void UploadConfig(const fs::path shaderPath);
 		void ReloadConfig();
+		void SaveConfig();
 
 		[[nodiscard]] std::vector<std::shared_ptr<GraphicResource::Shader>> GetShaders() const noexcept;
 		[[nodiscard]] bool IsShaderDirty() noexcept;
