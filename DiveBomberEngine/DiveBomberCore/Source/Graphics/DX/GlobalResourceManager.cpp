@@ -2,7 +2,6 @@
 
 namespace DiveBomber::DX
 {
-	using namespace DEResource;
 	std::unique_ptr<GlobalResourceManager> GlobalResourceManager::instance;
 
 	void GlobalResourceManager::DeleteResource(const std::string key) noexcept

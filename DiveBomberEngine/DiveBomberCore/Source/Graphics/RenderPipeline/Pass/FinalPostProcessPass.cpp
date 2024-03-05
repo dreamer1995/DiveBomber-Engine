@@ -3,7 +3,7 @@
 #include "..\..\Graphics.h"
 #include "..\..\..\Component\Material.h"
 
-#include "..\..\Resource\ResourceCommonInclude.h"
+#include "..\..\Resource\GraphicsResourceCommonInclude.h"
 #include "..\..\DX\GlobalResourceManager.h"
 #include "..\..\..\Utility\GlobalParameters.h"
 

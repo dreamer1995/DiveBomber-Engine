@@ -1,11 +1,11 @@
 #pragma once
-#include "..\Resource.h"
+#include "..\..\..\Resource.h"
 #include "Bindable.h"
 #include "..\..\GraphicsHeader.h"
 
 namespace DiveBomber::DEResource
 {
-	class IndexBuffer final : public Resource, public Bindable
+	class IndexBuffer final : public DiveBomber::Resource, public Bindable
 	{
 	public:
 		IndexBuffer(const std::vector<unsigned short>& indices);

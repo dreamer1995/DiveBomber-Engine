@@ -1,5 +1,5 @@
 #pragma once
-#include "..\Resource.h"
+#include "..\..\..\Resource.h"
 #include "ShaderInputable.h"
 #include "..\..\GraphicsHeader.h"
 #include "..\..\..\Utility\DEJson.h"
@@ -17,7 +17,7 @@ namespace DiveBomber::DEResource
 	namespace fs = std::filesystem;
 	using json = nlohmann::json;
 
-	class Texture : public Resource, public ShaderInputable
+	class Texture : public DiveBomber::Resource, public ShaderInputable
 	{
 	public:
 		enum class TextureDimension

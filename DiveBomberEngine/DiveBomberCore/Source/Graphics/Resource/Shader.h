@@ -1,5 +1,5 @@
 #pragma once
-#include "Resource.h"
+#include "..\..\Resource.h"
 #include "..\GraphicsHeader.h"
 
 #include <filesystem>
@@ -24,7 +24,7 @@ namespace DiveBomber::DEResource
 		ComputeShader,
 	};
 
-	class Shader final : public Resource
+	class Shader final : public DiveBomber::Resource
 	{
 	public:
 		Shader(const fs::path inputPath, ShaderType inputType);

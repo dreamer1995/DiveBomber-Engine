@@ -1,11 +1,11 @@
 #pragma once
-#include "..\..\Utility\Common.h"
+#include "Utility\Common.h"
 
 #include <string>
 #include <memory>
 #include <cassert>
 
-namespace DiveBomber::DEResource
+namespace DiveBomber
 {
 	class Resource
 	{

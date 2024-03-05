@@ -169,8 +169,8 @@
     <ClInclude Include="Source\Graphics\Resource\ShaderInputable\UnorderedAccessBuffer.h" />
     <ClInclude Include="Source\Graphics\Resource\ShaderInputable\UnorderedAccessBufferAsShaderResourceView.h" />
     <ClInclude Include="Source\Graphics\Resource\DynamicConstant.h" />
-    <ClInclude Include="Source\Graphics\Resource\Resource.h" />
-    <ClInclude Include="Source\Graphics\Resource\ResourceCommonInclude.h" />
+    <ClInclude Include="Source\Resource.h" />
+    <ClInclude Include="Source\Graphics\Resource\GraphicsResourceCommonInclude.h" />
     <ClInclude Include="Source\Graphics\Resource\ConstantBuffer.h" />
     <ClInclude Include="Source\Graphics\Resource\Bindable\DynamicConstantBufferInRootSignature.h" />
     <ClInclude Include="Source\Graphics\Resource\Bindable\ConstantBufferInRootSignature.h" />

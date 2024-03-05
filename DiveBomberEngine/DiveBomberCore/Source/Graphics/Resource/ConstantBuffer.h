@@ -1,5 +1,5 @@
 #pragma once
-#include "Resource.h"
+#include "..\..\Resource.h"
 #include "..\Graphics.h"
 #include "..\..\Exception\GraphicsExceptionEX.h"
 #include "..\DX\CommandList.h"
@@ -9,7 +9,7 @@
 namespace DiveBomber::DEResource
 {
 	template<typename C>
-	class ConstantBuffer : public Resource
+	class ConstantBuffer : public DiveBomber::Resource
 	{
 	public:
 		ConstantBuffer(const std::wstring& inputName,

@@ -1,5 +1,5 @@
 #pragma once
-#include "..\Resource.h"
+#include "..\..\..\Resource.h"
 #include "Bindable.h"
 
 #include <DirectXMath.h>
@@ -14,7 +14,7 @@ namespace DiveBomber::DEResource
 	template<typename C>
 	class ConstantBufferInRootSignature;
 
-	class ConstantTransformBuffer final : public Resource, public Bindable
+	class ConstantTransformBuffer final : public DiveBomber::Resource, public Bindable
 	{
 	public:
 		struct alignas(16) Transforms

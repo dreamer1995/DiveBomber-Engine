@@ -1,11 +1,11 @@
 #pragma once
-#include "..\Resource.h"
+#include "..\..\..\Resource.h"
 #include "Bindable.h"
 #include "..\..\GraphicsHeader.h"
 
 namespace DiveBomber::DEResource
 {
-	class Topology final: public Resource, public Bindable
+	class Topology final: public DiveBomber::Resource, public Bindable
 	{
 	public:
 		Topology(const std::wstring& inputName, D3D_PRIMITIVE_TOPOLOGY inputType, D3D12_PRIMITIVE_TOPOLOGY_TYPE inputShaderType);

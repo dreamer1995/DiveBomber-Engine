@@ -3,7 +3,7 @@
 #include "..\GraphicsSource.h"
 #include "UploadBuffer.h"
 #include "ResourceStateTracker.h"
-#include "..\Resource\Resource.h"
+#include "..\..\Resource.h"
 
 namespace DiveBomber::DX
 {

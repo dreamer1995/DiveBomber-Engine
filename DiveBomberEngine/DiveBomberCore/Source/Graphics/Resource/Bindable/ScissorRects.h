@@ -1,11 +1,11 @@
 #pragma once
-#include "..\Resource.h"
+#include "..\..\..\Resource.h"
 #include "Bindable.h"
 #include "..\..\GraphicsHeader.h"
 
 namespace DiveBomber::DEResource
 {
-	class ScissorRects final : public Resource, public Bindable
+	class ScissorRects final : public DiveBomber::Resource, public Bindable
 	{
 	public:
 		ScissorRects(const std::wstring& inputName);

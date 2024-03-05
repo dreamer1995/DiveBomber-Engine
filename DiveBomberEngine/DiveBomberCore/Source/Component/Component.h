@@ -1,9 +1,9 @@
-#include "..\Graphics\Resource\Resource.h"
+#include "..\Resource.h"
 #pragma once
 
 namespace DiveBomber::DEComponent
 {
-	class Component : public DEResource::Resource
+	class Component : public Resource
 	{
 	public:
 		Component(std::wstring inputName)

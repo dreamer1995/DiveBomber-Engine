@@ -6,7 +6,7 @@
 #include <unordered_map>
 #include <mutex>
 
-namespace DiveBomber::DEResource
+namespace DiveBomber
 {
 	class Resource;
 }
@@ -28,7 +28,7 @@ namespace DiveBomber::DX
 		template<class T, typename...Params>
 		[[nodiscard]] static std::shared_ptr<T> Resolve(Params&&...p) noxnd
 		{
-			static_assert(std::is_base_of<DEResource::Resource, T>::value, "Can only resolve classes derived from Resource");
+			static_assert(std::is_base_of<Resource, T>::value, "Can only resolve classes derived from Resource");
 			return GetInstance().Resolve_<T>(std::forward<Params>(p)...);
 		}
 
@@ -70,7 +70,7 @@ namespace DiveBomber::DX
 		}
 
 	private:
-		std::unordered_map<std::string, std::shared_ptr<DEResource::Resource>> resources;
+		std::unordered_map<std::string, std::shared_ptr<Resource>> resources;
 
 		std::mutex GlobalResourceManagerMutex;
 

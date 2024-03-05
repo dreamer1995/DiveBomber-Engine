@@ -215,8 +215,8 @@
     <ClInclude Include="Source\Graphics\Resource\Bindable\Topology.h" />
     <ClInclude Include="Source\Graphics\Resource\Bindable\Viewport.h" />
     <ClInclude Include="Source\Graphics\Resource\DynamicConstant.h" />
-    <ClInclude Include="Source\Graphics\Resource\Resource.h" />
-    <ClInclude Include="Source\Graphics\Resource\ResourceCommonInclude.h" />
+    <ClInclude Include="Source\Resource.h" />
+    <ClInclude Include="Source\Graphics\Resource\GraphicsResourceCommonInclude.h" />
     <ClInclude Include="Source\Graphics\Resource\ShaderInputable\BufferInHeap.h" />
     <ClInclude Include="Source\Graphics\Resource\ShaderInputable\DynamicBufferInHeap.h" />
     <ClInclude Include="Source\Graphics\Resource\ShaderInputable\ShaderInputable.h" />

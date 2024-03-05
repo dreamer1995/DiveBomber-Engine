@@ -1,7 +1,7 @@
 #include "SimpleSphere.h"
 
 #include "..\Graphics.h"
-#include "..\Resource\ResourceCommonInclude.h"
+#include "..\Resource\GraphicsResourceCommonInclude.h"
 #include "..\Geometry\Sphere.h"
 #include "..\..\Component\Mesh.h"
 #include "..\..\Component\Material.h"
@@ -21,6 +21,8 @@ namespace DiveBomber::DEObject
 	using namespace DEComponent;
 
 	SimpleSphere::SimpleSphere(const std::wstring inputName)
+		:
+		Object(inputName)
 	{
 		name = inputName;
 

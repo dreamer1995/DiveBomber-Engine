@@ -6,7 +6,7 @@ namespace DiveBomber::DEObject
 	class Model final : public Object
 	{
 	public:
-		Model();
+		Model(const std::wstring inputName);
 		[[nodiscard]] int GetModel() const noexcept;
 		void Bind() noxnd;
 	private:

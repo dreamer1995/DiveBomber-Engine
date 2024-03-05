@@ -1,7 +1,7 @@
 #include "FullScreenPlane.h"
 
 #include "..\..\Graphics.h"
-#include "..\..\Resource\ResourceCommonInclude.h"
+#include "..\..\Resource\GraphicsResourceCommonInclude.h"
 #include "..\..\Geometry\Vertex.h"
 #include "..\..\..\Component\Mesh.h"
 #include "..\..\..\Component\Material.h"

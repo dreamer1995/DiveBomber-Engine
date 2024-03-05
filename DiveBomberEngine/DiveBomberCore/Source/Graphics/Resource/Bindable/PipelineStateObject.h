@@ -1,5 +1,5 @@
 #pragma once
-#include "..\Resource.h"
+#include "..\..\..\Resource.h"
 #include "Bindable.h"
 #include "..\..\GraphicsHeader.h"
 
@@ -16,7 +16,7 @@ namespace DiveBomber::DEResource
 	class Topology;
 	class Shader;
 
-	class PipelineStateObject final : public Resource, public Bindable
+	class PipelineStateObject final : public DiveBomber::Resource, public Bindable
 	{
 	public:
 		struct PipelineStateReference

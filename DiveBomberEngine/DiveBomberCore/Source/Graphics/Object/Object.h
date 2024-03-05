@@ -1,6 +1,7 @@
 #pragma once
 #include "..\..\Utility\Common.h"
 #include "..\..\Graphics\UI\DetailModifier.h"
+#include "..\..\Resource.h"
 
 #include <DirectXMath.h>
 #include <string>
@@ -19,10 +20,9 @@ namespace DiveBomber::DEComponent
 
 namespace DiveBomber::DEObject
 {
-	class Object : public UI::DetailModifier
+	class Object : public DiveBomber::Resource, public UI::DetailModifier
 	{
 	public:
-		Object() = default;
 		Object(const std::wstring inputName);
 		virtual ~Object();
 

@@ -1,5 +1,5 @@
 #pragma once
-#include "Resource.h"
+#include "..\..\Resource.h"
 #include "..\GraphicsHeader.h"
 
 namespace DiveBomber::DX
@@ -11,7 +11,7 @@ namespace DiveBomber::DX
 namespace DiveBomber::DEResource
 {
 	class DepthStencil;
-	class RenderTarget : public Resource
+	class RenderTarget : public DiveBomber::Resource
 	{
 		// just for reference
 		//enum class RenderTargetType

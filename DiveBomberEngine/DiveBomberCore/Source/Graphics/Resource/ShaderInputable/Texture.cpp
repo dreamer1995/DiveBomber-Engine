@@ -7,7 +7,7 @@
 #include "..\..\DX\DescriptorAllocation.h"
 #include "..\..\DX\CommandList.h"
 #include "..\..\DX\ResourceStateTracker.h"
-#include "..\ResourceCommonInclude.h"
+#include "..\GraphicsResourceCommonInclude.h"
 #include "..\..\..\Component\Material.h"
 #include "..\..\DX\CommandQueue.h"
 

@@ -1,11 +1,11 @@
 #pragma once
-#include "..\Resource.h"
+#include "..\..\..\Resource.h"
 #include "Bindable.h"
 #include "..\..\GraphicsHeader.h"
 
 namespace DiveBomber::DEResource
 {
-	class RootSignature final : public Resource, public Bindable
+	class RootSignature final : public DiveBomber::Resource, public Bindable
 	{
 	public:
 		RootSignature(const std::wstring& inputName);

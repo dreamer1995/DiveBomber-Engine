@@ -1,5 +1,5 @@
 #pragma once
-#include "..\Resource.h"
+#include "..\..\..\Resource.h"
 #include "ShaderInputable.h"
 
 #include "..\..\GraphicsHeader.h"
@@ -12,7 +12,7 @@ namespace DiveBomber::DX
 
 namespace DiveBomber::DEResource
 {
-	class UnorderedAccessBuffer final : public Resource, public ShaderInputable
+	class UnorderedAccessBuffer final : public DiveBomber::Resource, public ShaderInputable
 	{
 	public:
 		UnorderedAccessBuffer(

@@ -6,7 +6,9 @@ namespace DiveBomber::DEObject
 {
     using namespace DEException;
 
-    Model::Model()
+    Model::Model(const std::wstring inputName)
+        :
+        Object(inputName)
     {
     }
 

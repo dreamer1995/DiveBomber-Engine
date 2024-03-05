@@ -1,11 +1,11 @@
 #pragma once
-#include "..\Resource.h"
+#include "..\..\..\Resource.h"
 #include "Bindable.h"
 #include "..\..\GraphicsHeader.h"
 
 namespace DiveBomber::DEResource
 {
-	class Viewport final : public Resource, public Bindable
+	class Viewport final : public DiveBomber::Resource, public Bindable
 	{
 	public:
 		Viewport(const std::wstring& inputName);

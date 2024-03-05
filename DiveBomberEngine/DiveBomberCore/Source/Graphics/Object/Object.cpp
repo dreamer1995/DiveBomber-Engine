@@ -13,7 +13,7 @@ namespace DiveBomber::DEObject
 
 	Object::Object(const std::wstring inputName)
 		:
-		name(inputName)
+		Resource(inputName)
 	{
 	}
 

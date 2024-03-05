@@ -1,7 +1,7 @@
 #include "SkyDomePass.h"
 
 #include "..\..\Graphics.h"
-#include "..\..\Resource\ResourceCommonInclude.h"
+#include "..\..\Resource\GraphicsResourceCommonInclude.h"
 #include "..\..\Geometry\Cube.h"
 #include "..\..\..\Component\Mesh.h"
 #include "..\..\..\Component\Material.h"

@@ -1,6 +1,6 @@
 #pragma once
 #include "ComputePass.h"
-#include "..\..\Resource\ResourceCommonInclude.h"
+#include "..\..\Resource\GraphicsResourceCommonInclude.h"
 
 #include <memory>
 
