@@ -1,7 +1,7 @@
 #pragma once
 #include "RenderPass.h"
 
-namespace DiveBomber::DEResource
+namespace DiveBomber::GraphicResource
 {
 	class IndexBuffer;
 	class PipelineStateObject;
@@ -25,15 +25,15 @@ namespace DiveBomber::RenderPipeline
 	class SkyDomePass final : public RenderPass
 	{
 	public:
-		SkyDomePass(std::shared_ptr<DEResource::RenderTarget> inputRenderTarget,
-			std::shared_ptr<DEResource::DepthStencil> inputDepthStencil);
+		SkyDomePass(std::shared_ptr<GraphicResource::RenderTarget> inputRenderTarget,
+			std::shared_ptr<GraphicResource::DepthStencil> inputDepthStencil);
 
 		void Execute() noxnd override;
 
 	private:
 		std::shared_ptr<DEComponent::Material> material;
 		std::shared_ptr<DEComponent::Mesh> mesh;
-		std::shared_ptr<DEResource::PipelineStateObject> pso;
+		std::shared_ptr<GraphicResource::PipelineStateObject> pso;
 
 		std::shared_ptr<DEObject::Object> skyDomeAnchor;
 	};

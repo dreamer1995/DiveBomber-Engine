@@ -5,7 +5,7 @@
 #include "..\..\Utility\DEJson.h"
 #include "..\..\Window\Window.h"
 #include "..\..\Hardware\Keyboard.h"
-#include "..\Resource\ShaderInputable\Texture.h"
+#include "..\GraphicResource\ShaderInputable\Texture.h"
 #include "..\DX\GlobalResourceManager.h"
 #include "..\Graphics.h"
 #include "..\..\DiveBomberCore.h"
@@ -17,7 +17,7 @@
 namespace DiveBomber::UI
 {
 	using namespace DEWindow;
-	using namespace DEResource;
+	using namespace GraphicResource;
 	using namespace DX;
 	using namespace DEGraphics;
 	using namespace DEComponent;
@@ -427,7 +427,7 @@ namespace DiveBomber::UI
 			fs::path texturePath = inputTree.path;
 			texturePath.replace_extension(L"");
 
-			std::shared_ptr<DEResource::Texture> texture = GlobalResourceManager::Resolve<Texture>(
+			std::shared_ptr<GraphicResource::Texture> texture = GlobalResourceManager::Resolve<Texture>(
 				texturePath);
 
 			texture->ReloadTexture();

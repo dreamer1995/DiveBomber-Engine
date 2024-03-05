@@ -1,7 +1,7 @@
 #include "FullScreenPlane.h"
 
 #include "..\..\Graphics.h"
-#include "..\..\Resource\GraphicsResourceCommonInclude.h"
+#include "..\..\GraphicResource\GraphicsResourceCommonInclude.h"
 #include "..\..\Geometry\Vertex.h"
 #include "..\..\..\Component\Mesh.h"
 #include "..\..\..\Component\Material.h"
@@ -11,8 +11,8 @@
 namespace DiveBomber::RenderPipeline
 {
 	using namespace DEGraphics;
-	using namespace DEResource;
-	using namespace DEResource::VertexProcess;
+	using namespace GraphicResource;
+	using namespace GraphicResource::VertexProcess;
 	using namespace DX;
 	using namespace DEComponent;
 	namespace dx = DirectX;

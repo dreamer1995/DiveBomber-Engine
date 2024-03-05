@@ -1,10 +1,10 @@
 #pragma once
 #include "ComputePass.h"
-#include "..\..\Resource\GraphicsResourceCommonInclude.h"
+#include "..\..\GraphicResource\GraphicsResourceCommonInclude.h"
 
 #include <memory>
 
-namespace DiveBomber::DEResource
+namespace DiveBomber::GraphicResource
 {
 	class PipelineStateObject;
 	class ShaderInputable;
@@ -26,14 +26,14 @@ namespace DiveBomber::RenderPipeline
 		};
 
 	public:
-		FinalPostProcessPass(std::shared_ptr<DEResource::UnorderedAccessBuffer> inputTarget);
+		FinalPostProcessPass(std::shared_ptr<GraphicResource::UnorderedAccessBuffer> inputTarget);
 
 		virtual void Execute() noxnd override;
 
 	private:
 		std::shared_ptr<DEComponent::Material> material;
-		std::shared_ptr<DEResource::PipelineStateObject> pso;
+		std::shared_ptr<GraphicResource::PipelineStateObject> pso;
 		PostProcessData postProcessCB;
-		std::shared_ptr<DEResource::ConstantBufferInHeap<PostProcessData>> postProcessCBIndex;
+		std::shared_ptr<GraphicResource::ConstantBufferInHeap<PostProcessData>> postProcessCBIndex;
 	};
 }

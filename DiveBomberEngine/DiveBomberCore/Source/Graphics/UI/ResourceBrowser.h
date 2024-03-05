@@ -7,7 +7,7 @@
 #include <stack>
 #include <..\imgui\imgui.h>
 
-namespace DiveBomber::DEResource
+namespace DiveBomber::GraphicResource
 {
 	class Texture;
 }
@@ -43,7 +43,7 @@ namespace DiveBomber::UI
 	private:
 		struct Icon
 		{
-			std::shared_ptr<DEResource::Texture> iconTexture;
+			std::shared_ptr<GraphicResource::Texture> iconTexture;
 			ImVec2 uv0 = ImVec2(0, 0);
 			ImVec2 uv1 = ImVec2(1, 1);
 			ImVec2 XYRatio = ImVec2(1, 1);
@@ -76,7 +76,7 @@ namespace DiveBomber::UI
 		std::stack<FileTreeNode*> selectedTreeNodeStack;
 		std::unordered_set<UINT> currentSelectedFileIDs;
 		bool browserFileIconMode = true;
-		std::shared_ptr<DEResource::Texture> iconAtlasTexture;
+		std::shared_ptr<GraphicResource::Texture> iconAtlasTexture;
 
 		const ImVec2 buttonSize = ImVec2(20, 20);
 		std::shared_ptr<Icon> backArrow;

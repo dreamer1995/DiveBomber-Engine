@@ -7,7 +7,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
-namespace DiveBomber::DEResource
+namespace DiveBomber::GraphicResource
 {
 	class RenderTargetAsShaderResourceView;
 	class UnorderedAccessBufferAsShaderResourceView;
@@ -40,9 +40,9 @@ namespace DiveBomber::RenderPipeline
 		void PostRender() noxnd override;
 
 	private:
-		std::shared_ptr<DEResource::RenderTargetAsShaderResourceView> HDRTarget;
-		std::shared_ptr<DEResource::UnorderedAccessBufferAsShaderResourceView> finalTarget;
-		std::shared_ptr<DEResource::RootSignature> rootSignature;
+		std::shared_ptr<GraphicResource::RenderTargetAsShaderResourceView> HDRTarget;
+		std::shared_ptr<GraphicResource::UnorderedAccessBufferAsShaderResourceView> finalTarget;
+		std::shared_ptr<GraphicResource::RootSignature> rootSignature;
 
 		std::shared_ptr<OpaqueGBufferPass> opaqueGBufferPass;
 		std::shared_ptr<FinalPostProcessPass> finalPostProcessPass;

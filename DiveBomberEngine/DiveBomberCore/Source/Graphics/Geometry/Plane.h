@@ -5,7 +5,7 @@
 
 #include <array>
 
-namespace DiveBomber::DEResource
+namespace DiveBomber::GraphicResource
 {
 	class Plane final
 	{

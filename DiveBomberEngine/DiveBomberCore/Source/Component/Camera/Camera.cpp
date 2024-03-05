@@ -1,14 +1,14 @@
 #include "Camera.h"
 
 #include "..\..\Graphics\Graphics.h"
-#include "..\..\Graphics\Resource\Bindable\ConstantBufferInRootSignature.h"
+#include "..\..\Graphics\GraphicResource\Bindable\ConstantBufferInRootSignature.h"
 #include <..\imgui\imgui.h>
 
 namespace DiveBomber::DEComponent
 {
 	using namespace DEGraphics;
 	using namespace Utility;
-	using namespace DEResource;
+	using namespace GraphicResource;
 	namespace dx = DirectX;
 
 	Camera::Camera(std::wstring inputName, CameraAttributes inputAttributes) noexcept

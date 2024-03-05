@@ -1,6 +1,6 @@
 #include "Vertex.h"
 
-namespace DiveBomber::DEResource::VertexProcess
+namespace DiveBomber::GraphicResource::VertexProcess
 {
 	// VertexLayout
 	const VertexLayout::Element& VertexLayout::ResolveByIndex(size_t i) const noxnd

@@ -1,9 +1,9 @@
 #include "Material.h"
 
-#include "..\Graphics\Resource\Shader.h"
-#include "..\Graphics\Resource\Bindable\ConstantBufferInRootSignature.h"
-#include "..\Graphics\Resource\ShaderInputable\DynamicConstantBufferInHeap.h"
-#include "..\Graphics\Resource\ShaderInputable\Texture.h"
+#include "..\Graphics\GraphicResource\Shader.h"
+#include "..\Graphics\GraphicResource\Bindable\ConstantBufferInRootSignature.h"
+#include "..\Graphics\GraphicResource\ShaderInputable\DynamicConstantBufferInHeap.h"
+#include "..\Graphics\GraphicResource\ShaderInputable\Texture.h"
 #include "..\Graphics\DX\ShaderManager.h"
 #include "..\Graphics\DX\CommandQueue.h"
 #include "..\Graphics\DX\GlobalResourceManager.h"
@@ -17,7 +17,7 @@
 namespace DiveBomber::DEComponent
 {
     using namespace DEGraphics;
-    using namespace DEResource;
+    using namespace GraphicResource;
     using namespace DX;
 
     Material::Material(const fs::path inputPath, const fs::path inputDefaultShaderPath)
@@ -466,7 +466,7 @@ namespace DiveBomber::DEComponent
         }
     }
 
-    std::vector<std::shared_ptr<DEResource::Shader>> Material::GetShaders() const noexcept
+    std::vector<std::shared_ptr<GraphicResource::Shader>> Material::GetShaders() const noexcept
     {
         return shaders;
     }
@@ -485,7 +485,7 @@ namespace DiveBomber::DEComponent
         return isShaderDirty;
     }
 
-    std::shared_ptr<DEResource::ConstantBufferInRootSignature<UINT>> Material::GetIndexConstantBuffer() const noexcept
+    std::shared_ptr<GraphicResource::ConstantBufferInRootSignature<UINT>> Material::GetIndexConstantBuffer() const noexcept
     {
         return indexConstantBuffer;
     }

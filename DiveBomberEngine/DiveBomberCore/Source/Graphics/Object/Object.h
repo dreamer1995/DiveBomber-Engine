@@ -8,7 +8,7 @@
 #include <vector>
 #include <memory>
 
-namespace DiveBomber::DEResource
+namespace DiveBomber::GraphicResource
 {
 	class Bindable;
 }
@@ -33,7 +33,7 @@ namespace DiveBomber::DEObject
 		[[nodiscard]] DirectX::XMMATRIX GetTransformXM() const noexcept;
 
 		virtual void Render() const noxnd;
-		void AddBindable(std::shared_ptr<DEResource::Bindable> bindableObject) noexcept;
+		void AddBindable(std::shared_ptr<GraphicResource::Bindable> bindableObject) noexcept;
 
 		[[nodiscard]] std::wstring GetName() const noexcept;
 
@@ -44,7 +44,7 @@ namespace DiveBomber::DEObject
 		DirectX::XMFLOAT3 position{ 0.0f,0.0f,0.0f };
 		DirectX::XMFLOAT3 rotation{ 0.0f,0.0f,0.0f };
 
-		std::vector<std::shared_ptr<DEResource::Bindable>> bindableObjects;
+		std::vector<std::shared_ptr<GraphicResource::Bindable>> bindableObjects;
 		std::vector<std::shared_ptr<DEComponent::Component>> attachedComponents;
 	};
 }

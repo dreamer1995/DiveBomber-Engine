@@ -3,7 +3,7 @@
 
 #include <unordered_map>
 
-namespace DiveBomber::DEResource
+namespace DiveBomber::GraphicResource
 {
 	class Bindable;
 	class IndexBuffer;

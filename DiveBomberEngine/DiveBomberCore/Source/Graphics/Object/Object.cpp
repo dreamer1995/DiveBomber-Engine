@@ -1,7 +1,7 @@
 #include "Object.h"
 
 #include "..\Graphics.h"
-#include "..\Resource\Bindable\Bindable.h"
+#include "..\GraphicResource\Bindable\Bindable.h"
 #include "..\..\Component\Component.h"
 
 #include <..\imgui\imgui.h>
@@ -55,7 +55,7 @@ namespace DiveBomber::DEObject
 		}
 	}
 
-	void Object::AddBindable(std::shared_ptr<DEResource::Bindable> bindableObject) noexcept
+	void Object::AddBindable(std::shared_ptr<GraphicResource::Bindable> bindableObject) noexcept
 	{
 		bindableObjects.emplace_back(bindableObject);
 	}

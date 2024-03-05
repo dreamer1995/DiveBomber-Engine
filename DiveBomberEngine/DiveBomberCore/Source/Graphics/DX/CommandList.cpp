@@ -118,7 +118,7 @@ namespace DiveBomber::DX
 		trackedObjects.emplace_back(object);
 	}
 
-	void CommandList::TrackResource(std::shared_ptr<DEResource::Resource> resource) noexcept
+	void CommandList::TrackResource(std::shared_ptr<GraphicResource::Resource> resource) noexcept
 	{
 		trackedResource.emplace_back(resource);
 	}

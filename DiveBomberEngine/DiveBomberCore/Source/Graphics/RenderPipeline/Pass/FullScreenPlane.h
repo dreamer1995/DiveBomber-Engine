@@ -1,7 +1,7 @@
 #pragma once
 #include "RenderPass.h"
 
-namespace DiveBomber::DEResource
+namespace DiveBomber::GraphicResource
 {
 	class IndexBuffer;
 	class PipelineStateObject;
@@ -19,13 +19,13 @@ namespace DiveBomber::RenderPipeline
 	class FullScreenPlane final : public RenderPass
 	{
 	public:
-		FullScreenPlane(std::string inputName, std::shared_ptr<DEResource::RenderTarget> inputRenderTarget);
+		FullScreenPlane(std::string inputName, std::shared_ptr<GraphicResource::RenderTarget> inputRenderTarget);
 
 		void Execute() noxnd override;
 
 	private:
 		std::shared_ptr<DEComponent::Material> material;
 		std::shared_ptr<DEComponent::Mesh> mesh;
-		std::shared_ptr<DEResource::PipelineStateObject> pso;
+		std::shared_ptr<GraphicResource::PipelineStateObject> pso;
 	};
 }

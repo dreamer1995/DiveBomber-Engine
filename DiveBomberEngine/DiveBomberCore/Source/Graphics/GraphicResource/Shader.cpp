@@ -1,0 +1,187 @@
+#include "Shader.h"
+
+#include "..\..\Utility\GlobalParameters.h"
+#include "..\GraphicsSource.h"
+#include "..\DX\GlobalResourceManager.h"
+#include "..\DX\ShaderManager.h"
+#include "..\..\Component\Material.h"
+
+#include <print>
+#include <iostream>
+#include <fstream>
+#include <d3dcompiler.h>
+#pragma comment(lib,"d3dcompiler.lib")
+
+namespace DiveBomber::GraphicResource
+{
+	using namespace DEGraphics;
+	using namespace DEException;
+	using namespace DX;
+	namespace fs = std::filesystem;
+
+	Shader::Shader(const fs::path inputPath, ShaderType inputType)
+		:
+		Resource(inputPath.stem()),
+		sourceFile(inputPath),
+		type(inputType)
+	{
+		// Do not move to constructor because we need abbreviation
+		builtFile = ProjectDirectoryW L"Cache\\BuiltShader\\" + name + GetShaderTypeAbbreviation() + L".cso";
+		directory = sourceFile.parent_path();
+
+		LoadShader();
+
+		isDirty = false;
+	}
+
+	wrl::ComPtr<ID3DBlob> Shader::GetBytecode() const noexcept
+	{
+		return bytecodeBlob;
+	}
+
+	void Shader::LoadShader()
+	{
+		bool needRecompile = true;
+		if (fs::exists(builtFile))
+		{
+			sourceLastSaveTime = fs::last_write_time(sourceFile);
+			builtLastSaveTime = fs::last_write_time(builtFile);
+			if (builtLastSaveTime > sourceLastSaveTime)
+			{
+				needRecompile = false;
+			}
+		}
+
+		if (needRecompile)
+		{
+			RecompileShader();
+		}
+
+		if (!isDirty && (bytecodeBlob == nullptr))
+		{
+			HRESULT hr;
+			GFX_THROW_INFO(D3DReadFileToBlob(builtFile.c_str(), &bytecodeBlob));
+		}
+	}
+
+	void Shader::RecompileShader()
+	{
+		std::wstring line;
+		std::string hlslFile;
+
+		std::wifstream rawFile;
+		rawFile.open(sourceFile);
+
+		while (std::getline(rawFile, line)) {
+			if (line != L"\"Properties\"")
+			{
+				hlslFile.append(Utility::ToNarrow(line));
+				hlslFile.append("\n");
+			}
+			else
+			{
+				std::getline(rawFile, line);
+				while (line != L"\"/Properties\"")
+				{
+					//paramsFile.append(line);
+					//paramsFile.append(L"\n");
+					std::getline(rawFile, line);
+				}
+			}
+		}
+
+		rawFile.close();
+
+		wrl::ComPtr<ID3DBlob> compiledBlob = ShaderManager::GetInstance().Compile(hlslFile, directory, name, type);
+		if (compiledBlob)
+		{
+			bytecodeBlob = compiledBlob;
+			isDirty = true;
+			std::wcout << L"Recompile Shader: " + name + GetShaderTypeAbbreviation() << std::endl;
+		}
+	}
+
+	std::wstring Shader::GetShaderParamsString(const fs::path path)
+	{
+		std::wstring line;
+		std::wstring paramsFile;
+
+		std::wifstream rawFile;
+		rawFile.open(path);
+
+		while (std::getline(rawFile, line)) {
+			if (line == L"\"Properties\"")
+			{
+				std::getline(rawFile, line);
+				while (line != L"\"/Properties\"")
+				{
+					paramsFile.append(line);
+					paramsFile.append(L"\n");
+					std::getline(rawFile, line);
+				}
+				break;
+			}
+		}
+
+		rawFile.close();
+
+		return paramsFile;
+	}
+
+	void Shader::AddMaterialReference(std::shared_ptr<DEComponent::Material> material)
+	{
+		materialMap.emplace(material->GetName(), material);
+	}
+
+	void Shader::AddMaterialReference(const std::wstring key)
+	{
+	}
+
+	std::string Shader::GenerateUID(const std::wstring name, ShaderType type)
+	{
+		using namespace std::string_literals;
+		return typeid(Shader).name() + "#"s + Utility::ToNarrow(ProjectDirectoryW L"Asset\\Shader\\" + name) + "#"s + std::to_string((int)type);
+	}
+
+	std::string Shader::GetUID() const noexcept
+	{
+		return GenerateUID(name, type);
+	}
+
+	bool Shader::IsDirty() const noexcept
+	{
+		return isDirty;
+	}
+
+	void Shader::SetDirty(bool inputIsDirty) noexcept
+	{
+		isDirty = inputIsDirty;
+	}
+
+	ShaderType Shader::GetShaderType() const noexcept
+	{
+		return type;
+	}
+
+	std::wstring Shader::GetShaderTypeAbbreviation() const noexcept
+	{
+		switch (type)
+		{
+		case ShaderType::VertexShader:
+			return L"VS";
+		case ShaderType::HullShader:
+			return L"HS";
+		case ShaderType::DomainShader:
+			return L"DS";
+		case ShaderType::GeometryShader:
+			return L"GS";
+		case ShaderType::PixelShader:
+			return L"PS";
+		case ShaderType::ComputeShader:
+			return L"CS";
+		default: {
+			return L"";
+		}
+		}
+	}
+}

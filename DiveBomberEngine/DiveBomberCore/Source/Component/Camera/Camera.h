@@ -6,7 +6,7 @@
 #include <DirectXMath.h>
 #include <string>
 
-namespace DiveBomber::DEResource
+namespace DiveBomber::GraphicResource
 {
 	template<typename C>
 	class ConstantBufferInRootSignature;
@@ -92,7 +92,7 @@ namespace DiveBomber::DEComponent
 		std::unique_ptr<Projection> projection;
 		//CameraIndicator indicator;
 
-		std::shared_ptr<DEResource::ConstantBufferInRootSignature<Transforms>> transformConstantBuffer;
+		std::shared_ptr<GraphicResource::ConstantBufferInRootSignature<Transforms>> transformConstantBuffer;
 		Transforms transforms;
 	};
 }

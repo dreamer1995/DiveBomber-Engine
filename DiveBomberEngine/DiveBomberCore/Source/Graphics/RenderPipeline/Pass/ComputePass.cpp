@@ -1,10 +1,10 @@
 #include "ComputePass.h"
-#include "..\..\Resource\ShaderInputable\UnorderedAccessBuffer.h"
+#include "..\..\GraphicResource\ShaderInputable\UnorderedAccessBuffer.h"
 #include <iostream>
 
 namespace DiveBomber::RenderPipeline
 {
-	using namespace DEResource;
+	using namespace GraphicResource;
 
 	ComputePass::ComputePass(std::string inputName, std::shared_ptr<UnorderedAccessBuffer> inputTarget)
 		:

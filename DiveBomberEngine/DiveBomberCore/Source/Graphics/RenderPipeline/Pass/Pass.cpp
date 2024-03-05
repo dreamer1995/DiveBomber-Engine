@@ -1,10 +1,10 @@
 #pragma once
 #include "Pass.h"
-#include "..\..\Resource\ShaderInputable\ShaderInputable.h"
+#include "..\..\GraphicResource\ShaderInputable\ShaderInputable.h"
 
 namespace DiveBomber::RenderPipeline
 {
-	using namespace DEResource;
+	using namespace GraphicResource;
 
 	Pass::Pass(std::string inputName)
 		:

@@ -1,10 +1,10 @@
 #include "Mesh.h"
 
 #include "..\Graphics\Graphics.h"
-#include "..\Graphics\Resource\Bindable\IndexBuffer.h"
-#include "..\Graphics\Resource\Bindable\Topology.h"
-#include "..\Graphics\Resource\Bindable\ConstantBufferInRootSignature.h"
-#include "..\Graphics\Resource\ShaderInputable\StructuredBufferInHeap.h"
+#include "..\Graphics\GraphicResource\Bindable\IndexBuffer.h"
+#include "..\Graphics\GraphicResource\Bindable\Topology.h"
+#include "..\Graphics\GraphicResource\Bindable\ConstantBufferInRootSignature.h"
+#include "..\Graphics\GraphicResource\ShaderInputable\StructuredBufferInHeap.h"
 #include "..\Graphics\DX\GlobalResourceManager.h"
 
 #include <..\imgui\imgui.h>
@@ -12,8 +12,8 @@
 namespace DiveBomber::DEComponent
 {
     using namespace DEGraphics;
-    using namespace DEResource;
-    using namespace DEResource::VertexProcess;
+    using namespace GraphicResource;
+    using namespace GraphicResource::VertexProcess;
     using namespace DX;
 
     Mesh::Mesh(std::wstring inputName, VertexData& inputVertexbuffer, std::shared_ptr<IndexBuffer> inputIndexBuffer)
@@ -51,7 +51,7 @@ namespace DiveBomber::DEComponent
         topology = inputTopology;
     }
 
-    DEResource::VertexProcess::VertexData& Mesh::GetVertexData() noexcept
+    GraphicResource::VertexProcess::VertexData& Mesh::GetVertexData() noexcept
     {
         return vertexData;
     }

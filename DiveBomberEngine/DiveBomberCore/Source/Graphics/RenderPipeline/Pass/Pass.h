@@ -7,7 +7,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
-namespace DiveBomber::DEResource
+namespace DiveBomber::GraphicResource
 {
 	class ShaderInputable;
 }
@@ -23,8 +23,8 @@ namespace DiveBomber::RenderPipeline
 
 		virtual void Execute() noxnd = 0;
 
-		void SetTexture(const std::shared_ptr<DEResource::ShaderInputable> inputResource, UINT slot) noexcept;
-		void SetConstant(const std::shared_ptr<DEResource::ShaderInputable> inputResource, UINT slot) noexcept;
+		void SetTexture(const std::shared_ptr<GraphicResource::ShaderInputable> inputResource, UINT slot) noexcept;
+		void SetConstant(const std::shared_ptr<GraphicResource::ShaderInputable> inputResource, UINT slot) noexcept;
 
 		[[nodiscard]] std::string GetName() const noexcept;
 
@@ -37,7 +37,7 @@ namespace DiveBomber::RenderPipeline
 	protected:
 		std::string name;
 
-		std::unordered_map<UINT, std::shared_ptr<DEResource::ShaderInputable>> inputTexturesMap;
-		std::unordered_map<UINT, std::shared_ptr<DEResource::ShaderInputable>> inputConstantsMap;
+		std::unordered_map<UINT, std::shared_ptr<GraphicResource::ShaderInputable>> inputTexturesMap;
+		std::unordered_map<UINT, std::shared_ptr<GraphicResource::ShaderInputable>> inputConstantsMap;
 	};
 }

@@ -1,7 +1,7 @@
 #include "SkyDomePass.h"
 
 #include "..\..\Graphics.h"
-#include "..\..\Resource\GraphicsResourceCommonInclude.h"
+#include "..\..\GraphicResource\GraphicsResourceCommonInclude.h"
 #include "..\..\Geometry\Cube.h"
 #include "..\..\..\Component\Mesh.h"
 #include "..\..\..\Component\Material.h"
@@ -13,15 +13,15 @@
 namespace DiveBomber::RenderPipeline
 {
 	using namespace DEGraphics;
-	using namespace DEResource;
-	using namespace DEResource::VertexProcess;
+	using namespace GraphicResource;
+	using namespace GraphicResource::VertexProcess;
 	using namespace DX;
 	using namespace DEComponent;
 	using namespace DEObject;
 	namespace dx = DirectX;
 
 	SkyDomePass::SkyDomePass(std::shared_ptr<RenderTarget> inputRenderTarget,
-		std::shared_ptr<DEResource::DepthStencil> inputDepthStencil)
+		std::shared_ptr<GraphicResource::DepthStencil> inputDepthStencil)
 		:
 		RenderPass("SkyDome", inputRenderTarget, inputDepthStencil)
 	{
@@ -64,7 +64,7 @@ namespace DiveBomber::RenderPipeline
 
 		skyDomeAnchor = std::make_shared<Object>(wName);
 
-		std::shared_ptr<DEResource::ConstantTransformBuffer> transformBuffer = std::make_shared<ConstantTransformBuffer>(wName + L"Transforms");
+		std::shared_ptr<GraphicResource::ConstantTransformBuffer> transformBuffer = std::make_shared<ConstantTransformBuffer>(wName + L"Transforms");
 		transformBuffer->InitializeParentReference(*skyDomeAnchor.get());
 
 		skyDomeAnchor->AddBindable(transformBuffer);

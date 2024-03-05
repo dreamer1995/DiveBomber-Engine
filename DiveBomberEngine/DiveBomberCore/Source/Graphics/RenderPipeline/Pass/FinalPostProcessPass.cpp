@@ -3,7 +3,7 @@
 #include "..\..\Graphics.h"
 #include "..\..\..\Component\Material.h"
 
-#include "..\..\Resource\GraphicsResourceCommonInclude.h"
+#include "..\..\GraphicResource\GraphicsResourceCommonInclude.h"
 #include "..\..\DX\GlobalResourceManager.h"
 #include "..\..\..\Utility\GlobalParameters.h"
 
@@ -12,7 +12,7 @@
 namespace DiveBomber::RenderPipeline
 {
 	using namespace DEGraphics;
-	using namespace DEResource;
+	using namespace GraphicResource;
 	using namespace DX;
 	using namespace DEComponent;
 
@@ -25,7 +25,7 @@ namespace DiveBomber::RenderPipeline
 		postProcessCB.invScreenSize.x = 1.0f / Graphics::GetInstance().GetWidth();
 		postProcessCB.invScreenSize.y = 1.0f / Graphics::GetInstance().GetHeight();
 
-		postProcessCBIndex = std::make_shared<DEResource::ConstantBufferInHeap<PostProcessData>>(L"FinalPostProcessPassCB", postProcessCB);
+		postProcessCBIndex = std::make_shared<GraphicResource::ConstantBufferInHeap<PostProcessData>>(L"FinalPostProcessPassCB", postProcessCB);
 
 		material->SetConstant(postProcessCBIndex, 1u);
 

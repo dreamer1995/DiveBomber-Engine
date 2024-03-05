@@ -17,7 +17,7 @@ namespace DiveBomber::DEComponent
 	class Camera;
 }
 
-namespace DiveBomber::DEResource
+namespace DiveBomber::GraphicResource
 {
 	class RenderTarget;
 	class DepthStencil;
@@ -72,8 +72,8 @@ namespace DiveBomber::DEGraphics
 		[[nodiscard]] wrl::ComPtr<ID3D12Device10> GetDevice() const noexcept;
 		[[nodiscard]] std::shared_ptr<DX::CommandList> GetCommandList(const D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT) noexcept;
 		[[nodiscard]] wrl::ComPtr<ID3D12GraphicsCommandList7> GetGraphicsCommandList(const D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT) noexcept;
-		[[nodiscard]] std::shared_ptr<DEResource::RenderTarget> GetCurrentBackBuffer() const noexcept;
-		[[nodiscard]] std::shared_ptr<DEResource::DepthStencil> GetMainDS() const noexcept;
+		[[nodiscard]] std::shared_ptr<GraphicResource::RenderTarget> GetCurrentBackBuffer() const noexcept;
+		[[nodiscard]] std::shared_ptr<GraphicResource::DepthStencil> GetMainDS() const noexcept;
 		uint64_t ExecuteCommandList(const D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT);
 		uint64_t ExecuteCommandList(std::shared_ptr<DX::CommandList> commandList, const D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT);
 		uint64_t ExecuteCommandLists(std::vector<std::shared_ptr<DX::CommandList>> commandLists, const D3D12_COMMAND_LIST_TYPE type = D3D12_COMMAND_LIST_TYPE_DIRECT);
@@ -114,9 +114,9 @@ namespace DiveBomber::DEGraphics
 
 		std::shared_ptr<DEComponent::Camera> renderCamera;
 
-		std::shared_ptr<DEResource::DepthStencil> mainDS;
-		std::unique_ptr<DEResource::Viewport> viewport;
-		std::unique_ptr<DEResource::ScissorRects> scissorRects;
+		std::shared_ptr<GraphicResource::DepthStencil> mainDS;
+		std::unique_ptr<GraphicResource::Viewport> viewport;
+		std::unique_ptr<GraphicResource::ScissorRects> scissorRects;
 
 		static std::unique_ptr<Graphics> instance;
 

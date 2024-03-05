@@ -3,7 +3,7 @@
 #include "..\Graphics\GraphicsHeader.h"
 #include "..\Graphics\Geometry\Vertex.h"
 
-namespace DiveBomber::DEResource
+namespace DiveBomber::GraphicResource
 {
 	class IndexBuffer;
 	class Topology;
@@ -13,7 +13,7 @@ namespace DiveBomber::DEResource
 	class StructuredBufferInHeap;
 }
 
-namespace DiveBomber::DEResource::VertexProcess
+namespace DiveBomber::GraphicResource::VertexProcess
 {
 	class VertexData;
 }
@@ -24,28 +24,28 @@ namespace DiveBomber::DEComponent
 	{
 	public:
 		Mesh(std::wstring inputName,
-			DEResource::VertexProcess::VertexData& inputVertexbuffer, std::shared_ptr<DEResource::IndexBuffer> inputIndexBuffer);
+			GraphicResource::VertexProcess::VertexData& inputVertexbuffer, std::shared_ptr<GraphicResource::IndexBuffer> inputIndexBuffer);
 		Mesh(std::wstring inputName,
-			DEResource::VertexProcess::VertexData& inputVertexbuffer, std::shared_ptr<DEResource::IndexBuffer> inputIndexBuffer,
-			std::shared_ptr<DEResource::Topology> inputTopology);
+			GraphicResource::VertexProcess::VertexData& inputVertexbuffer, std::shared_ptr<GraphicResource::IndexBuffer> inputIndexBuffer,
+			std::shared_ptr<GraphicResource::Topology> inputTopology);
 
-		void SetMesh(DEResource::VertexProcess::VertexData& inputVertexbuffer,
-			std::shared_ptr<DEResource::IndexBuffer> inputIndexBuffer) noexcept;
-		void SetTopology(std::shared_ptr<DEResource::Topology> inputTopology) noexcept;
-		[[nodiscard]] DEResource::VertexProcess::VertexData& GetVertexData() noexcept;
-		[[nodiscard]] std::shared_ptr<DEResource::IndexBuffer> GetIndexBuffer() const noexcept;
-		[[nodiscard]] std::shared_ptr<DEResource::Topology> GetTopology() const noexcept;
+		void SetMesh(GraphicResource::VertexProcess::VertexData& inputVertexbuffer,
+			std::shared_ptr<GraphicResource::IndexBuffer> inputIndexBuffer) noexcept;
+		void SetTopology(std::shared_ptr<GraphicResource::Topology> inputTopology) noexcept;
+		[[nodiscard]] GraphicResource::VertexProcess::VertexData& GetVertexData() noexcept;
+		[[nodiscard]] std::shared_ptr<GraphicResource::IndexBuffer> GetIndexBuffer() const noexcept;
+		[[nodiscard]] std::shared_ptr<GraphicResource::Topology> GetTopology() const noexcept;
 		[[nodiscard]] std::wstring GetName() const noexcept;
 
 		void Bind() noxnd;
 
 		void DrawComponentUI() override;
 	private:
-		DEResource::VertexProcess::VertexData vertexData;
-		std::shared_ptr<DEResource::IndexBuffer> indexBuffer;
-		std::shared_ptr<DEResource::Topology> topology;
+		GraphicResource::VertexProcess::VertexData vertexData;
+		std::shared_ptr<GraphicResource::IndexBuffer> indexBuffer;
+		std::shared_ptr<GraphicResource::Topology> topology;
 
-		std::shared_ptr<DEResource::ConstantBufferInRootSignature<UINT>> vertexDataIndexCB;
-		std::shared_ptr<DEResource::StructuredBufferInHeap<char>> vertexBuffer;
+		std::shared_ptr<GraphicResource::ConstantBufferInRootSignature<UINT>> vertexDataIndexCB;
+		std::shared_ptr<GraphicResource::StructuredBufferInHeap<char>> vertexBuffer;
 	};
 }

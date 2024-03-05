@@ -1,7 +1,7 @@
 #include "SimpleSphere.h"
 
 #include "..\Graphics.h"
-#include "..\Resource\GraphicsResourceCommonInclude.h"
+#include "..\GraphicResource\GraphicsResourceCommonInclude.h"
 #include "..\Geometry\Sphere.h"
 #include "..\..\Component\Mesh.h"
 #include "..\..\Component\Material.h"
@@ -15,8 +15,8 @@
 namespace DiveBomber::DEObject
 {
 	using namespace DEGraphics;
-	using namespace DiveBomber::DEResource;
-	using namespace DiveBomber::DEResource::VertexProcess;
+	using namespace DiveBomber::GraphicResource;
+	using namespace DiveBomber::GraphicResource::VertexProcess;
 	using namespace DX;
 	using namespace DEComponent;
 

@@ -1,10 +1,10 @@
 #include "RenderPass.h"
 #include "..\..\Graphics.h"
-#include "..\..\Resource\RenderTarget.h"
-#include "..\..\Resource\DepthStencil.h"
+#include "..\..\GraphicResource\RenderTarget.h"
+#include "..\..\GraphicResource\DepthStencil.h"
 #include "..\..\Object\Object.h"
 
-namespace DiveBomber::DEResource
+namespace DiveBomber::GraphicResource
 {
 	class RenderTargetAsShaderResourceView;
 }
@@ -12,11 +12,11 @@ namespace DiveBomber::DEResource
 namespace DiveBomber::RenderPipeline
 {
 	using namespace DEGraphics;
-	using namespace DEResource;
+	using namespace GraphicResource;
 	using namespace DEObject;
 
-	RenderPass::RenderPass(std::string inputName, std::shared_ptr<DEResource::RenderTarget> inputRenderTarget,
-		std::shared_ptr<DEResource::DepthStencil> inputDepthStencil)
+	RenderPass::RenderPass(std::string inputName, std::shared_ptr<GraphicResource::RenderTarget> inputRenderTarget,
+		std::shared_ptr<GraphicResource::DepthStencil> inputDepthStencil)
 		:
 		Pass(inputName),
 		renderTarget(inputRenderTarget),

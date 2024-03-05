@@ -5,7 +5,7 @@
 
 #include <optional>
 
-namespace DiveBomber::DEResource
+namespace DiveBomber::GraphicResource
 {
 	class Cube final
 	{

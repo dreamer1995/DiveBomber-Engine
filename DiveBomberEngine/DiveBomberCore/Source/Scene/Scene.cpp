@@ -9,7 +9,7 @@
 namespace DiveBomber::DEScene
 {
 	using namespace DEGraphics;
-	using namespace DEResource;
+	using namespace GraphicResource;
 	using namespace DEObject;
 	using namespace DEComponent;
 	using namespace DX;

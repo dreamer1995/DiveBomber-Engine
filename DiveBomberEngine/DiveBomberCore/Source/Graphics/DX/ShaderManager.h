@@ -8,7 +8,7 @@
 #include <dxcapi.h>
 #pragma comment(lib,"dxcompiler.lib")
 
-namespace DiveBomber::DEResource
+namespace DiveBomber::GraphicResource
 {
 	class Shader;
 	enum class ShaderType;
@@ -24,8 +24,8 @@ namespace DiveBomber::DX
 		ShaderManager(const ShaderManager&) = delete;
 		ShaderManager& operator =(const ShaderManager&) = delete;
 
-		[[nodiscard]] wrl::ComPtr<ID3DBlob> Compile(const std::string& hlslFile, const std::wstring shaderDirectory, const std::wstring shaderName, DEResource::ShaderType shaderType);
-		void AddToUsingPool(std::shared_ptr<DEResource::Shader> shader) noexcept;
+		[[nodiscard]] wrl::ComPtr<ID3DBlob> Compile(const std::string& hlslFile, const std::wstring shaderDirectory, const std::wstring shaderName, GraphicResource::ShaderType shaderType);
+		void AddToUsingPool(std::shared_ptr<GraphicResource::Shader> shader) noexcept;
 		void ReLoadShader();
 		void ResetAllShaderDirtyState() noexcept;
 		// May not needed because of detecting null
@@ -42,7 +42,7 @@ namespace DiveBomber::DX
 		wrl::ComPtr<IDxcUtils> utils;
 		wrl::ComPtr<IDxcIncludeHandler> includeHandler;
 
-		std::unordered_map<std::string, std::shared_ptr<DEResource::Shader>> shaderPool;
+		std::unordered_map<std::string, std::shared_ptr<GraphicResource::Shader>> shaderPool;
 
 		std::mutex shaderManagerMutex;
 

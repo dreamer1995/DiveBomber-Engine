@@ -15,7 +15,7 @@
 #include "Component\Camera\Camera.h"
 #include "Component\Material.h"
 #include "Scene\Scene.h"
-#include "Graphics\Resource\ShaderInputable\Texture.h"
+#include "Graphics\GraphicResource\ShaderInputable\Texture.h"
 
 #include <..\imgui\imgui.h>
 #include <iostream>
@@ -29,7 +29,7 @@ namespace DiveBomber
 	using namespace DEConsole;
 	using namespace Utility;
 	using namespace Hardware;
-	using namespace DEResource;
+	using namespace GraphicResource;
 	using namespace DEScene;
 	using namespace DEObject;
 	using namespace DX;
@@ -137,7 +137,7 @@ namespace DiveBomber
 			{
 				if (dir_entry.path().extension() != ".deasset")
 				{
-					std::shared_ptr<DEResource::Texture> texture = GlobalResourceManager::Resolve<Texture>(dir_entry.path().filename());
+					std::shared_ptr<GraphicResource::Texture> texture = GlobalResourceManager::Resolve<Texture>(dir_entry.path().filename());
 				}
 			}
 			Graphics::GetInstance().ExecuteAllCurrentCommandLists();

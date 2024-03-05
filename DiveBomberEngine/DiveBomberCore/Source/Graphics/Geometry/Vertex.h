@@ -6,7 +6,7 @@
 //#include <type_traits>
 //#include <assimp/scene.h>
 
-namespace DiveBomber::DEResource::VertexProcess
+namespace DiveBomber::GraphicResource::VertexProcess
 {
 	using RGBAColor = Utility::RGBAColor;
 #define DVTX_ELEMENT_AI_EXTRACTOR(x)

@@ -1,7 +1,7 @@
 #pragma once
 #include "Vertex.h"
 
-namespace DiveBomber::DEResource
+namespace DiveBomber::GraphicResource
 {
 	class IndexedTriangleList
 	{

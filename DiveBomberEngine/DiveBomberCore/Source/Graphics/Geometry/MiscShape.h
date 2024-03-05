@@ -2,7 +2,7 @@
 #include "Vertex.h"
 #include "IndexedTriangleList.h"
 
-namespace DiveBomber::DEResource
+namespace DiveBomber::GraphicResource
 {
 	class MiscShape final
 	{

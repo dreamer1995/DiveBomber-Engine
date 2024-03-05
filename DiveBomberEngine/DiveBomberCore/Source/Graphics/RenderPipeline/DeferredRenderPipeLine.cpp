@@ -3,10 +3,10 @@
 #include "..\Graphics.h"
 #include "..\DX\Commandlist.h"
 #include "..\DX\GlobalResourceManager.h"
-#include "..\Resource\Bindable\RootSignature.h"
+#include "..\GraphicResource\Bindable\RootSignature.h"
 
-#include "..\Resource\ShaderInputable\RenderTargetAsShaderResourceView.h"
-#include "..\Resource\ShaderInputable\UnorderedAccessBufferAsShaderResourceView.h"
+#include "..\GraphicResource\ShaderInputable\RenderTargetAsShaderResourceView.h"
+#include "..\GraphicResource\ShaderInputable\UnorderedAccessBufferAsShaderResourceView.h"
 
 #include "Pass\OpaqueGBufferPass.h"
 #include "Pass\FinalPostProcessPass.h"
@@ -20,7 +20,7 @@ namespace DiveBomber::RenderPipeline
 {
 	using namespace DEGraphics;
 	using namespace DX;
-	using namespace DEResource;
+	using namespace GraphicResource;
 	using namespace DEObject;
 
 	DeferredRenderPipeLine::DeferredRenderPipeLine()

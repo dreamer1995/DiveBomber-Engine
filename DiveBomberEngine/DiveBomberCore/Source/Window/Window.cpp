@@ -1,7 +1,7 @@
 #include "Window.h"
 
 #include "..\Exception\WindowException.h"
-#include "..\..\Resource\resource.h"
+#include "..\..\EngineResource\Icon\resource.h"
 #include "..\Hardware\Keyboard.h"
 #include "..\Hardware\Mouse.h"
 #include "..\Graphics\Graphics.h"

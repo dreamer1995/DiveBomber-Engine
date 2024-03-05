@@ -1,9 +1,9 @@
 #include "Graphics.h"
 
 #include "..\Component\Camera\Camera.h"
-#include "Resource\DepthStencil.h"
-#include "Resource\Bindable\Viewport.h"
-#include "Resource\Bindable\ScissorRects.h"
+#include "GraphicResource\DepthStencil.h"
+#include "GraphicResource\Bindable\Viewport.h"
+#include "GraphicResource\Bindable\ScissorRects.h"
 #include "..\Exception\GraphicsException.h"
 #include "DX\GPUAdapter.h"
 #include "DX\DXDevice.h"
@@ -25,7 +25,7 @@ namespace DiveBomber::DEGraphics
 {
 	using namespace DX;
 	using namespace DEException;
-	using namespace DEResource;
+	using namespace GraphicResource;
 	using namespace DEComponent;
 	using namespace Utility;
 
