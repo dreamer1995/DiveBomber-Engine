@@ -341,7 +341,14 @@ namespace DiveBomber
 
 		if (wnd.kbd->KeyIsDown('F'))
 		{
-			mainCamera->LookZero({ 0.0f, 0.0f, 0.0f });
+			if (currentSelectedDetail)
+			{
+				std::shared_ptr<Object> object = std::dynamic_pointer_cast<Object>(currentSelectedDetail);
+				if (object)
+				{
+					mainCamera->LookZero(object->GetPos());
+				}
+			}
 		}
 
 		while (const auto delta = wnd.mouse->ReadRawDelta())

@@ -581,8 +581,29 @@ namespace DiveBomber::DEComponent
                 }
                 case ShaderParamType::SPT_Texture:
                 {
-                    // todo
                     ImGui::Text(tag(param["Name"].get<std::string>()));
+
+                    const ImVec2 borderSize = { 115.0f,115.0f };
+                    ImVec2 iconSize = { 100.0f,100.0f };
+                    ImGui::BeginChild(tag(param["Name"].get<std::string>()), borderSize, ImGuiChildFlags_Border);
+                        std::shared_ptr<Texture> texture = GlobalResourceManager::GetInstance().Resolve<Texture>(
+                            param["Value"], Texture::TextureLoadType::TLT_Icon);
+                        const D3D12_RESOURCE_DESC texDesc = texture->GetTextureBuffer()->GetDesc();
+                        const float XYRatio = texDesc.Width / (float)texDesc.Height;
+                        if (XYRatio > 1)
+                        {
+                            iconSize.y /= XYRatio;
+                        }
+                        else
+                        {
+                            iconSize.x *= XYRatio;
+                        }
+
+                        ImGui::SetCursorPosX((ImGui::GetWindowSize().x - iconSize.x) * 0.5f);
+                        ImGui::SetCursorPosY((ImGui::GetWindowSize().y - iconSize.y) * 0.5f);
+                        ImGui::Image((ImTextureID)texture->GetSRVDescriptorGPUHandle().ptr,
+                            ImVec2(iconSize.x, iconSize.y));
+                    ImGui::EndChild();
                     break;
                 }
                 }

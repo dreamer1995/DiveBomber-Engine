@@ -64,7 +64,6 @@ namespace DiveBomber::UI
 		if (isShown)
 		{
 			std::string captionChar = GetCaption() + (id == 1 ? "" : " " + std::to_string(id));
-			ImGui::ShowDemoWindow();
 			ImGui::Begin(captionChar.c_str(), &isShown);
 
 			ImGui::BeginChild("ContentInfo", ImVec2(ImGui::GetContentRegionAvail().x, 0),
