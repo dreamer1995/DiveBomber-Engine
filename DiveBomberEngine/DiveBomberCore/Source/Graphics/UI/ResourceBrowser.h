@@ -1,6 +1,6 @@
 #pragma once
 #include "UIWidget.h"
-#include "DetailModifier.h"
+#include "..\..\ConfigDrivenResource.h"
 
 #include <filesystem>
 #include <unordered_set>
@@ -12,9 +12,13 @@ namespace DiveBomber::GraphicResource
 	class Texture;
 }
 
+namespace DiveBomber
+{
+	class ConfigDrivenResource;
+}
+
 namespace DiveBomber::UI
 {
-	class DetailModifier;
 	namespace fs = std::filesystem;
 
 	class ResourceBrowser final : public UIWidget
@@ -24,6 +28,8 @@ namespace DiveBomber::UI
 		{
 			CFT_Material,
 			CFT_Texture,
+			CFT_Shader,
+			CFT_Scene,
 			CFT_Folder,
 		};
 	public:
@@ -67,7 +73,7 @@ namespace DiveBomber::UI
 		void SetIcon(std::shared_ptr<Icon> icon, UINT iconIndex, UINT size) noexcept;
 		void MaterialResourcePopup(FileTreeNode& inputTree);
 		void TextureResourcePopup(FileTreeNode& inputTree);
-		[[nodiscard]] std::shared_ptr<DetailModifier> ResolveResourceDetailInstance(FileTreeNode& inputTree) const;
+		[[nodiscard]] std::shared_ptr<DiveBomber::ConfigDrivenResource> ResolveResourceInstance(FileTreeNode& inputTree) const;
 
 	private:
 		UINT fileTreeIDCounter = 0;

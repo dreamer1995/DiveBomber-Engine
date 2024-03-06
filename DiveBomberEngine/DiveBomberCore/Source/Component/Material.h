@@ -3,7 +3,7 @@
 #include "..\Graphics\GraphicsHeader.h"
 #include "..\Utility\GlobalParameters.h"
 #include "..\Utility\DEJson.h"
-#include "..\Graphics\UI\DetailModifier.h"
+#include "..\ConfigDrivenResource.h"
 
 #include <vector>
 #include <unordered_map>
@@ -33,7 +33,7 @@ namespace DiveBomber::DEComponent
 		SPT_Texture,
 	};
 
-	class Material final : public Component, public UI::DetailModifier
+	class Material final : public Component, public DiveBomber::ConfigDrivenResource
 	{
 	public:
 		Material(const fs::path inputPath, const fs::path inputDefaultShaderPath = EngineShaderDirectoryW L"Default");

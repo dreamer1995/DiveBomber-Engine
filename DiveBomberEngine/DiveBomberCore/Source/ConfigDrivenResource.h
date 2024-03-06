@@ -1,8 +1,8 @@
 #pragma once
 
-namespace DiveBomber::UI
+namespace DiveBomber
 {
-	class DetailModifier
+	class ConfigDrivenResource
 	{
 	public:
 		virtual void DrawDetailPanel() = 0;

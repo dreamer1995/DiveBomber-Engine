@@ -318,7 +318,7 @@ namespace DiveBomber::UI
 								if (!Window::GetInstance().kbd->KeyIsDown(VK_CONTROL))
 								{
 									currentSelectedFileIDs.clear();
-									DiveBomberCore::GetInstance().SetCurrentSelectedDetail(ResolveResourceDetailInstance(child));
+									DiveBomberCore::GetInstance().SetCurrentSelectedResource(ResolveResourceInstance(child));
 								}
 								currentSelectedFileIDs.emplace(child.id);
 								checkSelect = true;
@@ -440,25 +440,25 @@ namespace DiveBomber::UI
 		}
 	}
 
-	std::shared_ptr<DetailModifier> ResourceBrowser::ResolveResourceDetailInstance(FileTreeNode& inputTree) const
+	std::shared_ptr<ConfigDrivenResource> ResourceBrowser::ResolveResourceInstance(FileTreeNode& inputTree) const
 	{
 		fs::path resourcePath = inputTree.path;
 		resourcePath.replace_extension();
-		std::shared_ptr<DetailModifier> detailModifier;
+		std::shared_ptr<ConfigDrivenResource> configDrivenResource;
 
 		switch (inputTree.fileType)
 		{
 		case FileType::CFT_Material:
-			detailModifier = GlobalResourceManager::Resolve<Material>(resourcePath);
+			configDrivenResource = GlobalResourceManager::Resolve<Material>(resourcePath);
 			break;
 		case FileType::CFT_Texture:
 		{
-			detailModifier = GlobalResourceManager::Resolve<Texture>(resourcePath);
+			configDrivenResource = GlobalResourceManager::Resolve<Texture>(resourcePath);
 			break;
 		}
 		}
 
-		return detailModifier;
+		return configDrivenResource;
 	}
 
 	void ResourceBrowser::RecursiveFilePath(fs::path path, FileTreeNode& inputFileTree)

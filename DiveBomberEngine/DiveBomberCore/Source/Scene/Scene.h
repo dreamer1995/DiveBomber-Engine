@@ -1,5 +1,8 @@
 #pragma once
 #include "..\Utility\Common.h"
+#include "..\Utility\DEJson.h"
+#include "..\Resource.h"
+
 #include <string>
 #include <memory>
 #include <map>
@@ -22,10 +25,12 @@ namespace DiveBomber::RenderPipeline
 
 namespace DiveBomber::DEScene
 {
-	class Scene final
+	namespace fs = std::filesystem;
+
+	class Scene final : public DiveBomber::Resource
 	{
 	public:
-		Scene();
+		Scene(const fs::path inputPath);
 		~Scene();
 
 		void LoadSceneFromFile(const std::wstring inputName) noexcept;
@@ -33,9 +38,8 @@ namespace DiveBomber::DEScene
 		[[nodiscard]] std::shared_ptr<DEComponent::Camera> GetMainCamera() const noexcept;
 		[[nodiscard]] std::shared_ptr<DEObject::Object> FindSceneObjectByName(std::wstring name) const noexcept;
 		[[nodiscard]] std::multimap<std::wstring, std::shared_ptr<DEObject::Object>> GetSceneObjects() const noexcept;
-		[[nodiscard]] std::wstring GetName() const noexcept;
+
 	private:
-		std::wstring name = L"";
 		std::unique_ptr<RenderPipeline::DeferredRenderPipeLine> mainRenderPipeline;
 		std::multimap<std::wstring, std::shared_ptr<DEObject::Object>> drawableObjects;
 		std::shared_ptr<DEComponent::Camera> mainCamera;

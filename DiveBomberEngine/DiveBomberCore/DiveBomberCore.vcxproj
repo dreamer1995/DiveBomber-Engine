@@ -229,7 +229,7 @@
     <ClInclude Include="Source\Graphics\GraphicResource\ShaderInputable\Texture.h" />
     <ClInclude Include="Source\Graphics\GraphicResource\ShaderInputable\UnorderedAccessBuffer.h" />
     <ClInclude Include="Source\Graphics\GraphicResource\ShaderInputable\UnorderedAccessBufferAsShaderResourceView.h" />
-    <ClInclude Include="Source\Graphics\UI\DetailModifier.h" />
+    <ClInclude Include="Source\ConfigDrivenResource.h" />
     <ClInclude Include="Source\Graphics\UI\MainMenuBar.h" />
     <ClInclude Include="Source\Graphics\UI\DetailPanel.h" />
     <ClInclude Include="Source\Graphics\UI\RenderStatusPanel.h" />

@@ -15,7 +15,9 @@ namespace DiveBomber::DEScene
 	using namespace DX;
 	using namespace RenderPipeline;
 
-	Scene::Scene()
+	Scene::Scene(const fs::path inputPath)
+		:
+		Resource(inputPath.stem())
 	{
 	}
 
@@ -77,10 +79,5 @@ namespace DiveBomber::DEScene
 	std::multimap<std::wstring, std::shared_ptr<Object>> Scene::GetSceneObjects() const noexcept
 	{
 		return drawableObjects;
-	}
-
-	std::wstring DiveBomber::DEScene::Scene::GetName() const noexcept
-	{
-		return name;
 	}
 }

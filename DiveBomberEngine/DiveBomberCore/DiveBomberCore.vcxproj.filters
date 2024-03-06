@@ -217,7 +217,7 @@
     <ClInclude Include="Source\Graphics\UI\SceneCamera.h" />
     <ClInclude Include="Source\Component\Component.h" />
     <ClInclude Include="EngineResource\Icon\resource.h" />
-    <ClInclude Include="Source\Graphics\UI\DetailModifier.h" />
+    <ClInclude Include="Source\ConfigDrivenResource.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

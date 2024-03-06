@@ -1,7 +1,7 @@
 #include "DetailPanel.h"
 
 #include "..\..\DiveBomberCore.h"
-#include "..\UI\DetailModifier.h"
+#include "..\..\ConfigDrivenResource.h"
 #include "..\..\Resource.h"
 
 #include <..\imgui\imgui.h>
@@ -14,16 +14,16 @@ namespace DiveBomber::UI
 		{
 			std::string captionChar = GetCaption() + (id == 1 ? "" : " " + std::to_string(id));
 			ImGui::Begin(captionChar.c_str(), &isShown);
-			std::shared_ptr<UI::DetailModifier> detailModifier = DiveBomberCore::GetInstance().GetCurrentSelectedDetail();
-			if (detailModifier)
+			std::shared_ptr<DiveBomber::ConfigDrivenResource> configDrivenResource = DiveBomberCore::GetInstance().GetCurrentSelectedResource();
+			if (configDrivenResource)
 			{
-				std::shared_ptr<Resource> resource = std::dynamic_pointer_cast<Resource>(detailModifier);
+				std::shared_ptr<Resource> resource = std::dynamic_pointer_cast<Resource>(configDrivenResource);
 				if (resource)
 				{
 					ImGui::Text(Utility::ToNarrow(resource->GetName()).c_str());
 				}
 
-				detailModifier->DrawDetailPanel();
+				configDrivenResource->DrawDetailPanel();
 			}
 
 			ImGui::End();

@@ -3,7 +3,7 @@
 #include "ShaderInputable.h"
 #include "..\..\GraphicsHeader.h"
 #include "..\..\..\Utility\DEJson.h"
-#include "..\..\UI\DetailModifier.h"
+#include "..\..\..\ConfigDrivenResource.h"
 
 #include <filesystem>
 #include <..\DirectXTex\DirectXTex\DirectXTex.h>
@@ -18,7 +18,7 @@ namespace DiveBomber::GraphicResource
 	namespace fs = std::filesystem;
 	using json = nlohmann::json;
 
-	class Texture : public DiveBomber::Resource, public ShaderInputable, public UI::DetailModifier
+	class Texture : public DiveBomber::Resource, public ShaderInputable, public DiveBomber::ConfigDrivenResource
 	{
 	public:
 		enum class TextureDimension

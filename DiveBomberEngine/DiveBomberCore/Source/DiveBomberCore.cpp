@@ -6,7 +6,7 @@
 #include "Graphics\DX\ShaderManager.h"
 #include "Graphics\Object\SimpleSphere.h"
 #include "Graphics\UI\UIManager.h"
-#include "Graphics\UI\DetailModifier.h"
+#include "ConfigDrivenResource.h"
 #include "Console\Console.h"
 #include "Utility\Timer.h"
 #include "Utility\GlobalParameters.h"
@@ -125,7 +125,7 @@ namespace DiveBomber
 
 	void DiveBomberCore::Start()
 	{
-		currentScene = std::make_shared<Scene>();
+		currentScene = std::make_shared<Scene>(L"");
 
 		currentScene->LoadSceneFromFile(L"Test Scene");
 
@@ -341,9 +341,9 @@ namespace DiveBomber
 
 		if (wnd.kbd->KeyIsDown('F'))
 		{
-			if (currentSelectedDetail)
+			if (currentSelectedResource)
 			{
-				std::shared_ptr<Object> object = std::dynamic_pointer_cast<Object>(currentSelectedDetail);
+				std::shared_ptr<Object> object = std::dynamic_pointer_cast<Object>(currentSelectedResource);
 				if (object)
 				{
 					mainCamera->LookZero(object->GetPos());
@@ -467,14 +467,14 @@ namespace DiveBomber
 		return currentScene;
 	}
 
-	std::shared_ptr<DetailModifier> DiveBomberCore::GetCurrentSelectedDetail()
+	std::shared_ptr<ConfigDrivenResource> DiveBomberCore::GetCurrentSelectedResource()
 	{
-		return currentSelectedDetail;
+		return currentSelectedResource;
 	}
 
-	void DiveBomberCore::SetCurrentSelectedDetail(std::shared_ptr<DetailModifier> detail)
+	void DiveBomberCore::SetCurrentSelectedResource(std::shared_ptr<ConfigDrivenResource> resource)
 	{
-		currentSelectedDetail = detail;
+		currentSelectedResource = resource;
 	}
 
 	float& DiveBomberCore::GetSceneCameraSpeed() noexcept

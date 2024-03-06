@@ -37,14 +37,14 @@ namespace DiveBomber::UI
 					{
 						currentSelectedIndex = i;
 						checkSelect = true;
-						DiveBomberCore::GetInstance().SetCurrentSelectedDetail(std::next(sceneObjects.begin(), currentSelectedIndex)->second);
+						DiveBomberCore::GetInstance().SetCurrentSelectedResource(std::next(sceneObjects.begin(), currentSelectedIndex)->second);
 					}
 				}
 				// When mouse within window, mouse released on nothing.
 				if (ImGui::IsMouseReleased(ImGuiMouseButton_Left) && ImGui::IsWindowHovered() && !checkSelect)
 				{
 					currentSelectedIndex = -1;
-					DiveBomberCore::GetInstance().SetCurrentSelectedDetail(nullptr);
+					DiveBomberCore::GetInstance().SetCurrentSelectedResource(nullptr);
 				}
 				ImGui::EndListBox();
 			}
