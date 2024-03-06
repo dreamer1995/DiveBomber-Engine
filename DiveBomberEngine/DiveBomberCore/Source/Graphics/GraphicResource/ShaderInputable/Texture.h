@@ -3,6 +3,7 @@
 #include "ShaderInputable.h"
 #include "..\..\GraphicsHeader.h"
 #include "..\..\..\Utility\DEJson.h"
+#include "..\..\UI\DetailModifier.h"
 
 #include <filesystem>
 #include <..\DirectXTex\DirectXTex\DirectXTex.h>
@@ -17,7 +18,7 @@ namespace DiveBomber::GraphicResource
 	namespace fs = std::filesystem;
 	using json = nlohmann::json;
 
-	class Texture : public DiveBomber::Resource, public ShaderInputable
+	class Texture : public DiveBomber::Resource, public ShaderInputable, public UI::DetailModifier
 	{
 	public:
 		enum class TextureDimension
@@ -85,7 +86,6 @@ namespace DiveBomber::GraphicResource
 		[[nodiscard]] wrl::ComPtr<ID3D12Resource> GetTextureBuffer() const noexcept;
 		static void UpdateConfig(const fs::path& outputPath, const TextureParam inputTextureParam);
 		
-		std::wstring GetName() const noexcept;
 		template<typename...Ignore>
 		[[nodiscard]] static std::string GenerateUID(const fs::path& inputPath, const TextureLoadType textureLoadType = TextureLoadType::TLT_Standard, Ignore&&...ignore)
 		{
@@ -93,6 +93,9 @@ namespace DiveBomber::GraphicResource
 			return typeid(Texture).name() + "#"s + inputPath.string() + std::to_string((UINT)textureLoadType);
 		}
 		[[nodiscard]] std::string GetUID() const noexcept override;
+
+		void DrawDetailPanel() override;
+		void SaveConfig() override;
 
 	protected:
 		void GetConfig();
@@ -107,11 +110,14 @@ namespace DiveBomber::GraphicResource
 		[[nodiscard]] DXGI_FORMAT GetUAVCompatableFormat(DXGI_FORMAT format);
 		[[nodiscard]] bool CheckSRGBFormat(DXGI_FORMAT format);
 		[[nodiscard]] D3D12_RESOURCE_DIMENSION SRVDimensionToResourceDimension(TextureDimension textureDimension) noxnd;
+		[[nodiscard]] UINT GetTextureDimensionIndex(TextureDimension textureDimension) noxnd;
+		[[nodiscard]] TextureDimension IndexToTextureDimension(UINT textureDimensionIndex) noxnd;
 
 	protected:
 		json config;
 		fs::path filePath;
 		fs::path cachePath;
+		fs::path configFilePath;
 		std::shared_ptr<DX::DescriptorAllocation> descriptorAllocation;
 		wrl::ComPtr<ID3D12Resource> textureBuffer;
 		TextureParam textureParam;

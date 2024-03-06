@@ -60,14 +60,8 @@ namespace DiveBomber::DEObject
 		bindableObjects.emplace_back(bindableObject);
 	}
 
-	std::wstring Object::GetName() const noexcept
-	{
-		return name;
-	}
-
 	void DiveBomber::DEObject::Object::DrawDetailPanel()
 	{
-		ImGui::Text(Utility::ToNarrow(name).c_str());
 		ImGui::SetNextItemOpen(true, ImGuiCond_Once);
 		if (ImGui::CollapsingHeader("Transform"))
 		{
@@ -85,5 +79,9 @@ namespace DiveBomber::DEObject
 		{
 			component->DrawComponentUI();
 		}
+	}
+
+	void DiveBomber::DEObject::Object::SaveConfig()
+	{
 	}
 }

@@ -13,6 +13,7 @@
 
 #include <fstream>
 #include <format>
+#include <..\imgui\imgui.h>
 #include <..\DirectXTex\Auxiliary\DirectXTexEXR.h>
 #pragma comment(lib,"DirectXTex.lib")
 
@@ -80,19 +81,53 @@ namespace DiveBomber::GraphicResource
 		return textureBuffer;
 	}
 
-	std::wstring Texture::GetName() const noexcept
-	{
-		return name;
-	}
-
 	std::string Texture::GetUID() const noexcept
 	{
 		return GenerateUID(filePath, textureLoadType);
 	}
 
+	void Texture::DrawDetailPanel()
+	{
+		ImGui::Checkbox("sRGB", &textureParam.sRGB);
+		ImGui::Checkbox("Generate Mip", &textureParam.generateMip);
+
+		static const char* textureDimensionTypes[] =
+		{
+			"Texture1D",
+			"Texture1D_Array",
+			"Texture2D",
+			"Texture2D_Array",
+			"Texture3D",
+			"TextureCube",
+			"TextureCube_Array"
+		};
+		int currentIndex = GetTextureDimensionIndex(textureParam.textureDimension);
+		const char* combo_preview_value = textureDimensionTypes[currentIndex];
+
+		if (ImGui::BeginCombo("Texture Dimension", combo_preview_value))
+		{
+			for (int n = 0; n < IM_ARRAYSIZE(textureDimensionTypes); n++)
+			{
+				const bool is_selected = (currentIndex == n);
+				if (ImGui::Selectable(textureDimensionTypes[n], is_selected))
+				{
+					textureParam.textureDimension = IndexToTextureDimension(n);
+				}
+
+				if (is_selected)
+					ImGui::SetItemDefaultFocus();
+			}
+			ImGui::EndCombo();
+		}
+	}
+
+	void Texture::SaveConfig()
+	{
+		UpdateConfig(configFilePath, textureParam);
+	}
+
 	void Texture::GetConfig()
 	{
-		fs::path configFilePath;
 		fs::path configFileCachePath(ProjectDirectoryW L"Cache\\Texture\\" + name + L".deasset");
 #if EditorMode
 		configFilePath = filePath;
@@ -112,12 +147,11 @@ namespace DiveBomber::GraphicResource
 			fs::copy(configFilePath, configFileCachePath, fs::copy_options::update_existing);
 		}
 #endif // EditorMode
-		configFilePath = configFileCachePath;
 
-		std::ifstream rawFile(configFilePath);
+		std::ifstream rawFile(configFileCachePath);
 		if (!rawFile.is_open())
 		{
-			throw std::exception(std::format("Unable to open config file {}", configFilePath.string()).c_str());
+			throw std::exception(std::format("Unable to open config file {}", configFileCachePath.string()).c_str());
 		}
 		rawFile >> config;
 
@@ -1111,6 +1145,52 @@ namespace DiveBomber::GraphicResource
 		}
 
 		return isSRGB;
+	}
+
+	UINT Texture::GetTextureDimensionIndex(TextureDimension textureDimension) noxnd
+	{
+		switch (textureDimension)
+		{
+		case DiveBomber::GraphicResource::Texture::TextureDimension::TDS_Texture1D:
+			return 0;
+		case DiveBomber::GraphicResource::Texture::TextureDimension::TDS_Texture1D_Array:
+			return 1;
+		case DiveBomber::GraphicResource::Texture::TextureDimension::TDS_Texture2D:
+			return 2;
+		case DiveBomber::GraphicResource::Texture::TextureDimension::TDS_Texture2D_Array:
+			return 3;
+		case DiveBomber::GraphicResource::Texture::TextureDimension::TDS_Texture3D:
+			return 4;
+		case DiveBomber::GraphicResource::Texture::TextureDimension::TDS_TextureCube:
+			return 5;
+		case DiveBomber::GraphicResource::Texture::TextureDimension::TDS_TextureCube_Array:
+			return 6;
+		default:
+			throw std::exception("Unknow texture dimension");
+		}
+	}
+
+	Texture::TextureDimension Texture::IndexToTextureDimension(UINT textureDimensionIndex) noxnd
+	{
+		switch (textureDimensionIndex)
+		{
+		case 0:
+			return TextureDimension::TDS_Texture1D;
+		case 1:
+			return TextureDimension::TDS_Texture1D_Array;
+		case 2:
+			return TextureDimension::TDS_Texture2D;
+		case 3:
+			return TextureDimension::TDS_Texture2D_Array;
+		case 4:
+			return TextureDimension::TDS_Texture3D;
+		case 5:
+			return TextureDimension::TDS_TextureCube;
+		case 6:
+			return TextureDimension::TDS_TextureCube_Array;
+		default:
+			throw std::exception("Unknow texture dimension index");
+		}
 	}
 
 	D3D12_RESOURCE_DIMENSION Texture::SRVDimensionToResourceDimension(TextureDimension textureDimension) noxnd

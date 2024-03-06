@@ -51,15 +51,13 @@ namespace DiveBomber::DEComponent
 
 		void Bind() noxnd;
 
-		[[nodiscard]] std::wstring GetName() const noexcept;
-
 		void SetMaterialParameterScalar(std::string constantName, std::string key, float scalar) const noexcept;
 		void SetMaterialParameterVector(std::string constantName, std::string key, DirectX::XMFLOAT4 vector) const noexcept;
 
 		void GetConfig();
 		void UploadConfig(const fs::path shaderPath);
 		void ReloadConfig();
-		void SaveConfig();
+		void SaveConfig() override;
 
 		[[nodiscard]] std::vector<std::shared_ptr<GraphicResource::Shader>> GetShaders() const noexcept;
 		[[nodiscard]] bool IsShaderDirty() noexcept;

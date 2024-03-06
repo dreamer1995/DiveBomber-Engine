@@ -67,7 +67,7 @@ namespace DiveBomber::UI
 		void SetIcon(std::shared_ptr<Icon> icon, UINT iconIndex, UINT size) noexcept;
 		void MaterialResourcePopup(FileTreeNode& inputTree);
 		void TextureResourcePopup(FileTreeNode& inputTree);
-		void SetDetailPanelDisplay(FileTreeNode& inputTree);
+		[[nodiscard]] std::shared_ptr<DetailModifier> ResolveResourceDetailInstance(FileTreeNode& inputTree) const;
 
 	private:
 		UINT fileTreeIDCounter = 0;

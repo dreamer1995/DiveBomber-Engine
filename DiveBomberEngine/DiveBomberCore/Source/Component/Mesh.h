@@ -35,7 +35,6 @@ namespace DiveBomber::DEComponent
 		[[nodiscard]] GraphicResource::VertexProcess::VertexData& GetVertexData() noexcept;
 		[[nodiscard]] std::shared_ptr<GraphicResource::IndexBuffer> GetIndexBuffer() const noexcept;
 		[[nodiscard]] std::shared_ptr<GraphicResource::Topology> GetTopology() const noexcept;
-		[[nodiscard]] std::wstring GetName() const noexcept;
 
 		void Bind() noxnd;
 

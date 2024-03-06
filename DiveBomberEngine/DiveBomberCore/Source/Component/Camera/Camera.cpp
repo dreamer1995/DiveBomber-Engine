@@ -130,11 +130,6 @@ namespace DiveBomber::DEComponent
 		//proj.SetPos(pos);
 	}
 
-	const std::wstring& Camera::GetName() const noexcept
-	{
-		return name;
-	}
-
 	//void Camera::LinkTechniques(Rgph::RenderGraph& rg)
 	//{
 	//	indicator.LinkTechniques(rg);

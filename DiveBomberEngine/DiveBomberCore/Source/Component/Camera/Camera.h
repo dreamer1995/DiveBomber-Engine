@@ -48,7 +48,6 @@ namespace DiveBomber::DEComponent
 		void Translate(const DirectX::XMFLOAT3 translation) noexcept;
 		[[nodiscard]] DirectX::XMFLOAT3 GetPos() const noexcept;
 		void SetPos(const DirectX::XMFLOAT3& inputPos) noexcept;
-		[[nodiscard]] const std::wstring& GetName() const noexcept;
 		//void LinkTechniques(Rgph::RenderGraph& rg);
 		//void Submit(size_t channel) const;
 

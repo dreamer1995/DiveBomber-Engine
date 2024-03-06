@@ -66,11 +66,6 @@ namespace DiveBomber::DEComponent
         return topology;
     }
 
-    std::wstring Mesh::GetName() const noexcept
-    {
-        return name;
-    }
-
     void Mesh::DrawComponentUI()
     {
         ImGui::SetNextItemOpen(true, ImGuiCond_Once);

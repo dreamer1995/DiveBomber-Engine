@@ -688,11 +688,6 @@ namespace DiveBomber::DEComponent
         indexConstantBuffer->Bind();
     }
 
-    std::wstring Material::GetName() const noexcept
-    {
-        return name;
-    }
-
     void Material::SetMaterialParameterScalar(std::string constantName, std::string key, float scalar) const noexcept
     {
         auto it = dynamicConstantMap.find(constantName);

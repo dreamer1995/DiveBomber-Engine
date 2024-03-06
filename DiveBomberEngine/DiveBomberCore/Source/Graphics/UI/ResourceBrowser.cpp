@@ -319,7 +319,7 @@ namespace DiveBomber::UI
 								if (!Window::GetInstance().kbd->KeyIsDown(VK_CONTROL))
 								{
 									currentSelectedFileIDs.clear();
-									SetDetailPanelDisplay(child);
+									DiveBomberCore::GetInstance().SetCurrentSelectedDetail(ResolveResourceDetailInstance(child));
 								}
 								currentSelectedFileIDs.emplace(child.id);
 								checkSelect = true;
@@ -430,20 +430,36 @@ namespace DiveBomber::UI
 
 			Graphics::GetInstance().ExecuteAllCurrentCommandLists();
 		}
+		if (ImGui::MenuItem("Save", NULL))
+		{
+			fs::path texturePath = inputTree.path;
+			texturePath.replace_extension(L"");
 
+			std::shared_ptr<GraphicResource::Texture> texture = GlobalResourceManager::Resolve<Texture>(
+				texturePath);
+			texture->SaveConfig();
+		}
 	}
 
-	void ResourceBrowser::SetDetailPanelDisplay(FileTreeNode& inputTree)
+	std::shared_ptr<DetailModifier> ResourceBrowser::ResolveResourceDetailInstance(FileTreeNode& inputTree) const
 	{
+		fs::path resourcePath = inputTree.path;
+		resourcePath.replace_extension();
+		std::shared_ptr<DetailModifier> detailModifier;
+
 		switch (inputTree.fileType)
 		{
 		case FileType::CFT_Material:
-			fs::path materialPath = inputTree.path;
-			materialPath.replace_extension();
-			std::shared_ptr<Material> material = GlobalResourceManager::Resolve<Material>(materialPath);
-			DiveBomberCore::GetInstance().SetCurrentSelectedDetail(material);
+			detailModifier = GlobalResourceManager::Resolve<Material>(resourcePath);
+			break;
+		case FileType::CFT_Texture:
+		{
+			detailModifier = GlobalResourceManager::Resolve<Texture>(resourcePath);
 			break;
 		}
+		}
+
+		return detailModifier;
 	}
 
 	void ResourceBrowser::RecursiveFilePath(fs::path path, FileTreeNode& inputFileTree)

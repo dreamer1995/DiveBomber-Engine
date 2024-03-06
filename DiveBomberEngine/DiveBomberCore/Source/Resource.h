@@ -30,6 +30,11 @@ namespace DiveBomber
 			return GenerateUID(Utility::ToNarrow(name));
 		}
 
+		[[nodiscard]] std::wstring GetName() const noexcept
+		{
+			return name;
+		}
+
 	protected:
 		std::wstring name;
 	};

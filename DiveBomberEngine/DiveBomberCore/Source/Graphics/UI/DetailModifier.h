@@ -6,5 +6,6 @@ namespace DiveBomber::UI
 	{
 	public:
 		virtual void DrawDetailPanel() = 0;
+		virtual void SaveConfig() = 0;
 	};
 }
