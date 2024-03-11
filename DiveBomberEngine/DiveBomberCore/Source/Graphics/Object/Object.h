@@ -36,6 +36,7 @@ namespace DiveBomber::DEObject
 		void AddBindable(std::shared_ptr<GraphicResource::Bindable> bindableObject) noexcept;
 
 		void virtual DrawDetailPanel() override;
+		void CreateConfig() override;
 		void virtual SaveConfig() override;
 	protected:
 		std::wstring name;

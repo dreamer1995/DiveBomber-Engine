@@ -9,7 +9,6 @@
 #include "..\Graphics\DX\GlobalResourceManager.h"
 
 #include <iostream>
-#include <fstream>
 #include <any>
 #include <format>
 #include <..\imgui\imgui.h>
@@ -23,81 +22,29 @@ namespace DiveBomber::DEComponent
     Material::Material(const fs::path inputPath, const fs::path inputDefaultShaderPath)
         :
         Component(inputPath.stem()),
-        configFilePath(inputPath.wstring() + L".deasset"),
-        defaultShaderPath(inputDefaultShaderPath)
+        ConfigDrivenResource(inputPath.wstring() + L".deasset"),
+        shaderPath(inputDefaultShaderPath)
     {
         using namespace std::string_literals;
         indexConstantBuffer = std::make_shared<ConstantBufferInRootSignature<UINT>>(name + L"#"s + L"IndexConstant", 7u);
 
         GetConfig();
-        ReloadConfig();
+        LoadResourceFromConfig();
     }
 
     void DiveBomber::DEComponent::Material::GetConfig()
     {
         fs::path configFileCachePath(ProjectDirectoryW L"Cache\\Material\\" + configFilePath.filename().wstring());
-#if EditorMode
-        GetConfigFromRaw();
+        ReadConfig(configFileCachePath);
 
-        if (!fs::exists(configFileCachePath) || fs::last_write_time(configFileCachePath) < fs::last_write_time(configFilePath))
+        shaderPath = Utility::ToWide(config["ShaderPath"]);
+
+        fs::file_time_type configFileLastSaveTime = fs::last_write_time(configFilePath);
+        fs::file_time_type builtShaderLastSaveTime = fs::last_write_time(shaderPath);
+        if (builtShaderLastSaveTime > configFileLastSaveTime)
         {
-            if (!fs::exists(configFileCachePath.parent_path()))
-            {
-                fs::create_directories(configFileCachePath.parent_path());
-            }
-
-            fs::copy(configFilePath, configFileCachePath, fs::copy_options::update_existing);
+            CreateConfig();
         }
-#endif //EditorMode
-        {
-            std::ifstream rawFile(configFileCachePath);
-            if (!rawFile.is_open())
-            {
-                throw std::exception(std::format("Unable to open script file {}", configFilePath.string()).c_str());
-            }
-            rawFile >> config;
-            rawFile.close();
-        }
-    }
-
-    void Material::GetConfigFromRaw()
-    {
-        if (!fs::exists(configFilePath))
-        {
-            if (!fs::exists(configFilePath.parent_path()))
-            {
-                fs::create_directories(configFilePath.parent_path());
-            }
-
-            CreateDefaultConfig();
-        }
-        else
-        {
-            std::ifstream rawFile(configFilePath);
-            if (!rawFile.is_open())
-            {
-                throw std::exception(std::format("Unable to open script file {}", configFilePath.string()).c_str());
-            }
-            rawFile >> config;
-            rawFile.close();
-
-
-            fs::path shaderPath(Utility::ToWide(config["ShaderPath"]));
-
-            fs::file_time_type configFileLastSaveTime = fs::last_write_time(configFilePath);
-            fs::file_time_type builtShaderLastSaveTime = fs::last_write_time(shaderPath);
-            if (builtShaderLastSaveTime > configFileLastSaveTime)
-            {
-                UploadConfig(shaderPath);
-            }
-        }
-    }
-
-    void Material::CreateDefaultConfig()
-    {
-        config["ShaderPath"] = Utility::ToNarrow(defaultShaderPath);
-
-        UploadConfig(defaultShaderPath);
     }
 
     int Material::ParamTypeStringToEnum(std::string string) const noexcept
@@ -220,7 +167,7 @@ namespace DiveBomber::DEComponent
         return "";
     }
 
-    void Material::UploadConfig(const fs::path shaderPath)
+    void Material::CreateConfig()
     {
         config["ConfigFileType"] = 0u;
         std::wstring paramString = Shader::GetShaderParamsString(shaderPath);
@@ -378,7 +325,7 @@ namespace DiveBomber::DEComponent
         outFile.close();
     }
 
-    void Material::ReloadConfig()
+    void Material::LoadResourceFromConfig()
     {
         std::wstring shaderPath = Utility::ToWide(config["ShaderPath"]);
         shaders.clear();
@@ -484,7 +431,6 @@ namespace DiveBomber::DEComponent
             case ShaderParamType::SPT_Color:
                 dx::XMFLOAT4 float4 = buf[param["Name"]];
                 param["Value"] = { float4.x,float4.y,float4.z,float4.w };
-                std::cout << param["Value"][1] << std::endl;
                 break;
             case ShaderParamType::SPT_Bool:
                 param["Value"] = (bool)buf[param["Name"]];
@@ -693,7 +639,7 @@ namespace DiveBomber::DEComponent
         if (IsShaderDirty())
         {
             GetConfig();
-            ReloadConfig();
+            LoadResourceFromConfig();
 
             //not a good idea, should be re-considered
             std::shared_ptr<CommandQueue> commandQueue = Graphics::GetInstance().GetCommandQueue(D3D12_COMMAND_LIST_TYPE_COPY);

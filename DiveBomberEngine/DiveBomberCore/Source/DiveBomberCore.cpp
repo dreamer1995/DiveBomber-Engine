@@ -418,7 +418,7 @@ namespace DiveBomber
 							for (auto& materialPair : materialMap)
 							{
 								materialPair.second->GetConfig();
-								materialPair.second->ReloadConfig();
+								materialPair.second->LoadResourceFromConfig();
 							}
 						}
 					}

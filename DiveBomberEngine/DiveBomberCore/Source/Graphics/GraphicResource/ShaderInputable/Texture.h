@@ -2,10 +2,8 @@
 #include "..\..\..\Resource.h"
 #include "ShaderInputable.h"
 #include "..\..\GraphicsHeader.h"
-#include "..\..\..\Utility\DEJson.h"
 #include "..\..\..\ConfigDrivenResource.h"
 
-#include <filesystem>
 #include <..\DirectXTex\DirectXTex\DirectXTex.h>
 
 namespace DiveBomber::DX
@@ -15,9 +13,6 @@ namespace DiveBomber::DX
 
 namespace DiveBomber::GraphicResource
 {
-	namespace fs = std::filesystem;
-	using json = nlohmann::json;
-
 	class Texture : public DiveBomber::Resource, public ShaderInputable, public DiveBomber::ConfigDrivenResource
 	{
 	public:
@@ -84,7 +79,7 @@ namespace DiveBomber::GraphicResource
 		[[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetSRVDescriptorCPUHandle() const noexcept;
 		[[nodiscard]] D3D12_GPU_DESCRIPTOR_HANDLE GetSRVDescriptorGPUHandle() const noexcept;
 		[[nodiscard]] wrl::ComPtr<ID3D12Resource> GetTextureBuffer() const noexcept;
-		static void UpdateConfig(const fs::path& outputPath, const TextureParam inputTextureParam);
+		void CreateConfig() override;
 		
 		template<typename...Ignore>
 		[[nodiscard]] static std::string GenerateUID(const fs::path& inputPath, const TextureLoadType textureLoadType = TextureLoadType::TLT_Standard, Ignore&&...ignore)
@@ -114,10 +109,8 @@ namespace DiveBomber::GraphicResource
 		[[nodiscard]] TextureDimension IndexToTextureDimension(UINT textureDimensionIndex) noxnd;
 
 	protected:
-		json config;
 		fs::path filePath;
 		fs::path cachePath;
-		fs::path configFilePath;
 		std::shared_ptr<DX::DescriptorAllocation> descriptorAllocation;
 		wrl::ComPtr<ID3D12Resource> textureBuffer;
 		TextureParam textureParam;

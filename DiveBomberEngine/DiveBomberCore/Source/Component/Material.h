@@ -1,8 +1,6 @@
 #pragma once
 #include "Component.h"
 #include "..\Graphics\GraphicsHeader.h"
-#include "..\Utility\GlobalParameters.h"
-#include "..\Utility\DEJson.h"
 #include "..\ConfigDrivenResource.h"
 
 #include <vector>
@@ -21,9 +19,6 @@ namespace DiveBomber::GraphicResource
 
 namespace DiveBomber::DEComponent
 {
-	using json = nlohmann::json;
-	namespace fs = std::filesystem;
-
 	enum class ShaderParamType
 	{
 		SPT_Float,
@@ -36,7 +31,7 @@ namespace DiveBomber::DEComponent
 	class Material final : public Component, public DiveBomber::ConfigDrivenResource
 	{
 	public:
-		Material(const fs::path inputPath, const fs::path inputDefaultShaderPath = EngineShaderDirectoryW L"Default");
+		Material(fs::path inputPath, const fs::path inputDefaultShaderPath = EngineShaderDirectoryW L"Default");
 		void SetTexture(const std::shared_ptr<GraphicResource::ShaderInputable> texture) noexcept;
 		void SetTexture(const std::shared_ptr<GraphicResource::ShaderInputable> texture, UINT slot) noexcept;
 		void SetTexture(const std::string textureName, const std::shared_ptr<GraphicResource::ShaderInputable> texture) noexcept;
@@ -55,8 +50,8 @@ namespace DiveBomber::DEComponent
 		void SetMaterialParameterVector(std::string constantName, std::string key, DirectX::XMFLOAT4 vector) const noexcept;
 
 		void GetConfig();
-		void UploadConfig(const fs::path shaderPath);
-		void ReloadConfig();
+		void CreateConfig() override;
+		void LoadResourceFromConfig();
 		void SaveConfig() override;
 
 		[[nodiscard]] std::vector<std::shared_ptr<GraphicResource::Shader>> GetShaders() const noexcept;
@@ -74,8 +69,6 @@ namespace DiveBomber::DEComponent
 			return typeid(Resource).name() + "#"s + name.string();
 		}
 	private:
-		void GetConfigFromRaw();
-		void CreateDefaultConfig();
 		[[nodiscard]] int ParamTypeStringToEnum(std::string string) const noexcept;
 		[[nodiscard]] int ShaderStageStringToEnum(std::string string) const noexcept;
 		[[nodiscard]] int ParamTypeToDynamicConstantType(ShaderParamType type) const noexcept;
@@ -90,11 +83,8 @@ namespace DiveBomber::DEComponent
 		std::unordered_map<std::string, std::shared_ptr<GraphicResource::DynamicConstantBufferInHeap>> dynamicConstantMap;
 		std::unordered_map<std::string, std::pair<std::shared_ptr<GraphicResource::Texture>, UINT>> textureMap;
 
-		json config;
-		fs::path configFilePath;
-
 		std::vector<std::shared_ptr<GraphicResource::Shader>> shaders;
 
-		fs::path defaultShaderPath;
+		fs::path shaderPath;
 	};
 }

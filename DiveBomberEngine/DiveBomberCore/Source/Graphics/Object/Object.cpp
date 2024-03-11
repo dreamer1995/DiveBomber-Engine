@@ -13,7 +13,8 @@ namespace DiveBomber::DEObject
 
 	Object::Object(const std::wstring inputName)
 		:
-		Resource(inputName)
+		Resource(inputName),
+		ConfigDrivenResource(inputName)
 	{
 	}
 
@@ -79,6 +80,10 @@ namespace DiveBomber::DEObject
 		{
 			component->DrawComponentUI();
 		}
+	}
+
+	void DiveBomber::DEObject::Object::CreateConfig()
+	{
 	}
 
 	void DiveBomber::DEObject::Object::SaveConfig()

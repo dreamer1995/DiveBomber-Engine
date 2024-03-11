@@ -32,7 +32,7 @@ namespace DiveBomber::DX
 			return GetInstance().Resolve_<T>(std::forward<Params>(p)...);
 		}
 
-		[[nodiscard]] static GlobalResourceManager& GetInstance();
+		static GlobalResourceManager& GetInstance();
 		static void Destructor() noexcept;
 
 	private:

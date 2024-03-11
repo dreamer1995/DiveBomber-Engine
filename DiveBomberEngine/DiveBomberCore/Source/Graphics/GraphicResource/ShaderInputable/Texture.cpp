@@ -1,6 +1,5 @@
 #include "Texture.h"
 
-#include "..\..\..\Utility\GlobalParameters.h"
 #include "..\..\GraphicsSource.h"
 #include "..\..\DX\GlobalResourceManager.h"
 #include "..\..\DX\DescriptorAllocator.h"
@@ -11,7 +10,6 @@
 #include "..\..\..\Component\Material.h"
 #include "..\..\DX\CommandQueue.h"
 
-#include <fstream>
 #include <format>
 #include <..\imgui\imgui.h>
 #include <..\DirectXTex\Auxiliary\DirectXTexEXR.h>
@@ -36,6 +34,7 @@ namespace DiveBomber::GraphicResource
 	Texture::Texture(const fs::path& inputPath, const TextureLoadType inputTextureLoadType)
 		:
 		Resource(inputPath.filename()),
+		ConfigDrivenResource(inputPath.wstring() + L".deasset"),
 		filePath(inputPath.wstring()),
 		textureLoadType(inputTextureLoadType),
 		textureParam(TextureParam{}),
@@ -123,37 +122,13 @@ namespace DiveBomber::GraphicResource
 
 	void Texture::SaveConfig()
 	{
-		UpdateConfig(configFilePath, textureParam);
+		CreateConfig();
 	}
 
 	void Texture::GetConfig()
 	{
-		fs::path configFileCachePath(ProjectDirectoryW L"Cache\\Texture\\" + name + L".deasset");
-#if EditorMode
-		configFilePath = filePath;
-		configFilePath = configFilePath.wstring() + L".deasset";
-		if (!fs::exists(configFilePath))
-		{
-			throw std::exception(std::format("Unable to open source config file {}.", configFilePath.string()).c_str());
-		}
-
-		// if no cache or cache obsoleted
-		if (!fs::exists(configFileCachePath) || fs::last_write_time(configFileCachePath) < fs::last_write_time(configFilePath))
-		{
-			if (!fs::exists(configFileCachePath.parent_path()))
-			{
-				fs::create_directories(configFileCachePath.parent_path());
-			}
-			fs::copy(configFilePath, configFileCachePath, fs::copy_options::update_existing);
-		}
-#endif // EditorMode
-
-		std::ifstream rawFile(configFileCachePath);
-		if (!rawFile.is_open())
-		{
-			throw std::exception(std::format("Unable to open config file {}", configFileCachePath.string()).c_str());
-		}
-		rawFile >> config;
+		fs::path configFileCachePath(ProjectDirectoryW L"Cache\\Texture\\" + configFilePath.filename().wstring());
+		ReadConfig(configFileCachePath);
 
 		textureParam.sRGB = config["sRGB"];
 		switch (textureLoadType)
@@ -175,19 +150,18 @@ namespace DiveBomber::GraphicResource
 			textureParam.textureDimension = config["textureDimension"];
 			break;
 		}
-		rawFile.close();
 	}
 
-	void Texture::UpdateConfig(const fs::path& outputPath, const TextureParam inputTextureParam)
+	void Texture::CreateConfig()
 	{
 		json config;
 		config["ConfigFileType"] = 1u;
-		config["sRGB"] = inputTextureParam.sRGB;
-		config["GenerateMip"] = inputTextureParam.generateMip;
-		config["textureDimension"] = inputTextureParam.textureDimension;
+		config["sRGB"] = textureParam.sRGB;
+		config["GenerateMip"] = textureParam.generateMip;
+		config["textureDimension"] = textureParam.textureDimension;
 
 		// write prettified JSON to another file
-		std::ofstream outFile(outputPath);
+		std::ofstream outFile(configFilePath);
 		outFile << std::setw(4) << config << std::endl;
 		outFile.close();
 	}
