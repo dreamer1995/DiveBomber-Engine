@@ -207,7 +207,10 @@ namespace DiveBomber::DEComponent
             {
                 if (existedParam["Name"] == param["Name"])
                 {
-                    if (existedParam["Type"] == param["Type"] && hasDefault)
+                    // saved value type should be same
+                    // if type not match, set back to default.
+                    if (existedParam["Type"] == param["Type"] &&
+                        existedParam["Value"].type() == ParamTypeEnumToJsonTypeEnum(param["Type"]))
                     {
                         materialData = existedParam;
                         existed = true;
@@ -226,22 +229,7 @@ namespace DiveBomber::DEComponent
                 if (comparedSource != comparedDestination)
                 {
                     comparedSource = comparedDestination;
-                    // if type not match, set back to default.
-                    if (ParamTypeEnumToJsonTypeEnum(param["Type"]) != materialData["Value"].type())
-                    {
-                        if (param["Type"] != ShaderParamType::SPT_Texture)
-                        {
-                            comparedSource["Value"] = param["Default"];
-                        }
-                        else
-                        {
-                            materialData["Value"] = TextureDefaultToTexturePath(materialData["Default"]);
-                        }
-                    }
-                    else
-                    {
-                        comparedSource["Value"] = materialData["Value"];
-                    }
+                    comparedSource["Value"] = materialData["Value"];
                     materialData = comparedSource;
                 }
             }
