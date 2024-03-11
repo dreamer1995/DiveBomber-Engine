@@ -19,6 +19,10 @@ namespace DiveBomber
 		{
 		}
 
+		virtual ~ConfigDrivenResource()
+		{
+		}
+
 		virtual void DrawDetailPanel() = 0;
 		virtual void SaveConfig() = 0;
 		virtual void CreateConfig() = 0;
