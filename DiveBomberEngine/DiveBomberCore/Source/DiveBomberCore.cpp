@@ -125,7 +125,7 @@ namespace DiveBomber
 
 	void DiveBomberCore::Start()
 	{
-		currentScene = std::make_shared<Scene>(L"");
+		currentScene = std::make_shared<Scene>(ProjectDirectoryW L"Asset\\Scene\\DefaultScene");
 
 		currentScene->LoadSceneFromFile(L"Test Scene");
 

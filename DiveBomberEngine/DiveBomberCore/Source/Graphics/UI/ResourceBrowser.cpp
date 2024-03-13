@@ -500,6 +500,7 @@ namespace DiveBomber::UI
 						childFileNode.fileType = FileType::CFT_Material;
 						break;
 					case FileType::CFT_Texture:
+					{
 						childFileNode.icon = std::make_shared<Icon>();
 						fs::path texturePath = childFileNode.path;
 						texturePath.replace_extension(L"");
@@ -517,6 +518,11 @@ namespace DiveBomber::UI
 							childFileNode.icon->XYRatio.x *= XYRatio;
 						}
 						childFileNode.fileType = FileType::CFT_Texture;
+						break;
+					}
+					case FileType::CFT_Scene:
+						childFileNode.icon = fileIconMaterial;
+						childFileNode.fileType = FileType::CFT_Scene;
 						break;
 					}
 				}

@@ -17,8 +17,10 @@ namespace DiveBomber::DEScene
 
 	Scene::Scene(const fs::path inputPath)
 		:
-		Resource(inputPath.stem())
+		Resource(inputPath.stem()),
+		ConfigDrivenResource(inputPath.wstring() + L".deasset")
 	{
+		GetConfig();
 	}
 
 	Scene::~Scene()
@@ -79,5 +81,38 @@ namespace DiveBomber::DEScene
 	std::multimap<std::wstring, std::shared_ptr<Object>> Scene::GetSceneObjects() const noexcept
 	{
 		return drawableObjects;
+	}
+
+	void DiveBomber::DEScene::Scene::AddObjects(const std::shared_ptr<DEObject::Object> object) noexcept
+	{
+		drawableObjects.emplace(object->GetName(), object);
+
+
+	}
+
+	void DiveBomber::DEScene::Scene::DrawDetailPanel()
+	{
+	}
+	void DiveBomber::DEScene::Scene::CreateConfig()
+	{
+		json config;
+		config["ConfigFileType"] = 3u;
+		config["Objects"] = {};
+
+		// write prettified JSON to another file
+		std::ofstream outFile(configFilePath);
+		outFile << std::setw(4) << config << std::endl;
+		outFile.close();
+	}
+
+	void DiveBomber::DEScene::Scene::SaveConfig()
+	{
+	}
+
+	void DiveBomber::DEScene::Scene::GetConfig()
+	{
+		fs::path configFileCachePath(ProjectDirectoryW L"Cache\\Scene\\" + configFilePath.filename().wstring());
+
+		ReadConfig(configFileCachePath);
 	}
 }
