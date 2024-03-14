@@ -74,7 +74,8 @@ namespace DiveBomber::GraphicResource
 		Texture(const fs::path& inputPath, const TextureLoadType inputTextureLoadType = TextureLoadType::TLT_Standard);
 		~Texture();
 
-		void ReloadTexture();
+		//delete cache defaultly
+		void ReloadTexture(const bool deleteCache = true);
 		[[nodiscard]] UINT GetSRVDescriptorHeapOffset() const noexcept override;
 		[[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetSRVDescriptorCPUHandle() const noexcept;
 		[[nodiscard]] D3D12_GPU_DESCRIPTOR_HANDLE GetSRVDescriptorGPUHandle() const noexcept;
@@ -93,7 +94,7 @@ namespace DiveBomber::GraphicResource
 		void SaveConfig() override;
 
 	protected:
-		void GetConfig();
+		void ApplyConfig();
 		void LoadTexture();
 		void GenerateCache(const wrl::ComPtr<ID3D12Resource>& outputTextureBuffer, const std::filesystem::path& outputPath, bool cubemap = false);
 		void GenerateCache(const dx::Image* images, size_t numImages, const dx::TexMetadata texMetaData, const std::filesystem::path& outputPath);

@@ -91,6 +91,7 @@
     <ClCompile Include="Source\Graphics\UI\UIManager.cpp" />
     <ClCompile Include="Source\Graphics\UI\RenderStatusPanel.cpp" />
     <ClCompile Include="Source\Graphics\UI\SceneCamera.cpp" />
+    <ClCompile Include="Source\Graphics\Object\Prefab.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Utility\Common.h" />
@@ -145,7 +146,6 @@
     <ClInclude Include="Source\Graphics\Geometry\Vertex.h" />
     <ClInclude Include="Source\Graphics\Object\Object.h" />
     <ClInclude Include="Source\Graphics\RenderPipeline\Pass\FullScreenPlane.h" />
-    <ClInclude Include="Source\Graphics\Object\Model.h" />
     <ClInclude Include="Source\Graphics\Object\SimpleSphere.h" />
     <ClInclude Include="Source\Graphics\GraphicResource\Bindable\Bindable.h" />
     <ClInclude Include="Source\Graphics\GraphicResource\Bindable\ConstantTransformBuffer.h" />
@@ -218,6 +218,8 @@
     <ClInclude Include="Source\Component\Component.h" />
     <ClInclude Include="EngineResource\Icon\resource.h" />
     <ClInclude Include="Source\ConfigDrivenResource.h" />
+    <ClInclude Include="Source\Graphics\Object\Model.h" />
+    <ClInclude Include="Source\Graphics\Object\Prefab.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

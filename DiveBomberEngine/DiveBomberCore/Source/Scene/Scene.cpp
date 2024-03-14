@@ -87,12 +87,15 @@ namespace DiveBomber::DEScene
 	{
 		drawableObjects.emplace(object->GetName(), object);
 
+		json objectConfig = object->GetConfig();
 
+		config["Objects"].emplace_back(objectConfig);
 	}
 
 	void DiveBomber::DEScene::Scene::DrawDetailPanel()
 	{
 	}
+
 	void DiveBomber::DEScene::Scene::CreateConfig()
 	{
 		json config;

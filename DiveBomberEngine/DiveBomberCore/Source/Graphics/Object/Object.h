@@ -38,6 +38,12 @@ namespace DiveBomber::DEObject
 		void virtual DrawDetailPanel() override;
 		void CreateConfig() override;
 		void virtual SaveConfig() override;
+		[[nodiscard]] json GetConfig() noexcept;
+		void UpdateConfig() noexcept;
+
+	protected:
+		void ApplyConfig();
+
 	protected:
 		std::wstring name;
 

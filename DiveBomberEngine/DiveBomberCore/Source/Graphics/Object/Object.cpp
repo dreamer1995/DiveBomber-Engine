@@ -89,4 +89,33 @@ namespace DiveBomber::DEObject
 	void DiveBomber::DEObject::Object::SaveConfig()
 	{
 	}
+
+	json DiveBomber::DEObject::Object::GetConfig() noexcept
+	{
+		UpdateConfig();
+		return config;
+	}
+
+	void DiveBomber::DEObject::Object::UpdateConfig() noexcept
+	{
+	}
+
+	void DiveBomber::DEObject::Object::ApplyConfig()
+	{
+		name = Utility::ToWide(config["Name"]);
+
+		position = dx::XMFLOAT3{ 
+			config["Transform"]["Position"][0],
+			config["Transform"]["Position"][1],
+			config["Transform"]["Position"][2] 
+		};
+
+		rotation = dx::XMFLOAT3{
+			config["Transform"]["Rotation"][0],
+			config["Transform"]["Rotation"][1],
+			config["Transform"]["Rotation"][2]
+		};
+		
+
+	}
 }

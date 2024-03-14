@@ -28,11 +28,10 @@ namespace DiveBomber::DEComponent
         using namespace std::string_literals;
         indexConstantBuffer = std::make_shared<ConstantBufferInRootSignature<UINT>>(name + L"#"s + L"IndexConstant", 7u);
 
-        GetConfig();
-        LoadResourceFromConfig();
+        RefreshMaterial();
     }
 
-    void DiveBomber::DEComponent::Material::GetConfig()
+    void DiveBomber::DEComponent::Material::ApplyConfig()
     {
         fs::path configFileCachePath(ProjectDirectoryW L"Cache\\Material\\" + configFilePath.filename().wstring());
         ReadConfig(configFileCachePath);
@@ -432,6 +431,12 @@ namespace DiveBomber::DEComponent
         outFile.close();
     }
 
+    void Material::RefreshMaterial()
+    {
+        ApplyConfig();
+        LoadResourceFromConfig();
+    }
+
     std::vector<std::shared_ptr<GraphicResource::Shader>> Material::GetShaders() const noexcept
     {
         return shaders;
@@ -626,8 +631,7 @@ namespace DiveBomber::DEComponent
     {
         if (IsShaderDirty())
         {
-            GetConfig();
-            LoadResourceFromConfig();
+            RefreshMaterial();
 
             //not a good idea, should be re-considered
             std::shared_ptr<CommandQueue> commandQueue = Graphics::GetInstance().GetCommandQueue(D3D12_COMMAND_LIST_TYPE_COPY);

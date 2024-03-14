@@ -417,8 +417,7 @@ namespace DiveBomber
 							auto materialMap = sphere->GetMaterials();
 							for (auto& materialPair : materialMap)
 							{
-								materialPair.second->GetConfig();
-								materialPair.second->LoadResourceFromConfig();
+								materialPair.second->RefreshMaterial();
 							}
 						}
 					}

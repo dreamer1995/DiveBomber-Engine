@@ -30,6 +30,7 @@ namespace DiveBomber::UI
 			CFT_Texture,
 			CFT_Shader,
 			CFT_Scene,
+			CFT_Prefab,
 			CFT_Folder,
 		};
 	public:

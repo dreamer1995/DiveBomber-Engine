@@ -112,6 +112,7 @@
     <ClCompile Include="Source\Graphics\DX\UploadBuffer.cpp" />
     <ClCompile Include="Source\Graphics\Geometry\Vertex.cpp" />
     <ClCompile Include="Source\Graphics\Object\Object.cpp" />
+    <ClCompile Include="Source\Graphics\Object\Prefab.cpp" />
     <ClCompile Include="Source\Graphics\RenderPipeline\DeferredRenderPipeLine.cpp" />
     <ClCompile Include="Source\Graphics\RenderPipeline\Pass\FullScreenPlane.cpp" />
     <ClCompile Include="Source\Graphics\Object\Model.cpp" />
@@ -189,10 +190,11 @@
     <ClInclude Include="Source\Graphics\Geometry\Plane.h" />
     <ClInclude Include="Source\Graphics\Geometry\Sphere.h" />
     <ClInclude Include="Source\Graphics\Geometry\Vertex.h" />
+    <ClInclude Include="Source\Graphics\Object\Model.h" />
     <ClInclude Include="Source\Graphics\Object\Object.h" />
+    <ClInclude Include="Source\Graphics\Object\Prefab.h" />
     <ClInclude Include="Source\Graphics\RenderPipeline\DeferredRenderPipeLine.h" />
     <ClInclude Include="Source\Graphics\RenderPipeline\Pass\FullScreenPlane.h" />
-    <ClInclude Include="Source\Graphics\Object\Model.h" />
     <ClInclude Include="Source\Graphics\Object\SimpleSphere.h" />
     <ClInclude Include="Source\Graphics\RenderPipeline\Pass\ComputePass.h" />
     <ClInclude Include="Source\Graphics\RenderPipeline\Pass\FinalPostProcessPass.h" />

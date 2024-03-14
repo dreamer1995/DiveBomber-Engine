@@ -40,8 +40,7 @@ namespace DiveBomber::GraphicResource
 		textureParam(TextureParam{}),
 		descriptorAllocation(Graphics::GetInstance().GetDescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)->Allocate(1u))
 	{
-		GetConfig();
-		LoadTexture();
+		ReloadTexture(false);
 	}
 
 	Texture::~Texture()
@@ -49,14 +48,17 @@ namespace DiveBomber::GraphicResource
 		ResourceStateTracker::RemoveGlobalResourceState(textureBuffer);
 	}
 
-	void Texture::ReloadTexture()
+	void Texture::ReloadTexture(const bool deleteCache)
 	{
-		fs::path configFileCachePath(ProjectDirectoryW L"Cache\\Texture\\" + name + L".deasset");
+		if(deleteCache)
+		{
+			fs::path configFileCachePath(ProjectDirectoryW L"Cache\\Texture\\" + name + L".deasset");
 
-		fs::remove(cachePath);
-		fs::remove(configFileCachePath);
+			fs::remove(cachePath);
+			fs::remove(configFileCachePath);
+		}
 		
-		GetConfig();
+		ApplyConfig();
 		LoadTexture();
 	}
 
@@ -125,7 +127,7 @@ namespace DiveBomber::GraphicResource
 		CreateConfig();
 	}
 
-	void Texture::GetConfig()
+	void Texture::ApplyConfig()
 	{
 		fs::path configFileCachePath(ProjectDirectoryW L"Cache\\Texture\\" + configFilePath.filename().wstring());
 		ReadConfig(configFileCachePath);

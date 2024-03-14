@@ -49,10 +49,9 @@ namespace DiveBomber::DEComponent
 		void SetMaterialParameterScalar(std::string constantName, std::string key, float scalar) const noexcept;
 		void SetMaterialParameterVector(std::string constantName, std::string key, DirectX::XMFLOAT4 vector) const noexcept;
 
-		void GetConfig();
 		void CreateConfig() override;
-		void LoadResourceFromConfig();
 		void SaveConfig() override;
+		void RefreshMaterial();
 
 		[[nodiscard]] std::vector<std::shared_ptr<GraphicResource::Shader>> GetShaders() const noexcept;
 		[[nodiscard]] bool IsShaderDirty() noexcept;
@@ -69,6 +68,9 @@ namespace DiveBomber::DEComponent
 			return typeid(Resource).name() + "#"s + name.string();
 		}
 	private:
+		void ApplyConfig();
+		void LoadResourceFromConfig();
+
 		[[nodiscard]] int ParamTypeStringToEnum(std::string string) const noexcept;
 		[[nodiscard]] int ShaderStageStringToEnum(std::string string) const noexcept;
 		[[nodiscard]] int ParamTypeToDynamicConstantType(ShaderParamType type) const noexcept;
