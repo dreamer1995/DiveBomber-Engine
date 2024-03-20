@@ -20,7 +20,7 @@ namespace DiveBomber::RenderPipeline
 		:
 		ComputePass("FinalPostProcessPass", inputTarget)
 	{
-		material = GlobalResourceManager::Resolve<Material>(EngineMaterialDirectoryW L"FinalPostProcessMaterial", EngineShaderDirectoryW L"PostProcess");
+		material = GlobalResourceManager::Resolve<Material>(EngineMaterialDirectoryW L"FinalPostProcessMaterial", EngineShaderDirectoryW L"PostProcess.hlsl");
 
 		postProcessCB.invScreenSize.x = 1.0f / Graphics::GetInstance().GetWidth();
 		postProcessCB.invScreenSize.y = 1.0f / Graphics::GetInstance().GetHeight();

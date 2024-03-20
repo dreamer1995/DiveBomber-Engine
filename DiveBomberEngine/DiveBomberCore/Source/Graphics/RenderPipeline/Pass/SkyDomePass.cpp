@@ -35,7 +35,7 @@ namespace DiveBomber::RenderPipeline
 
 		mesh = std::make_shared<Mesh>(wName, cube.vertices, indexBuffer);
 
-		material = GlobalResourceManager::Resolve<Material>(EngineMaterialDirectoryW + wName + L"Material", EngineShaderDirectoryW L"SkyDome");
+		material = GlobalResourceManager::Resolve<Material>(EngineMaterialDirectoryW + wName + L"Material", EngineShaderDirectoryW L"SkyDome.hlsl");
 
 		std::shared_ptr<RootSignature> rootSignature = GlobalResourceManager::Resolve<RootSignature>(L"StandardFullStageAccess");
 

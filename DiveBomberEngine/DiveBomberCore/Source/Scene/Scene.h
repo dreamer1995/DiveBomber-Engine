@@ -34,7 +34,7 @@ namespace DiveBomber::DEScene
 		Scene(const fs::path inputPath);
 		~Scene();
 
-		void LoadSceneFromFile(const std::wstring inputName) noexcept;
+		void LoadScene() noexcept;
 		void Render() noxnd;
 		[[nodiscard]] std::shared_ptr<DEComponent::Camera> GetMainCamera() const noexcept;
 		[[nodiscard]] std::shared_ptr<DEObject::Object> FindSceneObjectByName(std::wstring name) const noexcept;

@@ -27,10 +27,8 @@ namespace DiveBomber::DEScene
 	{
 	}
 
-	void Scene::LoadSceneFromFile(const std::wstring inputName) noexcept
+	void Scene::LoadScene() noexcept
 	{
-		name = inputName;
-
 		mainRenderPipeline = std::make_unique<DeferredRenderPipeLine>();
 
 		drawableObjects.emplace(L"Sphere01", std::make_shared<SimpleSphere>(L"Sphere01"));
@@ -89,7 +87,7 @@ namespace DiveBomber::DEScene
 
 		json objectConfig = object->GetConfig();
 
-		config["Objects"].emplace_back(objectConfig);
+		config["Object"].emplace_back(objectConfig);
 	}
 
 	void DiveBomber::DEScene::Scene::DrawDetailPanel()
@@ -100,7 +98,7 @@ namespace DiveBomber::DEScene
 	{
 		json config;
 		config["ConfigFileType"] = 3u;
-		config["Objects"] = {};
+		config["Object"] = {};
 
 		// write prettified JSON to another file
 		std::ofstream outFile(configFilePath);

@@ -116,6 +116,9 @@ namespace DiveBomber::DEObject
 			config["Transform"]["Rotation"][2]
 		};
 		
-
+		for (auto& componentConfig : config["Component"])
+		{
+			
+		}
 	}
 }

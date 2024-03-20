@@ -35,7 +35,7 @@ namespace DiveBomber::RenderPipeline
 		
 		mesh = std::make_shared<Mesh>(L"FullScreenPlane", bufFull, indexBuffer);
 
-		material = GlobalResourceManager::Resolve<Material>(EngineMaterialDirectoryW L"FullScreenPlaneMaterial", EngineShaderDirectoryW L"FullScreen");
+		material = GlobalResourceManager::Resolve<Material>(EngineMaterialDirectoryW L"FullScreenPlaneMaterial", EngineShaderDirectoryW L"FullScreen.hlsl");
 
 		std::shared_ptr<RootSignature> rootSignature = GlobalResourceManager::Resolve<RootSignature>(L"StandardFullStageAccess");
 
