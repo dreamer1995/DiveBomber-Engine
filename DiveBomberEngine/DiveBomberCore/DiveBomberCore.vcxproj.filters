@@ -92,6 +92,7 @@
     <ClCompile Include="Source\Graphics\UI\RenderStatusPanel.cpp" />
     <ClCompile Include="Source\Graphics\UI\SceneCamera.cpp" />
     <ClCompile Include="Source\Graphics\Object\Prefab.cpp" />
+    <ClCompile Include="Source\Component\Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Utility\Common.h" />
@@ -220,6 +221,7 @@
     <ClInclude Include="Source\ConfigDrivenResource.h" />
     <ClInclude Include="Source\Graphics\Object\Model.h" />
     <ClInclude Include="Source\Graphics\Object\Prefab.h" />
+    <ClInclude Include="Source\Component\Renderer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

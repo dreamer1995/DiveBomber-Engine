@@ -14,7 +14,7 @@ namespace DiveBomber::DEObject
 	Object::Object(const std::wstring inputName)
 		:
 		Resource(inputName),
-		ConfigDrivenResource(inputName)
+		ConfigDrivenResource(L"")
 	{
 	}
 
