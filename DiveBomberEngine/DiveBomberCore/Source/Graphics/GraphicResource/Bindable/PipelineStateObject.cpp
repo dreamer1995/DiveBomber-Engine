@@ -103,6 +103,12 @@ namespace DiveBomber::GraphicResource
 		pipelineStateStream.rasterizer = pipelineStateReference.rasterizerDesc;
 		pipelineStateStream.depthStencil = pipelineStateReference.depthStencilDesc;
 
+		//pipelineStateReference.blendState.RenderTarget[0].BlendEnable = TRUE;
+		//pipelineStateReference.blendState.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+		//pipelineStateReference.blendState.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+
+		pipelineStateStream.blendState = pipelineStateReference.blendState;
+
 		D3D12_PIPELINE_STATE_STREAM_DESC pipelineStateStreamDesc = {
 			sizeof(PipelineStateStream), &pipelineStateStream
 		};
