@@ -85,15 +85,17 @@ namespace DiveBomber::RenderPipeline
 
 		Graphics::GetInstance().GetCamera()->Bind();
 
+		FLOAT clearColor[] = ClearMainRTColor;
+		renderTarget->TransitStateToRT();
+		renderTarget->Clear(clearColor);
+
 		for (std::shared_ptr<RenderTarget> target : GBufferSet)
 		{
 			target->TransitStateToRT();
 
-			FLOAT clearColor[] = ClearMainRTColor;
 			target->Clear(clearColor);
 		}
 
-		renderTarget->TransitStateToRT();
 		auto dsvHandle = depthStencil->GetDSVCPUDescriptorHandle();
 
 		Graphics::GetInstance().GetGraphicsCommandList()->OMSetRenderTargets((UINT)targetHandles.size(), targetHandles.data(), FALSE, &dsvHandle);
