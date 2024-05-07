@@ -16,6 +16,7 @@
 #include "Component\Material.h"
 #include "Scene\Scene.h"
 #include "Graphics\GraphicResource\ShaderInputable\Texture.h"
+#include "GUIDManager.h"
 
 #include <..\imgui\imgui.h>
 #include <iostream>
@@ -86,6 +87,7 @@ namespace DiveBomber
 			UIManager::Destructor();
 			ImGui::DestroyContext();
 		}
+		GUIDManager::Destructor();
 	}
 
 	DiveBomberCore& DiveBomberCore::GetInstance()

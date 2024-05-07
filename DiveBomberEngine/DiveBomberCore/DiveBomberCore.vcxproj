@@ -149,6 +149,7 @@
     <ClCompile Include="Source\Graphics\UI\SceneCamera.cpp" />
     <ClCompile Include="Source\Graphics\UI\SceneOutliner.cpp" />
     <ClCompile Include="Source\Graphics\UI\UIManager.cpp" />
+    <ClCompile Include="Source\GUIDManager.cpp" />
     <ClCompile Include="Source\Scene\Scene.cpp" />
     <ClCompile Include="Source\Utility\Color.h" />
     <ClCompile Include="Source\Utility\Common.cpp" />
@@ -219,6 +220,7 @@
     <ClInclude Include="Source\Graphics\GraphicResource\Bindable\Topology.h" />
     <ClInclude Include="Source\Graphics\GraphicResource\Bindable\Viewport.h" />
     <ClInclude Include="Source\Graphics\GraphicResource\DynamicConstant.h" />
+    <ClInclude Include="Source\GUIDManager.h" />
     <ClInclude Include="Source\Resource.h" />
     <ClInclude Include="Source\Graphics\GraphicResource\GraphicsResourceCommonInclude.h" />
     <ClInclude Include="Source\Graphics\GraphicResource\ShaderInputable\BufferInHeap.h" />
@@ -242,6 +244,7 @@
     <ClInclude Include="Source\Graphics\UI\SceneOutliner.h" />
     <ClInclude Include="Source\Graphics\UI\UIManager.h" />
     <ClInclude Include="Source\Graphics\UI\UIWidget.h" />
+    <ClInclude Include="Source\Utility\DEGUID.h" />
     <ClInclude Include="Source\Utility\DEJson.h" />
     <ClInclude Include="Source\Graphics\DEDirextX.h" />
     <ClInclude Include="Source\Graphics\DX\DescriptorAllocation.h" />

@@ -93,6 +93,7 @@
     <ClCompile Include="Source\Graphics\UI\SceneCamera.cpp" />
     <ClCompile Include="Source\Graphics\Object\Prefab.cpp" />
     <ClCompile Include="Source\Component\Renderer.cpp" />
+    <ClCompile Include="Source\GUIDManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Utility\Common.h" />
@@ -222,6 +223,8 @@
     <ClInclude Include="Source\Graphics\Object\Model.h" />
     <ClInclude Include="Source\Graphics\Object\Prefab.h" />
     <ClInclude Include="Source\Component\Renderer.h" />
+    <ClInclude Include="Source\GUIDManager.h" />
+    <ClInclude Include="Source\Utility\DEGUID.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

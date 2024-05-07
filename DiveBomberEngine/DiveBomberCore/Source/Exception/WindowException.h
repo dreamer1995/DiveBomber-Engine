@@ -4,7 +4,7 @@
 
 namespace DiveBomber::DEException
 {
-#define WND_EXCEPT( hr ) WindowHrException( __LINE__,__FILE__,(hr) )
+#define WND_EXCEPT( hr ) WindowHrException windowHrException( __LINE__,__FILE__,(hr) )
 #define WND_LAST_EXCEPT() WindowHrException( __LINE__,__FILE__,GetLastError() )
 #define WND_NOGFX_EXCEPT() NoGfxException( __LINE__,__FILE__ )
 
