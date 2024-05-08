@@ -1,5 +1,6 @@
 {
     "ConfigFileType": 0,
+    "GUID": "{E8FACCED-5F79-4F4C-B2A3-97D6B5929983}",
     "Param": null,
     "ShaderName": "..\\..\\DiveBomberCore\\EngineResource\\Shader\\GenerateDiffuseIrradiance.hlsl",
     "Stage": [

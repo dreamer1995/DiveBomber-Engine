@@ -1,6 +1,7 @@
 {
     "ConfigFileType": 1,
+    "GUID": "{AE996D48-8A95-4E64-A481-64B899AFED64}",
     "GenerateMip": false,
-    "textureDimension": 9,
-    "sRGB": true
+    "sRGB": true,
+    "textureDimension": 9
 }
