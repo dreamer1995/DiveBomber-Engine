@@ -9,6 +9,7 @@
 #include "..\GraphicsResourceCommonInclude.h"
 #include "..\..\..\Component\Material.h"
 #include "..\..\DX\CommandQueue.h"
+#include "..\..\..\GUIDManager.h"
 
 #include <format>
 #include <..\imgui\imgui.h>
@@ -158,6 +159,7 @@ namespace DiveBomber::GraphicResource
 	{
 		json config;
 		config["ConfigFileType"] = 1u;
+		config["GUID"] = Utility::utf8_encode(Utility::GUIDToWString(GUIDManager::GenerateGUID()));
 		config["sRGB"] = textureParam.sRGB;
 		config["GenerateMip"] = textureParam.generateMip;
 		config["textureDimension"] = textureParam.textureDimension;
@@ -622,7 +624,7 @@ namespace DiveBomber::GraphicResource
 		const std::wstring generateMipName(L"GenerateMipLinear");
 		D3D12_RESOURCE_DESC resDesc = uavBuffer->GetDesc();
 
-		std::shared_ptr<Material> material = GlobalResourceManager::Resolve<Material>(EngineMaterialDirectoryW + generateMipName + L"Material", EngineShaderDirectoryW + generateMipName + L".hlsl");
+		std::shared_ptr<Material> material = GlobalResourceManager::Resolve<Material>(EngineMaterialDirectoryW + generateMipName + L"Material", EngineShaderDirectoryW + generateMipName + L".deshader");
 
 		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 		srvDesc.Format = resDesc.Format;
@@ -749,7 +751,7 @@ namespace DiveBomber::GraphicResource
 
 		const std::wstring generateMipName(L"GenerateDiffuseIrradiance");
 
-		std::shared_ptr<Material> material = GlobalResourceManager::Resolve<Material>(EngineMaterialDirectoryW + generateMipName + L"Material", EngineShaderDirectoryW + generateMipName + L".hlsl");
+		std::shared_ptr<Material> material = GlobalResourceManager::Resolve<Material>(EngineMaterialDirectoryW + generateMipName + L"Material", EngineShaderDirectoryW + generateMipName + L".deshader");
 
 		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 		srvDesc.Format = resDesc.Format;
@@ -836,7 +838,7 @@ namespace DiveBomber::GraphicResource
 
 		const std::wstring generateMipName(L"GenerateSpecularIBLMip");
 
-		std::shared_ptr<Material> material = GlobalResourceManager::Resolve<Material>(EngineMaterialDirectoryW + generateMipName + L"Material", EngineShaderDirectoryW + generateMipName + L".hlsl");
+		std::shared_ptr<Material> material = GlobalResourceManager::Resolve<Material>(EngineMaterialDirectoryW + generateMipName + L"Material", EngineShaderDirectoryW + generateMipName + L".deshader");
 
 		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 		srvDesc.Format = resDesc.Format;
@@ -911,7 +913,7 @@ namespace DiveBomber::GraphicResource
 		// Create render request resource
 		const std::wstring generateCubeName(L"GenerateCubeMap");
 
-		std::shared_ptr<Material> material = GlobalResourceManager::Resolve<Material>(EngineMaterialDirectoryW + generateCubeName + L"Material", EngineShaderDirectoryW + generateCubeName + L".hlsl");
+		std::shared_ptr<Material> material = GlobalResourceManager::Resolve<Material>(EngineMaterialDirectoryW + generateCubeName + L"Material", EngineShaderDirectoryW + generateCubeName + L".deshader");
 
 		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 		srvDesc.Format = cubeSourceTextureBuffer->GetDesc().Format;

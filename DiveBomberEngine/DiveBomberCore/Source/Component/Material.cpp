@@ -7,6 +7,7 @@
 #include "..\Graphics\DX\ShaderManager.h"
 #include "..\Graphics\DX\CommandQueue.h"
 #include "..\Graphics\DX\GlobalResourceManager.h"
+#include "..\GUIDManager.h"
 
 #include <iostream>
 #include <any>
@@ -169,6 +170,7 @@ namespace DiveBomber::DEComponent
     void Material::CreateConfig()
     {
         config["ConfigFileType"] = 0u;
+        config["GUID"] = Utility::utf8_encode(Utility::GUIDToWString(GUIDManager::GenerateGUID()));
         std::wstring paramString = Shader::GetShaderParamsString(shaderPath);
 
         json paramsData;

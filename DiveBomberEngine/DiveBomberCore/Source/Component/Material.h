@@ -31,7 +31,7 @@ namespace DiveBomber::DEComponent
 	class Material final : public Component, public DiveBomber::ConfigDrivenResource
 	{
 	public:
-		Material(fs::path inputPath, const fs::path inputDefaultShaderPath = EngineShaderDirectoryW L"Default");
+		Material(fs::path inputPath, const fs::path inputDefaultShaderPath = EngineShaderDirectoryW L"Default.deshader");
 		void SetTexture(const std::shared_ptr<GraphicResource::ShaderInputable> texture) noexcept;
 		void SetTexture(const std::shared_ptr<GraphicResource::ShaderInputable> texture, UINT slot) noexcept;
 		void SetTexture(const std::string textureName, const std::shared_ptr<GraphicResource::ShaderInputable> texture) noexcept;

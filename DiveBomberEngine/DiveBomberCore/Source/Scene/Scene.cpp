@@ -5,6 +5,7 @@
 #include "..\Graphics\Object\SimpleSphere.h"
 #include "..\Graphics\RenderPipeline\DeferredRenderPipeLine.h"
 #include "..\Component\Camera\Camera.h"
+#include "..\GUIDManager.h"
 
 namespace DiveBomber::DEScene
 {
@@ -98,6 +99,7 @@ namespace DiveBomber::DEScene
 	{
 		json config;
 		config["ConfigFileType"] = 3u;
+		config["GUID"] = Utility::utf8_encode(Utility::GUIDToWString(GUIDManager::GenerateGUID()));
 		config["Object"] = {};
 
 		// write prettified JSON to another file

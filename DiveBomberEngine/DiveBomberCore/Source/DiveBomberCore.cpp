@@ -103,9 +103,9 @@ namespace DiveBomber
 
 		Graphics::GetInstance().PostInitializeGraphics();
 
-		fs::path root(L"G:\\repo\\DiveBomber-Engine\\SampleProject");
+		//fs::path root(L"G:\\repo\\DiveBomber-Engine\\SampleProject");
 		//fs::path root(L"G:\\repo\\DiveBomber-Engine\\DiveBomberEngine\\DiveBomberCore");
-		RecursiveFilePath(root);
+		//RecursiveFilePath(root);
 	}
 
 	DiveBomberCore::~DiveBomberCore()
