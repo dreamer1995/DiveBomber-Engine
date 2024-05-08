@@ -13,7 +13,7 @@
             ]
         }
     ],
-    "ShaderPath": "..\\..\\DiveBomberCore\\EngineResource\\Shader\\PostProcess.hlsl",
+    "ShaderPath": "..\\..\\DiveBomberCore\\EngineResource\\Shader\\PostProcess.deshader",
     "Stage": [
         5
     ]

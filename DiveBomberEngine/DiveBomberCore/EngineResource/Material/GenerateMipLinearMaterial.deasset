@@ -2,7 +2,7 @@
     "ConfigFileType": 0,
     "GUID": "{04AF6680-4176-4252-8888-01A8494367A9}",
     "Param": null,
-    "ShaderPath": "..\\..\\DiveBomberCore\\EngineResource\\Shader\\GenerateMipLinear.hlsl",
+    "ShaderPath": "..\\..\\DiveBomberCore\\EngineResource\\Shader\\GenerateMipLinear.deshader",
     "Stage": [
         5
     ]

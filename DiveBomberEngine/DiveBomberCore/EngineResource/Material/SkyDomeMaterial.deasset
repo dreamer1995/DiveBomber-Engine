@@ -18,7 +18,7 @@
             ]
         }
     ],
-    "ShaderPath": "..\\..\\DiveBomberCore\\EngineResource\\Shader\\SkyDome.hlsl",
+    "ShaderPath": "..\\..\\DiveBomberCore\\EngineResource\\Shader\\SkyDome.deshader",
     "Stage": [
         0,
         4

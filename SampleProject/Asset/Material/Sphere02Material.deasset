@@ -33,7 +33,7 @@
             ]
         }
     ],
-    "ShaderPath": "..\\..\\DiveBomberCore\\EngineResource\\Shader\\PBR.hlsl",
+    "ShaderPath": "..\\..\\DiveBomberCore\\EngineResource\\Shader\\PBR.deshader",
     "Stage": [
         0,
         4

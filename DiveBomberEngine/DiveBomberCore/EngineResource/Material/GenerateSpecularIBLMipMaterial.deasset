@@ -2,7 +2,7 @@
     "ConfigFileType": 0,
     "GUID": "{5860D090-83E9-4634-B7F6-84C30D23FB09}",
     "Param": null,
-    "ShaderPath": "..\\..\\DiveBomberCore\\EngineResource\\Shader\\GenerateSpecularIBLMip.hlsl",
+    "ShaderPath": "..\\..\\DiveBomberCore\\EngineResource\\Shader\\GenerateSpecularIBLMip.deshader",
     "Stage": [
         5
     ]
