@@ -20,6 +20,8 @@
 
 #include <..\imgui\imgui.h>
 #include <iostream>
+#include <shlwapi.h>
+#include <cstdio>
 
 namespace DiveBomber
 {
@@ -36,6 +38,37 @@ namespace DiveBomber
 	using namespace DX;
 	using namespace DEComponent;
 	using namespace UI;
+
+	void RecursiveFilePath(fs::path path)
+	{
+		for (auto const& dir_entry : fs::directory_iterator(path))
+		{
+			if (dir_entry.is_directory())
+			{
+				RecursiveFilePath(dir_entry);
+			}
+			//else if (dir_entry.path().extension() == L".deasset")
+			//{
+			//	json config;
+
+			//	std::ifstream rawFile(dir_entry.path());
+			//	rawFile >> config;
+
+			//	config["GUID"] = Utility::utf8_encode(Utility::GUIDToWString(GUIDManager::GenerateGUID()));
+
+			//	// write prettified JSON to another file
+			//	std::ofstream outFile(dir_entry.path());
+			//	outFile << std::setw(4) << config << std::endl;
+			//	outFile.close();
+			//}
+			else if (dir_entry.path().extension() == L".hlsl")
+			{
+				fs::path newPath = dir_entry.path();
+				newPath.replace_extension(L".deshader");
+				rename(dir_entry.path(), newPath);
+			}
+		}
+	}
 
 	DiveBomberCore::DiveBomberCore()
 	{
@@ -63,6 +96,10 @@ namespace DiveBomber
 		}
 
 		Graphics::GetInstance().PostInitializeGraphics();
+
+		//fs::path root(L"G:\\repo\\DiveBomber-Engine\\SampleProject");
+		fs::path root(L"G:\\repo\\DiveBomber-Engine\\DiveBomberEngine\\DiveBomberCore");
+		RecursiveFilePath(root);
 	}
 
 	DiveBomberCore::~DiveBomberCore()
