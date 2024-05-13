@@ -60,6 +60,7 @@ namespace DiveBomber
 				throw std::exception(std::format("Unable to open config file {}", configFileCachePath.string()).c_str());
 			}
 			rawFile >> config;
+			rawFile.close();
 		}
 
 	protected:

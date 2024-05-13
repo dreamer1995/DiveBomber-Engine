@@ -15,15 +15,23 @@ namespace DiveBomber
 	{
 	public:
 		GUIDManager();
-		~GUIDManager();
+		GUIDManager(const GUIDManager&) = delete;
+		GUIDManager& operator =(const GUIDManager&) = delete;
 
-		[[nodiscard]] static GUIDManager& GetInstance();
+		static GUIDManager& GetInstance();
 		static void Destructor() noexcept;
 
 		[[nodiscard]] static GUID GenerateGUID() noexcept;
+		void RebuildGUIDMap(fs::path path = L"") noexcept;
+
+	private:
+		void LoadGUIDMap();
+		void SaveGUIDMap() noexcept;
+		void RecursiveFilePath(fs::path path);
 
 	private:
 		static std::unique_ptr<GUIDManager> instance;
-		static std::map<std::string, fs::path> guidMap;
+		std::map<fs::path, GUID> guidMap;
+		fs::path guidMapPath = ProjectDirectoryW L"Cache\\GUIDMap.dedatabase";
 	};
 }
