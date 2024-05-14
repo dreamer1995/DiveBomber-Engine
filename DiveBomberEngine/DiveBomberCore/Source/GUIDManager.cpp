@@ -57,7 +57,7 @@ namespace DiveBomber
 
 			for (auto it = guidMapJson.begin(); it != guidMapJson.end(); it++)
 			{
-				guidMap[Utility::utf8_decode(it.value())] = Utility::WStringToGUID(Utility::utf8_decode(it.key()));
+				guidMap[Utility::WStringToGUID(Utility::utf8_decode(it.key()))] = Utility::utf8_decode(it.value());
 			}
 		}
 		else
@@ -72,7 +72,7 @@ namespace DiveBomber
 
 		for (auto& guidData : guidMap)
 		{
-			guidMapJson[Utility::utf8_encode(Utility::GUIDToWString(guidData.second))] = Utility::utf8_encode(guidData.first);
+			guidMapJson[Utility::utf8_encode(Utility::GUIDToWString(guidData.first))] = Utility::utf8_encode(fs::relative(guidData.second));
 		}
 
 		// write prettified JSON to another file
@@ -92,6 +92,13 @@ namespace DiveBomber
 			RecursiveFilePath(L"G:\\repo\\DiveBomber-Engine\\SampleProject");
 			RecursiveFilePath(L"G:\\repo\\DiveBomber-Engine\\DiveBomberEngine\\DiveBomberCore");
 		}
+	}
+
+	fs::path GUIDManager::GUIDToPath(GUID guid) noexcept
+	{
+		fs::path path = guidMap[guid];
+		assert((path != L"") && "GUID has no valid path-mapping");
+		return path;
 	}
 
 	void GUIDManager::RecursiveFilePath(fs::path path)
@@ -117,7 +124,7 @@ namespace DiveBomber
 
 					GUID guid = Utility::WStringToGUID(guidWString);
 
-					guidMap[dir_entry.path()] = guid;
+					guidMap[guid] = dir_entry.path();
 				}
 				else
 				{

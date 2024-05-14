@@ -24,6 +24,8 @@ namespace DiveBomber
 		[[nodiscard]] static GUID GenerateGUID() noexcept;
 		void RebuildGUIDMap(fs::path path = L"") noexcept;
 
+		[[nodiscard]] fs::path GUIDToPath(GUID guid) noexcept;
+
 	private:
 		void LoadGUIDMap();
 		void SaveGUIDMap() noexcept;
@@ -31,7 +33,7 @@ namespace DiveBomber
 
 	private:
 		static std::unique_ptr<GUIDManager> instance;
-		std::map<fs::path, GUID> guidMap;
+		std::map<GUID, fs::path> guidMap;
 		fs::path guidMapPath = ProjectDirectoryW L"Cache\\GUIDMap.dedatabase";
 	};
 }
