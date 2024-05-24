@@ -89,8 +89,8 @@ namespace DiveBomber
 		}
 		else
 		{
-			RecursiveFilePath(L"G:\\repo\\DiveBomber-Engine\\SampleProject");
-			RecursiveFilePath(L"G:\\repo\\DiveBomber-Engine\\DiveBomberEngine\\DiveBomberCore");
+			RecursiveFilePath(ProjectDirectoryW);
+			RecursiveFilePath(EngineDirectoryW);
 		}
 	}
 
