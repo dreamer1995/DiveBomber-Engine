@@ -2,6 +2,7 @@
     "ConfigFileType": 1,
     "GUID": "{7F85D45D-6582-45AE-ADC7-7F6DEAE40C54}",
     "GenerateMip": true,
+    "Name": "earth.dds",
     "sRGB": true,
     "textureDimension": 4
 }

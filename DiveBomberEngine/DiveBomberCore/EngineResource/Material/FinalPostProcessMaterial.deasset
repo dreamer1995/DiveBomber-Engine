@@ -1,6 +1,7 @@
 {
     "ConfigFileType": 0,
     "GUID": "{AB2158F3-5F38-430B-8D6F-2E46B9EB77C4}",
+    "Name": "FinalPostProcessMaterial",
     "Param": [
         {
             "Name": "baseColor",

@@ -94,6 +94,19 @@ namespace DiveBomber
 		}
 	}
 
+	void GUIDManager::RebuildGUIDMapForBatchModifyTables(fs::path path) noexcept
+	{
+		if (path != L"")
+		{
+			RecursiveFilePathForBatchModifyTables(path);
+		}
+		else
+		{
+			RecursiveFilePathForBatchModifyTables(ProjectDirectoryW);
+			RecursiveFilePathForBatchModifyTables(EngineDirectoryW);
+		}
+	}
+
 	fs::path GUIDManager::GUIDToPath(GUID guid) noexcept
 	{
 		fs::path path = guidMap[guid];
@@ -134,5 +147,37 @@ namespace DiveBomber
 		}
 
 		SaveGUIDMap();
+	}
+
+	void GUIDManager::RecursiveFilePathForBatchModifyTables(fs::path path)
+	{
+		for (auto dir_entry : fs::directory_iterator(path))
+		{
+			if (dir_entry.is_directory())
+			{
+				RecursiveFilePathForBatchModifyTables(dir_entry);
+			}
+			else if (dir_entry.path().extension() == L".deasset")
+			{
+				json config;
+
+				std::ifstream rawFile(dir_entry.path());
+				rawFile >> config;
+				rawFile.close();
+
+				auto it = config.find("ConfigFileType");
+				if (it != config.end())
+				{
+					{
+						config["Name"] = Utility::utf8_encode(dir_entry.path().stem());
+
+						// write prettified JSON to another file
+						std::ofstream outFile(dir_entry.path());
+						outFile << std::setw(4) << config << std::endl;
+						outFile.close();
+					}
+				}
+			}
+		}
 	}
 }

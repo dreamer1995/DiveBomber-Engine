@@ -2,6 +2,7 @@
     "ConfigFileType": 1,
     "GUID": "{A8666873-857C-4077-B8EE-C86AF8DB90AD}",
     "GenerateMip": false,
+    "Name": "MyImage01.jpg",
     "sRGB": true,
     "textureDimension": 4
 }

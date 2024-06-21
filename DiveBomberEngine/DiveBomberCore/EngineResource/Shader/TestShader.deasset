@@ -1,4 +1,5 @@
 {
     "ConfigFileType": 2,
-    "GUID": "{109A442A-27DF-4911-9AF4-7C5BEB1F2FFD}"
+    "GUID": "{109A442A-27DF-4911-9AF4-7C5BEB1F2FFD}",
+    "Name": "TestShader"
 }

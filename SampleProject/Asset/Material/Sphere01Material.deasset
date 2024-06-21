@@ -1,6 +1,7 @@
 {
     "ConfigFileType": 0,
     "GUID": "{3AA6DC69-1496-49D8-99FE-FC41BDE18FC0}",
+    "Name": "Sphere01Material",
     "Param": [
         {
             "Name": "BaseMap",

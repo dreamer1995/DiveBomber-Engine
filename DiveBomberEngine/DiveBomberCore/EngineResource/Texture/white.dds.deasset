@@ -2,6 +2,7 @@
     "ConfigFileType": 1,
     "GUID": "{6B7E4626-44B4-4D0B-94AD-64D087FC166F}",
     "GenerateMip": true,
+    "Name": "white.dds",
     "sRGB": true,
     "textureDimension": 4
 }

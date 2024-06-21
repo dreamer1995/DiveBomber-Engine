@@ -2,6 +2,7 @@
     "ConfigFileType": 1,
     "GUID": "{A4E18726-27C4-4920-BAA3-08E2197B7228}",
     "GenerateMip": false,
+    "Name": "panorama_image.png",
     "sRGB": true,
     "textureDimension": 9
 }

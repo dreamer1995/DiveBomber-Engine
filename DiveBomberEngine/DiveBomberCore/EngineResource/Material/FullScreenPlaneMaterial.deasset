@@ -1,6 +1,7 @@
 {
     "ConfigFileType": 0,
     "GUID": "{88DB1058-4830-42C5-B1D9-D1176A2E858F}",
+    "Name": "FullScreenPlaneMaterial",
     "Param": [
         {
             "Name": "baseColor",

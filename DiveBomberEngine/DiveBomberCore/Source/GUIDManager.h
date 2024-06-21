@@ -23,6 +23,7 @@ namespace DiveBomber
 
 		[[nodiscard]] static GUID GenerateGUID() noexcept;
 		void RebuildGUIDMap(fs::path path = L"") noexcept;
+		void RebuildGUIDMapForBatchModifyTables(fs::path path = L"") noexcept;
 
 		[[nodiscard]] fs::path GUIDToPath(GUID guid) noexcept;
 
@@ -30,6 +31,7 @@ namespace DiveBomber
 		void LoadGUIDMap();
 		void SaveGUIDMap() noexcept;
 		void RecursiveFilePath(fs::path path);
+		void RecursiveFilePathForBatchModifyTables(fs::path path);
 
 	private:
 		static std::unique_ptr<GUIDManager> instance;

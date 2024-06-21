@@ -1,6 +1,7 @@
 {
     "ConfigFileType": 0,
     "GUID": "{262BFB2D-FF77-4D32-BE50-2D0EE6DEA014}",
+    "Name": "SkyDomeMaterial",
     "Param": [
         {
             "Name": "baseMap",

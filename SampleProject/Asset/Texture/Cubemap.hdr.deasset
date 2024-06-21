@@ -2,6 +2,7 @@
     "ConfigFileType": 1,
     "GUID": "{A6E5FCD5-92AD-4029-8AD4-F2444390FDA4}",
     "GenerateMip": false,
+    "Name": "Cubemap.hdr",
     "sRGB": true,
     "textureDimension": 9
 }

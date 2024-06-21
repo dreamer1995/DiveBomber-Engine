@@ -2,6 +2,7 @@
     "ConfigFileType": 1,
     "GUID": "{78493350-5230-4254-95F0-C7D905C01858}",
     "GenerateMip": true,
+    "Name": "normal.dds",
     "sRGB": false,
     "textureDimension": 4
 }

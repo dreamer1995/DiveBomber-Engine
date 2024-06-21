@@ -1,6 +1,7 @@
 {
     "ConfigFileType": 0,
     "GUID": "{FE239B4C-48A1-46F1-B6B3-76B97F57097F}",
+    "Name": "GenerateCubeMapMaterial",
     "Param": null,
     "ShaderPath": "..\\..\\DiveBomberCore\\EngineResource\\Shader\\GenerateCubeMap.deshader",
     "Stage": [
